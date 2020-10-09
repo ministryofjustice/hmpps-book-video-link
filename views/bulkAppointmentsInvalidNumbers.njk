@@ -1,0 +1,103 @@
+{% extends "./partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set title = 'Some appointments cannot be added' %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+  text: "Back",
+  href: "/bulk-appointments/upload-file"
+}) }}
+{% endblock %}
+
+{% block content %}
+
+  <h1 class="govuk-heading-xl">{{title}}</h1>
+
+  {% if prisonersNotFound.length > 0 %}
+    <h2 class="govuk-heading-m">
+      Unable to find prisoners on the CSV file
+    </h2>
+
+    <p class="govuk-body">
+      Some prisoners could not be found. This might be because the prison number and the name do not match, or the prison number does not exist in this location.
+    </p>
+
+    <p class="govuk-body">
+      You should check these numbers. No appointments will be created for these prison numbers.
+    </p>
+
+    {% set prisonersNotFoundRows = [] %}
+
+    {% for prisonNumber in prisonersNotFound %}
+      {% set prisonersNotFoundRows = (prisonersNotFoundRows.push([
+        {
+          text: prisonNumber
+        }
+      ]), prisonersNotFoundRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+      attributes: { "data-qa": "invalid-numbers-not-found" },
+      head: [
+        {
+          text: "Prison number"
+        }
+      ],
+      rows: prisonersNotFoundRows
+    }) }}
+  {% endif %}
+
+  {% if prisonersDuplicated.length > 0 %}
+    <h2 class="govuk-heading-m">
+      Duplicate prison numbers listed on the CSV file
+    </h2>
+
+    <p class="govuk-body">
+      You can only include each prison number once on a CSV file. You must use a different CSV file if you want to add appointments for different times for the same prisoner.
+    </p>
+
+    {% set prisonersDuplicatedRows = [] %}
+
+    {% for prisonNumber in prisonersDuplicated %}
+      {% set prisonersDuplicatedRows = (prisonersDuplicatedRows.push([
+        {
+          text: prisonNumber
+        }
+      ]), prisonersDuplicatedRows) %}
+    {% endfor %}
+
+    {{ govukTable({
+      attributes: { "data-qa": "invalid-numbers-duplicated" },
+      head: [
+        {
+          text: "Prison number"
+        }
+      ],
+      rows: prisonersDuplicatedRows
+    }) }}
+  {% endif %}
+
+  {{ govukButton({ 
+      text: "Continue",
+      element: 'a',
+      href: '/bulk-appointments/confirm-appointments',
+      classes: "govuk-!-margin-right-2",
+      attributes: {
+        'data-qa': 'continue-with-invalid'
+      }
+    }) }}
+
+  {{ govukButton({
+      text: "Cancel",
+      element: 'a',
+      href: '/bulk-appointments/upload-file',
+      classes: "govuk-button--secondary",
+      attributes: {
+        'data-qa': 'upload-another-file'
+      }
+    }) }}
+
+{% endblock %}

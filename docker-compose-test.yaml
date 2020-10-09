@@ -1,0 +1,14 @@
+version: '3.1'
+services:
+  prisonstaffhub-wiremock:
+    image: rodolpheche/wiremock
+    container_name: prisonstaffhub-wiremock
+    restart: always
+    ports:
+      - "9191:8080"
+
+  prisonstaffhub-test-redis:
+    image: redis
+    container_name: prisonstaffhub-test-redis
+    ports:
+      - 6379:6379

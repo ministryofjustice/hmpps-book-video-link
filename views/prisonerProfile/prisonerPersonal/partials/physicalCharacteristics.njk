@@ -1,0 +1,8 @@
+{% from "../../macros/prisonerSummarySection.njk" import prisonerSummarySection %}
+
+{% if physicalCharacteristics.length %}
+  {{ prisonerSummarySection(physicalCharacteristics) }}
+{% else %}
+  <p class="govuk-body">{{ missingEntry }}</p>
+{% endif %}
+

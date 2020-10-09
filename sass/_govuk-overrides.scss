@@ -1,0 +1,96 @@
+// Whenever we have/want to diverge from govuk-frontend
+.prisoner-profile {
+  .govuk-summary-list-title {
+    margin: 0 0 govuk-spacing(2);
+    padding: govuk-spacing(2) 0;
+
+    @include govuk-media-query($from: tablet) {
+      margin: 0;
+    }
+  }
+
+  .govuk-accordion__section-content {
+    > .govuk-summary-list:not(:first-child) {
+      border-top: 1px solid $govuk-border-colour;
+    }
+
+    // Remove last line of every summary within an accordion section
+    .govuk-summary-list {
+      .govuk-summary-list__row:last-child {
+        .govuk-summary-list__key,
+        .govuk-summary-list__value {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .govuk-summary-list__key {
+    margin-bottom: govuk-spacing(1);
+    @include govuk-typography-weight-bold;
+    @include govuk-media-query($from: tablet) {
+      width: 50%;
+    }
+
+    &--indent {
+      @include govuk-media-query($from: desktop) {
+        padding-left: govuk-spacing(9);
+      }
+    }
+  }
+
+  .govuk-summary-list__value {
+    @include govuk-media-query($from: tablet) {
+      width: 50%;
+    }
+  }
+
+  .govuk-summary-list__value:last-child {
+    @include govuk-media-query($from: tablet) {
+      width: 50%;
+    }
+  }
+
+  // Handle borders on govukuk-accordions split over 2 columns
+  .govuk-accordion--split {
+    @include govuk-media-query($from: tablet) {
+      border-bottom: none;
+
+      .govuk-accordion__section {
+        &:last-of-type {
+          border-bottom: 1px solid $govuk-border-colour;
+        }
+      }
+    }
+  }
+}
+
+// to make the warning icon round
+.govuk-warning-text__icon {
+  box-sizing: content-box;
+}
+
+.header-with-link {
+  h1 {
+    display: inline;
+    margin-right: govuk-spacing(3);
+  }
+  margin-bottom: govuk-spacing(6);
+}
+
+// Table with child rows and cells
+.govuk-table--with-child-rows {
+  .govuk-table__cell:not(.govuk-table__cell--last) {
+    border: 0;
+  }
+}
+
+@media print {
+  .moj-pagination__list {
+    display: none;
+  }
+
+  .moj-pagination__results {
+    font-size: 14px;
+  }
+}

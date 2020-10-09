@@ -1,0 +1,205 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/label/macro.njk" import govukLabel %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "components/datePicker/datePicker.njk" import datePicker %}
+{% from "components/timePicker/timePicker.njk" import timePicker %}
+
+{% extends "./partials/layout.njk" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: "/bulk-appointments/need-to-upload-file"
+    }) }}
+{% endblock %}
+
+{% set timesHtml %}
+{{ timePicker({
+        id: 'start-time',
+        label: 'Start time',
+        name: 'startTime',
+        hour: startTimeHours,
+        minute: startTimeMinutes,
+        errorMessage: errors | findError('start-time-hours')
+    }) }}
+
+{{ timePicker({
+        id: 'end-time',
+        label: 'End time (optional)',
+        name: 'endTime',
+        hour: endTimeHours,
+        minute: endTimeMinutes,
+        errorMessage: errors | findError('end-time-hours')
+    }) }}
+
+{%  endset -%}
+
+{% set recurringHtml %}
+    <div data-qa="recurring-inputs">
+        {{ govukSelect({
+            id: "repeats",
+            name: "repeats",
+            label: {
+                text: "Repeats"
+            },
+            items: repeatTypes | addDefaultSelectedVale('Select', true) | setSelected(repeats),
+            classes: "js-appointment-repeats",
+            errorMessage: errors | findError('repeats')
+        }) }}
+
+        {{ govukInput({
+            id: "times",
+            name: "times",
+            value: times,
+            errorMessage: errors | findError('times'),
+            type: "number",
+            label: {
+                text: "How many appointments do you want to add?"
+            },
+            hint: {
+                text: "This includes the first appointment you have already added above. You can add appointments up to a maximum of 1 year."
+            },
+            classes: "govuk-input--width-3 js-appointment-repeats-times"
+        }) }}
+
+        <div class="govuk-form-group js-appointment-last-appointment">
+            <span class="govuk-body">Last appointment on</span>
+            <div id="appointment-end-date" class=" govuk-body govuk-!-font-weight-bold">
+                {{ endOfPeriod or '' }}
+            </div>
+        </div>
+    </div>
+{% endset -%}
+
+{% block content %}
+    <h1 class="govuk-heading-l">
+        Add appointment details
+    </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            {% if errors.length > 0 %}
+                {{ govukErrorSummary({
+                        titleText: "There is a problem",
+                        errorList: errors,
+                        attributes: { 'data-qa-errors': true }
+                    }) }}
+            {% endif %}
+
+            <form action="/bulk-appointments/add-appointment-details" method="POST" novalidate="novalidate">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                {{ govukSelect({
+                        id: "appointment-type",
+                        name: "appointmentType",
+                        label: {
+                            text: "Appointment type"
+                        },
+                        items: appointmentTypes | addDefaultSelectedVale('Select') | setSelected(appointmentType),
+                        errorMessage: errors | findError('appointment-type')
+                    }) }}
+
+                {{ govukSelect({
+                        id: "location",
+                        name: "location",
+                        label: {
+                            text: "Location"
+                        },
+                        items: locations | addDefaultSelectedVale('Select') | setSelected(location),
+                        errorMessage: errors | findError('location')
+                    }) }}
+
+                {{ datePicker({
+                        id: 'date',
+                        label: 'Date',
+                        name: 'date',
+                        date: date,
+                        errorMessage: errors | findError('date'),
+                        classes: 'js-appointment-date',
+                        attributes: {'data-disable-past-date':'true'}
+                    }) }}
+
+                {{ govukRadios({
+                        classes: "govuk-radios--inline",
+                        idPrefix: "same-time-appointments",
+                        name: "sameTimeAppointments",
+                        errorMessage: errors | findError('same-time-appointments'),
+                        fieldset: {
+                            legend: {
+                                text: "Do the appointments all have the same time?",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: [{
+                                value: "yes",
+                                text: "Yes",
+                                checked: sameTimeAppointments == 'yes',
+                                conditional: {
+                                    html: timesHtml
+                                }
+                            },
+                            {
+                                value: "no",
+                                text: "No",
+                                checked: sameTimeAppointments == 'no'
+                            }
+                        ]
+                    }) }}
+
+                {{ govukRadios({
+                        classes: "govuk-radios--inline",
+                        idPrefix: "recurring",
+                        name: "recurring",
+                        errorMessage: errors | findError('recurring'),
+                        fieldset: {
+                            legend: {
+                                text: "Are these recurring appointments?",
+                                classes: "govuk-fieldset__legend--s"
+                            }
+                        },
+                        items: [{
+                            value: "yes",
+                            text: "Yes",
+                            checked: recurring == 'yes',
+                            conditional: {
+                                html: recurringHtml
+                            }
+                        },
+                            {
+                                value: "no",
+                                text: "No",
+                                checked: recurring == 'no'
+                            }
+                        ]
+                    }) }}
+
+                {{ govukTextarea({
+                        name: "comments",
+                        id: "comments",
+                        value: comments,
+                        errorMessage: errors | findError('comments'),
+                        classes: 'govuk-!-width-one-half',
+                        label: {
+                            text: "Comments (optional)"
+                        }
+                    }) }}
+
+                {{ govukButton({ text: "Continue", type: "submit", classes: "govuk-!-margin-right-2" }) }}
+
+                {{ govukButton({
+                        text: "Cancel",
+                        element: 'a',
+                        href: homeUrl,
+                        classes: "govuk-button--secondary"
+                    }) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

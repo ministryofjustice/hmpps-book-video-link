@@ -1,0 +1,10 @@
+.offender-basic-details {
+  overflow: auto;
+  display: flex;
+  div {
+    flex-grow: 1;
+    &:first-of-type {
+      flex-grow: 0
+    }
+  }
+}

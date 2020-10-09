@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Page /> when there is an error should display spinner and contents 1`] = `
+<Fragment>
+  <Spinner />
+  <Component
+    homeLink="http://home/"
+  />
+  <BackLink
+    href="http://this/"
+  >
+    Back
+  </BackLink>
+  <styled.div>
+    <styled.div>
+      <H1
+        size="LARGE"
+      >
+        Page title
+      </H1>
+    </styled.div>
+    <div
+      className="page-content"
+    >
+      Page content
+    </div>
+  </styled.div>
+</Fragment>
+`;

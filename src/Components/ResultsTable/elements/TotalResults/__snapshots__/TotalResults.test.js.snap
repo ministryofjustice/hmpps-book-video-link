@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TotalResults /> should match the default snapshot 1`] = `
+<styled.div>
+  Prisoners listed:
+   
+  <styled.span
+    name="total-number"
+  >
+    0
+  </styled.span>
+</styled.div>
+`;
+
+exports[`<TotalResults /> should match with value snapshot 1`] = `
+<styled.div>
+  Prisoners listed:
+   
+  <styled.span
+    name="total-number"
+  >
+    10
+  </styled.span>
+</styled.div>
+`;
