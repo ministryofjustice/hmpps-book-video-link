@@ -67,14 +67,18 @@ env:
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
-        name: dps-redis
-        key: REDIS_HOST
+        name: hmpps-book-video-link-elasticache-redis
+        key: primary_endpoint_address
 
-  - name: REDIS_PASSWORD
+  - name: REDIS_AUTH_TOKEN
     valueFrom:
       secretKeyRef:
-        name: dps-redis
-        key: REDIS_PASSWORD
+        name: hmpps-book-video-link-elasticache-redis
+        key: auth_token
+
+  - name: REDIS_TLS_ENABLED
+    value: {{ .Values.env.REDIS_TLS_ENABLED }}
+    value: "true"
 
   - name: API_ENDPOINT_URL
     value: {{ .Values.env.API_ENDPOINT_URL | quote }}
