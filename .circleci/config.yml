@@ -129,14 +129,14 @@ workflows:
             - build
       - hmpps/build_docker:
           name: build_docker
-          image_name: "quay.io/hmpps/prisonstaffhub"
+          image_name: "quay.io/hmpps/hmpps-book-video-link"
           filters:
             branches:
               only:
                 - main
       - hmpps/deploy_env:
-          chart_name: prison-staff-hub
-          release_name: prison-staff-hub
+          chart_name: hmpps-book-video-link
+          release_name: hmpps-book-video-link
           name: deploy_dev
           env: "dev"
           requires:
@@ -151,11 +151,11 @@ workflows:
           requires:
             - deploy_dev
       - hmpps/deploy_env:
-          chart_name: prison-staff-hub
-          release_name: prison-staff-hub
+          chart_name: hmpps-book-video-link
+          release_name: hmpps-book-video-link
           name: deploy_preprod
           env: "preprod"
-          context: prison-staff-hub-preprod
+          context: hmpps-book-video-link-preprod
           requires:
             - request-preprod-approval
       - request-prod-approval:
@@ -163,12 +163,12 @@ workflows:
           requires:
             - deploy_preprod
       - hmpps/deploy_env:
-          chart_name: prison-staff-hub
-          release_name: prison-staff-hub
+          chart_name: hmpps-book-video-link
+          release_name: hmpps-book-video-link
           name: deploy_prod
           env: "prod"
           slack_notification: true
-          context: prison-staff-hub-prod
+          context: hmpps-book-video-link-prod
           requires:
             - request-prod-approval
   scheduled:
