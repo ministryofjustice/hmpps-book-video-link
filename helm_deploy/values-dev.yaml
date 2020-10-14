@@ -4,7 +4,7 @@
 replicaCount: 2
 
 image:
-  repository: quay.io/hmpps/prisonstaffhub
+  repository: quay.io/hmpps/hmpps-book-video-link
   tag: latest
   pullPolicy: IfNotPresent
   port: 3000
@@ -13,7 +13,7 @@ ingress:
   enabled: true
   enable_whitelist: false
   host: whereabouts-dev.prison.service.justice.gov.uk
-  cert_secret: prison-staff-hub-cert
+  cert_secret: hmpps-book-video-link-cert
   path: /
 
 env:
