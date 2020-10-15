@@ -12,7 +12,7 @@ image:
 ingress:
   enabled: true
   enable_whitelist: true
-  host: book-video-link-preprod.prison.service.justice.gov.uk
+  host: hmpps-book-video-link-preprod.prison.service.justice.gov.uk
   cert_secret: hmpps-book-video-link-cert
   path: /
 
