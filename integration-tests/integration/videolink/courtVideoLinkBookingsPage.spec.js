@@ -3,14 +3,13 @@ const CourtVideoLinkBookingsPage = require('../../pages/videolink/courtVideoBook
 context('A user can view the video link home page', () => {
   before(() => {
     cy.clearCookies()
-    cy.task('reset')
+    cy.task('resetAndStubTokenVerification')
     cy.task('stubLoginCourt')
     cy.login()
   })
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
-    cy.task('resetAndStubTokenVerification')
     cy.task('stubCourts')
     cy.task('stubAppointmentsGet', [
       {
@@ -97,7 +96,7 @@ context('A user can view the video link home page', () => {
     })
   })
 
-  xit('The results are displayed', () => {
+  it('The results are displayed', () => {
     cy.visit('/videolink/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.noResultsMessage().should('not.be.visible')
@@ -120,7 +119,7 @@ context('A user can view the video link home page', () => {
       })
   })
 
-  xit('Returns unsupported courts when Other is selected', () => {
+  it('Returns unsupported courts when Other is selected', () => {
     cy.visit('/videolink/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.courtOption().select('Other')
@@ -140,7 +139,7 @@ context('A user can view the video link home page', () => {
       })
   })
 
-  xit('The no results message is displayed', () => {
+  it('The no results message is displayed', () => {
     cy.task('stubAppointmentsGet')
     cy.task('stubVideoLinkAppointments')
     cy.visit('/videolink/bookings')
