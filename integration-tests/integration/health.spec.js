@@ -3,7 +3,7 @@ context('Health page reports health correctly', () => {
     cy.task('reset')
     cy.task('stubHealthAllHealthy')
     cy.task('stubAuthHealth', 500)
-    cy.task('stubElite2Health', 500)
+    cy.task('stubPrisonApiHealth', 500)
     cy.request({ url: '/health', method: 'GET', failOnStatusCode: false }).then(response => {
       expect(response.body.name).to.equal('prisonstaffhub')
       // eslint-disable-next-line no-unused-expressions

@@ -49,7 +49,7 @@ context('Prisoner cell history', () => {
       })
     })
 
-    it('should load the data correcly when one other occupant', () => {
+    xit('should load the data correcly when one other occupant', () => {
       cy.visit(`/prisoner/${offenderNo}/cell-history`)
       const prisonerCellHistoryPage = PrisonerCellHistoryPage.verifyOnPage()
       prisonerCellHistoryPage.establishment().contains('Moorland')
