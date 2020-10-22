@@ -175,7 +175,7 @@ const caseNoteFactory = (elite2Api, caseNotesApi) => {
           href: '#hours',
         })
       }
-    } catch {
+    } catch (e) {
       // Do nothing, will only fail if the date inputs are invalid, which
       // has been handled by the above validations
     }
