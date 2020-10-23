@@ -31,10 +31,10 @@ context('Login functionality', () => {
     cy.get('h1').should('contain.text', 'Sign in')
   })
 
-  xit('Logout takes user to login page', () => {
+  it('Logout takes user to login page', () => {
     cy.task('stubLogin', {})
     cy.login()
-    SearchPage.verifyOnPage()
+    CourtVideoLinkHomePage.verifyOnPage()
 
     // can't do a visit here as cypress requires only one domain
     cy.request('/auth/logout')
@@ -42,10 +42,10 @@ context('Login functionality', () => {
       .should('contain', 'Sign in')
   })
 
-  xit('Token verification failure clears user session', () => {
+  it('Token verification failure clears user session', () => {
     cy.task('stubLogin', {})
     cy.login()
-    SearchPage.verifyOnPage()
+    CourtVideoLinkHomePage.verifyOnPage()
     cy.task('stubVerifyToken', false)
 
     // can't do a visit here as cypress requires only one domain
@@ -60,7 +60,7 @@ context('Login functionality', () => {
     SearchPage.verifyOnPage()
   })
 
-  xit('Log in as video link court user', () => {
+  it('Log in as video link court user', () => {
     cy.task('stubLoginCourt')
     cy.login()
     CourtVideoLinkHomePage.verifyOnPage()

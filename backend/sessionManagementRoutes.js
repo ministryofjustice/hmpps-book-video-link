@@ -119,7 +119,7 @@ const configureRoutes = ({ app, tokenRefresher, tokenVerifier, mailTo, homeLink 
         if (typeof returnTo === 'string' && returnTo.startsWith('/')) {
           return res.redirect(returnTo)
         }
-        return res.redirect('/')
+        return res.redirect('/videolink')
       })
       return null
     })(req, res, next)

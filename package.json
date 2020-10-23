@@ -94,12 +94,12 @@
     "whatwg-fetch": "2.0.4"
   },
   "scripts": {
-    "clean": "rm -rf .nyc_output coverage",
+    "clean": " rm -Rf build .nyc_output coverage",
     "start": "node backend/index.js",
     "start:cov": "nyc node backend/index.js",
     "start:dev": "nodemon --watch backend --watch views backend/index.js",
-    "start-feature": "npm run compile-sass && export $(cat $npm_config_env) && node backend/index.js",
-    "build": "npm run compile-sass",
+    "start-feature": "cp -R static build && npm run compile-sass && export $(cat $npm_config_env) && node backend/index.js",
+    "build": "cp -R static build && npm run compile-sass",
     "test": "jest",
     "test-watch": "jest --watch",
     "record-build-info": "node scripts/record-build-info",

@@ -8,7 +8,7 @@ context('A user can view the video link home page', () => {
     cy.login()
   })
 
-  xit('should redirect a video court user to the video link home page', () => {
+  it('should redirect a video court user to the video link home page', () => {
     cy.task('stubLocationGroups')
     cy.task('stubGroups', 'MDI')
     cy.task('stubActivityLocations')
@@ -18,7 +18,7 @@ context('A user can view the video link home page', () => {
     CourtVideoLinkHomePage.verifyOnPage()
   })
 
-  xit('should redirect a video court user to the video link home page', () => {
+  it('should redirect a video court user to the video link home page', () => {
     cy.task('stubLocationGroups')
     cy.task('stubActivityLocations')
 

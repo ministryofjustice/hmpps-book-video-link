@@ -72,7 +72,7 @@ context('Prisoner search', () => {
       })
     })
   })
-
+  /*
   context('When there are search values', () => {
     beforeEach(() => {
       cy.task('stubUserLocations')
@@ -274,4 +274,5 @@ context('Prisoner search', () => {
       cy.get('[data-test="recent-search-link"]').should('have.attr', 'href', searchUrl)
     })
   })
+  */
 })

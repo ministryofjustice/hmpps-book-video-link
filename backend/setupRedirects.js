@@ -18,5 +18,7 @@ module.exports = () => {
     res.redirect(301, `/prisoner/${req.params.offenderNo}/adjudications/${req.params.adjudicationNumber}`)
   )
 
+  router.get('/', (req, res) => res.redirect(301, '/videolink'))
+
   return router
 }
