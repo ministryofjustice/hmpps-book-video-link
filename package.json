@@ -98,7 +98,7 @@
     "start": "node backend/index.js",
     "start:cov": "nyc node backend/index.js",
     "start:dev": "nodemon --watch backend --watch views backend/index.js",
-    "start-feature": "cp -R static build && npm run compile-sass && export $(cat $npm_config_env) && node backend/index.js",
+    "start-feature": "cp -R static build && npm run compile-sass && export $(cat feature.env) && node backend/index.js",
     "build": "cp -R static build && npm run compile-sass",
     "test": "jest",
     "test-watch": "jest --watch",
