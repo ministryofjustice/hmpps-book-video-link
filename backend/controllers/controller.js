@@ -1,11 +1,7 @@
 const asyncMiddleware = require('../middleware/asyncHandler')
 
 const factory = ({
-  activityListService,
-  adjudicationHistoryService,
   iepDetailsService,
-  houseblockListService,
-  attendanceService,
   establishmentRollService,
   globalSearchService,
   movementsService,
@@ -13,64 +9,8 @@ const factory = ({
   appointmentsService,
   csvParserService,
   offenderService,
-  offenderActivitesService,
   caseNotesApi,
-  logError,
 }) => {
-  const getActivityList = async (req, res) => {
-    const { agencyId, locationId, date, timeSlot } = req.query
-    try {
-      const viewModel = await activityListService.getActivityList(res.locals, agencyId, locationId, date, timeSlot)
-      return res.json(viewModel)
-    } catch (error) {
-      if (error.code === 'ECONNRESET' || (error.stack && error.stack.toLowerCase().includes('timeout')))
-        return res.end()
-      logError(req.originalUrl, error, 'getActivityList()')
-      const errorStatusCode = (error && error.status) || (error.response && error.response.status) || 500
-      res.status(errorStatusCode)
-      return res.end()
-    }
-  }
-
-  const getAdjudications = asyncMiddleware(async (req, res) => {
-    const { offenderNumber } = req.params
-    const viewModel = await adjudicationHistoryService.getAdjudications(res.locals, offenderNumber, req.query)
-    res.set(res.locals.responseHeaders)
-    res.json(viewModel)
-  })
-
-  const getAdjudicationDetails = asyncMiddleware(async (req, res) => {
-    const { offenderNumber, adjudicationNumber } = req.params
-    const viewModel = await adjudicationHistoryService.getAdjudicationDetails(
-      res.locals,
-      offenderNumber,
-      adjudicationNumber
-    )
-    res.json(viewModel)
-  })
-
-  const getHouseblockList = async (req, res) => {
-    const { agencyId, groupName, date, timeSlot, wingStatus } = req.query
-    try {
-      const viewModel = await houseblockListService.getHouseblockList(
-        res.locals,
-        agencyId,
-        groupName,
-        date,
-        timeSlot,
-        wingStatus
-      )
-      return res.json(viewModel)
-    } catch (error) {
-      if (error.code === 'ECONNRESET' || (error.stack && error.stack.toLowerCase().includes('timeout')))
-        return res.end()
-      logError(req.originalUrl, error, 'getHouseblockList()')
-      const errorStatusCode = (error && error.status) || (error.response && error.response.status) || 500
-      res.status(errorStatusCode)
-      return res.end()
-    }
-  }
-
   const getIepDetails = asyncMiddleware(async (req, res) => {
     const { offenderNo } = req.params
     const viewModel = await iepDetailsService.getIepDetails(res.locals, offenderNo, req.query)
@@ -81,21 +21,6 @@ const factory = ({
     const { currentIepLevel, agencyId } = req.query
     const viewModel = await iepDetailsService.getPossibleLevels(res.locals, currentIepLevel, agencyId)
     res.json(viewModel)
-  })
-
-  const updateAttendance = asyncMiddleware(async (req, res) => {
-    const attendanceRecord = await attendanceService.updateAttendance(res.locals, req.body)
-    res.json(attendanceRecord)
-  })
-
-  const batchUpdateAttendance = asyncMiddleware(async (req, res) => {
-    const batchAttendanceRecord = await attendanceService.batchUpdateAttendance(res.locals, req.body)
-    res.json(batchAttendanceRecord)
-  })
-
-  const getAbsenceReasons = asyncMiddleware(async (req, res) => {
-    const absenceReasons = await attendanceService.getAbsenceReasons(res.locals)
-    res.json(absenceReasons)
   })
 
   const getEstablishmentRollCount = asyncMiddleware(async (req, res) => {
@@ -200,12 +125,6 @@ const factory = ({
     res.end()
   })
 
-  const getPrisonersUnaccountedFor = asyncMiddleware(async (req, res) => {
-    const { agencyId, date, timeSlot } = req.query
-    const viewModel = await offenderActivitesService.getPrisonersUnaccountedFor(res.locals, agencyId, date, timeSlot)
-    res.json(viewModel)
-  })
-
   const getCaseNote = asyncMiddleware(async (req, res) => {
     const { offenderNumber, caseNoteId } = req.params
     const caseNote = await caseNotesApi.getCaseNote(res.locals, offenderNumber, caseNoteId)
@@ -213,13 +132,6 @@ const factory = ({
   })
 
   return {
-    getActivityList,
-    getAdjudications,
-    getAdjudicationDetails,
-    getHouseblockList,
-    updateAttendance,
-    batchUpdateAttendance,
-    getAbsenceReasons,
     getEstablishmentRollCount,
     globalSearch,
     getMovementsIn,
@@ -235,7 +147,6 @@ const factory = ({
     bulkAppointmentsCsvTemplate,
     changeIepLevel,
     getPossibleLevels,
-    getPrisonersUnaccountedFor,
     getCaseNote,
   }
 }

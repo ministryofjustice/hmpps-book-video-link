@@ -189,34 +189,6 @@ const elite2ApiFactory = client => {
 
   const getAppointmentTypes = context => get(context, '/api/reference-domains/scheduleReasons?eventType=APP')
 
-  const getAdjudicationFindingTypes = context => get(context, '/api/reference-domains/domains/OIC_FINDING', 1000)
-
-  const getAdjudications = async (context, offenderNumber, params, pageOffset, pageLimit) => {
-    contextProperties.setCustomRequestHeaders(context, {
-      'page-offset': pageOffset || 0,
-      'page-limit': pageLimit || 10,
-    })
-
-    const response = await get(
-      context,
-      `/api/offenders/${offenderNumber}/adjudications${params && `?${mapToQueryString(params)}`}`
-    )
-
-    return {
-      ...response,
-      pagination: {
-        pageOffset: context.responseHeaders['page-offset'],
-        pageLimit: context.responseHeaders['page-limit'],
-        totalRecords: context.responseHeaders['total-records'],
-      },
-    }
-  }
-
-  const getAdjudicationDetails = (context, offenderNumber, adjudicationNumber) =>
-    get(context, `/api/offenders/${offenderNumber}/adjudications/${adjudicationNumber}`)
-
-  const getAdjudicationsForBooking = (context, bookingId) => get(context, `/api/bookings/${bookingId}/adjudications`)
-
   const addAppointments = (context, body) => post(context, '/api/appointments', body)
 
   const addSingleAppointment = (context, bookingId, body) =>
@@ -417,10 +389,7 @@ const elite2ApiFactory = client => {
     getBasicInmateDetailsForOffenders,
     getLocationsForAppointments,
     getAppointmentTypes,
-    getAdjudicationFindingTypes,
-    getAdjudications,
-    getAdjudicationDetails,
-    getAdjudicationsForBooking,
+
     addAppointments,
     changeIepLevel,
     getOffenderActivities,

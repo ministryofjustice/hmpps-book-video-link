@@ -7,7 +7,6 @@ const { alertFactory } = require('./controllers/alert')
 const { caseNoteFactory } = require('./controllers/caseNote')
 const { probationDocumentsFactory } = require('./controllers/probationDocuments')
 const { downloadProbationDocumentFactory } = require('./controllers/downloadProbationDocument')
-const { attendanceStatisticsFactory } = require('./controllers/attendance/attendanceStatistics')
 const referenceCodesService = require('./controllers/reference-codes-service')
 
 const bulkAppointmentsAddDetailsRouter = require('./routes/appointments/bulkAppointmentsAddDetailsRouter')
@@ -28,37 +27,19 @@ const selectCourtAppointmentCourt = require('./routes/appointments/selectCourtAp
 const viewAppointmentsRouter = require('./routes/appointments/viewAppointmentsRouter')
 const viewCourtBookingsRouter = require('./routes/appointments/viewCourtBookingsRouter')
 const requestBookingRouter = require('./routes/appointments/requestBookingRouter')
-const prisonerProfileRouter = require('./routes/prisonerProfileRouter')
 const retentionReasonsRouter = require('./routes/retentionReasonsRouter')
 const attendanceChangeRouter = require('./routes/attendanceChangesRouter')
-const covidRouter = require('./routes/covidRouter')
-const prisonerSearchRouter = require('./routes/prisonerSearchRouter')
-const cellMoveRouter = require('./routes/cellMoveRouter')
-
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const amendCaseNNoteRouter = require('./routes/caseNoteAmendmentRouter')
-
 const currentUser = require('./middleware/currentUser')
 const systemOauthClient = require('./api/systemOauthClient')
 const handleErrors = require('./middleware/asyncHandler')
 const { notifyClient } = require('./shared/notifyClient')
-
 const { raiseAnalyticsEvent } = require('./raiseAnalyticsEvent')
 
 const router = express.Router()
 
-const setup = ({
-  elite2Api,
-  whereaboutsApi,
-  oauthApi,
-  communityApi,
-  dataComplianceApi,
-  keyworkerApi,
-  caseNotesApi,
-  allocationManagerApi,
-  pathfinderApi,
-  socApi,
-}) => {
+const setup = ({ elite2Api, whereaboutsApi, oauthApi, communityApi, dataComplianceApi, caseNotesApi }) => {
   router.use(currentUser({ elite2Api, oauthApi }))
 
   router.use(async (req, res, next) => {
@@ -92,23 +73,6 @@ const setup = ({
   router.post(
     '/prisoner/:offenderNo/add-case-note',
     handleErrors(caseNoteFactory(elite2Api, caseNotesApi).handleCreateCaseNoteForm)
-  )
-  router.get(
-    '/manage-prisoner-whereabouts/attendance-reason-statistics',
-    handleErrors(attendanceStatisticsFactory(oauthApi, elite2Api, whereaboutsApi, logError).attendanceStatistics)
-  )
-  router.get(
-    '/manage-prisoner-whereabouts/attendance-reason-statistics/reason/:reason',
-    handleErrors(
-      attendanceStatisticsFactory(oauthApi, elite2Api, whereaboutsApi, logError).attendanceStatisticsOffendersList
-    )
-  )
-
-  router.get(
-    '/manage-prisoner-whereabouts/attendance-reason-statistics/suspended',
-    handleErrors(
-      attendanceStatisticsFactory(oauthApi, elite2Api, whereaboutsApi, logError).attendanceStatisticsSuspendedList
-    )
   )
 
   router.get(
@@ -190,29 +154,7 @@ const setup = ({
     retentionReasonsRouter({ elite2Api, dataComplianceApi, logError })
   )
 
-  router.use('/prisoner/:offenderNo/cell-move', cellMoveRouter({ oauthApi, elite2Api, whereaboutsApi, logError }))
-
-  router.use(
-    '/prisoner/:offenderNo',
-    prisonerProfileRouter({
-      elite2Api,
-      keyworkerApi,
-      oauthApi,
-      caseNotesApi,
-      allocationManagerApi,
-      systemOauthClient,
-      pathfinderApi,
-      dataComplianceApi,
-      logError,
-      socApi,
-    })
-  )
-
-  router.use('/current-covid-units', covidRouter(elite2Api, logError))
-
   router.use('/attendance-changes', attendanceChangeRouter({ elite2Api, whereaboutsApi, oauthApi, logError }))
-
-  router.use('/prisoner-search', prisonerSearchRouter({ elite2Api, logError }))
 
   router.use(
     '/prisoner/:offenderNo/case-notes/amend-case-note/:caseNoteId',
