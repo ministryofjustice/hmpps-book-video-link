@@ -9,7 +9,6 @@ const factory = ({
   appointmentsService,
   csvParserService,
   offenderService,
-  caseNotesApi,
 }) => {
   const getIepDetails = asyncMiddleware(async (req, res) => {
     const { offenderNo } = req.params
@@ -125,12 +124,6 @@ const factory = ({
     res.end()
   })
 
-  const getCaseNote = asyncMiddleware(async (req, res) => {
-    const { offenderNumber, caseNoteId } = req.params
-    const caseNote = await caseNotesApi.getCaseNote(res.locals, offenderNumber, caseNoteId)
-    res.json(caseNote)
-  })
-
   return {
     getEstablishmentRollCount,
     globalSearch,
@@ -147,7 +140,6 @@ const factory = ({
     bulkAppointmentsCsvTemplate,
     changeIepLevel,
     getPossibleLevels,
-    getCaseNote,
   }
 }
 

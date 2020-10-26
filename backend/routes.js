@@ -4,9 +4,6 @@ const { logError } = require('./logError')
 const config = require('./config')
 
 const { alertFactory } = require('./controllers/alert')
-const { caseNoteFactory } = require('./controllers/caseNote')
-const { probationDocumentsFactory } = require('./controllers/probationDocuments')
-const { downloadProbationDocumentFactory } = require('./controllers/downloadProbationDocument')
 const referenceCodesService = require('./controllers/reference-codes-service')
 
 const bulkAppointmentsAddDetailsRouter = require('./routes/appointments/bulkAppointmentsAddDetailsRouter')
@@ -27,19 +24,16 @@ const selectCourtAppointmentCourt = require('./routes/appointments/selectCourtAp
 const viewAppointmentsRouter = require('./routes/appointments/viewAppointmentsRouter')
 const viewCourtBookingsRouter = require('./routes/appointments/viewCourtBookingsRouter')
 const requestBookingRouter = require('./routes/appointments/requestBookingRouter')
-const retentionReasonsRouter = require('./routes/retentionReasonsRouter')
 const attendanceChangeRouter = require('./routes/attendanceChangesRouter')
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
-const amendCaseNNoteRouter = require('./routes/caseNoteAmendmentRouter')
 const currentUser = require('./middleware/currentUser')
-const systemOauthClient = require('./api/systemOauthClient')
 const handleErrors = require('./middleware/asyncHandler')
 const { notifyClient } = require('./shared/notifyClient')
 const { raiseAnalyticsEvent } = require('./raiseAnalyticsEvent')
 
 const router = express.Router()
 
-const setup = ({ elite2Api, whereaboutsApi, oauthApi, communityApi, dataComplianceApi, caseNotesApi }) => {
+const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
   router.use(currentUser({ elite2Api, oauthApi }))
 
   router.use(async (req, res, next) => {
@@ -66,26 +60,6 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi, communityApi, dataComplian
     '/offenders/:offenderNo/create-alert',
     handleErrors(alertFactory(oauthApi, elite2Api, referenceCodesService(elite2Api)).handleCreateAlertForm)
   )
-  router.get(
-    '/prisoner/:offenderNo/add-case-note',
-    handleErrors(caseNoteFactory(elite2Api, caseNotesApi).displayCreateCaseNotePage)
-  )
-  router.post(
-    '/prisoner/:offenderNo/add-case-note',
-    handleErrors(caseNoteFactory(elite2Api, caseNotesApi).handleCreateCaseNoteForm)
-  )
-
-  router.get(
-    '/offenders/:offenderNo/probation-documents',
-    handleErrors(
-      probationDocumentsFactory(oauthApi, elite2Api, communityApi, systemOauthClient).displayProbationDocumentsPage
-    )
-  )
-  router.get(
-    '/offenders/:offenderNo/probation-documents/:documentId/download',
-    handleErrors(downloadProbationDocumentFactory(oauthApi, communityApi, systemOauthClient).downloadDocument)
-  )
-
   router.get('/bulk-appointments/need-to-upload-file', async (req, res) => {
     res.render('bulkAppointmentsAdd.njk', { title: 'You need to upload a CSV file' })
   })
@@ -149,17 +123,7 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi, communityApi, dataComplian
 
   router.use('/appointments', viewAppointmentsRouter({ elite2Api, whereaboutsApi, oauthApi, logError }))
 
-  router.use(
-    '/offenders/:offenderNo/retention-reasons',
-    retentionReasonsRouter({ elite2Api, dataComplianceApi, logError })
-  )
-
   router.use('/attendance-changes', attendanceChangeRouter({ elite2Api, whereaboutsApi, oauthApi, logError }))
-
-  router.use(
-    '/prisoner/:offenderNo/case-notes/amend-case-note/:caseNoteId',
-    amendCaseNNoteRouter({ elite2Api, caseNotesApi, logError })
-  )
 
   return router
 }

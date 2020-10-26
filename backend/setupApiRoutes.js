@@ -23,7 +23,7 @@ const handleErrors = require('./middleware/asyncHandler')
 
 const router = express.Router()
 
-const setup = ({ elite2Api, oauthApi, caseNotesApi, offenderSearchApi }) => {
+const setup = ({ elite2Api, oauthApi, offenderSearchApi }) => {
   const controller = controllerFactory({
     iepDetailsService: iepDetailsFactory(elite2Api),
     establishmentRollService: establishmentRollFactory(elite2Api),
@@ -33,7 +33,6 @@ const setup = ({ elite2Api, oauthApi, caseNotesApi, offenderSearchApi }) => {
     appointmentsService: appointmentsServiceFactory(elite2Api),
     csvParserService: csvParserService({ fs, isBinaryFileSync }),
     offenderService: offenderServiceFactory(elite2Api),
-    caseNotesApi,
   })
   router.use(currentUser({ elite2Api, oauthApi }))
 

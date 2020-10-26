@@ -1,8 +1,7 @@
 const { serviceCheckFactory } = require('../controllers/healthCheck')
 
 const service = (name, url) => {
-  const healthUrl =
-    name === 'allocationManager' ? `${url.replace(/\/$/, '')}/health` : `${url.replace(/\/$/, '')}/health/ping`
+  const healthUrl = `${url.replace(/\/$/, '')}/health/ping`
   const check = serviceCheckFactory(name, healthUrl)
   return () =>
     check()
@@ -36,10 +35,6 @@ module.exports = function healthcheckFactory(
   authUrl,
   elite2Url,
   whereaboutsUrl,
-  communityUrl,
-  keyworkerUrl,
-  caseNotesUrl,
-  allocationManagerUrl,
   tokenverificationUrl,
   offenderSearchUrl
 ) {
@@ -47,10 +42,6 @@ module.exports = function healthcheckFactory(
     service('auth', authUrl),
     service('elite2', elite2Url),
     service('whereabouts', whereaboutsUrl),
-    service('community', communityUrl),
-    service('keyworker', keyworkerUrl),
-    service('allocationManager', allocationManagerUrl),
-    service('casenotes', caseNotesUrl),
     service('tokenverification', tokenverificationUrl),
     service('offenderSearch', offenderSearchUrl),
   ]

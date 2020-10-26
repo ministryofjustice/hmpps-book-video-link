@@ -42,7 +42,6 @@ app.use(
     elite2Api: apis.elite2Api,
     whereaboutsApi: apis.whereaboutsApi,
     oauthApi: apis.oauthApi,
-    caseNotesApi: apis.caseNotesApi,
     offenderSearchApi: apis.offenderSearchApi,
   })
 )
@@ -52,13 +51,6 @@ app.use(
     elite2Api: apis.elite2Api,
     whereaboutsApi: apis.whereaboutsApi,
     oauthApi: apis.oauthApi,
-    communityApi: apis.communityApi,
-    dataComplianceApi: apis.dataComplianceApi,
-    keyworkerApi: apis.keyworkerApi,
-    caseNotesApi: apis.caseNotesApi,
-    allocationManagerApi: apis.allocationManagerApi,
-    pathfinderApi: apis.pathfinderApi,
-    socApi: apis.socApi,
   })
 )
 

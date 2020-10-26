@@ -3,14 +3,12 @@ module.exports = {
     port: process.env.PORT || 3002,
     production: process.env.NODE_ENV === 'production',
     notmEndpointUrl: process.env.NN_ENDPOINT_URL || 'http://localhost:3000/',
-    licencesUrl: process.env.LICENCES_URL || 'http://localhost:3003/',
     mailTo: process.env.MAIL_TO || 'feedback@digital.justice.gov.uk',
     tokenRefreshThresholdSeconds: process.env.TOKEN_REFRESH_THRESHOLD_SECONDS || 60,
     url: process.env.PRISON_STAFF_HUB_UI_URL || `http://localhost:${process.env.PORT || 3002}/`,
     maximumFileUploadSizeInMb: process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB || 200,
     featureFlags: {},
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
-    displayRetentionLink: process.env.DISPLAY_RETENTION_LINK === 'true' || false,
     supportUrl: process.env.SUPPORT_URL || 'http://localhost:3000/',
   },
   analytics: {
@@ -46,48 +44,10 @@ module.exports = {
       url: process.env.API_WHEREABOUTS_ENDPOINT_URL || 'http://localhost:8082/',
       timeoutSeconds: process.env.API_WHEREABOUTS_ENDPOINT_TIMEOUT_SECONDS || 30,
     },
-    community: {
-      url: process.env.API_COMMUNITY_ENDPOINT_URL || 'http://localhost:8083/communityapi',
-      timeoutSeconds: process.env.API_COMMUNITY_ENDPOINT_TIMEOUT_SECONDS || 30,
-      apiPrefix: process.env.API_COMMUNITY_API_PREFIX || '/api',
-    },
-    datacompliance: {
-      url: process.env.API_DATA_COMPLIANCE_ENDPOINT_URL || 'http://localhost:8083/',
-      timeoutSeconds: process.env.API_DATA_COMPLIANCE_ENDPOINT_TIMEOUT_SECONDS || 30,
-    },
-    keyworker: {
-      url: process.env.KEYWORKER_API_URL || 'http://localhost:8081/',
-      timeoutSeconds: process.env.KEYWORKER_API_TIMEOUT_SECONDS || 30,
-    },
     tokenverification: {
       url: process.env.TOKENVERIFICATION_API_URL || 'http://localhost:8100',
       timeoutSeconds: process.env.TOKENVERIFICATION_API_TIMEOUT_SECONDS || 10,
       enabled: process.env.TOKENVERIFICATION_API_ENABLED === 'true',
-    },
-    categorisation: {
-      ui_url: process.env.CATEGORISATION_UI_URL || 'http://localhost:3003/',
-    },
-    useOfForce: {
-      ui_url: process.env.USE_OF_FORCE_URL,
-      prisons: process.env.USE_OF_FORCE_PRISONS || '',
-    },
-    caseNotes: {
-      url: process.env.CASENOTES_API_URL || 'http://localhost:8083',
-      timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 30,
-    },
-    allocationManager: {
-      url: process.env.ALLOCATION_MANAGER_ENDPOINT_URL || '',
-      timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 30,
-    },
-    pathfinder: {
-      url: process.env.PATHFINDER_ENDPOINT_API_URL || '',
-      ui_url: process.env.PATHFINDER_UI_URL,
-      timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 30,
-    },
-    soc: {
-      url: process.env.SOC_URL || '',
-      timeoutSeconds: 10,
-      enabled: process.env.SOC_API_ENABLED === 'true',
     },
     offenderSearch: {
       url: process.env.OFFENDER_SEARCH_API_URL || 'http://localhost:8085',
