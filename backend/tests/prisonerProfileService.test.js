@@ -211,7 +211,7 @@ describe('prisoner profile service', () => {
         offenderRecordRetained: undefined,
         showAddKeyworkerSession: false,
         showReportUseOfForce: false,
-        useOfForceUrl: '//useOfForceUrl/report/123/report-use-of-force',
+        useOfForceUrl: 'undefined/report/123/report-use-of-force',
         userCanEdit: false,
         staffId: 111,
         categoryCode: undefined,
@@ -315,22 +315,6 @@ describe('prisoner profile service', () => {
           expect(getPrisonerProfileData).toEqual(
             expect.objectContaining({
               showAddKeyworkerSession: true,
-            })
-          )
-        })
-      })
-
-      describe('when the user is in a use of force prison', () => {
-        beforeEach(() => {
-          oauthApi.currentUser.mockReturnValue({ staffId: 111, activeCaseLoadId: 'LEI' })
-        })
-
-        it('should enable the user to report use of force', async () => {
-          const getPrisonerProfileData = await service.getPrisonerProfileData(context, offenderNo)
-
-          expect(getPrisonerProfileData).toEqual(
-            expect.objectContaining({
-              showReportUseOfForce: true,
             })
           )
         })

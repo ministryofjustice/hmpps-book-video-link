@@ -38,7 +38,7 @@ jobs:
             - node_modules
             - build
 
-  cypress_integration_tests:
+  integration_tests:
     working_directory: ~/app
     docker:
       - image: circleci/node:12-buster-browsers
@@ -85,7 +85,7 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-      - cypress_integration_tests:
+      - integration_tests:
           requires:
             - build
       - hmpps/build_docker:
@@ -102,7 +102,7 @@ workflows:
           env: "dev"
           requires:
             - build_docker
-            - cypress_integration_tests
+            - integration_tests
           filters:
             branches:
               only: main
