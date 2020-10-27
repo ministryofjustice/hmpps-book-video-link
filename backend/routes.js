@@ -3,9 +3,6 @@ const express = require('express')
 const { logError } = require('./logError')
 const config = require('./config')
 
-const { alertFactory } = require('./controllers/alert')
-const referenceCodesService = require('./controllers/reference-codes-service')
-
 const bulkAppointmentsAddDetailsRouter = require('./routes/appointments/bulkAppointmentsAddDetailsRouter')
 const bulkAppointmentsConfirmRouter = require('./routes/appointments/bulkAppointmentsConfirmRouter')
 const bulkAppointmentsInvalidNumbersRouter = require('./routes/appointments/bulkAppointmentsInvalidNumbersRouter')
@@ -27,7 +24,6 @@ const requestBookingRouter = require('./routes/appointments/requestBookingRouter
 const attendanceChangeRouter = require('./routes/attendanceChangesRouter')
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const currentUser = require('./middleware/currentUser')
-const handleErrors = require('./middleware/asyncHandler')
 const { notifyClient } = require('./shared/notifyClient')
 const { raiseAnalyticsEvent } = require('./raiseAnalyticsEvent')
 
@@ -44,22 +40,7 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     }
     next()
   })
-  router.get(
-    '/edit-alert',
-    handleErrors(alertFactory(oauthApi, elite2Api, referenceCodesService(elite2Api)).displayEditAlertPage)
-  )
-  router.post(
-    '/edit-alert/:bookingId/:alertId',
-    handleErrors(alertFactory(oauthApi, elite2Api, referenceCodesService(elite2Api)).handleEditAlertForm)
-  )
-  router.get(
-    '/offenders/:offenderNo/create-alert',
-    handleErrors(alertFactory(oauthApi, elite2Api, referenceCodesService(elite2Api)).displayCreateAlertPage)
-  )
-  router.post(
-    '/offenders/:offenderNo/create-alert',
-    handleErrors(alertFactory(oauthApi, elite2Api, referenceCodesService(elite2Api)).handleCreateAlertForm)
-  )
+
   router.get('/bulk-appointments/need-to-upload-file', async (req, res) => {
     res.render('bulkAppointmentsAdd.njk', { title: 'You need to upload a CSV file' })
   })
