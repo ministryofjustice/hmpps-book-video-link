@@ -1,27 +1,13 @@
 const asyncMiddleware = require('../middleware/asyncHandler')
 
 const factory = ({
-  iepDetailsService,
   establishmentRollService,
   globalSearchService,
-  movementsService,
   offenderLoader,
   appointmentsService,
   csvParserService,
   offenderService,
 }) => {
-  const getIepDetails = asyncMiddleware(async (req, res) => {
-    const { offenderNo } = req.params
-    const viewModel = await iepDetailsService.getIepDetails(res.locals, offenderNo, req.query)
-    res.json(viewModel)
-  })
-
-  const getPossibleLevels = asyncMiddleware(async (req, res) => {
-    const { currentIepLevel, agencyId } = req.query
-    const viewModel = await iepDetailsService.getPossibleLevels(res.locals, currentIepLevel, agencyId)
-    res.json(viewModel)
-  })
-
   const getEstablishmentRollCount = asyncMiddleware(async (req, res) => {
     const { agencyId, unassigned } = req.query
     const viewModel = await establishmentRollService.getEstablishmentRollCount(res.locals, agencyId, unassigned)
@@ -43,42 +29,6 @@ const factory = ({
       dateOfBirthFilter
     )
     res.set(res.locals.responseHeaders)
-    res.json(viewModel)
-  })
-
-  const getMovementsIn = asyncMiddleware(async (req, res) => {
-    const { agencyId } = req.params
-    const viewModel = await movementsService.getMovementsIn(res.locals, agencyId)
-    res.json(viewModel)
-  })
-
-  const getMovementsOut = asyncMiddleware(async (req, res) => {
-    const { agencyId } = req.params
-    const viewModel = await movementsService.getMovementsOut(res.locals, agencyId)
-    res.json(viewModel)
-  })
-
-  const getOffendersInReception = asyncMiddleware(async (req, res) => {
-    const { agencyId } = req.params
-    const viewModel = await movementsService.getOffendersInReception(res.locals, agencyId)
-    res.json(viewModel)
-  })
-
-  const getOffendersCurrentlyOutOfLivingUnit = asyncMiddleware(async (req, res) => {
-    const { livingUnitId } = req.params
-    const viewModel = await movementsService.getOffendersCurrentlyOutOfLivingUnit(res.locals, livingUnitId)
-    res.json(viewModel)
-  })
-
-  const getOffendersCurrentlyOutOfAgency = asyncMiddleware(async (req, res) => {
-    const { agencyId } = req.params
-    const viewModel = await movementsService.getOffendersCurrentlyOutOfAgency(res.locals, agencyId)
-    res.json(viewModel)
-  })
-
-  const getOffendersEnRoute = asyncMiddleware(async (req, res) => {
-    const { agencyId } = req.params
-    const viewModel = await movementsService.getOffendersEnRoute(res.locals, agencyId)
     res.json(viewModel)
   })
 
@@ -118,28 +68,13 @@ const factory = ({
     res.json(viewModel)
   })
 
-  const changeIepLevel = asyncMiddleware(async (req, res) => {
-    const { offenderNumber } = req.params
-    await iepDetailsService.changeIepLevel(res.locals, offenderNumber, req.body)
-    res.end()
-  })
-
   return {
     getEstablishmentRollCount,
     globalSearch,
-    getMovementsIn,
-    getMovementsOut,
-    getIepDetails,
     getOffender,
-    getOffendersInReception,
-    getOffendersCurrentlyOutOfLivingUnit,
-    getOffendersCurrentlyOutOfAgency,
-    getOffendersEnRoute,
     uploadOffenders,
     getAppointmentOptions,
     bulkAppointmentsCsvTemplate,
-    changeIepLevel,
-    getPossibleLevels,
   }
 }
 

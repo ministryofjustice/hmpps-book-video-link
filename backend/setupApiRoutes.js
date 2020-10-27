@@ -6,9 +6,7 @@ const offenderServiceFactory = require('./services/offenderService')
 const { userLocationsFactory } = require('./controllers/userLocations')
 const { userMeFactory } = require('./controllers/userMe')
 const { getConfiguration } = require('./controllers/getConfig')
-const iepDetailsFactory = require('./controllers/incentiveLevelDetails').getIepDetailsFactory
 const establishmentRollFactory = require('./controllers/establishmentRollCount').getEstablishmentRollCountFactory
-const { movementsServiceFactory } = require('./services/movementsService')
 const { globalSearchFactory } = require('./controllers/globalSearch')
 const { imageFactory } = require('./controllers/images')
 const { offenderLoaderFactory } = require('./controllers/offender-loader')
@@ -17,18 +15,14 @@ const endDateController = require('./controllers/appointments/endDate')
 const currentUser = require('./middleware/currentUser')
 const controllerFactory = require('./controllers/controller').factory
 const contextProperties = require('./contextProperties')
-const systemOauthClient = require('./api/systemOauthClient')
 const { csvParserService } = require('./csv-parser')
-const handleErrors = require('./middleware/asyncHandler')
 
 const router = express.Router()
 
 const setup = ({ elite2Api, oauthApi, offenderSearchApi }) => {
   const controller = controllerFactory({
-    iepDetailsService: iepDetailsFactory(elite2Api),
     establishmentRollService: establishmentRollFactory(elite2Api),
     globalSearchService: globalSearchFactory(offenderSearchApi),
-    movementsService: movementsServiceFactory(elite2Api, systemOauthClient),
     offenderLoader: offenderLoaderFactory(elite2Api),
     appointmentsService: appointmentsServiceFactory(elite2Api),
     csvParserService: csvParserService({ fs, isBinaryFileSync }),
@@ -56,24 +50,13 @@ const setup = ({ elite2Api, oauthApi, offenderSearchApi }) => {
   router.use('/api/me', userMeFactory(oauthApi).userMe)
   router.use('/api/usercaseloads', userCaseLoadsFactory(elite2Api).userCaseloads)
   router.use('/api/userLocations', userLocationsFactory(elite2Api).userLocations)
-  router.use('/api/bookings/:offenderNo/iepSummary', controller.getIepDetails)
-  router.use('/api/offenders/:offenderNumber/iep-details', controller.getIepDetails)
-  router.use('/api/iep-levels', controller.getPossibleLevels)
-  router.post('/api/offenders/:offenderNumber/change-incentive-level', controller.changeIepLevel)
   router.use('/api/offenders/:offenderNo', controller.getOffender)
   router.use('/api/establishmentRollCount', controller.getEstablishmentRollCount)
-  router.use('/api/movements/:agencyId/in', controller.getMovementsIn)
-  router.use('/api/movements/:agencyId/out', controller.getMovementsOut)
-  router.use('/api/movements/:agencyId/in-reception', controller.getOffendersInReception)
-  router.use('/api/movements/livingUnit/:livingUnitId/currently-out', controller.getOffendersCurrentlyOutOfLivingUnit)
-  router.use('/api/movements/agency/:agencyId/currently-out', controller.getOffendersCurrentlyOutOfAgency)
-  router.use('/api/movements/:agencyId/en-route', controller.getOffendersEnRoute)
   router.use('/api/globalSearch', controller.globalSearch)
   router.use('/api/appointments/upload-offenders/:agencyId', controller.uploadOffenders)
   router.get('/app/images/:offenderNo/data', imageFactory(elite2Api).prisonerImage)
   router.get('/app/image/:imageId/data', imageFactory(elite2Api).image)
   router.get('/bulk-appointments/csv-template', controller.bulkAppointmentsCsvTemplate)
-  router.get('/api/get-case-note/:offenderNumber/:caseNoteId', handleErrors(controller.getCaseNote))
   router.get('/api/get-recurring-end-date', endDateController)
 
   return router

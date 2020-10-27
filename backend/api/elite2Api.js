@@ -151,18 +151,6 @@ const elite2ApiFactory = client => {
       body
     )
 
-  const getMovementsIn = (context, agencyId, movementDate) =>
-    get(context, `/api/movements/${agencyId}/in/${movementDate}`)
-
-  const getMovementsInBetween = (context, agencyId, params) =>
-    get(context, `/api/movements/${agencyId}/in?${mapToQueryString(params)}`)
-
-  const getMovementsOut = (context, agencyId, movementDate) =>
-    get(context, `/api/movements/${agencyId}/out/${movementDate}`)
-
-  const getOffendersInReception = (context, agencyId) =>
-    get(context, `/api/movements/rollcount/${agencyId}/in-reception`)
-
   const getIepSummary = (context, bookings) =>
     get(context, `/api/bookings/offenders/iepSummary?${arrayToQueryString(bookings, 'bookings')}`)
 
@@ -172,15 +160,7 @@ const elite2ApiFactory = client => {
   const getDetails = (context, offenderNo, fullInfo = false) =>
     get(context, `/api/bookings/offenderNo/${offenderNo}?fullInfo=${fullInfo}`)
 
-  const getOffendersCurrentlyOutOfLivingUnit = (context, livingUnitId) =>
-    get(context, `/api/movements/livingUnit/${livingUnitId}/currently-out`)
-
-  const getOffendersCurrentlyOutOfAgency = (context, agencyId) =>
-    get(context, `/api/movements/agency/${agencyId}/currently-out`)
-
   const getLocation = (context, livingUnitId) => get(context, `/api/locations/${livingUnitId}`)
-
-  const getOffendersEnRoute = (context, agencyId) => get(context, `/api/movements/${agencyId}/enroute`)
 
   const getBasicInmateDetailsForOffenders = (context, offenders) => post(context, `/api/bookings/offenders`, offenders)
 
@@ -216,9 +196,6 @@ const elite2ApiFactory = client => {
 
   const getOffenderSummaries = (context, offenderNo) =>
     get(context, `/api/bookings?${arrayToQueryString(offenderNo, 'offenderNo')}`, 100)
-
-  const getCaseNoteSummaryByTypes = (context, params) =>
-    get(context, `/api/case-notes/summary?${mapToQueryString(params)}`)
 
   const getMainOffence = (context, bookingId) => get(context, `/api/bookings/${bookingId}/mainOffence`)
 
@@ -374,18 +351,11 @@ const elite2ApiFactory = client => {
     getInmates,
     getPrisonerImage,
     getLastPrison,
-    getMovementsIn,
-    getMovementsInBetween,
-    getMovementsOut,
-    getOffendersInReception,
     getRecentMovements,
     getIepSummary,
     getIepSummaryForBooking,
     getDetails,
-    getOffendersCurrentlyOutOfLivingUnit,
-    getOffendersCurrentlyOutOfAgency,
     getLocation,
-    getOffendersEnRoute,
     getBasicInmateDetailsForOffenders,
     getLocationsForAppointments,
     getAppointmentTypes,
@@ -401,7 +371,6 @@ const elite2ApiFactory = client => {
     getOffenderActivitiesOverDateRange,
     getActivitiesAtLocation,
     addSingleAppointment,
-    getCaseNoteSummaryByTypes,
     getMainOffence,
     getStaffRoles,
     getPrisonerBalances,

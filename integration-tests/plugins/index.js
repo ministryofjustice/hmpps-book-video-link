@@ -1,20 +1,13 @@
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
-const dataComplianceApi = require('../mockApis/dataCompliance')
 const whereabouts = require('../mockApis/whereabouts')
 const tokenverification = require('../mockApis/tokenverification')
-const keyworker = require('../mockApis/keyworker')
-const caseNotes = require('../mockApis/caseNotes')
 const activityResponse = require('../mockApis/responses/activityResponse')
 const {
   courtEventsWithDifferentStatusResponse,
   externalTransfersResponse,
 } = require('../mockApis/responses/houseBlockResponse')
 const alertsResponse = require('../mockApis/responses/alertsResponse')
-const allocationManager = require('../mockApis/allocationManager')
-const community = require('../mockApis/community')
-const pathfinder = require('../mockApis/pathfinder')
-const socApi = require('../mockApis/soc')
 const offenderSearch = require('../mockApis/offenderSearch')
 
 const { resetStubs } = require('../mockApis/wiremock')
@@ -36,10 +29,6 @@ module.exports = on => {
     stubAuthHealth: status => Promise.all([auth.stubHealth(status)]),
     stubPrisonApiHealth: status => Promise.all([prisonApi.stubHealth(status)]),
     stubWhereaboutsHealth: status => Promise.all([whereabouts.stubHealth(status)]),
-    stubAllocationManagerHealth: status => Promise.all([allocationManager.stubHealth(status)]),
-    stubKeyworkerHealth: status => Promise.all([keyworker.stubHealth(status)]),
-    stubCaseNotesHealth: status => Promise.all([caseNotes.stubHealth(status)]),
-    stubCommunityHealth: status => Promise.all([community.stubHealth(status)]),
     stubTokenverificationHealth: status => Promise.all([tokenverification.stubHealth(status)]),
     stubOffenderSearchHealth: status => Promise.all([offenderSearch.stubHealth(status)]),
 
@@ -48,11 +37,7 @@ module.exports = on => {
         auth.stubHealth(),
         prisonApi.stubHealth(),
         whereabouts.stubHealth(),
-        keyworker.stubHealth(),
-        allocationManager.stubHealth(),
-        caseNotes.stubHealth(),
         tokenverification.stubHealth(),
-        community.stubHealth(),
         offenderSearch.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
@@ -77,8 +62,6 @@ module.exports = on => {
     stubCourts: courts => Promise.all([whereabouts.stubCourtLocations(courts)]),
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubAddVideoLinkAppointment: appointment => Promise.all([whereabouts.stubAddVideoLinkAppointment(appointment)]),
-    stubCaseNotes: response => caseNotes.stubCaseNotes(response),
-    stubCaseNoteTypes: () => caseNotes.stubCaseNoteTypes(),
 
     stubForAttendance: ({ caseload, locationId, timeSlot, date, activities }) => {
       const offenderNumbers = extractOffenderNumbers(activities)
@@ -124,30 +107,6 @@ module.exports = on => {
       ])
     },
 
-    stubPrisonerProfileHeaderData: ({
-      offenderBasicDetails,
-      offenderFullDetails,
-      iepSummary,
-      caseNoteSummary,
-      userRoles = [],
-      retentionRecord,
-      offenderNo,
-    }) =>
-      Promise.all([
-        auth.stubUserMe(),
-        auth.stubUserMeRoles([...userRoles, { roleCode: 'UPDATE_ALERT' }]),
-        prisonApi.stubOffenderBasicDetails(offenderBasicDetails),
-        prisonApi.stubOffenderFullDetails(offenderFullDetails),
-        prisonApi.stubIepSummaryForBookingIds(iepSummary),
-        prisonApi.stubOffenderCaseNoteSummary(caseNoteSummary),
-        prisonApi.stubUserCaseloads(),
-        prisonApi.stubStaffRoles(),
-        prisonApi.stubOffenderImage(),
-        keyworker.stubKeyworkerByCaseloadAndOffenderNo(),
-        dataComplianceApi.stubRetentionRecord(offenderNo, retentionRecord),
-        allocationManager.stubGetPomForOffender({ primary_pom: { name: 'SMITH, JANE' } }),
-      ]),
-
     stubAlertTypes: () => Promise.all([prisonApi.stubAlertTypes()]),
     stubAlertsForBooking: alerts => Promise.all([prisonApi.stubAlertsForBooking(alerts)]),
     stubAlerts: prisonApi.stubAlerts,
@@ -155,83 +114,6 @@ module.exports = on => {
     stubInmates: prisonApi.stubInmates,
     stubUserLocations: prisonApi.stubUserLocations,
 
-    stubQuickLook: ({
-      offence,
-      prisonerDetails,
-      sentenceDetails,
-      balances,
-      iepSummary,
-      positiveCaseNotes,
-      negativeCaseNotes,
-      adjudications,
-      nextVisit,
-      visitBalances,
-      todaysEvents,
-      profileInformation,
-    }) =>
-      Promise.all([
-        prisonApi.stubMainOffence(offence),
-        prisonApi.stubPrisonerDetails(prisonerDetails),
-        prisonApi.stubPrisonerSentenceDetails(sentenceDetails),
-        prisonApi.stubPrisonerBalances(balances),
-        prisonApi.stubIepSummaryForBooking(iepSummary),
-        prisonApi.stubPositiveCaseNotes(positiveCaseNotes),
-        prisonApi.stubNegativeCaseNotes(negativeCaseNotes),
-        prisonApi.stubAdjudicationsForBooking(adjudications),
-        prisonApi.stubNextVisit(nextVisit),
-        prisonApi.stubPrisonerVisitBalances(visitBalances),
-        prisonApi.stubEventsForToday(todaysEvents),
-        prisonApi.stubProfileInformation(profileInformation),
-      ]),
-    stubQuickLookApiErrors: () =>
-      Promise.all([
-        prisonApi.stubMainOffence(null, 500),
-        prisonApi.stubPrisonerDetails([], 500),
-        prisonApi.stubPrisonerSentenceDetails(null, 500),
-        prisonApi.stubPrisonerBalances(null, 500),
-        prisonApi.stubIepSummaryForBooking(null, 500),
-        prisonApi.stubPositiveCaseNotes(null, 500),
-        prisonApi.stubNegativeCaseNotes(null, 500),
-        prisonApi.stubAdjudicationsForBooking(null, 500),
-        prisonApi.stubNextVisit(null, 500),
-        prisonApi.stubPrisonerVisitBalances(null, 500),
-        prisonApi.stubEventsForToday([], 500),
-        prisonApi.stubProfileInformation(null, 500),
-      ]),
-    stubPersonal: ({
-      identifiers,
-      aliases,
-      property,
-      contacts,
-      addresses,
-      secondaryLanguages,
-      personAddresses,
-      personEmails,
-      personPhones,
-      treatmentTypes,
-      healthTypes,
-      careNeeds,
-      reasonableAdjustments,
-      agencies,
-      prisonOffenderManagers,
-    }) =>
-      Promise.all([
-        prisonApi.stubIdentifiers(identifiers),
-        prisonApi.stubOffenderAliases(aliases),
-        prisonApi.stubPrisonerProperty(property),
-        prisonApi.stubPrisonerContacts(contacts),
-        prisonApi.stubPrisonerAddresses(addresses),
-        prisonApi.stubSecondaryLanguages(secondaryLanguages),
-        prisonApi.stubPersonAddresses(personAddresses),
-        prisonApi.stubPersonEmails(personEmails),
-        prisonApi.stubPersonPhones(personPhones),
-        prisonApi.stubTreatmentTypes(treatmentTypes),
-        prisonApi.stubHealthTypes(healthTypes),
-        prisonApi.stubPersonalCareNeeds(careNeeds),
-        prisonApi.stubReasonableAdjustments(reasonableAdjustments),
-        prisonApi.stubAgencies(agencies),
-        allocationManager.stubGetPomForOffender(prisonOffenderManagers),
-      ]),
     stubReleaseDatesOffenderNo: releaseDates => Promise.all([prisonApi.stubPrisonerSentenceDetails(releaseDates)]),
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,
@@ -279,8 +161,6 @@ module.exports = on => {
     stubClientCredentialsRequest: () => auth.stubClientCredentialsRequest(),
     stubUserMeRoles: roles => auth.stubUserMeRoles(roles),
     stubUserMe: () => auth.stubUserMe(),
-    stubPathFinderOffenderDetails: details => pathfinder.getOffenderDetails(details),
-    stubSocOffenderDetails: details => socApi.stubGetOffenderDetails(details),
     stubVisitsWithVisitors: ({ visitsWithVisitors, offenderBasicDetails, visitTypes }) =>
       Promise.all([
         prisonApi.stubVisitsWithVisitors(visitsWithVisitors),
@@ -296,45 +176,20 @@ module.exports = on => {
     stubAppointmentsGet: prisonApi.stubAppointmentsGet,
     stubVideoLinkAppointments: whereabouts.stubVideoLinkAppointments,
     stubCreateAlert: prisonApi.stubCreateAlert,
-    stubCreateCaseNote: caseNotes.stubCreateCaseNote,
-    stubCaseNoteTypesForUser: caseNotes.stubCaseNoteTypesForUser,
     stubGlobalSearch: offenderSearch.stubGlobalSearch,
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
     stubGlobalSearchMultiplePages: offenderSearch.stubGlobalSearchMultiplePages,
     stubOffenderImage: prisonApi.stubOffenderImage,
     verifyGlobalSearch: offenderSearch.verifyGlobalSearch,
     stubOffenderMovements: prisonApi.stubOffenderMovements,
-    stubGetCaseNote: caseNote => caseNotes.stubGetCaseNote(caseNote),
     stubBookingDetails: details => prisonApi.stubBookingDetails(details),
-    verifySaveAmendment: caseNotes.verifySaveAmendment,
-    stubSaveAmendment: caseNotes.stubSaveAmendment,
     stubBookingNonAssociations: response => prisonApi.stubBookingNonAssociations(response),
-    stubProfessionalContacts: ({
-      offenderBasicDetails,
-      contacts,
-      personAddresses,
-      personEmails,
-      personPhones,
-      prisonOffenderManagers,
-    }) =>
-      Promise.all([
-        prisonApi.stubOffenderBasicDetails(offenderBasicDetails),
-        prisonApi.stubPrisonerContacts(contacts),
-        prisonApi.stubPersonAddresses(personAddresses),
-        prisonApi.stubPersonEmails(personEmails),
-        prisonApi.stubPersonPhones(personPhones),
-        allocationManager.stubGetPomForOffender(prisonOffenderManagers),
-      ]),
     stubUserCaseLoads: caseloads => prisonApi.stubUserCaseloads(caseloads),
     stubUpdateCaseload: prisonApi.stubUpdateCaseload,
     stubCellAttributes: prisonApi.stubCellAttributes,
     stubMainOffence: offence => prisonApi.stubMainOffence(offence),
     stubCsraAssessments: ({ offenderNumbers, assessments }) =>
       prisonApi.stubCsraAssessments(offenderNumbers, assessments),
-    stubNoExistingOffenderRecord: ({ offenderNo }) => dataComplianceApi.stubNoExistingOffenderRecord(offenderNo),
-    stubRetentionRecord: ({ offenderNo, record }) => dataComplianceApi.stubRetentionRecord(offenderNo, record),
-    stubGetOffenderRetentionReasons: dataComplianceApi.stubGetOffenderRetentionReasons,
-    stubCreateRecord: ({ offenderNo }) => dataComplianceApi.stubCreateRecord(offenderNo),
     stubCellsWithCapacity: ({ cells }) => prisonApi.stubCellsWithCapacity(cells),
     stubCellsWithCapacityByGroupName: ({ agencyId, groupName, response }) =>
       whereabouts.stubCellsWithCapacityByGroupName({ agencyId, groupName, response }),
@@ -382,10 +237,6 @@ module.exports = on => {
     verifyAdjudicationsHistory: ({ offenderNo, agencyId, finding, fromDate, toDate }) =>
       prisonApi.verifyAdjudicationsHistory({ offenderNo, agencyId, finding, fromDate, toDate }),
     resetAdjudicationsStub: () => prisonApi.resetAdjudicationsStub(),
-    stubConvictions: ({ offenderNo, convictions }) => community.stubConvictions(offenderNo, convictions),
-    stubOffenderDetails: ({ offenderNo, details }) => community.stubOffenderDetails(offenderNo, details),
-    stubDocuments: ({ offenderNo, documents }) => community.stubDocuments(offenderNo, documents),
-    stubDocument: ({ offenderNo, documentId, content }) => community.stubDocument(offenderNo, documentId, content),
     stubIepSummaryForBooking: iepSummary => prisonApi.stubIepSummaryForBooking(iepSummary),
     stubMovementsIn: ({ agencyId, fromDate, movements }) =>
       prisonApi.stubMovementsIn({ agencyId, fromDate, movements }),
