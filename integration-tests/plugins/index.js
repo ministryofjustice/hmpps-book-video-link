@@ -8,7 +8,6 @@ const {
   externalTransfersResponse,
 } = require('../mockApis/responses/houseBlockResponse')
 const alertsResponse = require('../mockApis/responses/alertsResponse')
-const offenderSearch = require('../mockApis/offenderSearch')
 
 const { resetStubs } = require('../mockApis/wiremock')
 
@@ -30,7 +29,6 @@ module.exports = on => {
     stubPrisonApiHealth: status => Promise.all([prisonApi.stubHealth(status)]),
     stubWhereaboutsHealth: status => Promise.all([whereabouts.stubHealth(status)]),
     stubTokenverificationHealth: status => Promise.all([tokenverification.stubHealth(status)]),
-    stubOffenderSearchHealth: status => Promise.all([offenderSearch.stubHealth(status)]),
 
     stubHealthAllHealthy: () =>
       Promise.all([
@@ -38,7 +36,6 @@ module.exports = on => {
         prisonApi.stubHealth(),
         whereabouts.stubHealth(),
         tokenverification.stubHealth(),
-        offenderSearch.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
     stubLogin: ({ username = 'ITAG_USER', caseload = 'MDI', roles = [] }) =>
@@ -176,11 +173,8 @@ module.exports = on => {
     stubAppointmentsGet: prisonApi.stubAppointmentsGet,
     stubVideoLinkAppointments: whereabouts.stubVideoLinkAppointments,
     stubCreateAlert: prisonApi.stubCreateAlert,
-    stubGlobalSearch: offenderSearch.stubGlobalSearch,
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
-    stubGlobalSearchMultiplePages: offenderSearch.stubGlobalSearchMultiplePages,
     stubOffenderImage: prisonApi.stubOffenderImage,
-    verifyGlobalSearch: offenderSearch.verifyGlobalSearch,
     stubOffenderMovements: prisonApi.stubOffenderMovements,
     stubBookingDetails: details => prisonApi.stubBookingDetails(details),
     stubBookingNonAssociations: response => prisonApi.stubBookingNonAssociations(response),
