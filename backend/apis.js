@@ -4,7 +4,6 @@ const { elite2ApiFactory } = require('./api/elite2Api')
 const { oauthApiFactory } = require('./api/oauthApi')
 const { whereaboutsApiFactory } = require('./api/whereaboutsApi')
 const { tokenVerificationApiFactory } = require('./api/tokenVerificationApi')
-const { offenderSearchApiFactory } = require('./api/offenderSearchApi')
 
 const elite2Api = elite2ApiFactory(
   clientFactory({
@@ -35,17 +34,9 @@ const tokenVerificationApi = tokenVerificationApiFactory(
   })
 )
 
-const offenderSearchApi = offenderSearchApiFactory(
-  clientFactory({
-    baseUrl: config.apis.offenderSearch.url,
-    timeout: config.apis.offenderSearch.timeoutSeconds * 1000,
-  })
-)
-
 module.exports = {
   elite2Api,
   whereaboutsApi,
   oauthApi,
   tokenVerificationApi,
-  offenderSearchApi,
 }

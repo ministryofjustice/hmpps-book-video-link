@@ -31,19 +31,12 @@ const addAppInfo = result => {
   return { ...result, ...buildInfo }
 }
 
-module.exports = function healthcheckFactory(
-  authUrl,
-  elite2Url,
-  whereaboutsUrl,
-  tokenverificationUrl,
-  offenderSearchUrl
-) {
+module.exports = function healthcheckFactory(authUrl, elite2Url, whereaboutsUrl, tokenverificationUrl) {
   const checks = [
     service('auth', authUrl),
     service('elite2', elite2Url),
     service('whereabouts', whereaboutsUrl),
     service('tokenverification', tokenverificationUrl),
-    service('offenderSearch', offenderSearchUrl),
   ]
 
   return callback =>

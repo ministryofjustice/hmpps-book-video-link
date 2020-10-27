@@ -42,7 +42,6 @@ app.use(
     elite2Api: apis.elite2Api,
     whereaboutsApi: apis.whereaboutsApi,
     oauthApi: apis.oauthApi,
-    offenderSearchApi: apis.offenderSearchApi,
   })
 )
 app.use(csrf())

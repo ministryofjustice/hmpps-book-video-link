@@ -13,7 +13,6 @@ context('Health page reports health correctly', () => {
         elite2: { timeout: 1000, code: 'ECONNABORTED', errno: 'ETIMEDOUT', retries: 2 },
         tokenverification: 'UP',
         whereabouts: 'UP',
-        offenderSearch: 'UP',
       })
     })
   })
@@ -31,7 +30,6 @@ context('Health page reports health correctly', () => {
         elite2: 'UP',
         tokenverification: 'UP',
         whereabouts: 'UP',
-        offenderSearch: 'UP',
       })
     })
   })

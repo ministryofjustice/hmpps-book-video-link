@@ -7,7 +7,6 @@ const { userLocationsFactory } = require('./controllers/userLocations')
 const { userMeFactory } = require('./controllers/userMe')
 const { getConfiguration } = require('./controllers/getConfig')
 const establishmentRollFactory = require('./controllers/establishmentRollCount').getEstablishmentRollCountFactory
-const { globalSearchFactory } = require('./controllers/globalSearch')
 const { imageFactory } = require('./controllers/images')
 const { offenderLoaderFactory } = require('./controllers/offender-loader')
 const { appointmentsServiceFactory } = require('./services/appointmentsService')
@@ -19,10 +18,9 @@ const { csvParserService } = require('./csv-parser')
 
 const router = express.Router()
 
-const setup = ({ elite2Api, oauthApi, offenderSearchApi }) => {
+const setup = ({ elite2Api, oauthApi }) => {
   const controller = controllerFactory({
     establishmentRollService: establishmentRollFactory(elite2Api),
-    globalSearchService: globalSearchFactory(offenderSearchApi),
     offenderLoader: offenderLoaderFactory(elite2Api),
     appointmentsService: appointmentsServiceFactory(elite2Api),
     csvParserService: csvParserService({ fs, isBinaryFileSync }),
@@ -52,7 +50,6 @@ const setup = ({ elite2Api, oauthApi, offenderSearchApi }) => {
   router.use('/api/userLocations', userLocationsFactory(elite2Api).userLocations)
   router.use('/api/offenders/:offenderNo', controller.getOffender)
   router.use('/api/establishmentRollCount', controller.getEstablishmentRollCount)
-  router.use('/api/globalSearch', controller.globalSearch)
   router.use('/api/appointments/upload-offenders/:agencyId', controller.uploadOffenders)
   router.get('/app/images/:offenderNo/data', imageFactory(elite2Api).prisonerImage)
   router.get('/app/image/:imageId/data', imageFactory(elite2Api).image)

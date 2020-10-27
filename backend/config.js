@@ -49,10 +49,6 @@ module.exports = {
       timeoutSeconds: process.env.TOKENVERIFICATION_API_TIMEOUT_SECONDS || 10,
       enabled: process.env.TOKENVERIFICATION_API_ENABLED === 'true',
     },
-    offenderSearch: {
-      url: process.env.OFFENDER_SEARCH_API_URL || 'http://localhost:8085',
-      timeoutSeconds: process.env.OFFENDER_SEARCH_API_TIMEOUT_SECONDS || 10,
-    },
   },
 
   notifications: {
