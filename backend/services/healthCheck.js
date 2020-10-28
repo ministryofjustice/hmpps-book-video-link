@@ -43,7 +43,7 @@ module.exports = function healthcheckFactory(authUrl, elite2Url, whereaboutsUrl,
     Promise.all(checks.map(fn => fn())).then(checkResults => {
       const allOk = checkResults.every(item => item.status === 'UP') ? 'UP' : 'DOWN'
       const result = {
-        name: 'prisonstaffhub',
+        name: 'book-video-link',
         status: allOk,
         api: checkResults.reduce(gatherCheckInfo, {}),
       }
