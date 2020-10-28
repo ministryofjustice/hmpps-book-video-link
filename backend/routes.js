@@ -1,7 +1,6 @@
 const express = require('express')
 
 const { logError } = require('./logError')
-const config = require('./config')
 
 const addAppointmentRouter = require('./routes/appointments/addAppointmentRouter')
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
@@ -30,10 +29,6 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
       prisonerSearchUrl: req.session.prisonerSearchUrl,
     }
     next()
-  })
-
-  router.get('/terms', async (req, res) => {
-    res.render('terms', { mailTo: config.app.mailTo, homeLink: config.app.notmEndpointUrl })
   })
 
   router.use('/offenders/:offenderNo/add-appointment', addAppointmentRouter({ elite2Api, logError }))

@@ -18,13 +18,12 @@ const hasCookies = expectedNames => res => {
   expect(cookieNames).toEqual(expect.arrayContaining(expectedNames))
 }
 
-const newNomisEndpointUrl = 'https://newnomis.url/'
-config.app.notmEndpointUrl = newNomisEndpointUrl
+config.app.url = 'http://localhost/'
 
 describe('Test the routes and middleware installed by sessionManagementRoutes', () => {
   const app = express()
 
-  app.set('view engine', 'ejs')
+  app.set('view engine', 'njk')
   app.use(bodyParser.urlencoded({ extended: false }))
 
   app.use(
@@ -56,7 +55,6 @@ describe('Test the routes and middleware installed by sessionManagementRoutes', 
   sessionManagementRoutes.configureRoutes({
     app,
     tokenRefresher,
-    mailTo: 'test@site.com',
   })
 
   // some content to send for '/'
@@ -94,7 +92,7 @@ describe('Test the routes and middleware installed by sessionManagementRoutes', 
       .expect(302)
       .expect(
         'location',
-        'http://localhost:9090/auth/logout?client_id=book-video-link-client&redirect_uri=https://newnomis.url/'
+        'http://localhost:9090/auth/logout?client_id=book-video-link-client&redirect_uri=http://localhost/'
       ))
 
   it('After logout get "/" should redirect to "/login"', () =>

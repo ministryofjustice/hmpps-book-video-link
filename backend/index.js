@@ -24,7 +24,6 @@ const nunjucksSetup = require('./utils/nunjucksSetup')
 const setupRedirects = require('./setupRedirects')
 
 app.set('trust proxy', 1) // trust first proxy
-app.set('view engine', 'ejs')
 app.set('view engine', 'njk')
 
 nunjucksSetup(app, path)
@@ -45,8 +44,8 @@ app.use(
   })
 )
 
-app.use((req, res) => {
-  res.redirect(config.app.notmEndpointUrl)
+app.use((req, res, next) => {
+  res.redirect('/')
 })
 
 app.listen(config.app.port, () => {
