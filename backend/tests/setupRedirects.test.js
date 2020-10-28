@@ -15,13 +15,6 @@ describe('setup redirects', () => {
     agent = request.agent(app)
   })
 
-  it('should redirect to the new bulk appointments service when the old url is used', done => {
-    agent
-      .get('/add-bulk-appointments')
-      .expect('location', '/bulk-appointments/need-to-upload-file')
-      .expect(301, done)
-  })
-
   it('should redirect to the new support service when the old support url is used', done => {
     agent
       .get('/content/support')

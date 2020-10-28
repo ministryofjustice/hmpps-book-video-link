@@ -3,14 +3,6 @@ const express = require('express')
 const { logError } = require('./logError')
 const config = require('./config')
 
-const bulkAppointmentsAddDetailsRouter = require('./routes/appointments/bulkAppointmentsAddDetailsRouter')
-const bulkAppointmentsConfirmRouter = require('./routes/appointments/bulkAppointmentsConfirmRouter')
-const bulkAppointmentsInvalidNumbersRouter = require('./routes/appointments/bulkAppointmentsInvalidNumbersRouter')
-const bulkAppointmentsAddedRouter = require('./routes/appointments/bulkAppointmentsAddedRouter')
-const bulkAppointmentsSlipsRouter = require('./routes/appointments/bulkAppointmentsSlipsRouter')
-const bulkAppointmentsUploadRouter = require('./routes/appointments/bulkAppointmentsUploadRouter')
-const bulkAppointmentsClashesRouter = require('./routes/appointments/bulkAppointmentsClashesRouter')
-
 const changeCaseloadRouter = require('./routes/changeCaseloadRouter')
 const addAppointmentRouter = require('./routes/appointments/addAppointmentRouter')
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
@@ -40,27 +32,6 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     }
     next()
   })
-
-  router.get('/bulk-appointments/need-to-upload-file', async (req, res) => {
-    res.render('bulkAppointmentsAdd.njk', { title: 'You need to upload a CSV file' })
-  })
-
-  router.get('/bulk-appointments/no-appointments-added', async (req, res) => {
-    const { reason } = req.query
-    req.session.data = null
-    res.render('bulkAppointmentsNotAdded.njk', { reason })
-  })
-
-  router.use('/bulk-appointments/upload-file', bulkAppointmentsUploadRouter({ elite2Api, logError }))
-  router.use(
-    '/bulk-appointments/add-appointment-details',
-    bulkAppointmentsAddDetailsRouter({ elite2Api, oauthApi, logError })
-  )
-  router.use('/bulk-appointments/appointments-added', bulkAppointmentsAddedRouter({ logError }))
-  router.get('/bulk-appointments/appointments-movement-slips', bulkAppointmentsSlipsRouter({ elite2Api, logError }))
-  router.use('/bulk-appointments/confirm-appointments', bulkAppointmentsConfirmRouter({ elite2Api, logError }))
-  router.use('/bulk-appointments/appointment-clashes', bulkAppointmentsClashesRouter({ elite2Api, logError }))
-  router.use('/bulk-appointments/invalid-numbers', bulkAppointmentsInvalidNumbersRouter({ elite2Api, logError }))
 
   router.use('/change-caseload', changeCaseloadRouter({ elite2Api, logError }))
 
