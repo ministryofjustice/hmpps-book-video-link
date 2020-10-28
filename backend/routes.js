@@ -3,7 +3,6 @@ const express = require('express')
 const { logError } = require('./logError')
 const config = require('./config')
 
-const changeCaseloadRouter = require('./routes/changeCaseloadRouter')
 const addAppointmentRouter = require('./routes/appointments/addAppointmentRouter')
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
@@ -32,8 +31,6 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     }
     next()
   })
-
-  router.use('/change-caseload', changeCaseloadRouter({ elite2Api, logError }))
 
   router.get('/terms', async (req, res) => {
     res.render('terms', { mailTo: config.app.mailTo, homeLink: config.app.notmEndpointUrl })
