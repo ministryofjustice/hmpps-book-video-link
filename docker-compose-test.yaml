@@ -1,14 +1,14 @@
 version: '3.1'
 services:
-  prisonstaffhub-wiremock:
+  book-video-link-wiremock:
     image: rodolpheche/wiremock
-    container_name: prisonstaffhub-wiremock
+    container_name: book-video-link-wiremock
     restart: always
     ports:
       - "9191:8080"
 
-  prisonstaffhub-test-redis:
+  book-video-link-test-redis:
     image: redis
-    container_name: prisonstaffhub-test-redis
+    container_name: book-video-link-test-redis
     ports:
       - 6379:6379

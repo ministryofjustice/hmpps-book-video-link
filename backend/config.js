@@ -1,13 +1,12 @@
 module.exports = {
   app: {
-    port: process.env.PORT || 3002,
+    port: process.env.PORT || 3000,
     production: process.env.NODE_ENV === 'production',
     notmEndpointUrl: process.env.NN_ENDPOINT_URL || 'http://localhost:3000/',
     mailTo: process.env.MAIL_TO || 'feedback@digital.justice.gov.uk',
     tokenRefreshThresholdSeconds: process.env.TOKEN_REFRESH_THRESHOLD_SECONDS || 60,
     url: process.env.PRISON_STAFF_HUB_UI_URL || `http://localhost:${process.env.PORT || 3002}/`,
     maximumFileUploadSizeInMb: process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB || 200,
-    featureFlags: {},
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
     supportUrl: process.env.SUPPORT_URL || 'http://localhost:3000/',
   },
@@ -31,9 +30,9 @@ module.exports = {
       url: process.env.OAUTH_ENDPOINT_URL || 'http://localhost:9090/auth/',
       ui_url: process.env.OAUTH_ENDPOINT_UI_URL || process.env.OAUTH_ENDPOINT_URL || 'http://localhost:9090/auth/',
       timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 10,
-      clientId: process.env.API_CLIENT_ID || 'elite2apiclient',
+      clientId: process.env.API_CLIENT_ID || 'book-video-link-client',
       clientSecret: process.env.API_CLIENT_SECRET || 'clientsecret',
-      systemClientId: process.env.API_SYSTEM_CLIENT_ID || 'prisonstaffhubclient',
+      systemClientId: process.env.API_SYSTEM_CLIENT_ID || 'book-video-link-admin',
       systemClientSecret: process.env.API_SYSTEM_CLIENT_SECRET || 'clientsecret',
     },
     elite2: {

@@ -14,7 +14,6 @@ services:
       - whereaboutsapi
       - redis
     environment:
-      - UPDATE_ATTENDANCE_PRISONS='HLI,MDI,LEI'
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PORT=3002

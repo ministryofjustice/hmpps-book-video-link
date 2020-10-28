@@ -1,7 +1,7 @@
 const Logger = require('bunyan')
 
 module.exports = new Logger({
-  name: 'prisonStaffHub',
+  name: 'book-video-link',
   streams: [
     {
       stream: process.stdout,
