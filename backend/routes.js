@@ -4,7 +4,6 @@ const { logError } = require('./logError')
 
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
-const prepostAppointmentRouter = require('./routes/appointments/prepostAppointmentsRouter')
 const selectCourtAppointmentRooms = require('./routes/appointments/selectCourtAppointmentRoomsRouter')
 const selectCourtAppointmentCourt = require('./routes/appointments/selectCourtAppointmentCourtRouter')
 
@@ -14,7 +13,6 @@ const attendanceChangeRouter = require('./routes/attendanceChangesRouter')
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const currentUser = require('./middleware/currentUser')
 const { notifyClient } = require('./shared/notifyClient')
-const { raiseAnalyticsEvent } = require('./raiseAnalyticsEvent')
 
 const router = express.Router()
 
@@ -31,10 +29,7 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
   })
 
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ elite2Api, logError }))
-  router.use(
-    '/offenders/:offenderNo/prepost-appointments',
-    prepostAppointmentRouter({ elite2Api, logError, oauthApi, whereaboutsApi, notifyClient, raiseAnalyticsEvent })
-  )
+
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment',
     addCourtAppointmentRouter({ elite2Api, logError })
