@@ -2,7 +2,6 @@ const express = require('express')
 
 const { logError } = require('./logError')
 
-const addAppointmentRouter = require('./routes/appointments/addAppointmentRouter')
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
 const prepostAppointmentRouter = require('./routes/appointments/prepostAppointmentsRouter')
@@ -31,7 +30,6 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     next()
   })
 
-  router.use('/offenders/:offenderNo/add-appointment', addAppointmentRouter({ elite2Api, logError }))
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ elite2Api, logError }))
   router.use(
     '/offenders/:offenderNo/prepost-appointments',
