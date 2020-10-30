@@ -17,53 +17,6 @@ module.exports = {
       },
     })
   },
-  stubAttendanceChanges: (changes, status = 200) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: '/whereabouts/attendances/changes\\?fromDateTime=.+?&toDateTime=.+?',
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: {
-          changes,
-        },
-      },
-    })
-  },
-  stubAttendanceStats: (agencyId, fromDate, period, stats, status = 200) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/whereabouts/attendance-statistics/${agencyId}/over-date-range?fromDate=${fromDate}&toDate=${fromDate}&period=${period}`,
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: stats,
-      },
-    })
-  },
-  stubGetAbsenceReasons: () => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: '/whereabouts/absence-reasons',
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: absenceReasons,
-      },
-    })
-  },
   stubCourtLocations: (locations, status = 200) => {
     return stubFor({
       request: {
@@ -78,66 +31,6 @@ module.exports = {
         jsonBody: locations || {
           courtLocations: ['London', 'Sheffield', 'Leeds'],
         },
-      },
-    })
-  },
-  stubGetAttendance: (caseload, locationId, timeSlot, date, data = attendance) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: `/whereabouts/attendances/.+?/${locationId}\\?date=${date}&period=${timeSlot}`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: data,
-      },
-    })
-  },
-  stubGetAttendancesForBookings: (caseload, timeSlot, date, data = []) => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        url: `/whereabouts/attendances/${caseload}?date=${date}&period=${timeSlot}`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: data,
-      },
-    })
-  },
-  stubPostAttendance: attendanceToReturn => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/whereabouts/attendance`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: attendanceToReturn,
-      },
-    })
-  },
-  stubPutAttendance: attendanceToReturn => {
-    return stubFor({
-      request: {
-        method: 'PUT',
-        urlPattern: `/whereabouts/attendances/${attendanceToReturn.id}`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: attendanceToReturn,
       },
     })
   },
@@ -286,35 +179,6 @@ module.exports = {
       request: {
         method: 'GET',
         url: `/whereabouts/locations/${agencyId}/${groupName}/location-prefix`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: response,
-      },
-    }),
-
-  stubGetAgencyGroupLocations: ({ agencyId, groupName, response }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/whereabouts/locations/groups/${agencyId}/${groupName}`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: response,
-      },
-    }),
-  stubCellsWithCapacityByGroupName: ({ agencyId, groupName, response }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/whereabouts/locations/cellsWithCapacity/${agencyId}/${groupName}`,
       },
       response: {
         status: 200,

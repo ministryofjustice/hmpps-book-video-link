@@ -55,7 +55,6 @@ module.exports = on => {
     stubProgEventsAtLocation: ({ caseload, locationId, timeSlot, date, activities }) =>
       Promise.all([prisonApi.stubProgEventsAtLocation(caseload, locationId, timeSlot, date, activities)]),
 
-    stubAttendanceChanges: response => Promise.all([whereabouts.stubAttendanceChanges(response)]),
     stubCourts: courts => Promise.all([whereabouts.stubCourtLocations(courts)]),
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubAddVideoLinkAppointment: appointment => Promise.all([whereabouts.stubAddVideoLinkAppointment(appointment)]),
@@ -114,11 +113,6 @@ module.exports = on => {
     stubReleaseDatesOffenderNo: releaseDates => Promise.all([prisonApi.stubPrisonerSentenceDetails(releaseDates)]),
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,
-    stubGetAbsenceReasons: response => Promise.all([whereabouts.stubGetAbsenceReasons()]),
-    stubGetAttendance: ({ caseload, locationId, timeSlot, date, data }) =>
-      Promise.all([whereabouts.stubGetAttendance(caseload, locationId, timeSlot, date, data)]),
-    stubPostAttendance: response => whereabouts.stubPostAttendance(response),
-    stubPutAttendance: response => whereabouts.stubPutAttendance(response),
     verifyPostAttendance: () => whereabouts.verifyPostAttendance(),
     stubSentenceAdjustments: response => prisonApi.stubGetSentenceAdjustments(response),
     stubMovementsBetween: prisonApi.stubMovementsBetween,
@@ -184,9 +178,6 @@ module.exports = on => {
     stubMainOffence: offence => prisonApi.stubMainOffence(offence),
     stubCsraAssessments: ({ offenderNumbers, assessments }) =>
       prisonApi.stubCsraAssessments(offenderNumbers, assessments),
-    stubCellsWithCapacity: ({ cells }) => prisonApi.stubCellsWithCapacity(cells),
-    stubCellsWithCapacityByGroupName: ({ agencyId, groupName, response }) =>
-      whereabouts.stubCellsWithCapacityByGroupName({ agencyId, groupName, response }),
     stubInmatesAtLocation: ({ inmates }) => prisonApi.stubInmatesAtLocation(inmates),
     stubOffenderCellHistory: ({ history }) => prisonApi.stubOffenderCellHistory(history),
     stubGetAlerts: ({ agencyId, alerts }) => prisonApi.stubGetAlerts({ agencyId, alerts }),
@@ -203,8 +194,6 @@ module.exports = on => {
     stubGetLocationPrefix: ({ agencyId, groupName, response }) =>
       whereabouts.stubGetLocationPrefix({ agencyId, groupName, response }),
     verifyMoveToCellSwap: ({ bookingId }) => prisonApi.verifyMoveToCellSwap({ bookingId }),
-    stubAttendanceStats: ({ agencyId, fromDate, period, stats }) =>
-      whereabouts.stubAttendanceStats(agencyId, fromDate, period, stats),
     stubEstablishmentRollCount: ({ agencyId, assignedMovements, unassignedMovements, movements, enroute }) =>
       Promise.all([
         prisonApi.stubAssignedMovements(agencyId, assignedMovements),
@@ -217,14 +206,10 @@ module.exports = on => {
       prisonApi.stubGetEventsByLocationIds(agencyId, date, timeSlot, response),
     stubExternalTransfers: response => prisonApi.stubExternalTransfers(response),
     stubAssessments: offenderNumbers => prisonApi.stubAssessments(offenderNumbers),
-    stubGetAgencyGroupLocations: ({ agencyId, groupName, response }) =>
-      whereabouts.stubGetAgencyGroupLocations({ agencyId, groupName, response }),
     stubLocationGroups: locationGroups => whereabouts.stubLocationGroups(locationGroups),
     stubActivityLocationsByDateAndPeriod: ({ locations, date, period, withFault }) =>
       prisonApi.stubActivityLocationsByDateAndPeriod(locations, date, period, withFault),
     stubActivityLocationsConnectionResetFault: () => prisonApi.stubActivityLocationsConnectionResetFault(),
-    stubGetAttendancesForBookings: ({ agencyId, timeSlot, date, data }) =>
-      whereabouts.stubGetAttendancesForBookings(agencyId, timeSlot, date, data),
     stubGetAdjudicationDetails: adjudicationDetails => prisonApi.stubGetAdjudicationDetails(adjudicationDetails),
     stubAdjudicationFindingTypes: types => prisonApi.stubAdjudicationFindingTypes(types),
     stubAdjudications: ({ response, headers }) => prisonApi.stubAdjudications(response, headers),
