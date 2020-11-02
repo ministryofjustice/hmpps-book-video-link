@@ -96,9 +96,9 @@
     "whatwg-fetch": "2.0.4"
   },
   "scripts": {
-    "clean": " rm -Rf build .nyc_output coverage",
+    "clean": " rm -Rf build .nyc_output coverage test-results",
     "start": "node backend/index.js",
-    "start:cov": "nyc node backend/index.js",
+    "start:cov": "cp -R static build && npm run compile-sass && export $(cat feature.env) && nyc node backend/index.js",
     "start:dev": "nodemon --watch backend --watch views backend/index.js",
     "start-feature": "cp -R static build && npm run compile-sass && export $(cat feature.env) && node backend/index.js",
     "start-feature:dev": "cp -R static build && npm run compile-sass && export $(cat feature.env) && nodemon --watch backend --watch views backend/index.js",
@@ -112,8 +112,8 @@
     "int-test": "cypress run",
     "int-test-no-artefacts": "cypress run --config video=false,screenshotOnRunFailure=false",
     "int-test-ui": "cypress open",
-    "compile-sass": "sass --load-path=. ./sass:./build/static/stylesheets --style compressed",
-    "compile-sass-watch": "npm run compile-sass && sass --load-path=. ./sass:./build/static/stylesheets --watch --style compressed"
+    "compile-sass": "sass --load-path=. ./sass:./build/stylesheets --style compressed",
+    "compile-sass-watch": "npm run compile-sass && sass --load-path=. ./sass:./build/stylesheets --watch --style compressed"
   },
   "nyc": {
     "all": true,

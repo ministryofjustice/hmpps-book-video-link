@@ -4,7 +4,7 @@ const path = require('path')
 const router = express.Router()
 
 module.exports = () => {
-  router.use(express.static(path.join(__dirname, '../build/static')))
+  router.use(express.static(path.join(__dirname, '../build')))
 
   const assetPaths = [
     '../node_modules/govuk-frontend/govuk/assets',
