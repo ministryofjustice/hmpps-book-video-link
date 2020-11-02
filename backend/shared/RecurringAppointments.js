@@ -1,5 +1,5 @@
 const moment = require('moment-business-days')
-const { DayOfTheWeek, DATE_TIME_FORMAT_SPEC } = require('../dateHelpers')
+const { DayOfTheWeek, DATE_TIME_FORMAT_SPEC } = require('./dateHelpers')
 
 const repeatsToMomentMap = {
   WEEKLY: 'weeks',

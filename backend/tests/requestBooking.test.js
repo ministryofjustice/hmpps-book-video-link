@@ -5,7 +5,7 @@ process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 const config = require('../config')
 
 const { requestBookingFactory } = require('../controllers/appointments/requestBooking')
-const { DAY_MONTH_YEAR } = require('../../src/dateHelpers')
+const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyClient } = require('../shared/notifyClient')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 

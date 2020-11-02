@@ -1,4 +1,4 @@
-const { DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../../src/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../shared/dateHelpers')
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')
