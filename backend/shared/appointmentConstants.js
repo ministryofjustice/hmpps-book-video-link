@@ -1,6 +1,6 @@
 const moment = require('moment')
-const { DAY_MONTH_YEAR } = require('../../src/dateHelpers')
-const { calculateEndDate } = require('../../src/BulkAppointments/RecurringAppointments')
+const { DAY_MONTH_YEAR } = require('./dateHelpers')
+const { calculateEndDate } = require('./RecurringAppointments')
 
 const repeatTypes = [
   { value: 'WEEKLY', text: 'Weekly' },

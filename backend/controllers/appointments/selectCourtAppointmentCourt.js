@@ -1,5 +1,5 @@
 const moment = require('moment')
-const { DATE_TIME_FORMAT_SPEC, Time } = require('../../../src/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC, Time } = require('../../shared/dateHelpers')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
 const { serviceUnavailableMessage } = require('../../common-messages')
 

@@ -1,5 +1,5 @@
 const moment = require('moment')
-const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../../src/dateHelpers')
+const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
 const { serviceUnavailableMessage } = require('../../common-messages')
 const { validateComments } = require('../../shared/appointmentConstants')
 const {

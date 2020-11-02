@@ -1,6 +1,6 @@
 const moment = require('moment')
 
-const { DATE_TIME_FORMAT_SPEC } = require('../../../src/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC } = require('../../shared/dateHelpers')
 const {
   app: { notmEndpointUrl: dpsUrl },
 } = require('../../config')

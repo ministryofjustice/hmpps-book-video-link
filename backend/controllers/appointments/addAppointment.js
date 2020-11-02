@@ -4,7 +4,7 @@ const {
   app: { notmEndpointUrl: dpsUrl },
 } = require('../../config')
 const { properCaseName, formatName } = require('../../utils')
-const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } = require('../../../src/dateHelpers')
+const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } = require('../../shared/dateHelpers')
 const { serviceUnavailableMessage } = require('../../common-messages')
 const { repeatTypes, endRecurringEndingDate, validateComments } = require('../../shared/appointmentConstants')
 

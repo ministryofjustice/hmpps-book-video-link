@@ -1,6 +1,4 @@
 const { stubFor, verifyPosts } = require('./wiremock')
-const absenceReasons = require('./responses/absenceReasons')
-const attendance = require('./responses/attendance')
 
 module.exports = {
   stubHealth: (status = 200) => {

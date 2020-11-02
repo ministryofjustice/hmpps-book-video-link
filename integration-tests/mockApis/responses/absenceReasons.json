@@ -1,5 +1,0 @@
-{
-  "paidReasons": ["AcceptableAbsence", "NotRequired"],
-  "unpaidReasons": ["Refused", "RestDay", "RestInCell", "UnacceptableAbsence", "SessionCancelled", "Sick"],
-  "triggersIEPWarning": ["Refused", "UnacceptableAbsence"]
-}
