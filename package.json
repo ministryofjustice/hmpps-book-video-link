@@ -63,7 +63,7 @@
     "audit-ci": "^3.0.0",
     "axios-mock-adapter": "^1.15.0",
     "chai": "^4.1.2",
-    "cypress": "^5.0.0",
+    "cypress": "^5.5.0",
     "cypress-file-upload": "^4.0.7",
     "cypress-multi-reporters": "^1.4.0",
     "dotenv-expand": "^4.2.0",

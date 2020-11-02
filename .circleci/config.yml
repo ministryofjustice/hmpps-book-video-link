@@ -1,49 +1,68 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@1.1.1
+  hmpps: ministryofjustice/hmpps@1.1.2
 
 executors:
-  builder:
+  integration-tests:
     docker:
       - image: circleci/node:12-buster-browsers
+      - image: circleci/redis:buster
     working_directory: ~/app
 
 jobs:
   build:
-    executor: builder
+    executor: hmpps/node
     steps:
       - checkout
+      - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
       - restore_cache:
-          key: node_modules-{{ checksum "package-lock.json" }}-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: Install Dependencies
-          command: CYPRESS_INSTALL_BINARY=0 npm ci --no-audit
+          command: npm ci --no-audit
       - save_cache:
-          key: node_modules-{{ checksum "package-lock.json" }}-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
-            - ./node_modules
+            - node_modules
+            - ~/.cache
       - run:
-          name: Run eslint
-          command: npm run lint
-      - run:
-          name: Run Tests
           command: |
-              set -e
-              npm test -- --runInBand
-      - run: NODE_ENV=production npm run build
+            npm run build
+            DATE=$(date '+%Y-%m-%d')
+            export BUILD_NUMBER=${DATE}.${CIRCLE_BUILD_NUM}
+            export GIT_REF="$CIRCLE_SHA1"
+            npm run record-build-info
+      - run: # Run linter after build because the integration test code depend on compiled typescript...
+          name: Linter check
+          command: npm run lint
       - persist_to_workspace:
           root: .
           paths:
             - node_modules
+            - build-info.json
             - build
+            - dist
+            - .cache/Cypress
 
-  integration_tests:
-    working_directory: ~/app
-    docker:
-      - image: circleci/node:12-buster-browsers
-      - image: circleci/redis:buster
-    resource_class: large
+  unit_test:
+    executor: hmpps/node
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: unit tests
+          command: npm run test
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results/unit-test-reports.html
+
+  integration_test:
+    executor: integration-tests
     steps:
       - checkout
       - attach_workspace:
@@ -55,21 +74,21 @@ jobs:
           name: Get wiremock
           command: curl -o wiremock.jar https://repo1.maven.org/maven2/com/github/tomakehurst/wiremock-standalone/2.27.1/wiremock-standalone-2.27.1.jar
       - run:
-          name: Run auth wiremock
+          name: Run wiremock
           command: java -jar wiremock.jar --port 9191
           background: true
-      - restore_cache:
-          key: node_modules-{{ checksum "package-lock.json" }}-{{ checksum "package.json" }}
-      - run:
-          name: Install cypress.
-          command: npx cypress install
       - run:
           name: Run the node app.
           command: npm run start-feature
           background: true
       - run:
-          name: Run Cypress Integration tests
-          command: npm run int-test-no-artefacts
+          name: Wait for node app to start
+          command: sleep 5
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: integration tests
+          command: npm run int-test
       - store_test_results:
           path: test-results
       - store_artifacts:
@@ -82,37 +101,40 @@ workflows:
   build-test-and-deploy:
     jobs:
       - build:
-          filters:
-            tags:
-              ignore: /.*/
-      - integration_tests:
+        filters:
+          tags:
+            ignore: /.*/
+      - unit_test:
           requires:
             - build
+      - integration_test:
+          requires:
+            - build
+      - hmpps/helm_lint:
+          name: helm_lint
       - hmpps/build_docker:
           name: build_docker
-          image_name: "quay.io/hmpps/hmpps-book-video-link"
           filters:
             branches:
               only:
                 - main
       - hmpps/deploy_env:
-          chart_name: hmpps-book-video-link
-          release_name: hmpps-book-video-link
           name: deploy_dev
           env: "dev"
-          requires:
-            - build_docker
-            - integration_tests
           filters:
             branches:
-              only: main
+              only:
+                - main
+          requires:
+            - helm_lint
+            - unit_test
+            - integration_test
+            - build_docker
       - request-preprod-approval:
           type: approval
           requires:
             - deploy_dev
       - hmpps/deploy_env:
-          chart_name: hmpps-book-video-link
-          release_name: hmpps-book-video-link
           name: deploy_preprod
           env: "preprod"
           context: hmpps-book-video-link-preprod
@@ -123,14 +145,13 @@ workflows:
           requires:
             - deploy_preprod
       - hmpps/deploy_env:
-          chart_name: hmpps-book-video-link
-          release_name: hmpps-book-video-link
           name: deploy_prod
           env: "prod"
           slack_notification: true
           context: hmpps-book-video-link-prod
           requires:
             - request-prod-approval
+
   scheduled:
     triggers:
       - schedule:
