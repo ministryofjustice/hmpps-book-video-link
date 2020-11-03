@@ -40,22 +40,24 @@ module.exports = ({ oauthApi, elite2Api, logError }) => async (req, res) => {
         errors,
         formValues: req.query,
         homeUrl: '/videolink',
-        results: searchResults.filter(result => (prison ? prison === result.latestLocationId : result)).map(result => {
-          const { offenderNo, latestLocationId, pncNumber } = result
-          const name = formatName(result.firstName, result.lastName)
+        results: searchResults
+          .filter(result => (prison ? prison === result.latestLocationId : result))
+          .map(result => {
+            const { offenderNo, latestLocationId, pncNumber } = result
+            const name = formatName(result.firstName, result.lastName)
 
-          return {
-            name,
-            offenderNo,
-            dob: result.dateOfBirth ? moment(result.dateOfBirth).format('D MMMM YYYY') : undefined,
-            prison: result.latestLocation,
-            prisonId: latestLocationId,
-            pncNumber: pncNumber || '--',
-            addAppointmentHTML: config.app.videoLinkEnabledFor.includes(latestLocationId)
-              ? `<a href="/${latestLocationId}/offenders/${offenderNo}/add-court-appointment" class="govuk-link" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for ${name}, prison number ${offenderNo}</span></a>`
-              : '',
-          }
-        }),
+            return {
+              name,
+              offenderNo,
+              dob: result.dateOfBirth ? moment(result.dateOfBirth).format('D MMMM YYYY') : undefined,
+              prison: result.latestLocation,
+              prisonId: latestLocationId,
+              pncNumber: pncNumber || '--',
+              addAppointmentHTML: config.app.videoLinkEnabledFor.includes(latestLocationId)
+                ? `<a href="/${latestLocationId}/offenders/${offenderNo}/add-court-appointment" class="govuk-link" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for ${name}, prison number ${offenderNo}</span></a>`
+                : '',
+            }
+          }),
         hasSearched,
         hasOtherSearchDetails: prisonNumber || dobDay || dobMonth || dobYear || prison,
       })

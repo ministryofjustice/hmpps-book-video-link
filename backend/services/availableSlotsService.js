@@ -15,17 +15,9 @@ const sortByStartTime = (a, b) => a.startTime.diff(b.startTime)
 
 module.exports = ({ appointmentsService, existingEventsService }, { startOfDay, endOfDay } = defaultOptions) => {
   const breakDayIntoSlots = ({ date, minutesNeeded }) => {
-    const startTime = moment(date, DATE_ONLY_FORMAT_SPEC)
-      .hour(Number(startOfDay))
-      .minute(0)
-      .seconds(0)
-      .millisecond(0)
+    const startTime = moment(date, DATE_ONLY_FORMAT_SPEC).hour(Number(startOfDay)).minute(0).seconds(0).millisecond(0)
 
-    const endTime = moment(date, DATE_ONLY_FORMAT_SPEC)
-      .hour(Number(endOfDay))
-      .minute(0)
-      .seconds(0)
-      .millisecond(0)
+    const endTime = moment(date, DATE_ONLY_FORMAT_SPEC).hour(Number(endOfDay)).minute(0).seconds(0).millisecond(0)
 
     const duration = moment.duration(endTime.diff(startTime))
     const totalMinutes = duration.asMinutes()

@@ -80,10 +80,12 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
   const getVideoLinkEnabledPrisons = async locals => {
     const prisons = await elite2Api.getAgencies(locals)
 
-    return prisons.filter(prison => videoLinkEnabledFor.includes(prison.agencyId)).map(vlp => ({
-      agencyId: vlp.agencyId,
-      description: vlp.formattedDescription || vlp.description,
-    }))
+    return prisons
+      .filter(prison => videoLinkEnabledFor.includes(prison.agencyId))
+      .map(vlp => ({
+        agencyId: vlp.agencyId,
+        description: vlp.formattedDescription || vlp.description,
+      }))
   }
   const renderError = (req, res, error) => {
     if (error) logError(req.originalUrl, error, serviceUnavailableMessage)

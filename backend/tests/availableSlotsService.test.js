@@ -4,11 +4,7 @@ const { DATE_TIME_FORMAT_SPEC, DATE_ONLY_FORMAT_SPEC } = require('../shared/date
 const availableSlotsServiceFactory = require('../services/availableSlotsService')
 
 const getTime = ({ momentDate = moment(), hour, minutes }) =>
-  momentDate
-    .hour(Number(hour))
-    .minute(minutes)
-    .seconds(0)
-    .millisecond(0)
+  momentDate.hour(Number(hour)).minute(minutes).seconds(0).millisecond(0)
 
 const getTimeWithFormat = options => getTime(options).format(DATE_TIME_FORMAT_SPEC)
 

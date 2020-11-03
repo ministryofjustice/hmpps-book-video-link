@@ -12,7 +12,7 @@ const sixtyDaysInSeconds = 5184000
 const router = express.Router()
 
 module.exports = () => {
-  router.use(helmet())
+  router.use(helmet({ contentSecurityPolicy: false }))
 
   router.use(
     hsts({
