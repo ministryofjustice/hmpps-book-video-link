@@ -46,7 +46,6 @@
     -ms-flex-align: center;
     align-items: center;
     height: 100%;
-    min-width: 320px;
     background: $govuk-brand-colour;
 
     &-primary {
@@ -78,7 +77,7 @@
       color: $govuk-text-colour;
       cursor: pointer;
       display: block;
-      padding: 16px 10px;
+      padding: 16px 20px;
       background: $govuk-brand-colour;
       color: govuk-colour('white');
       font-size: 19px;
