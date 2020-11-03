@@ -49,13 +49,7 @@ const isBlank = str => !str || /^\s*$/.test(str)
  * @param name name to be converted.
  * @returns name converted to proper case.
  */
-const properCaseName = name =>
-  isBlank(name)
-    ? ''
-    : name
-        .split('-')
-        .map(capitalize)
-        .join('-')
+const properCaseName = name => (isBlank(name) ? '' : name.split('-').map(capitalize).join('-'))
 
 const formatName = (firstName, lastName) =>
   [properCaseName(firstName), properCaseName(lastName)].filter(Boolean).join(' ')
@@ -129,9 +123,7 @@ const merge = (left, right) => ({
 const isToday = date => {
   if (date === 'Today') return true
 
-  return moment(date, 'DD/MM/YYYY')
-    .startOf('day')
-    .isSame(moment().startOf('day'))
+  return moment(date, 'DD/MM/YYYY').startOf('day').isSame(moment().startOf('day'))
 }
 
 const isTodayOrAfter = date => {

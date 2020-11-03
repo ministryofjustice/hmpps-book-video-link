@@ -25,7 +25,11 @@ describe('Select court appoinment court', () => {
     comment: 'Test',
     locationDescription: 'Room 3',
     appointmentTypeDescription: 'Videolink',
-    locationTypes: [{ value: 1, text: 'Room 3' }, { value: 2, text: 'Room 2' }, { value: 3, text: 'Room 3' }],
+    locationTypes: [
+      { value: 1, text: 'Room 3' },
+      { value: 2, text: 'Room 2' },
+      { value: 3, text: 'Room 3' },
+    ],
     date: '10/10/2019',
     preAppointmentRequired: 'yes',
     postAppointmentRequired: 'yes',

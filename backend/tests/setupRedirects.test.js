@@ -16,9 +16,6 @@ describe('setup redirects', () => {
   })
 
   it('should redirect to the new support service when the old support url is used', done => {
-    agent
-      .get('/content/support')
-      .expect('location', '//supportUrl')
-      .expect(301, done)
+    agent.get('/content/support').expect('location', '//supportUrl').expect(301, done)
   })
 })

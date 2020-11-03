@@ -83,9 +83,11 @@ module.exports = elite2Api => {
     })
 
   const getAppointmentsAtLocations = async (context, { agency, date, locations }) => {
-    return (await Promise.all(
-      locations.map(location => getAppointmentsAtLocationEnhanceWithLocationId(context, agency, location.value, date))
-    )).reduce((acc, current) => acc.concat(current), [])
+    return (
+      await Promise.all(
+        locations.map(location => getAppointmentsAtLocationEnhanceWithLocationId(context, agency, location.value, date))
+      )
+    ).reduce((acc, current) => acc.concat(current), [])
   }
 
   const getAvailableLocations = async (context, { timeSlot, locations, eventsAtLocations }) => {
@@ -124,18 +126,14 @@ module.exports = elite2Api => {
       locations,
     })
 
-    const mainStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC)
-      .add(1, 'minute')
-      .format(DATE_TIME_FORMAT_SPEC)
+    const mainStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).add(1, 'minute').format(DATE_TIME_FORMAT_SPEC)
     const mainLocations = await getAvailableLocations(context, {
       timeSlot: { startTime: mainStartTime, endTime },
       locations,
       eventsAtLocations,
     })
 
-    const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC)
-      .subtract(20, 'minutes')
-      .format(DATE_TIME_FORMAT_SPEC)
+    const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes').format(DATE_TIME_FORMAT_SPEC)
 
     const preLocations =
       preAppointmentRequired === 'yes'
@@ -146,9 +144,7 @@ module.exports = elite2Api => {
           })
         : []
 
-    const postEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC)
-      .add(20, 'minutes')
-      .format(DATE_TIME_FORMAT_SPEC)
+    const postEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes').format(DATE_TIME_FORMAT_SPEC)
 
     const postLocations =
       postAppointmentRequired === 'yes'

@@ -33,7 +33,11 @@ const appointmentDetails = {
   comment: 'Test',
   locationDescription: 'Room 3',
   appointmentTypeDescription: 'VideoLink',
-  locationTypes: [{ value: 1, text: 'Room 3' }, { value: 2, text: 'Room 2' }, { value: 3, text: 'Room 3' }],
+  locationTypes: [
+    { value: 1, text: 'Room 3' },
+    { value: 2, text: 'Room 2' },
+    { value: 3, text: 'Room 3' },
+  ],
   date: '01/01/2017',
   preAppointmentRequired: 'yes',
   postAppointmentRequired: 'yes',
@@ -71,8 +75,14 @@ describe('Room check middleware', () => {
     it('should place appointment details into flash and continue to next middleware', async () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
         mainLocations: [{ value: 1, text: 'Room 1' }],
-        preLocations: [{ value: 2, text: 'Room 2' }, { value: 22, text: 'Room 22' }],
-        postLocations: [{ value: 3, text: 'Room 3' }, { value: 33, text: 'Room 33' }],
+        preLocations: [
+          { value: 2, text: 'Room 2' },
+          { value: 22, text: 'Room 22' },
+        ],
+        postLocations: [
+          { value: 3, text: 'Room 3' },
+          { value: 33, text: 'Room 33' },
+        ],
       })
 
       const tomorrow = moment().add(1, 'day')
@@ -114,20 +124,12 @@ describe('Room check middleware', () => {
 
       await middleware(req, res, next)
 
-      const mainStartTime = moment()
-        .hour(12)
-        .minute(0)
+      const mainStartTime = moment().hour(12).minute(0)
 
-      const mainEndTime = moment()
-        .hour(13)
-        .minute(0)
+      const mainEndTime = moment().hour(13).minute(0)
 
-      const startTime = moment(mainStartTime)
-        .subtract(20, 'minutes')
-        .format(DATE_TIME_FORMAT_SPEC)
-      const endTime = moment(mainEndTime)
-        .add(20, 'minutes')
-        .format(DATE_TIME_FORMAT_SPEC)
+      const startTime = moment(mainStartTime).subtract(20, 'minutes').format(DATE_TIME_FORMAT_SPEC)
+      const endTime = moment(mainEndTime).add(20, 'minutes').format(DATE_TIME_FORMAT_SPEC)
 
       expect(availableSlotsService.getAvailableRooms).toHaveBeenCalledWith(
         {},
@@ -187,7 +189,10 @@ describe('Room check middleware', () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
         mainLocations: [{ value: 1, text: 'Room 1' }],
         preLocations: [],
-        postLocations: [{ value: 3, text: 'Room 3' }, { value: 4, text: 'Room 4' }],
+        postLocations: [
+          { value: 3, text: 'Room 3' },
+          { value: 4, text: 'Room 4' },
+        ],
       })
 
       req.flash.mockImplementation(() => [
@@ -207,7 +212,10 @@ describe('Room check middleware', () => {
 
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
         mainLocations: [{ value: 1, text: 'Room 1' }],
-        preLocations: [{ value: 3, text: 'Room 3' }, { value: 4, text: 'Room 4' }],
+        preLocations: [
+          { value: 3, text: 'Room 3' },
+          { value: 4, text: 'Room 4' },
+        ],
         postLocations: [],
       })
 
@@ -227,9 +235,15 @@ describe('Room check middleware', () => {
   describe('when selected rooms are still available', () => {
     it('should call the next middleware', async () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
-        preLocations: [{ value: 1, text: 'Room 1' }, { value: 3, text: 'Room 3' }],
+        preLocations: [
+          { value: 1, text: 'Room 1' },
+          { value: 3, text: 'Room 3' },
+        ],
         mainLocations: [{ value: 2, text: 'Room 2' }],
-        postLocations: [{ value: 1, text: 'Room 1' }, { value: 3, text: 'Room 3' }],
+        postLocations: [
+          { value: 1, text: 'Room 1' },
+          { value: 3, text: 'Room 3' },
+        ],
       })
 
       req.body = {
@@ -249,9 +263,15 @@ describe('Room check middleware', () => {
   describe('when selected rooms are no longer available', () => {
     it('should render room not available page if originaly selected main room is not available', async () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
-        preLocations: [{ value: 1, text: 'Room 1' }, { value: 3, text: 'Room 3' }],
+        preLocations: [
+          { value: 1, text: 'Room 1' },
+          { value: 3, text: 'Room 3' },
+        ],
         mainLocations: [{ value: 4, text: 'Room 4' }],
-        postLocations: [{ value: 1, text: 'Room 1' }, { value: 3, text: 'Room 3' }],
+        postLocations: [
+          { value: 1, text: 'Room 1' },
+          { value: 3, text: 'Room 3' },
+        ],
       })
 
       req.body = {
@@ -272,9 +292,15 @@ describe('Room check middleware', () => {
 
     it('should render room not available page if originally selected pre room is not available', async () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
-        preLocations: [{ value: 2, text: 'Room 2' }, { value: 3, text: 'Room 3' }],
+        preLocations: [
+          { value: 2, text: 'Room 2' },
+          { value: 3, text: 'Room 3' },
+        ],
         mainLocations: [{ value: 2, text: 'Room 2' }],
-        postLocations: [{ value: 2, text: 'Room 2' }, { value: 3, text: 'Room 3' }],
+        postLocations: [
+          { value: 2, text: 'Room 2' },
+          { value: 3, text: 'Room 3' },
+        ],
       })
 
       req.body = {
@@ -295,9 +321,15 @@ describe('Room check middleware', () => {
 
     it('should render room not available page if originally selected post room is not available', async () => {
       existingEventsService.getAvailableLocationsForVLB.mockReturnValue({
-        preLocations: [{ value: 2, text: 'Room 2' }, { value: 4, text: 'Room 4' }],
+        preLocations: [
+          { value: 2, text: 'Room 2' },
+          { value: 4, text: 'Room 4' },
+        ],
         mainLocations: [{ value: 2, text: 'Room 2' }],
-        postLocations: [{ value: 2, text: 'Room 2' }, { value: 4, text: 'Room 4' }],
+        postLocations: [
+          { value: 2, text: 'Room 2' },
+          { value: 4, text: 'Room 4' },
+        ],
       })
 
       req.body = {
