@@ -9,23 +9,11 @@ const selectCourtAppointmentCourt = require('./routes/appointments/selectCourtAp
 const viewCourtBookingsRouter = require('./routes/appointments/viewCourtBookingsRouter')
 const requestBookingRouter = require('./routes/appointments/requestBookingRouter')
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
-const currentUser = require('./middleware/currentUser')
 const { notifyClient } = require('./shared/notifyClient')
 
 const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
-  router.use(currentUser({ prisonApi, oauthApi }))
-
-  router.use(async (req, res, next) => {
-    res.locals = {
-      ...res.locals,
-      currentUrlPath: req.originalUrl,
-      prisonerSearchUrl: req.session.prisonerSearchUrl,
-    }
-    next()
-  })
-
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ prisonApi, logError }))
 
   router.use(

@@ -1,11 +1,8 @@
-const Logger = require('bunyan')
+const bunyan = require('bunyan')
+const bunyanFormat = require('bunyan-format')
 
-module.exports = new Logger({
-  name: 'book-video-link',
-  streams: [
-    {
-      stream: process.stdout,
-      level: 'error',
-    },
-  ],
-})
+const formatOut = bunyanFormat({ outputMode: 'json', color: true })
+
+const log = bunyan.createLogger({ name: 'Book video link', stream: formatOut, level: 'info' })
+
+module.exports = log

@@ -13,6 +13,7 @@ describe('Current user', () => {
     oauthApi.currentUser.mockReturnValue({
       name: 'Bob Smith',
       activeCaseLoadId: 'MDI',
+      username: 'USER_BOB',
     })
 
     req = { session: {} }
@@ -30,6 +31,7 @@ describe('Current user', () => {
     expect(req.session.userDetails).toEqual({
       name: 'Bob Smith',
       activeCaseLoadId: 'MDI',
+      username: 'USER_BOB',
     })
   })
 
@@ -59,6 +61,7 @@ describe('Current user', () => {
         description: 'Moorland',
       },
       displayName: 'Bob Smith',
+      username: 'USER_BOB',
     })
   })
 

@@ -13,12 +13,13 @@ module.exports = ({ prisonApi, oauthApi }) => async (req, res, next) => {
     }
 
     const caseloads = req.session.allCaseloads
-    const { name, activeCaseLoadId } = req.session.userDetails
+    const { name, username, activeCaseLoadId } = req.session.userDetails
 
     res.locals.user = {
       ...res.locals.user,
       allCaseloads: caseloads,
       displayName: name,
+      username,
       activeCaseLoad: caseloads.find(cl => cl.caseLoadId === activeCaseLoadId),
     }
   }

@@ -22,6 +22,7 @@ const setupAuth = require('./setupAuth')
 const setupStaticContent = require('./setupStaticContent')
 const nunjucksSetup = require('./utils/nunjucksSetup')
 const setupRedirects = require('./setupRedirects')
+const setupCurrentUserAndRequestLogging = require('./setupCurrentUserAndRequestLogging')
 
 app.set('trust proxy', 1) // trust first proxy
 app.set('view engine', 'njk')
@@ -36,6 +37,7 @@ app.use(setupStaticContent())
 app.use(setupWebSession())
 app.use(setupAuth({ oauthApi: apis.oauthApi, tokenVerificationApi: apis.tokenVerificationApi }))
 app.use(csrf())
+app.use(setupCurrentUserAndRequestLogging({ oauthApi: apis.oauthApi, prisonApi: apis.prisonApi }))
 app.use(
   routes({
     prisonApi: apis.prisonApi,
