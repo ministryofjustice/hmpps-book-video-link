@@ -10,7 +10,7 @@ context('Health page reports health correctly', () => {
       expect(response.body.version).to.not.be.empty
       expect(response.body.api).to.deep.equal({
         auth: { timeout: 1000, code: 'ECONNABORTED', errno: 'ETIMEDOUT', retries: 2 },
-        elite2: { timeout: 1000, code: 'ECONNABORTED', errno: 'ETIMEDOUT', retries: 2 },
+        prison: { timeout: 1000, code: 'ECONNABORTED', errno: 'ETIMEDOUT', retries: 2 },
         tokenverification: 'UP',
         whereabouts: 'UP',
       })
@@ -27,7 +27,7 @@ context('Health page reports health correctly', () => {
       expect(response.body.version).to.not.be.empty
       expect(response.body.api).to.deep.equal({
         auth: 'UP',
-        elite2: 'UP',
+        prison: 'UP',
         tokenverification: 'UP',
         whereabouts: 'UP',
       })

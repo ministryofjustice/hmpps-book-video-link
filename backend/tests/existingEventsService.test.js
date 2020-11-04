@@ -3,21 +3,21 @@ const { DATE_ONLY_FORMAT_SPEC } = require('../shared/dateHelpers')
 const existingEventsService = require('../services/existingEventsService')
 
 describe('existing events', () => {
-  const elite2Api = {}
+  const prisonApi = {}
   let service
 
   beforeEach(() => {
-    elite2Api.getActivityList = jest.fn()
-    service = existingEventsService(elite2Api)
+    prisonApi.getActivityList = jest.fn()
+    service = existingEventsService(prisonApi)
   })
 
   describe('location availability', () => {
     beforeEach(() => {
-      elite2Api.getLocations = jest.fn()
-      elite2Api.getEventsAtLocations = jest.fn()
-      elite2Api.getLocations.mockReturnValue(Promise.resolve([]))
-      elite2Api.getLocationsForAppointments = jest.fn()
-      elite2Api.getActivitiesAtLocation = jest.fn()
+      prisonApi.getLocations = jest.fn()
+      prisonApi.getEventsAtLocations = jest.fn()
+      prisonApi.getLocations.mockReturnValue(Promise.resolve([]))
+      prisonApi.getLocationsForAppointments = jest.fn()
+      prisonApi.getActivitiesAtLocation = jest.fn()
     })
 
     it('should handle time slot where location booking slightly overlap ', async () => {
@@ -117,7 +117,7 @@ describe('existing events', () => {
       const today = moment().format(DATE_ONLY_FORMAT_SPEC)
       const startTime = `${today}T11:00:00`
       const endTime = `${today}T14:00:00`
-      elite2Api.getActivityList.mockReturnValue(
+      prisonApi.getActivityList.mockReturnValue(
         Promise.resolve([
           {
             locationId: 1,
@@ -154,7 +154,7 @@ describe('existing events', () => {
     })
 
     it('should make multiple calls to retrieve events at each location, also enhancing each event with the locationId', async () => {
-      elite2Api.getActivityList.mockReturnValue(
+      prisonApi.getActivityList.mockReturnValue(
         Promise.resolve([{ eventId: 1, startTime: '2010-10-10T10:00:00', endTime: '2010-10-10T10:00:00' }])
       )
 
@@ -194,11 +194,11 @@ describe('existing events', () => {
         ])
       )
 
-      expect(elite2Api.getActivityList).toHaveBeenCalledWith(
+      expect(prisonApi.getActivityList).toHaveBeenCalledWith(
         {},
         { agencyId: 'MDI', date: '2019-10-10', locationId: 1, usage: 'APP' }
       )
-      expect(elite2Api.getActivityList).toHaveBeenCalledWith(
+      expect(prisonApi.getActivityList).toHaveBeenCalledWith(
         {},
         { agencyId: 'MDI', date: '2019-10-10', locationId: 2, usage: 'APP' }
       )
@@ -215,8 +215,8 @@ describe('existing events', () => {
         },
       ]
 
-      elite2Api.getLocationsForAppointments.mockReturnValue(locations)
-      elite2Api.getActivityList.mockReturnValue(Promise.resolve(eventsAtLocations))
+      prisonApi.getLocationsForAppointments.mockReturnValue(locations)
+      prisonApi.getActivityList.mockReturnValue(Promise.resolve(eventsAtLocations))
 
       const availableLocations = await service.getAvailableLocationsForVLB(
         {},
@@ -240,12 +240,12 @@ describe('existing events', () => {
 
   describe('getting events for offenders', () => {
     beforeEach(() => {
-      elite2Api.getSentenceData = jest.fn()
-      elite2Api.getVisits = jest.fn()
-      elite2Api.getAppointments = jest.fn()
-      elite2Api.getExternalTransfers = jest.fn()
-      elite2Api.getCourtEvents = jest.fn()
-      elite2Api.getActivities = jest.fn()
+      prisonApi.getSentenceData = jest.fn()
+      prisonApi.getVisits = jest.fn()
+      prisonApi.getAppointments = jest.fn()
+      prisonApi.getExternalTransfers = jest.fn()
+      prisonApi.getCourtEvents = jest.fn()
+      prisonApi.getActivities = jest.fn()
     })
 
     it('should call the correct endpoints with the correct parameters', async () => {
@@ -257,16 +257,16 @@ describe('existing events', () => {
 
       await service.getExistingEventsForOffender({}, 'LEI', '11/12/2019', 'ABC123')
 
-      expect(elite2Api.getVisits).toHaveBeenCalledWith({}, expectedParameters)
-      expect(elite2Api.getAppointments).toHaveBeenCalledWith({}, expectedParameters)
-      expect(elite2Api.getExternalTransfers).toHaveBeenCalledWith({}, expectedParameters)
-      expect(elite2Api.getCourtEvents).toHaveBeenCalledWith({}, expectedParameters)
-      expect(elite2Api.getActivities).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getVisits).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getAppointments).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getExternalTransfers).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getCourtEvents).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getActivities).toHaveBeenCalledWith({}, expectedParameters)
     })
 
     describe('when there are no errors', () => {
       beforeEach(() => {
-        elite2Api.getSentenceData = jest.fn().mockResolvedValue([
+        prisonApi.getSentenceData = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             firstName: 'Test',
@@ -277,7 +277,7 @@ describe('existing events', () => {
             },
           },
         ])
-        elite2Api.getVisits = jest.fn().mockResolvedValue([
+        prisonApi.getVisits = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             locationId: 1,
@@ -291,7 +291,7 @@ describe('existing events', () => {
             endTime: '2019-12-11T15:00:00',
           },
         ])
-        elite2Api.getAppointments = jest.fn().mockResolvedValue([
+        prisonApi.getAppointments = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             locationId: 2,
@@ -304,7 +304,7 @@ describe('existing events', () => {
             endTime: '2019-12-11T13:00:00',
           },
         ])
-        elite2Api.getExternalTransfers = jest.fn().mockResolvedValue([
+        prisonApi.getExternalTransfers = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             locationId: 3,
@@ -318,7 +318,7 @@ describe('existing events', () => {
             endTime: '2019-12-11T17:00:00',
           },
         ])
-        elite2Api.getCourtEvents = jest.fn().mockResolvedValue([
+        prisonApi.getCourtEvents = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             eventId: 4,
@@ -331,7 +331,7 @@ describe('existing events', () => {
             startTime: '2019-12-11T11:00:00',
           },
         ])
-        elite2Api.getActivities = jest.fn().mockResolvedValue([
+        prisonApi.getActivities = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             locationId: 5,
@@ -381,10 +381,10 @@ describe('existing events', () => {
       })
     })
 
-    describe('when there are errors with elite2Api', () => {
+    describe('when there are errors with prisonApi', () => {
       it('should return the error', async () => {
         const error = new Error('Network error')
-        elite2Api.getVisits.mockImplementation(() => Promise.reject(error))
+        prisonApi.getVisits.mockImplementation(() => Promise.reject(error))
 
         const events = await service.getExistingEventsForOffender({}, 'LEI', '11/12/2019', 'ABC123')
 
@@ -395,8 +395,8 @@ describe('existing events', () => {
 
   describe('get events for a location', () => {
     beforeEach(() => {
-      elite2Api.getActivitiesAtLocation = jest.fn()
-      elite2Api.getActivityList = jest.fn()
+      prisonApi.getActivitiesAtLocation = jest.fn()
+      prisonApi.getActivityList = jest.fn()
     })
 
     it('should call the correct endpoints with the correct parameters', async () => {
@@ -408,14 +408,14 @@ describe('existing events', () => {
 
       await service.getExistingEventsForLocation({}, 'LEI', 123, '11/12/2019')
 
-      expect(elite2Api.getActivitiesAtLocation).toHaveBeenCalledWith({}, expectedParameters)
-      expect(elite2Api.getActivityList).toHaveBeenCalledWith({}, { ...expectedParameters, usage: 'VISIT' })
-      expect(elite2Api.getActivityList).toHaveBeenCalledWith({}, { ...expectedParameters, usage: 'APP' })
+      expect(prisonApi.getActivitiesAtLocation).toHaveBeenCalledWith({}, expectedParameters)
+      expect(prisonApi.getActivityList).toHaveBeenCalledWith({}, { ...expectedParameters, usage: 'VISIT' })
+      expect(prisonApi.getActivityList).toHaveBeenCalledWith({}, { ...expectedParameters, usage: 'APP' })
     })
 
     describe('when there are no errors', () => {
       beforeEach(() => {
-        elite2Api.getActivitiesAtLocation = jest.fn().mockResolvedValue([
+        prisonApi.getActivitiesAtLocation = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
             locationId: 1,
@@ -429,7 +429,7 @@ describe('existing events', () => {
             endTime: '2019-12-11T16:00:00',
           },
         ])
-        elite2Api.getActivityList = jest
+        prisonApi.getActivityList = jest
           .fn()
           .mockResolvedValueOnce([
             {
@@ -486,10 +486,10 @@ describe('existing events', () => {
       })
     })
 
-    describe('when there are errors with elite2Api', () => {
+    describe('when there are errors with prisonApi', () => {
       it('should return the error', async () => {
         const error = new Error('Network error')
-        elite2Api.getActivitiesAtLocation.mockImplementation(() => Promise.reject(error))
+        prisonApi.getActivitiesAtLocation.mockImplementation(() => Promise.reject(error))
 
         const events = await service.getExistingEventsForLocation({}, 'LEI', 123, '11/12/2019')
 

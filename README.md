@@ -22,7 +22,7 @@ docker run -p 3000:3000 -d \
 ## Cypress integration tests
 
 The `integration-tests` directory contains a set of Cypress integration tests for the `book-video-link` application.
-These tests use WireMock to stub the application's dependencies on the elite2, oauth, token-verification and whereabouts RESTful APIs.
+These tests use WireMock to stub the application's dependencies on the prisonApi, oauth, token-verification and whereabouts RESTful APIs.
 
 ### Running the Cypress tests
 
@@ -35,7 +35,7 @@ the request log at `localhost:9191/__admin/requests/` and a JSON representation 
 ### Starting feature tests node instance
 
 A separate node instance needs to be started for the feature tests. This will run on port 3008 and won't conflict
-with any of the api services, e.g. elite2-api or oauth.
+with any of the api services, e.g. prison-api or oauth.
 
 ```npm run start-feature```
 

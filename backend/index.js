@@ -38,7 +38,7 @@ app.use(setupAuth({ oauthApi: apis.oauthApi, tokenVerificationApi: apis.tokenVer
 app.use(csrf())
 app.use(
   routes({
-    elite2Api: apis.elite2Api,
+    prisonApi: apis.prisonApi,
     whereaboutsApi: apis.whereaboutsApi,
     oauthApi: apis.oauthApi,
   })

@@ -14,8 +14,8 @@ const { notifyClient } = require('./shared/notifyClient')
 
 const router = express.Router()
 
-const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
-  router.use(currentUser({ elite2Api, oauthApi }))
+const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
+  router.use(currentUser({ prisonApi, oauthApi }))
 
   router.use(async (req, res, next) => {
     res.locals = {
@@ -26,24 +26,24 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     next()
   })
 
-  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ elite2Api, logError }))
+  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ prisonApi, logError }))
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment',
-    addCourtAppointmentRouter({ elite2Api, logError })
+    addCourtAppointmentRouter({ prisonApi, logError })
   )
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court',
-    selectCourtAppointmentCourt({ elite2Api, whereaboutsApi, logError })
+    selectCourtAppointmentCourt({ prisonApi, whereaboutsApi, logError })
   )
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms',
-    selectCourtAppointmentRooms({ elite2Api, whereaboutsApi, logError, oauthApi, notifyClient })
+    selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, logError, oauthApi, notifyClient })
   )
 
-  router.get('/videolink/prisoner-search', videolinkPrisonerSearchController({ oauthApi, elite2Api, logError }))
+  router.get('/videolink/prisoner-search', videolinkPrisonerSearchController({ oauthApi, prisonApi, logError }))
 
   router.get('/videolink', async (req, res) => {
     res.render('courtsVideolink.njk', {
@@ -52,9 +52,9 @@ const setup = ({ elite2Api, whereaboutsApi, oauthApi }) => {
     })
   })
 
-  router.use('/videolink/bookings', viewCourtBookingsRouter({ elite2Api, whereaboutsApi, logError }))
+  router.use('/videolink/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi, logError }))
 
-  router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, elite2Api }))
+  router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
   return router
 }

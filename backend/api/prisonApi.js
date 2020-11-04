@@ -1,7 +1,7 @@
 const contextProperties = require('../contextProperties')
 const { mapToQueryString } = require('../utils')
 
-const elite2ApiFactory = client => {
+const prisonApiFactory = client => {
   const processResponse = context => response => {
     contextProperties.setResponsePagination(context, response.headers)
     return response.body
@@ -103,4 +103,4 @@ const elite2ApiFactory = client => {
   }
 }
 
-module.exports = { elite2ApiFactory }
+module.exports = { prisonApiFactory }
