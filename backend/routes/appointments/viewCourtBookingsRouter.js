@@ -60,7 +60,7 @@ module.exports = ({ prisonApi, whereaboutsApi, logError }) => async (req, res) =
 
     const appointmentsEnhanced = videoLinkAppointmentsEnhanced
       .filter(videoLink => (courtOption ? filterVideoLinkCourt(courtOption, videoLink.court) : true))
-      .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
       .map(videoLink => {
         const { startTime, endTime, locationDescription, court } = videoLink
         const offenderName = `${properCaseName(videoLink.firstName)} ${properCaseName(videoLink.lastName)}`

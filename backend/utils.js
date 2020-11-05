@@ -136,7 +136,7 @@ const isTodayOrAfter = date => {
 const getCurrentPeriod = date => {
   const afternoonSplit = 12
   const eveningSplit = 17
-  const currentHour = moment(date).format('H')
+  const currentHour = parseInt(moment(date).format('H'), 10)
 
   if (currentHour < afternoonSplit) return 'AM'
   if (currentHour < eveningSplit) return 'PM'

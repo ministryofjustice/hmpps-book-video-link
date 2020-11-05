@@ -7,7 +7,7 @@ const clientSecret = 'clientSecret'
 
 const client = jest.fn()
 const oauthApi = oauthApiFactory(client, { url, clientId, clientSecret })
-const mock = nock('http://localhost', { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+const mock = nock('http://localhost', { reqheaders: { 'Content-Type': 'application/x-www-form-urlencoded' } })
 
 describe('oathApi tests', () => {
   describe('refresh', () => {

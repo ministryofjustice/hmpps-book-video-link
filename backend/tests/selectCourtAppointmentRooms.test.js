@@ -8,6 +8,7 @@ describe('Select court appointment rooms', () => {
   const oauthApi = {}
   const appointmentsService = {}
   const existingEventsService = {}
+  let service
 
   const req = {
     originalUrl: 'http://localhost',
@@ -90,16 +91,21 @@ describe('Select court appointment rooms', () => {
     req.flash.mockImplementation(() => [appointmentDetails])
 
     notifyClient.sendEmail = jest.fn()
+
+    service = selectCourtAppointmentRoomsFactory({
+      prisonApi,
+      whereaboutsApi,
+      appointmentsService,
+      existingEventsService,
+      logError,
+      oauthApi,
+      notifyClient,
+    })
   })
 
   describe('index', () => {
     it('should return locations', async () => {
-      const { index } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-      })
+      const { index } = service
 
       await index(req, res)
 
@@ -110,12 +116,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should extract appointment details', async () => {
-      const { index } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-      })
+      const { index } = service
 
       await index(req, res)
 
@@ -134,11 +135,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { index } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-      })
+      const { index } = service
 
       req.flash.mockImplementation(() => [])
 
@@ -156,12 +153,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should call getAvailableLocationsForVLB with the correct parameters', async () => {
-      const { index } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        existingEventsService,
-        logError,
-      })
+      const { index } = service
 
       await index(req, res)
 
@@ -190,13 +182,7 @@ describe('Select court appointment rooms', () => {
         comment: 'Test',
       }
 
-      const { validateInput } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-      })
-
+      const { validateInput } = service
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
@@ -217,13 +203,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should validate presence of room locations', async () => {
-      const { validateInput } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-        oauthApi,
-      })
+      const { validateInput } = service
 
       req.body = {
         selectPreAppointmentLocation: null,
@@ -252,12 +232,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should return selected form values on validation errors', async () => {
-      const { validateInput } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-      })
+      const { validateInput } = service
       const comment = 'Some supporting comment text'
 
       req.body = { comment }
@@ -273,12 +248,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should return locations, links and summary details on validation errors', async () => {
-      const { validateInput } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-      })
+      const { validateInput } = service
 
       req.flash.mockImplementation(() => [
         {
@@ -308,7 +278,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { validateInput } = selectCourtAppointmentRoomsFactory({ prisonApi, appointmentsService, logError })
+      const { validateInput } = service
 
       req.flash.mockImplementation(() => [])
 
@@ -323,7 +293,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should pack appointment details back into flash before rendering', async () => {
-      const { validateInput } = selectCourtAppointmentRoomsFactory({ prisonApi, appointmentsService, logError })
+      const { validateInput } = service
 
       await validateInput(req, res)
 
@@ -351,14 +321,7 @@ describe('Select court appointment rooms', () => {
       res.redirect = jest.fn()
     })
     it('should create main appointment', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        appointmentsService,
-        existingEventsService,
-        logError,
-        oauthApi,
-      })
+      const { createAppointments } = service
 
       await createAppointments(req, res)
 
@@ -377,14 +340,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should create main pre appointment 20 minutes before main with 20 minute duration', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        appointmentsService,
-        existingEventsService,
-        logError,
-        oauthApi,
-      })
+      const { createAppointments } = service
 
       await createAppointments(req, res)
 
@@ -403,14 +359,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should create main post appointment 20 minutes after main with 20 minute duration', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-        oauthApi,
-      })
+      const { createAppointments } = service
 
       await createAppointments(req, res)
 
@@ -456,14 +405,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should place pre and post appointment details into flash', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        appointmentsService,
-        logError,
-        existingEventsService,
-        oauthApi,
-      })
+      const { createAppointments } = service
 
       req.body = {
         selectPreAppointmentLocation: '1',
@@ -486,14 +428,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should redirect to confirmation page', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        oauthApi,
-        logError,
-        appointmentsService,
-        existingEventsService,
-      })
+      const { createAppointments } = service
 
       req.body = {
         selectPreAppointmentLocation: '1',
@@ -516,14 +451,7 @@ describe('Select court appointment rooms', () => {
           postAppointmentRequired: 'no',
         },
       ])
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        oauthApi,
-        logError,
-        appointmentsService,
-        existingEventsService,
-      })
+      const { createAppointments } = service
 
       req.body = {
         selectMainAppointmentLocation: '2',

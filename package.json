@@ -45,6 +45,8 @@
     "universal-analytics": "^0.4.23"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.6",
     "@typescript-eslint/eslint-plugin": "^4.6.1",
     "@typescript-eslint/parser": "^4.6.1",
     "audit-ci": "^3.1.1",
@@ -84,6 +86,7 @@
     "test-watch": "jest --watch",
     "record-build-info": "node scripts/record-build-info",
     "lint": "eslint backend",
+    "typecheck": "tsc",
     "verify": "npm run lint && npm test",
     "security_audit": "npx audit-ci --config audit-ci.json",
     "int-test": "cypress run",
@@ -123,7 +126,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && npm test"
+      "pre-commit": "lint-staged && tsc && npm test"
     }
   },
   "lint-staged": {

@@ -25,7 +25,7 @@ describe('Test clients built by oauthEnabledClient', () => {
 
     it('Should set the authorization header with "Bearer <access token>"', async () => {
       const context = {}
-      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b' }, context)
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
 
       const response = await client.get(context, '/api/users/me')
 
@@ -117,160 +117,6 @@ describe('Test clients built by oauthEnabledClient', () => {
 
         await expect(client.get({}, '/api/users/me')).rejects.toThrow('Timeout of 300ms exceeded')
       })
-
-      it('Should fail if request times out three with custom time out', async () => {
-        mock
-          .get('/api/users/me')
-          .delay(200)
-          .reply(200, { failure: 'one' })
-          .get('/api/users/me')
-          .delay(200)
-          .reply(200, { failure: 'two' })
-          .get('/api/users/me')
-          .delay(200)
-          .reply(200, { failure: 'three' })
-
-        await expect(client.getWithCustomTimeout({}, '/api/users/me', { customTimeout: 100 })).rejects.toThrow(
-          'Timeout of 100ms exceeded'
-        )
-      })
-    })
-
-    describe('getStream', () => {
-      it('Should retry twice if request fails', async () => {
-        mock
-          .get('/api/users/me')
-          .reply(500, { failure: 'one' })
-          .get('/api/users/me')
-          .reply(500, { failure: 'two' })
-          .get('/api/users/me')
-          .reply(200, '{"hi":"bob"}', ['Content-Type', 'image/png'])
-
-        const response = await client.getStream({}, '/api/users/me')
-        expect(response.read().toString()).toEqual('{"hi":"bob"}')
-      })
-
-      it('Should retry twice if request times out', async () => {
-        mock
-          .get('/api/users/me')
-          .delay(10000) // delay set to 10s, timeout to 900/3=300ms
-          .reply(200, { failure: 'one' })
-          .get('/api/users/me')
-          .delay(10000)
-          .reply(200, { failure: 'two' })
-          .get('/api/users/me')
-          .reply(200, '{"hi":"bob"}', ['Content-Type', 'image/png'])
-
-        const response = await client.getStream({}, '/api/users/me')
-        expect(response.read().toString()).toEqual('{"hi":"bob"}')
-      })
-
-      it('Should fail if request times out three times', async () => {
-        mock
-          .get('/api/users/me')
-          .delay(10000) // delay set to 10s, timeout to 900/3=300ms
-          .reply(200, { failure: 'one' })
-          .get('/api/users/me')
-          .delay(10000)
-          .reply(200, { failure: 'two' })
-          .get('/api/users/me')
-          .delay(10000)
-          .reply(200, { failure: 'three' })
-
-        await expect(client.getStream({}, '/api/users/me')).rejects.toThrow('Timeout of 300ms exceeded')
-      })
-    })
-
-    describe('pipe', () => {
-      let res
-      beforeEach(() => {
-        const header = jest.fn()
-        const on = jest.fn()
-        const once = jest.fn()
-        const emit = jest.fn()
-        const write = jest.fn()
-        const end = jest.fn()
-
-        res = {
-          header,
-          on,
-          once,
-          emit,
-          write,
-          end,
-        }
-      })
-      it('Should retry twice if request fails', async () => {
-        const pipe = new Promise(resolve => {
-          mock
-            .get('/api/users/me')
-            .reply(500, { failure: 'one' })
-            .get('/api/users/me')
-            .reply(500, { failure: 'two' })
-            .get('/api/users/me')
-            .reply(200, Buffer.from('some binary data'), ['Content-Type', 'image/png'])
-
-          client.pipe({}, '/api/users/me', {
-            ...res,
-            end: () => {
-              resolve()
-            },
-          })
-        })
-
-        await pipe
-        expect(res.write).toHaveBeenCalled()
-      })
-      it('Should retry many time if configure with more retires if request fails', async () => {
-        const pipe = new Promise(resolve => {
-          mock
-            .get('/api/users/me')
-            .reply(500, { failure: 'one' })
-            .get('/api/users/me')
-            .reply(500, { failure: 'two' })
-            .get('/api/users/me')
-            .reply(500, { failure: 'three' })
-            .get('/api/users/me')
-            .reply(500, { failure: 'four' })
-            .get('/api/users/me')
-            .reply(500, { failure: 'five' })
-            .get('/api/users/me')
-            .reply(200, Buffer.from('some binary data'), ['Content-Type', 'image/png'])
-
-          client.pipe(
-            {},
-            '/api/users/me',
-            {
-              ...res,
-              end: () => {
-                resolve()
-              },
-            },
-            { retry: 5 }
-          )
-        })
-
-        await pipe
-        expect(res.write).toHaveBeenCalled()
-      })
-      it('Should set headers on response to pipe to', async () => {
-        const pipe = new Promise(resolve => {
-          mock.get('/api/users/me').reply(200, Buffer.from('some binary data'), {
-            'Content-Type': 'image/png',
-            'Content-Length': 123,
-          })
-
-          client.pipe({}, '/api/users/me', {
-            ...res,
-            end: () => {
-              resolve()
-            },
-          })
-        })
-
-        await pipe
-        expect(res.header).toHaveBeenCalledWith({ 'content-type': 'image/png', 'content-length': '123' })
-      })
     })
   })
 
@@ -284,7 +130,7 @@ describe('Test clients built by oauthEnabledClient', () => {
       nock(hostname).get('/api/users/me').reply(200, {})
 
       const context = {}
-      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b' }, context)
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
 
       const response = await client.get(context, '/api/users/me')
 
@@ -296,7 +142,7 @@ describe('Test clients built by oauthEnabledClient', () => {
       nock(hostname).get('/api/users/me').reply(200, {})
 
       const context = {}
-      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b' }, context)
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
 
       const response = await client.get(context, '/api/users/me')
 
