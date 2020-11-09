@@ -8,13 +8,13 @@
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
     "skipLibCheck": true,
-    "noEmit": true,
+    "noEmit": false,
     "allowJs": true,
     "checkJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration-tests", "build", "static", "config",],
+  "exclude": ["node_modules", "assets/**/*.js", "integration-tests", "build", "dist/**/*.js", "static", "config",],
   "include": ["**/*.js", "**/*.ts"]
 }

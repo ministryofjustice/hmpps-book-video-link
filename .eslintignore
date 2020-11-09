@@ -4,6 +4,7 @@ internals
 public
 docs
 bin
+dist
 static
 audit-ci.json
 package-lock.json
