@@ -10,12 +10,18 @@ const DayOfTheWeek = dateTime => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(
 const DayMonthYear = dateTime => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
 const Time = dateTime => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(MOMENT_TIME)
 
+/**
+ * TODO: this needs tidying up - at the moment returns {string | Moment} but nowhere seems to handle the string case.
+ * @return {moment.Moment}
+ */
 const buildDateTime = ({ date, hours, minutes, dateFormat = DAY_MONTH_YEAR }) => {
   const time =
     date &&
     Number.isSafeInteger(Number.parseInt(hours, 10)) &&
     Number.isSafeInteger(Number.parseInt(minutes, 10)) &&
     moment(date, dateFormat)
+
+  // @ts-ignore
   return time ? time.hour(Number(hours)).minutes(Number(minutes)) : ''
 }
 

@@ -169,6 +169,7 @@ describe('Add appointment', () => {
           repeats: 'DAILY',
         })
 
+        // @ts-ignore
         Date.now.mockRestore()
       })
 
@@ -180,6 +181,7 @@ describe('Add appointment', () => {
 
         expect(res.redirect).toHaveBeenCalledWith(`/offenders/${offenderNo}/prepost-appointments`)
 
+        // @ts-ignore
         Date.now.mockRestore()
       })
     })
@@ -195,6 +197,7 @@ describe('Add appointment', () => {
         expect(logError).toHaveBeenCalledWith('http://localhost', new Error('Network error'), serviceUnavailableMessage)
         expect(res.render).toHaveBeenCalledWith('error.njk', { url: `/prisoner/${offenderNo}` })
 
+        // @ts-ignore
         Date.now.mockRestore()
       })
     })
@@ -233,7 +236,7 @@ describe('Add appointment', () => {
             endOfPeriod: 'Friday 26 April 2019',
           })
         )
-
+        // @ts-ignore
         Date.now.mockRestore()
       })
 

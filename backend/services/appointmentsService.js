@@ -1,10 +1,26 @@
 const moment = require('moment')
-const { repeatTypes, endRecurringEndingDate } = require('../shared/appointmentConstants')
 const { DATE_TIME_FORMAT_SPEC, Time } = require('../shared/dateHelpers')
 const { properCaseName } = require('../utils')
 
 const isVideoLinkBooking = appointmentType => appointmentType === 'VLB'
 
+/**
+ * TODO need to tidy this up and remove workout what is and isn't optional
+ *
+ * @param {object} params
+ * @param {string} [params.firstName]
+ * @param {string} [params.lastName]
+ * @param {any} [params.offenderNo]
+ * @param {any} [params.appointmentType]
+ * @param {any} [params.appointmentTypeDescription]
+ * @param {any} [params.location]
+ * @param {any} [params.startTime]
+ * @param {any} [params.endTime]
+ * @param {any} [params.comment]
+ * @param {any} [params.recurring]
+ * @param {string} [params.agencyDescription]
+ * @param {any} [params.court]
+ */
 const toAppointmentDetailsSummary = ({
   firstName,
   lastName,
@@ -16,19 +32,9 @@ const toAppointmentDetailsSummary = ({
   endTime,
   comment,
   recurring,
-  times,
-  repeats,
   agencyDescription,
   court,
 }) => {
-  const recurringInformation = recurring === 'yes' &&
-    !isVideoLinkBooking(appointmentType) && {
-      howOften: repeatTypes.find(repeat => repeat.value === repeats).text,
-      numberOfAppointments: times,
-      endDate: endRecurringEndingDate({ startTime, repeats, times }).endOfPeriod.format('dddd D MMMM YYYY'),
-      endDateShortFormat: endRecurringEndingDate({ startTime, repeats, times }).endOfPeriod.format('D MMMM YYYY'),
-    }
-
   const appointmentInfo = {
     prisonerName: isVideoLinkBooking(appointmentType)
       ? `${properCaseName(firstName)} ${properCaseName(lastName)}`
@@ -41,7 +47,6 @@ const toAppointmentDetailsSummary = ({
     endTime: endTime && Time(endTime),
     comment,
     recurring: properCaseName(recurring),
-    ...recurringInformation,
     court,
   }
 

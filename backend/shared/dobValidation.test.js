@@ -1,6 +1,9 @@
 const dobValidation = require('./dobValidation')
 
 describe('date of birth validation', () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   it('should error when missing the day', () => {
     expect(dobValidation(undefined, '3', '1987').dobErrors).toEqual([
       { href: '#dobDay', text: 'Date of birth must include a day' },
@@ -33,8 +36,6 @@ describe('date of birth validation', () => {
       { text: 'Enter a date of birth which is in the past', href: '#dobDay' },
       { href: '#dobError' },
     ])
-
-    Date.now.mockRestore()
   })
 
   it('should error when the date too far in the past', async () => {

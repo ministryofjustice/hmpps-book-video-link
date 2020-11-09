@@ -34,6 +34,7 @@ describe('Add court appointment', () => {
   })
 
   afterEach(() => {
+    // @ts-ignore
     if (Date.now.mockRestore) Date.now.mockRestore()
   })
 
