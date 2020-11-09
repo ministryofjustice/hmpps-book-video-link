@@ -68,6 +68,7 @@ describe('Room check middleware', () => {
   })
 
   afterEach(() => {
+    // @ts-ignore
     if (Date.now.mockRestore) Date.now.mockRestore()
   })
 

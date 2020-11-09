@@ -194,20 +194,17 @@ const addAppointmentFactory = (appointmentsService, existingEventsService, priso
     const endTime = buildDateTime({ date, hours: endTimeHours, minutes: endTimeMinutes })
 
     const errors = [
-      ...getValidationMessages(
-        {
-          appointmentType,
-          location,
-          date,
-          startTime,
-          endTime,
-          comments,
-          times,
-          repeats,
-          recurring,
-        },
-        true
-      ),
+      ...getValidationMessages({
+        appointmentType,
+        location,
+        date,
+        startTime,
+        endTime,
+        comments,
+        times,
+        repeats,
+        recurring,
+      }),
     ]
 
     if (errors.length > 0) {

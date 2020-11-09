@@ -42,7 +42,7 @@ describe('View court bookings', () => {
   })
 
   afterAll(() => {
-    Date.now.mockRestore()
+    jest.restoreAllMocks()
   })
 
   describe('when the page is first loaded with no results', () => {

@@ -57,6 +57,7 @@ describe('Request a booking', () => {
 
     controller = requestBookingFactory({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi })
 
+    // @ts-ignore
     raiseAnalyticsEvent.mockRestore()
   })
 
@@ -89,6 +90,10 @@ describe('Request a booking', () => {
         postAppointmentRequired: 'no',
       }
 
+      afterEach(() => {
+        jest.restoreAllMocks()
+      })
+
       it('should stash the appointment details and redirect to offender details', async () => {
         jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
 
@@ -110,6 +115,7 @@ describe('Request a booking', () => {
 
         expect(res.redirect).toHaveBeenCalledWith('/request-booking/select-court')
 
+        // @ts-ignore
         Date.now.mockRestore()
       })
 
@@ -142,6 +148,7 @@ describe('Request a booking', () => {
           })
         )
 
+        // @ts-ignore
         Date.now.mockRestore()
       })
 
@@ -222,6 +229,7 @@ describe('Request a booking', () => {
         })
       )
 
+      // @ts-ignore
       Date.now.mockRestore()
     })
   })

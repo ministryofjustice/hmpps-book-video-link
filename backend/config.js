@@ -1,11 +1,13 @@
+const toInt = (envVar, defaultVal) => (envVar ? parseInt(envVar, 10) : defaultVal)
+
 module.exports = {
   app: {
     port: process.env.PORT || 3000,
     production: process.env.NODE_ENV === 'production',
     notmEndpointUrl: process.env.NN_ENDPOINT_URL || 'http://localhost:3000/',
-    tokenRefreshThresholdSeconds: process.env.TOKEN_REFRESH_THRESHOLD_SECONDS || 60,
+    tokenRefreshThresholdSeconds: toInt(process.env.TOKEN_REFRESH_THRESHOLD_SECONDS, 60),
     url: process.env.BOOK_VIDEO_LINK_UI_URL || `http://localhost:${process.env.PORT || 3000}/`,
-    maximumFileUploadSizeInMb: process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB || 200,
+    maximumFileUploadSizeInMb: toInt(process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB, 200),
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
     supportUrl: process.env.SUPPORT_URL || 'http://localhost:3000/',
   },
@@ -15,20 +17,20 @@ module.exports = {
   hmppsCookie: {
     name: process.env.HMPPS_COOKIE_NAME || 'hmpps-session-dev',
     domain: process.env.HMPPS_COOKIE_DOMAIN || 'localhost',
-    expiryMinutes: process.env.WEB_SESSION_TIMEOUT_IN_MINUTES || 60,
+    expiryMinutes: toInt(process.env.WEB_SESSION_TIMEOUT_IN_MINUTES, 60),
     sessionSecret: process.env.SESSION_COOKIE_SECRET || 'notm-insecure-session',
   },
   redis: {
     enabled: process.env.REDIS_ENABLED === 'true',
     host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT || 6379,
+    port: toInt(process.env.REDIS_PORT, 6379),
     password: process.env.REDIS_AUTH_TOKEN,
   },
   apis: {
     oauth2: {
       url: process.env.OAUTH_ENDPOINT_URL || 'http://localhost:9090/auth/',
       ui_url: process.env.OAUTH_ENDPOINT_UI_URL || process.env.OAUTH_ENDPOINT_URL || 'http://localhost:9090/auth/',
-      timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 10,
+      timeoutSeconds: toInt(process.env.API_ENDPOINT_TIMEOUT_SECONDS, 10),
       clientId: process.env.API_CLIENT_ID || 'book-video-link-client',
       clientSecret: process.env.API_CLIENT_SECRET || 'clientsecret',
       systemClientId: process.env.API_SYSTEM_CLIENT_ID || 'book-video-link-admin',
@@ -36,15 +38,15 @@ module.exports = {
     },
     prison: {
       url: process.env.API_ENDPOINT_URL || 'http://localhost:8080/',
-      timeoutSeconds: process.env.API_ENDPOINT_TIMEOUT_SECONDS || 30,
+      timeoutSeconds: toInt(process.env.API_ENDPOINT_TIMEOUT_SECONDS, 30),
     },
     whereabouts: {
       url: process.env.API_WHEREABOUTS_ENDPOINT_URL || 'http://localhost:8082/',
-      timeoutSeconds: process.env.API_WHEREABOUTS_ENDPOINT_TIMEOUT_SECONDS || 30,
+      timeoutSeconds: toInt(process.env.API_WHEREABOUTS_ENDPOINT_TIMEOUT_SECONDS, 30),
     },
     tokenverification: {
       url: process.env.TOKENVERIFICATION_API_URL || 'http://localhost:8100',
-      timeoutSeconds: process.env.TOKENVERIFICATION_API_TIMEOUT_SECONDS || 10,
+      timeoutSeconds: toInt(process.env.TOKENVERIFICATION_API_TIMEOUT_SECONDS, 10),
       enabled: process.env.TOKENVERIFICATION_API_ENABLED === 'true',
     },
   },

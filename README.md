@@ -32,6 +32,18 @@ You need to fire up the wiremock server first:
 This will give you useful feedback if the app is making requests that you haven't mocked out. You can see
 the request log at `localhost:9191/__admin/requests/` and a JSON representation of the mocks `localhost:9191/__admin/mappings`.
 
+### Linting and unit tests
+
+to run typescript typechecking:
+```npm run start-feature```
+
+to run linting:
+```npm run lint```
+
+to run jest unit tests:
+```npm test```
+
+
 ### Starting feature tests node instance
 
 A separate node instance needs to be started for the feature tests. This will run on port 3008 and won't conflict

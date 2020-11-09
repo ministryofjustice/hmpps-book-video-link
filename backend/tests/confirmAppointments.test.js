@@ -190,44 +190,6 @@ describe('Confirm appointments', () => {
     )
   })
 
-  it('should display recurring information', async () => {
-    const { index } = confirmAppointments.confirmAppointmentFactory({
-      prisonApi,
-      appointmentsService,
-      logError: () => {},
-    })
-
-    req.flash = jest.fn()
-    req.flash.mockImplementation(() => [
-      {
-        ...appointmentDetails,
-        recurring: 'yes',
-        times: '2',
-        repeats: 'FORTNIGHTLY',
-      },
-    ])
-
-    await index(req, res)
-
-    expect(res.render).toHaveBeenCalledWith(
-      'confirmAppointments.njk',
-      expect.objectContaining({
-        details: {
-          comment: 'Test',
-          date: '10 October 2017',
-          endTime: '14:00',
-          lastAppointment: '24 October 2017',
-          location: 'Room 3',
-          numberAdded: '2',
-          recurring: 'Yes',
-          repeats: 'Fortnightly',
-          startTime: '11:00',
-          type: 'Appointment 1',
-        },
-      })
-    )
-  })
-
   it('should place data needed for movement slips into flash including pre and post appointments', async () => {
     const { index } = confirmAppointments.confirmAppointmentFactory({
       prisonApi,

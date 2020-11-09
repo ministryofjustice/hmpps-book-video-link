@@ -201,7 +201,7 @@ describe('isToday()', () => {
   })
 
   afterAll(() => {
-    Date.now.mockRestore()
+    jest.restoreAllMocks()
   })
 
   it('returns true if date is "Today"', () => {
@@ -223,7 +223,7 @@ describe('isTodayOrAfter()', () => {
   })
 
   afterAll(() => {
-    Date.now.mockRestore()
+    jest.restoreAllMocks()
   })
 
   it('returns true if date is "Today"', () => {

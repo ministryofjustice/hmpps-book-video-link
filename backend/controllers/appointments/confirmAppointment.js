@@ -84,8 +84,6 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
         endTime,
         comment,
         recurring,
-        times,
-        repeats,
         court,
       })
 
