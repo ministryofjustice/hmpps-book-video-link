@@ -1,22 +1,17 @@
 const moment = require('moment')
 
 const { DATE_TIME_FORMAT_SPEC } = require('../../shared/dateHelpers')
-const {
-  app: { notmEndpointUrl: dpsUrl },
-} = require('../../config')
 const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
-const { properCaseName, formatName } = require('../../utils')
 const { serviceUnavailableMessage } = require('../../common-messages')
 
 const { prepostDurations } = require('../../shared/appointmentConstants')
-const { toAppointmentDetailsSummary, isVideoLinkBooking } = require('../../services/appointmentsService')
+const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
 
 const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError }) => {
   const index = async (req, res) => {
     const { offenderNo } = req.params
-    const { activeCaseLoadId, authSource } = req.session.userDetails
-    const prisonUser = authSource === 'nomis'
+    const { activeCaseLoadId } = req.session.userDetails
 
     try {
       const { appointmentTypes, locationTypes } = await appointmentsService.getAppointmentOptions(
@@ -50,28 +45,8 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
 
       const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
       const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
-      const { text: locationDescriptionForMovementSlip } = (preAppointment &&
-        locationTypes.find(loc => loc.value === Number(preAppointment.locationId))) || { text: locationDescription }
 
-      const { firstName, lastName, assignedLivingUnitDesc } = await prisonApi.getDetails(res.locals, offenderNo)
-
-      req.session.appointmentSlipsData = {
-        appointmentDetails: {
-          comments: comment,
-          appointmentTypeDescription,
-          locationDescription: locationDescriptionForMovementSlip,
-        },
-        prisonersListed: [
-          {
-            firstName: properCaseName(firstName),
-            lastName: properCaseName(lastName),
-            offenderNo,
-            startTime: (preAppointment && preAppointment.startTime) || startTime,
-            endTime: (postAppointment && postAppointment.endTime) || endTime,
-            assignedLivingUnitDesc,
-          },
-        ],
-      }
+      const { firstName, lastName } = await prisonApi.getDetails(res.locals, offenderNo)
 
       const details = toAppointmentDetailsSummary({
         firstName,
@@ -118,89 +93,39 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
         }
       }
 
-      if (isVideoLinkBooking(appointmentType)) {
-        if (prisonUser) {
-          res.render('videolinkBookingConfirmHearingPrison.njk', {
-            title: 'The video link has been booked',
-            prisonerProfileLink: `${dpsUrl}offenders/${offenderNo}`,
-            offender: {
-              name: `${properCaseName(lastName)}, ${properCaseName(firstName)}`,
-              prison: agencyDescription,
-              prisonRoom: details.location,
-            },
-            details: {
-              date: details.date,
-              courtHearingStartTime: details.startTime,
-              courtHearingEndTime: details.endTime,
-              comments: details.comment,
-            },
-            prepostData,
-            court: {
-              courtLocation: details.court,
-            },
-          })
-        } else {
-          res.render('videolinkBookingConfirmHearingCourt.njk', {
-            title: 'The video link has been booked',
-            videolinkPrisonerSearchLink: '/videolink/prisoner-search',
-            offender: {
-              name: details.prisonerName,
-              prison: agencyDescription,
-              prisonRoom: details.location,
-            },
-            details: {
-              date: details.date,
-              courtHearingStartTime: details.startTime,
-              courtHearingEndTime: details.endTime,
-              comments: details.comment,
-            },
-            prepostData,
-            court: {
-              courtLocation: details.court,
-            },
-            homeUrl: '/videolink',
-          })
-        }
+      res.render('videolinkBookingConfirmHearingCourt.njk', {
+        title: 'The video link has been booked',
+        videolinkPrisonerSearchLink: '/videolink/prisoner-search',
+        offender: {
+          name: details.prisonerName,
+          prison: agencyDescription,
+          prisonRoom: details.location,
+        },
+        details: {
+          date: details.date,
+          courtHearingStartTime: details.startTime,
+          courtHearingEndTime: details.endTime,
+          comments: details.comment,
+        },
+        prepostData,
+        court: {
+          courtLocation: details.court,
+        },
+        homeUrl: '/videolink',
+      })
 
-        raiseAnalyticsEvent(
-          'VLB Appointments',
-          `Video link booked for ${details.court}`,
-          `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
-        )
-      } else {
-        const recurringData = details.recurring === 'Yes' && {
-          recurring: 'Yes',
-          repeats: details.howOften,
-          numberAdded: details.numberOfAppointments,
-          lastAppointment: details.endDateShortFormat,
-        }
-
-        res.render('confirmAppointments.njk', {
-          addAppointmentsLink: `/offenders/${offenderNo}/add-appointment`,
-          prisonerName: formatName(firstName, lastName),
-          prisonerProfileLink: `${dpsUrl}offenders/${offenderNo}`,
-          details: {
-            type: details.appointmentType,
-            location: details.location,
-            date: details.date,
-            startTime: details.startTime,
-            endTime: details.endTime,
-            ...recurringData,
-            comment: details.comment,
-          },
-        })
-      }
+      raiseAnalyticsEvent(
+        'VLB Appointments',
+        `Video link booked for ${details.court}`,
+        `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
+      )
     } catch (error) {
       logError(req.originalUrl, error, serviceUnavailableMessage)
       const pageData = {
-        url: prisonUser ? `${dpsUrl}offenders/${offenderNo}` : '/videolink/prisoner-search',
-        homeUrl: prisonUser ? dpsUrl : '/videolink',
+        url: '/videolink/prisoner-search',
+        homeUrl: '/videolink',
       }
-      if (prisonUser) {
-        res.render('error.njk', pageData)
-      } else {
-        res.render('courtServiceError.njk', pageData)
-      }
+      res.render('courtServiceError.njk', pageData)
     }
   }
   return { index }

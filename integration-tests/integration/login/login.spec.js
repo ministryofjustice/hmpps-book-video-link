@@ -36,9 +36,7 @@ context('Login functionality', () => {
     CourtVideoLinkHomePage.verifyOnPage()
 
     // can't do a visit here as cypress requires only one domain
-    cy.request('/auth/logout')
-      .its('body')
-      .should('contain', 'Sign in')
+    cy.request('/auth/logout').its('body').should('contain', 'Sign in')
   })
 
   it('Token verification failure clears user session', () => {
@@ -48,9 +46,7 @@ context('Login functionality', () => {
     cy.task('stubVerifyToken', false)
 
     // can't do a visit here as cypress requires only one domain
-    cy.request('/')
-      .its('body')
-      .should('contain', 'Sign in')
+    cy.request('/').its('body').should('contain', 'Sign in')
   })
 
   it('Log in as video link court user', () => {
