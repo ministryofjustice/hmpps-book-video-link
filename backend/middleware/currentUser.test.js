@@ -1,72 +1,47 @@
 const currentUser = require('./currentUser')
 
 describe('Current user', () => {
-  const prisonApi = {}
   const oauthApi = {}
   let req
   let res
 
   beforeEach(() => {
-    prisonApi.userCaseLoads = jest.fn()
     oauthApi.currentUser = jest.fn()
 
     oauthApi.currentUser.mockReturnValue({
       name: 'Bob Smith',
-      activeCaseLoadId: 'MDI',
       username: 'USER_BOB',
     })
 
     req = { session: {} }
     res = { locals: {} }
-
-    prisonApi.userCaseLoads.mockReturnValue([{ caseLoadId: 'MDI', description: 'Moorland' }])
   })
 
   it('should request and store user details', async () => {
-    const controller = currentUser({ prisonApi, oauthApi })
+    const controller = currentUser({ oauthApi })
 
     await controller(req, res, () => {})
 
     expect(oauthApi.currentUser).toHaveBeenCalled()
     expect(req.session.userDetails).toEqual({
       name: 'Bob Smith',
-      activeCaseLoadId: 'MDI',
       username: 'USER_BOB',
     })
   })
 
-  it('should request and store user case loads', async () => {
-    const controller = currentUser({ prisonApi, oauthApi })
-
-    await controller(req, res, () => {})
-
-    expect(prisonApi.userCaseLoads).toHaveBeenCalled()
-    expect(req.session.allCaseloads).toEqual([{ caseLoadId: 'MDI', description: 'Moorland' }])
-  })
-
   it('should stash data into res.locals', async () => {
-    const controller = currentUser({ prisonApi, oauthApi })
+    const controller = currentUser({ oauthApi })
 
     await controller(req, res, () => {})
 
     expect(res.locals.user).toEqual({
-      allCaseloads: [
-        {
-          caseLoadId: 'MDI',
-          description: 'Moorland',
-        },
-      ],
-      activeCaseLoad: {
-        caseLoadId: 'MDI',
-        description: 'Moorland',
-      },
       displayName: 'Bob Smith',
       username: 'USER_BOB',
     })
   })
 
   it('ignore xhr requests', async () => {
-    const controller = currentUser({ prisonApi, oauthApi })
+    const controller = currentUser({ oauthApi })
     req.xhr = true
 
     const next = jest.fn()
@@ -74,7 +49,6 @@ describe('Current user', () => {
     await controller(req, res, next)
 
     expect(oauthApi.currentUser.mock.calls.length).toEqual(0)
-    expect(prisonApi.userCaseLoads.mock.calls.length).toEqual(0)
     expect(next).toHaveBeenCalled()
   })
 })

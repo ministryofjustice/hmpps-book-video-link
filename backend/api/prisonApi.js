@@ -12,7 +12,6 @@ const prisonApiFactory = client => {
   const post = (context, url, data) => client.post(context, url, data).then(processResponse(context))
 
   const userLocations = context => (context.authSource !== 'auth' ? get(context, '/api/users/me/locations') : [])
-  const userCaseLoads = context => (context.authSource !== 'auth' ? get(context, '/api/users/me/caseLoads') : [])
 
   const getActivityList = (context, { agencyId, locationId, usage, date, timeSlot }) =>
     get(
@@ -85,7 +84,6 @@ const prisonApiFactory = client => {
 
   return {
     userLocations,
-    userCaseLoads,
     getActivityList,
     getAppointments,
     getAppointmentsForAgency,

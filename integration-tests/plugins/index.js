@@ -25,15 +25,7 @@ module.exports = on => {
         tokenverification.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
-    stubLogin: ({ username = 'ITAG_USER', caseload = 'MDI', roles = [] }) =>
-      Promise.all([
-        auth.stubLogin(username, caseload, roles),
-        prisonApi.stubUserMe(),
-        prisonApi.stubUserCaseloads(),
-        tokenverification.stubVerifyToken(true),
-      ]),
-    stubLoginCourt: () =>
-      Promise.all([auth.stubLoginCourt(), prisonApi.stubUserCaseloads(), tokenverification.stubVerifyToken(true)]),
+    stubLoginCourt: () => Promise.all([auth.stubLoginCourt(), tokenverification.stubVerifyToken(true)]),
 
     stubUserEmail: username => auth.stubEmail(username),
     stubUser: (username, caseload) => auth.stubUser(username, caseload),
@@ -57,7 +49,6 @@ module.exports = on => {
     stubAppointmentsGet: prisonApi.stubAppointmentsGet,
     stubVideoLinkAppointments: whereabouts.stubVideoLinkAppointments,
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
-    stubUserCaseLoads: caseloads => prisonApi.stubUserCaseloads(caseloads),
     stubLocationGroups: locationGroups => whereabouts.stubLocationGroups(locationGroups),
   })
 }

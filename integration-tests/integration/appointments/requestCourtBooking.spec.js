@@ -8,7 +8,7 @@ context('A user can request a booking', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLogin', { username: 'ITAG_USER', caseload: 'WWI' })
+    cy.task('stubLoginCourt')
     cy.login()
   })
   beforeEach(() => {
@@ -25,11 +25,7 @@ context('A user can request a booking', () => {
   it('A user can request a video link booking', () => {
     const requestCourtBookingStartPage = RequestCourtBookingStartPage.verifyOnPage()
     const startForm = requestCourtBookingStartPage.form()
-    startForm.date().type(
-      moment()
-        .add(1, 'days')
-        .format('DD/MM/YYYY')
-    )
+    startForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
     startForm.prison().select('WWI')
     startForm.startTimeHours().select('10')
     startForm.startTimeMinutes().select('00')
@@ -41,11 +37,7 @@ context('A user can request a booking', () => {
 
     const requestCourtBookingSelectCourtPage = RequestCourtBookingSelectCourtPage.verifyOnPage()
     requestCourtBookingSelectCourtPage.prison().contains('HMP Wandsworth')
-    requestCourtBookingSelectCourtPage.date().contains(
-      moment()
-        .add(1, 'days')
-        .format('D MMMM YYYY')
-    )
+    requestCourtBookingSelectCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
     requestCourtBookingSelectCourtPage.startTime().contains('10:00')
     requestCourtBookingSelectCourtPage.endTime().contains('11:00')
     requestCourtBookingSelectCourtPage.preStartEndTime().contains('09:40 to 10:00')
@@ -67,11 +59,7 @@ context('A user can request a booking', () => {
 
     const requestCourtBookingConfirmationPage = RequestCourtBookingConfirmationPage.verifyOnPage()
     requestCourtBookingConfirmationPage.prison().contains('HMP Wandsworth')
-    requestCourtBookingConfirmationPage.date().contains(
-      moment()
-        .add(1, 'days')
-        .format('dddd D MMMM YYYY')
-    )
+    requestCourtBookingConfirmationPage.date().contains(moment().add(1, 'days').format('dddd D MMMM YYYY'))
     requestCourtBookingConfirmationPage.startTime().contains('10:00')
     requestCourtBookingConfirmationPage.endTime().contains('11:00')
     requestCourtBookingConfirmationPage.preStartEndTime().contains('09:40 to 10:00')

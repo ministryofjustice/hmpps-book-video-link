@@ -6,8 +6,8 @@ const currentUser = require('./middleware/currentUser')
 
 const router = express.Router()
 
-module.exports = ({ prisonApi, oauthApi }) => {
-  router.use(currentUser({ prisonApi, oauthApi }))
+module.exports = ({ oauthApi }) => {
+  router.use(currentUser({ oauthApi }))
   router.use(async (req, res, next) => {
     res.locals = {
       ...res.locals,

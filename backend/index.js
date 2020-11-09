@@ -37,7 +37,7 @@ app.use(setupStaticContent())
 app.use(setupWebSession())
 app.use(setupAuth({ oauthApi: apis.oauthApi, tokenVerificationApi: apis.tokenVerificationApi }))
 app.use(csrf())
-app.use(setupCurrentUserAndRequestLogging({ oauthApi: apis.oauthApi, prisonApi: apis.prisonApi }))
+app.use(setupCurrentUserAndRequestLogging({ oauthApi: apis.oauthApi }))
 app.use(
   routes({
     prisonApi: apis.prisonApi,

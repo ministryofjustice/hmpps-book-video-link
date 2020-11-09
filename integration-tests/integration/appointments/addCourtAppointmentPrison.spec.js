@@ -10,7 +10,7 @@ context('A user can add a video link', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLogin', { username: 'ITAG_USER', caseload: 'MDI' })
+    cy.task('stubLoginCourt')
     cy.login()
   })
   beforeEach(() => {
@@ -125,7 +125,7 @@ context('A user can add a video link', () => {
   it.only('A user is taken to select court and rooms pages and then to court video link confirm', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
-    cy.task('stubLogin', { username: 'ITAG_USER', caseload: 'MDI', roles: [{ roleCode: 'VIDEO_LINK_COURT_USER' }] })
+    cy.task('stubLoginCourt')
     const addCourtAppointmentPage = AddCourtAppointmentPage.verifyOnPage()
     const addAppointmentForm = addCourtAppointmentPage.form()
     addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))

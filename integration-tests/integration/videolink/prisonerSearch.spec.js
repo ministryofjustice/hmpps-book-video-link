@@ -10,7 +10,6 @@ context('A user can search for an offender', () => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('stubUserMeRoles', [{ roleCode: 'VIDEO_LINK_COURT_USER' }])
     cy.task('stubUserMe')
-    cy.task('stubUserCaseLoads')
     cy.task('stubAgencies', [
       {
         description: 'MOORLAND (HMP & YOI)',
