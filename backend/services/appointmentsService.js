@@ -46,12 +46,10 @@ const mapAppointmentType = appointment => ({
 })
 
 const appointmentsServiceFactory = prisonApi => {
-  const getLocations = async (context, agency, filterByLocationType) =>
-    filterByLocationType
-      ? (await prisonApi.getLocationsForAppointments(context, agency))
-          .filter(loc => loc.locationType === filterByLocationType)
-          .map(mapLocationType)
-      : (await prisonApi.getLocationsForAppointments(context, agency)).map(mapLocationType)
+  const getLocations = async (context, agency) =>
+    (await prisonApi.getLocationsForAppointments(context, agency))
+      .filter(loc => loc.locationType === 'VIDE')
+      .map(mapLocationType)
 
   const getAppointmentOptions = async (context, agency) => {
     const [locationTypes, appointmentTypes] = await Promise.all([

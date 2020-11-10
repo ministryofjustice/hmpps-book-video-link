@@ -67,7 +67,7 @@ module.exports = ({ appointmentsService, existingEventsService }, { startOfDay, 
   const getAvailableRooms = async (context, { agencyId, startTime, endTime }) => {
     const date = moment(startTime, DATE_TIME_FORMAT_SPEC)
 
-    const locations = await appointmentsService.getLocations(context, agencyId, 'VIDE')
+    const locations = await appointmentsService.getLocations(context, agencyId)
     const eventsAtLocations = await existingEventsService.getAppointmentsAtLocations(context, {
       agency: agencyId,
       date: date.format(DAY_MONTH_YEAR),

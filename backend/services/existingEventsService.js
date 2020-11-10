@@ -67,7 +67,7 @@ module.exports = prisonApi => {
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
   ) => {
     const appointmentsService = appointmentsServiceFactory(prisonApi)
-    const locations = await appointmentsService.getLocations(context, agencyId, 'VIDE')
+    const locations = await appointmentsService.getLocations(context, agencyId)
 
     const eventsAtLocations = await getAppointmentsAtLocations(context, {
       agency: agencyId,
