@@ -104,9 +104,7 @@ context('A user can view the video link home page', () => {
       .searchResultsTableRows()
       .find('td')
       .then($tableCells => {
-        cy.get($tableCells)
-          .its('length')
-          .should('eq', 8)
+        cy.get($tableCells).its('length').should('eq', 8)
         expect($tableCells.get(0)).to.contain('14:30 to 15:30')
         expect($tableCells.get(1)).to.contain('Offender Three')
         expect($tableCells.get(2)).to.contain('VCC ROOM')
@@ -129,9 +127,7 @@ context('A user can view the video link home page', () => {
       .searchResultsTableRows()
       .find('td')
       .then($tableCells => {
-        cy.get($tableCells)
-          .its('length')
-          .should('eq', 4)
+        cy.get($tableCells).its('length').should('eq', 4)
         expect($tableCells.get(0)).to.contain('15:30 to 16:30')
         expect($tableCells.get(1)).to.contain('Offender Four')
         expect($tableCells.get(2)).to.contain('VCC ROOM')

@@ -122,7 +122,7 @@ context('A user can add a video link', () => {
     cy.visit(`/MDI/offenders/${offenderNo}/add-court-appointment`)
   })
 
-  it.only('A user is taken to select court and rooms pages and then to court video link confirm', () => {
+  it('A user is taken to select court and rooms pages and then to court video link confirm', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
     cy.task('stubLoginCourt')
