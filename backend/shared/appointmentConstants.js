@@ -2,14 +2,6 @@ const moment = require('moment')
 const { DAY_MONTH_YEAR } = require('./dateHelpers')
 const { calculateEndDate } = require('./RecurringAppointments')
 
-const repeatTypes = [
-  { value: 'WEEKLY', text: 'Weekly' },
-  { value: 'DAILY', text: 'Daily' },
-  { value: 'WEEKDAYS', text: 'Weekday (Monday to Friday)' },
-  { value: 'MONTHLY', text: 'Monthly' },
-  { value: 'FORTNIGHTLY', text: 'Fortnightly' },
-]
-
 const prepostDurations = {
   15: '15 minutes',
   30: '30 minutes',
@@ -64,81 +56,10 @@ const validateComments = (comments, errors) => {
     errors.push({ text: 'Maximum length should not exceed 3600 characters', href: '#comments' })
 }
 
-const getValidationMessages = (fields, singleAppointment) => {
-  const {
-    appointmentType,
-    location,
-    date,
-    startTime,
-    endTime,
-    comments,
-    recurring,
-    repeats,
-    times,
-    sameTimeAppointments,
-  } = fields
-  const errors = []
-
-  if (!appointmentType) errors.push({ text: 'Select an appointment type', href: '#appointment-type' })
-
-  if (!location) errors.push({ text: 'Select a location', href: '#location' })
-
-  validateDate(date, errors)
-
-  if (sameTimeAppointments === 'yes' || singleAppointment) {
-    validateStartEndTime(date, startTime, endTime, errors)
-  }
-
-  // Video link appointments require an end time so we can show availability
-  if (appointmentType === 'VLB' && !endTime) errors.push({ text: 'Select an end time', href: '#end-time-hours' })
-
-  validateComments(comments, errors)
-
-  if (!recurring) {
-    const recurringErrorMessage = singleAppointment
-      ? 'this is a recurring appointment'
-      : 'these are recurring appointments'
-    errors.push({ href: '#recurring', text: `Select yes if ${recurringErrorMessage}` })
-  }
-
-  if (recurring === 'yes' && !repeats) errors.push({ href: '#repeats', text: 'Select a period' })
-
-  if (recurring === 'yes') {
-    if (Number(times) <= 0 || !Number(times))
-      errors.push({ href: '#times', text: 'Enter the number of appointments using numbers only' })
-
-    if (repeats && times) {
-      const { recurringStartTime, endOfPeriod } = endRecurringEndingDate({ date, startTime, repeats, times })
-
-      if (endOfPeriod && endOfPeriod.isSameOrAfter(recurringStartTime.startOf('day').add(1, 'years'))) {
-        errors.push({
-          href: '#times',
-          text: 'Select fewer number of appointments - you can only add them for a maximum of 1 year',
-        })
-      }
-    }
-
-    if (repeats === 'WEEKDAYS') {
-      const SATURDAY = 6
-      const SUNDAY = 0
-      if (moment(date, DAY_MONTH_YEAR).day() === SATURDAY || moment(date, DAY_MONTH_YEAR).day() === SUNDAY) {
-        errors.push({
-          href: '#date',
-          text: 'The date must be a week day',
-        })
-      }
-    }
-  }
-
-  return errors
-}
-
 module.exports = {
   endRecurringEndingDate,
   validateDate,
   validateStartEndTime,
   validateComments,
-  getValidationMessages,
-  repeatTypes,
   prepostDurations,
 }

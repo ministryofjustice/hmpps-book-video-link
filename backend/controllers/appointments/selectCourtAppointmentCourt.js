@@ -56,10 +56,8 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
       const details = toAppointmentDetailsSummary({
         firstName,
         lastName,
-        offenderNo,
         startTime,
         endTime,
-        appointmentType: 'VLB',
         agencyDescription: agencyDetails.description,
       })
 

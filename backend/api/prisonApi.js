@@ -78,8 +78,6 @@ const prisonApiFactory = client => {
 
   const getAppointmentTypes = context => get(context, '/api/reference-domains/scheduleReasons?eventType=APP')
 
-  const addAppointments = (context, body) => post(context, '/api/appointments', body)
-
   const getPrisonerDetails = (context, offenderNo) => get(context, `/api/prisoners/${offenderNo}`)
 
   return {
@@ -96,7 +94,6 @@ const prisonApiFactory = client => {
     getLocation,
     getLocationsForAppointments,
     getAppointmentTypes,
-    addAppointments,
     getPrisonerDetails,
   }
 }

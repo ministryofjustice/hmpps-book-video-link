@@ -14,23 +14,16 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
     const { activeCaseLoadId } = req.session.userDetails
 
     try {
-      const { appointmentTypes, locationTypes } = await appointmentsService.getAppointmentOptions(
-        res.locals,
-        activeCaseLoadId
-      )
+      const { locationTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
 
       const appointmentDetails = req.flash('appointmentDetails')
       if (!appointmentDetails || !appointmentDetails.length) throw new Error('Appointment details are missing')
 
       const {
         locationId,
-        appointmentType,
         startTime,
         endTime,
         comment,
-        recurring,
-        times,
-        repeats,
         preAppointment,
         postAppointment,
         agencyDescription,
@@ -44,51 +37,43 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
       )
 
       const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
-      const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
-
       const { firstName, lastName } = await prisonApi.getDetails(res.locals, offenderNo)
 
       const details = toAppointmentDetailsSummary({
         firstName,
         lastName,
-        offenderNo,
-        appointmentType,
-        appointmentTypeDescription,
         location: locationDescription,
         startTime,
         endTime,
         comment,
-        recurring,
         court,
       })
 
       const prepostData = {}
 
-      if (appointmentType === 'VLB') {
-        const preAppointmentData = preAppointment &&
-          preAppointment.locationId && {
-            locationDescription: locationTypes.find(l => l.value === Number(preAppointment.locationId)).text,
-            duration: prepostDurations[preAppointment.duration],
-          }
-        const postAppointmentData = postAppointment &&
-          postAppointment.locationId && {
-            locationDescription: locationTypes.find(l => l.value === Number(postAppointment.locationId)).text,
-            duration: prepostDurations[postAppointment.duration],
-          }
-
-        if (preAppointmentData) {
-          prepostData['pre-court hearing briefing'] = `${preAppointmentData.locationDescription} - ${moment(
-            preAppointment.startTime,
-            DATE_TIME_FORMAT_SPEC
-          ).format('HH:mm')} to ${moment(preAppointment.endTime, DATE_TIME_FORMAT_SPEC).format('HH:mm')}`
+      const preAppointmentData = preAppointment &&
+        preAppointment.locationId && {
+          locationDescription: locationTypes.find(l => l.value === Number(preAppointment.locationId)).text,
+          duration: prepostDurations[preAppointment.duration],
+        }
+      const postAppointmentData = postAppointment &&
+        postAppointment.locationId && {
+          locationDescription: locationTypes.find(l => l.value === Number(postAppointment.locationId)).text,
+          duration: prepostDurations[postAppointment.duration],
         }
 
-        if (postAppointmentData) {
-          prepostData['post-court hearing briefing'] = `${postAppointmentData.locationDescription} - ${moment(
-            postAppointment.startTime,
-            DATE_TIME_FORMAT_SPEC
-          ).format('HH:mm')} to ${moment(postAppointment.endTime, DATE_TIME_FORMAT_SPEC).format('HH:mm')}`
-        }
+      if (preAppointmentData) {
+        prepostData['pre-court hearing briefing'] = `${preAppointmentData.locationDescription} - ${moment(
+          preAppointment.startTime,
+          DATE_TIME_FORMAT_SPEC
+        ).format('HH:mm')} to ${moment(preAppointment.endTime, DATE_TIME_FORMAT_SPEC).format('HH:mm')}`
+      }
+
+      if (postAppointmentData) {
+        prepostData['post-court hearing briefing'] = `${postAppointmentData.locationDescription} - ${moment(
+          postAppointment.startTime,
+          DATE_TIME_FORMAT_SPEC
+        ).format('HH:mm')} to ${moment(postAppointment.endTime, DATE_TIME_FORMAT_SPEC).format('HH:mm')}`
       }
 
       res.render('videolinkBookingConfirmHearingCourt.njk', {

@@ -152,9 +152,6 @@ const selectCourtAppointmentRoomsFactory = ({
         details: toAppointmentDetailsSummary({
           firstName,
           lastName,
-          offenderNo,
-          appointmentType,
-          appointmentTypeDescription,
           startTime,
           endTime,
           agencyDescription,
@@ -236,8 +233,6 @@ const selectCourtAppointmentRoomsFactory = ({
       const {
         startTime,
         endTime,
-        appointmentType,
-        appointmentTypeDescription,
         firstName,
         lastName,
         date,
@@ -275,9 +270,6 @@ const selectCourtAppointmentRoomsFactory = ({
           details: toAppointmentDetailsSummary({
             firstName,
             lastName,
-            offenderNo,
-            appointmentType,
-            appointmentTypeDescription,
             startTime,
             endTime,
             agencyDescription,

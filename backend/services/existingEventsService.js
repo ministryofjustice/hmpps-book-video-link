@@ -1,6 +1,6 @@
 const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers')
-const { switchDateFormat, getTime, sortByDateTime } = require('../utils')
+const { switchDateFormat, getTime } = require('../utils')
 const { appointmentsServiceFactory } = require('./appointmentsService')
 
 const getEventDescription = ({ eventDescription, eventLocation, comment }) => {
@@ -21,57 +21,6 @@ const toEvent = event => ({
 })
 
 module.exports = prisonApi => {
-  const getExistingEventsForOffender = async (context, agencyId, date, offenderNo) => {
-    const formattedDate = switchDateFormat(date)
-    const searchCriteria = { agencyId, date: formattedDate, offenderNumbers: [offenderNo] }
-
-    try {
-      const [sentenceData, courtEvents, ...rest] = await Promise.all([
-        prisonApi.getSentenceData(context, searchCriteria.offenderNumbers),
-        prisonApi.getCourtEvents(context, searchCriteria),
-        prisonApi.getVisits(context, searchCriteria),
-        prisonApi.getAppointments(context, searchCriteria),
-        prisonApi.getExternalTransfers(context, searchCriteria),
-        prisonApi.getActivities(context, searchCriteria),
-      ])
-
-      const hasCourtVisit = courtEvents.length && courtEvents.filter(event => event.eventStatus === 'SCH')
-
-      const isReleaseDate = sentenceData.length && sentenceData[0].sentenceDetail.releaseDate === formattedDate
-
-      const otherEvents = rest.reduce((flattenedEvents, event) => flattenedEvents.concat(event), [])
-
-      const formattedEvents = otherEvents
-        .sort((left, right) => sortByDateTime(left.startTime, right.startTime))
-        .map(toEvent)
-
-      if (hasCourtVisit) formattedEvents.unshift({ eventDescription: '**Court visit scheduled**' })
-
-      if (isReleaseDate) formattedEvents.unshift({ eventDescription: '**Due for release**' })
-
-      return formattedEvents
-    } catch (error) {
-      return error
-    }
-  }
-
-  const getExistingEventsForLocation = async (context, agencyId, locationId, date) => {
-    const formattedDate = switchDateFormat(date)
-    const searchCriteria = { agencyId, date: formattedDate, locationId }
-
-    try {
-      const eventsAtLocationByUsage = await Promise.all([
-        prisonApi.getActivitiesAtLocation(context, searchCriteria),
-        prisonApi.getActivityList(context, { ...searchCriteria, usage: 'VISIT' }),
-        prisonApi.getActivityList(context, { ...searchCriteria, usage: 'APP' }),
-      ]).then(events => events.reduce((flattenedEvents, event) => flattenedEvents.concat(event), []))
-
-      return eventsAtLocationByUsage.sort((left, right) => sortByDateTime(left.startTime, right.startTime)).map(toEvent)
-    } catch (error) {
-      return error
-    }
-  }
-
   const getAppointmentsAtLocationEnhanceWithLocationId = (context, agency, locationId, date) =>
     new Promise((resolve, reject) => {
       prisonApi
@@ -159,10 +108,8 @@ module.exports = prisonApi => {
   }
 
   return {
-    getExistingEventsForOffender,
-    getExistingEventsForLocation,
-    getAvailableLocations,
     getAvailableLocationsForVLB,
     getAppointmentsAtLocations,
+    getAvailableLocations,
   }
 }

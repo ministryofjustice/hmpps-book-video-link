@@ -2,60 +2,38 @@ const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC, Time } = require('../shared/dateHelpers')
 const { properCaseName } = require('../utils')
 
-const isVideoLinkBooking = appointmentType => appointmentType === 'VLB'
-
 /**
  * TODO need to tidy this up and remove workout what is and isn't optional
  *
  * @param {object} params
  * @param {string} [params.firstName]
  * @param {string} [params.lastName]
- * @param {any} [params.offenderNo]
- * @param {any} [params.appointmentType]
- * @param {any} [params.appointmentTypeDescription]
  * @param {any} [params.location]
  * @param {any} [params.startTime]
  * @param {any} [params.endTime]
  * @param {any} [params.comment]
- * @param {any} [params.recurring]
  * @param {string} [params.agencyDescription]
  * @param {any} [params.court]
  */
 const toAppointmentDetailsSummary = ({
   firstName,
   lastName,
-  offenderNo,
-  appointmentType,
-  appointmentTypeDescription,
   location,
   startTime,
   endTime,
   comment,
-  recurring,
   agencyDescription,
   court,
-}) => {
-  const appointmentInfo = {
-    prisonerName: isVideoLinkBooking(appointmentType)
-      ? `${properCaseName(firstName)} ${properCaseName(lastName)}`
-      : `${properCaseName(lastName)}, ${properCaseName(firstName)} (${offenderNo})`,
-    prison: agencyDescription,
-    appointmentType: appointmentTypeDescription,
-    location,
-    date: moment(startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
-    startTime: Time(startTime),
-    endTime: endTime && Time(endTime),
-    comment,
-    recurring: properCaseName(recurring),
-    court,
-  }
-
-  if (isVideoLinkBooking(appointmentType)) {
-    ;['appointmentType', 'recurring'].forEach(e => delete appointmentInfo[e])
-  }
-
-  return appointmentInfo
-}
+}) => ({
+  prisonerName: `${properCaseName(firstName)} ${properCaseName(lastName)}`,
+  prison: agencyDescription,
+  location,
+  date: moment(startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
+  startTime: Time(startTime),
+  endTime: endTime && Time(endTime),
+  comment,
+  court,
+})
 
 const mapLocationType = location => ({
   value: location.locationId,
@@ -86,31 +64,14 @@ const appointmentsServiceFactory = prisonApi => {
       appointmentTypes: appointmentTypes && appointmentTypes.map(mapAppointmentType),
     }
   }
-  const addAppointments = async (context, appointments) => {
-    await prisonApi.addAppointments(context, appointments)
-  }
-
-  const getLocationAndAppointmentDescription = async (context, { activeCaseLoadId, locationId, appointmentType }) => {
-    const { appointmentTypes, locationTypes } = await getAppointmentOptions(context, activeCaseLoadId)
-    const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
-    const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
-
-    return {
-      locationDescription,
-      appointmentTypeDescription,
-    }
-  }
 
   return {
-    getLocationAndAppointmentDescription,
     getAppointmentOptions,
-    addAppointments,
     getLocations,
   }
 }
 
 module.exports = {
   appointmentsServiceFactory,
-  isVideoLinkBooking,
   toAppointmentDetailsSummary,
 }
