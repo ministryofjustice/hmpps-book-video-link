@@ -34,14 +34,14 @@ context('A user can search for an offender', () => {
 
   it('should display errors if mandatory fields are empty', () => {
     cy.task('stubPrisonApiGlobalSearch')
-    cy.visit('/videolink/prisoner-search')
+    cy.visit('/prisoner-search')
     cy.get('button').click()
     cy.get('.govuk-error-summary').contains("You must search using either the prisoner's last name or prison number")
   })
 
   it('should handle missing dob fields', () => {
     cy.task('stubPrisonApiGlobalSearch')
-    cy.visit('/videolink/prisoner-search')
+    cy.visit('/prisoner-search')
     cy.get('#lastName').type('Offender')
     cy.get("[data-qa='other-search-details'] .govuk-details__summary-text").click()
     cy.get('#dobDay').type('1')
@@ -68,7 +68,7 @@ context('A user can search for an offender', () => {
         pncNumber: '1/2345',
       },
     ])
-    cy.visit('/videolink/prisoner-search')
+    cy.visit('/prisoner-search')
     cy.get('#lastName').type('Offender')
     cy.get('button').click()
     cy.get('table tr')

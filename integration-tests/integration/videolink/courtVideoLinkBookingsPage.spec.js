@@ -97,7 +97,7 @@ context('A user can view the video link home page', () => {
   })
 
   it('The results are displayed', () => {
-    cy.visit('/videolink/bookings')
+    cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.noResultsMessage().should('not.be.visible')
     courtVideoBookingsPage
@@ -118,7 +118,7 @@ context('A user can view the video link home page', () => {
   })
 
   it('Returns unsupported courts when Other is selected', () => {
-    cy.visit('/videolink/bookings')
+    cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.courtOption().select('Other')
     courtVideoBookingsPage.submitButton().click()
@@ -138,7 +138,7 @@ context('A user can view the video link home page', () => {
   it('The no results message is displayed', () => {
     cy.task('stubAppointmentsGet')
     cy.task('stubVideoLinkAppointments')
-    cy.visit('/videolink/bookings')
+    cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.noResultsMessage().should('be.visible')
   })

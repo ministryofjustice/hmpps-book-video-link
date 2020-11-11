@@ -91,12 +91,12 @@ const addCourtAppointmentsFactory = (prisonApi, logError) => {
         offenderNameWithNumber,
         agencyDescription,
         dpsUrl,
-        homeUrl: '/videolink',
+        homeUrl: '/',
         bookingId,
       })
     } catch (error) {
       if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-      return res.render('courtServiceError.njk', { url: `/videolink/prisoner-search`, homeUrl: '/videolink' })
+      return res.render('courtServiceError.njk', { url: `/prisoner-search`, homeUrl: '/' })
     }
   }
 

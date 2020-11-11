@@ -148,7 +148,7 @@ describe('Select court appointment rooms', () => {
       )
       expect(res.render).toHaveBeenCalledWith('courtServiceError.njk', {
         url: '/MDI/offenders/A12345/add-appointment',
-        homeUrl: '/videolink',
+        homeUrl: '/',
       })
     })
 

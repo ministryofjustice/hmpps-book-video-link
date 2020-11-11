@@ -34,7 +34,7 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
 
     return res.render('courtServiceError.njk', {
       url: `/${agencyId}/offenders/${offenderNo}/add-appointment`,
-      homeUrl: '/videolink',
+      homeUrl: '/',
     })
   }
 
@@ -88,7 +88,7 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
           courtHearingEndTime: details.endTime,
         },
         prePostData,
-        homeUrl: '/videolink',
+        homeUrl: '/',
       })
     } catch (error) {
       return renderError(req, res, error)

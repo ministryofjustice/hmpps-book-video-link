@@ -10,7 +10,7 @@ const courtVideoLinkHomePage = () =>
 export default {
   verifyOnPage: courtVideoLinkHomePage,
   goTo: () => {
-    cy.visit('/videolink')
+    cy.visit('/')
     return courtVideoLinkHomePage()
   },
 }

@@ -96,7 +96,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
     try {
       return res.render(template || 'requestBooking/requestBooking.njk', {
         user: { displayName: req.session.userDetails.name },
-        homeUrl: '/videolink',
+        homeUrl: '/',
         ...(pageData || {}),
       })
     } catch (error) {
@@ -112,7 +112,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
     return res.render('requestBooking/requestBooking.njk', {
       user: { displayName: req.session.userDetails.name },
       prisons: prisonDropdownValues,
-      homeUrl: '/videolink',
+      homeUrl: '/',
     })
   }
 
@@ -384,7 +384,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
 
       return res.render('requestBooking/requestBookingConfirmation.njk', {
         user: { displayName: req.session.userDetails.name },
-        homeUrl: '/videolink',
+        homeUrl: '/',
         title: 'The video link has been requested',
         details: {
           prison,

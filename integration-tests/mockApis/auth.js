@@ -216,16 +216,6 @@ const stubClientCredentialsRequest = () =>
 module.exports = {
   stubHealth,
   getLoginUrl,
-  stubLogin: (username, caseloadId, roles = []) =>
-    Promise.all([
-      favicon(),
-      redirect(),
-      logout(),
-      token(),
-      stubUserMe(),
-      stubUserMeRoles([{ roleCode: 'UPDATE_ALERT' }, ...roles]),
-      stubUser(username, caseloadId),
-    ]),
   stubLoginCourt: () =>
     Promise.all([
       favicon(),

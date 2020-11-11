@@ -39,7 +39,7 @@ module.exports = ({ oauthApi, prisonApi, logError }) => async (req, res) => {
           .sort((a, b) => a.text.localeCompare(b.text)),
         errors,
         formValues: req.query,
-        homeUrl: '/videolink',
+        homeUrl: '/',
         results: searchResults
           .filter(result => (prison ? prison === result.latestLocationId : result))
           .map(result => {
@@ -67,6 +67,6 @@ module.exports = ({ oauthApi, prisonApi, logError }) => async (req, res) => {
   } catch (error) {
     if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
 
-    return res.render('courtServiceError.njk', { url: '/', homeUrl: '/videolink' })
+    return res.render('courtServiceError.njk', { url: '/', homeUrl: '/' })
   }
 }

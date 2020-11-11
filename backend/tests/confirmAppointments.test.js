@@ -89,8 +89,8 @@ describe('Confirm appointments', () => {
     expect(res.render).toHaveBeenCalledWith(
       'videolinkBookingConfirmHearingCourt.njk',
       expect.objectContaining({
-        videolinkPrisonerSearchLink: '/videolink/prisoner-search',
-        homeUrl: '/videolink',
+        videolinkPrisonerSearchLink: '/prisoner-search',
+        homeUrl: '/',
         title: 'The video link has been booked',
         offender: {
           name: 'John Doe',
@@ -129,8 +129,8 @@ describe('Confirm appointments', () => {
       'Sorry, the service is unavailable'
     )
     expect(res.render).toHaveBeenCalledWith('courtServiceError.njk', {
-      url: '/videolink/prisoner-search',
-      homeUrl: '/videolink',
+      url: '/prisoner-search',
+      homeUrl: '/',
     })
   })
 })

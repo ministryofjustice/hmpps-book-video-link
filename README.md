@@ -35,7 +35,7 @@ the request log at `localhost:9191/__admin/requests/` and a JSON representation 
 ### Linting and unit tests
 
 to run typescript typechecking:
-```npm run start-feature```
+```npm run typecheck```
 
 to run linting:
 ```npm run lint```

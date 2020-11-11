@@ -78,7 +78,7 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
 
       res.render('videolinkBookingConfirmHearingCourt.njk', {
         title: 'The video link has been booked',
-        videolinkPrisonerSearchLink: '/videolink/prisoner-search',
+        videolinkPrisonerSearchLink: '/prisoner-search',
         offender: {
           name: details.prisonerName,
           prison: agencyDescription,
@@ -94,7 +94,7 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
         court: {
           courtLocation: details.court,
         },
-        homeUrl: '/videolink',
+        homeUrl: '/',
       })
 
       raiseAnalyticsEvent(
@@ -105,8 +105,8 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
     } catch (error) {
       logError(req.originalUrl, error, serviceUnavailableMessage)
       const pageData = {
-        url: '/videolink/prisoner-search',
-        homeUrl: '/videolink',
+        url: '/prisoner-search',
+        homeUrl: '/',
       }
       res.render('courtServiceError.njk', pageData)
     }

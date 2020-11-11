@@ -11,7 +11,7 @@ const courtVideoBookingsPage = () =>
 export default {
   verifyOnPage: courtVideoBookingsPage,
   goTo: () => {
-    cy.visit('/videolink/bookings')
+    cy.visit('/bookings')
     return courtVideoBookingsPage()
   },
 }

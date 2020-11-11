@@ -15,6 +15,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration-tests", "build", "dist/**/*.js", "static", "config",],
+  "exclude": ["node_modules", "assets", "integration-tests", "build", "dist", "static", "config",],
   "include": ["**/*.js", "**/*.ts"]
 }

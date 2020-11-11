@@ -91,12 +91,12 @@ module.exports = ({ prisonApi, whereaboutsApi, logError }) => async (req, res) =
       courtOption,
       appointmentRows: appointmentsEnhanced,
       user,
-      homeUrl: '/videolink',
+      homeUrl: '/',
       date: moment(searchDate).format('DD/MM/YYYY'),
       title: courtOption ? `${title} - ${courtOption}` : title,
     })
   } catch (error) {
     logError(req.originalUrl, error, serviceUnavailableMessage)
-    return res.render('error.njk', { url: '/videolink/bookings' })
+    return res.render('error.njk', { url: '/bookings' })
   }
 }

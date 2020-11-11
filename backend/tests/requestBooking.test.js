@@ -65,7 +65,7 @@ describe('Request a booking', () => {
     it('should make the correct calls for information and render the correct template', async () => {
       await controller.startOfJourney(req, res)
       expect(res.render).toHaveBeenCalledWith('requestBooking/requestBooking.njk', {
-        homeUrl: '/videolink',
+        homeUrl: '/',
         prisons: [
           {
             text: 'HMP Wandsworth',
@@ -655,7 +655,7 @@ describe('Request a booking', () => {
         courtDetails: {
           courtLocation: 'London',
         },
-        homeUrl: '/videolink',
+        homeUrl: '/',
         title: 'The video link has been requested',
         user: { displayName: 'Test User' },
       })

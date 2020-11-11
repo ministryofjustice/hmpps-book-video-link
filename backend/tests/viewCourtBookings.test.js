@@ -67,7 +67,7 @@ describe('View court bookings', () => {
         courtOption: undefined,
         courts: [{ value: 'Other', text: 'Other' }],
         user: { displayName: 'Test User' },
-        homeUrl: '/videolink',
+        homeUrl: '/',
       })
     })
 
@@ -240,7 +240,7 @@ describe('View court bookings', () => {
               { text: 'Wimbledon', value: 'Wimbledon' },
               { text: 'Other', value: 'Other' },
             ],
-            homeUrl: '/videolink',
+            homeUrl: '/',
             user: { displayName: 'Test User' },
           })
         )
@@ -319,7 +319,7 @@ describe('View court bookings', () => {
           new Error('Problem retrieving courts'),
           serviceUnavailableMessage
         )
-        expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/videolink/bookings' })
+        expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/bookings' })
       })
     })
   })

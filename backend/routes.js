@@ -31,16 +31,16 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, logError, oauthApi, notifyClient })
   )
 
-  router.get('/videolink/prisoner-search', videolinkPrisonerSearchController({ oauthApi, prisonApi, logError }))
+  router.get('/prisoner-search', videolinkPrisonerSearchController({ oauthApi, prisonApi, logError }))
 
-  router.get('/videolink', async (req, res) => {
+  router.get('/', async (req, res) => {
     res.render('courtsVideolink.njk', {
       user: { displayName: req.session.userDetails.name },
-      homeUrl: '/videolink',
+      homeUrl: '/',
     })
   })
 
-  router.use('/videolink/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi, logError }))
+  router.use('/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi, logError }))
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
