@@ -63,7 +63,7 @@ describe('Select court appointment rooms', () => {
     whereaboutsApi.addVideoLinkAppointment = jest.fn()
 
     appointmentsService.getAppointmentOptions = jest.fn()
-    appointmentsService.getLocations = jest.fn()
+    appointmentsService.getVideoLinkLocations = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()

@@ -11,9 +11,9 @@ describe('existing events', () => {
 
   describe('location availability', () => {
     beforeEach(() => {
-      prisonApi.getLocations = jest.fn()
+      prisonApi.getVideoLinkLocations = jest.fn()
       prisonApi.getEventsAtLocations = jest.fn()
-      prisonApi.getLocations.mockReturnValue(Promise.resolve([]))
+      prisonApi.getVideoLinkLocations.mockReturnValue(Promise.resolve([]))
       prisonApi.getLocationsForAppointments = jest.fn()
       prisonApi.getActivitiesAtLocation = jest.fn()
     })

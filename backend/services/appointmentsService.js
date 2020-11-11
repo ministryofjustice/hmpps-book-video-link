@@ -46,7 +46,7 @@ const mapAppointmentType = appointment => ({
 })
 
 const appointmentsServiceFactory = prisonApi => {
-  const getLocations = async (context, agency) =>
+  const getVideoLinkLocations = async (context, agency) =>
     (await prisonApi.getLocationsForAppointments(context, agency))
       .filter(loc => loc.locationType === 'VIDE')
       .map(mapLocationType)
@@ -65,7 +65,7 @@ const appointmentsServiceFactory = prisonApi => {
 
   return {
     getAppointmentOptions,
-    getLocations,
+    getVideoLinkLocations,
   }
 }
 

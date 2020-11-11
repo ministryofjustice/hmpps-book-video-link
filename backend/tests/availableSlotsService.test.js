@@ -13,7 +13,7 @@ describe('Available slots service', () => {
   const existingEventsService = {}
 
   beforeEach(() => {
-    appointmentsService.getLocations = jest.fn()
+    appointmentsService.getVideoLinkLocations = jest.fn()
     existingEventsService.getAppointmentsAtLocations = jest.fn()
   })
 
@@ -72,7 +72,7 @@ describe('Available slots service', () => {
   })
 
   it('should return no available rooms', async () => {
-    appointmentsService.getLocations.mockReturnValue([{ value: 1 }])
+    appointmentsService.getVideoLinkLocations.mockReturnValue([{ value: 1 }])
     existingEventsService.getAppointmentsAtLocations.mockReturnValue([
       {
         locationId: 1,
@@ -94,7 +94,7 @@ describe('Available slots service', () => {
   })
 
   it('should return a two locations, one of each id', async () => {
-    appointmentsService.getLocations.mockReturnValue([{ value: 1 }, { value: 2 }])
+    appointmentsService.getVideoLinkLocations.mockReturnValue([{ value: 1 }, { value: 2 }])
     existingEventsService.getAppointmentsAtLocations.mockReturnValue([
       {
         locationId: 1,
