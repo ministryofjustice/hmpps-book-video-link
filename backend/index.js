@@ -10,9 +10,10 @@ const csrf = require('csurf')
 const app = express()
 
 const path = require('path')
-const apis = require('./apis')
+const { oauthApi, prisonApi, tokenVerificationApi, whereaboutsApi } = require('./apis')
 const config = require('./config')
 const routes = require('./routes')
+const checkUserRole = require('./middleware/checkUserRole')
 
 const setupWebSession = require('./setupWebSession')
 const setupHealthChecks = require('./setupHealthChecks')
@@ -35,14 +36,15 @@ app.use(setupWebSecurity())
 app.use(setupRedirects())
 app.use(setupStaticContent())
 app.use(setupWebSession())
-app.use(setupAuth({ oauthApi: apis.oauthApi, tokenVerificationApi: apis.tokenVerificationApi }))
+app.use(setupAuth({ oauthApi, tokenVerificationApi }))
 app.use(csrf())
-app.use(setupCurrentUserAndRequestLogging({ oauthApi: apis.oauthApi }))
+app.use(setupCurrentUserAndRequestLogging({ oauthApi }))
+app.use(checkUserRole())
 app.use(
   routes({
-    prisonApi: apis.prisonApi,
-    whereaboutsApi: apis.whereaboutsApi,
-    oauthApi: apis.oauthApi,
+    prisonApi,
+    whereaboutsApi,
+    oauthApi,
   })
 )
 

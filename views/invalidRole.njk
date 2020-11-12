@@ -1,0 +1,31 @@
+{% extends "./partials/layout.njk" %}
+{% set title = "Invalid role" %} 
+{% set mainClasses = "govuk-main-wrapper--l" %} 
+{% block content %} 
+{% from "govuk/components/button/macro.njk" import govukButton %}
+<div class="govuk-grid-row govuk-body">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">You do not have permission to access this service</h1>
+    <p>
+      You should email
+      <span> <a href={{ email }}>feedback@digital.justice.gov.uk</a></span> if you work in
+      a court and you think you do have permission to access this service
+    </p>
+    <p>If you work in a prison, you cannot access this service</p>
+
+
+    <div class="govuk-body govuk-!-margin-bottom-4">
+        {{ govukButton({
+            text: "Exit",
+            element: 'a',
+            href: loginUrl,
+            attributes: {
+                'data-qa': 'back-to-login'
+            }
+        }) }}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

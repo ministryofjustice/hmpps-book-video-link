@@ -31,7 +31,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, logError, oauthApi, notifyClient })
   )
 
-  router.get('/prisoner-search', videolinkPrisonerSearchController({ oauthApi, prisonApi, logError }))
+  router.get('/prisoner-search', videolinkPrisonerSearchController({ prisonApi, logError }))
 
   router.get('/', async (req, res) => {
     res.render('courtsVideolink.njk', {

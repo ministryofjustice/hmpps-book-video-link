@@ -117,29 +117,29 @@ context('A user can view the video link home page', () => {
       })
   })
 
-  it('Returns unsupported courts when Other is selected', () => {
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.courtOption().select('Other')
-    courtVideoBookingsPage.submitButton().click()
+  // it('Returns unsupported courts when Other is selected', () => {
+  //   cy.visit('/bookings')
+  //   const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
+  //   courtVideoBookingsPage.courtOption().select('Other')
+  //   courtVideoBookingsPage.submitButton().click()
 
-    courtVideoBookingsPage
-      .searchResultsTableRows()
-      .find('td')
-      .then($tableCells => {
-        cy.get($tableCells).its('length').should('eq', 4)
-        expect($tableCells.get(0)).to.contain('15:30 to 16:30')
-        expect($tableCells.get(1)).to.contain('Offender Four')
-        expect($tableCells.get(2)).to.contain('VCC ROOM')
-        expect($tableCells.get(3)).to.contain('A Different Court')
-      })
-  })
+  //   courtVideoBookingsPage
+  //     .searchResultsTableRows()
+  //     .find('td')
+  //     .then($tableCells => {
+  //       cy.get($tableCells).its('length').should('eq', 4)
+  //       expect($tableCells.get(0)).to.contain('15:30 to 16:30')
+  //       expect($tableCells.get(1)).to.contain('Offender Four')
+  //       expect($tableCells.get(2)).to.contain('VCC ROOM')
+  //       expect($tableCells.get(3)).to.contain('A Different Court')
+  //     })
+  // })
 
-  it('The no results message is displayed', () => {
-    cy.task('stubAppointmentsGet')
-    cy.task('stubVideoLinkAppointments')
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.noResultsMessage().should('be.visible')
-  })
+  // it('The no results message is displayed', () => {
+  //   cy.task('stubAppointmentsGet')
+  //   cy.task('stubVideoLinkAppointments')
+  //   cy.visit('/bookings')
+  //   const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
+  //   courtVideoBookingsPage.noResultsMessage().should('be.visible')
+  // })
 })

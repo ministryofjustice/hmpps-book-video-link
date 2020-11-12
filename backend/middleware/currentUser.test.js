@@ -7,11 +7,14 @@ describe('Current user', () => {
 
   beforeEach(() => {
     oauthApi.currentUser = jest.fn()
+    oauthApi.userRoles = jest.fn()
 
     oauthApi.currentUser.mockReturnValue({
       name: 'Bob Smith',
       username: 'USER_BOB',
     })
+
+    oauthApi.userRoles.mockReturnValue([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
 
     req = { session: {} }
     res = { locals: {} }
@@ -29,7 +32,16 @@ describe('Current user', () => {
     })
   })
 
-  it('should stash data into res.locals', async () => {
+  it('should request and store user roles to session', async () => {
+    const controller = currentUser({ oauthApi })
+
+    await controller(req, res, () => {})
+
+    expect(oauthApi.userRoles).toHaveBeenCalled()
+    expect(req.session.userRoles).toEqual([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
+  })
+
+  it('should stash user data into res.locals', async () => {
     const controller = currentUser({ oauthApi })
 
     await controller(req, res, () => {})
@@ -38,6 +50,13 @@ describe('Current user', () => {
       displayName: 'Bob Smith',
       username: 'USER_BOB',
     })
+  })
+
+  it('should stash userRole data into res.locals', async () => {
+    const controller = currentUser({ oauthApi })
+
+    await controller(req, res, () => {})
+    expect(res.locals.userRoles).toEqual([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
   })
 
   it('ignore xhr requests', async () => {
