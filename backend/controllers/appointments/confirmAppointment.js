@@ -108,7 +108,7 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
         url: '/prisoner-search',
         homeUrl: '/',
       }
-      res.render('courtServiceError.njk', pageData)
+      res.render('error.njk', pageData)
     }
   }
   return { index }

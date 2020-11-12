@@ -96,7 +96,7 @@ const addCourtAppointmentsFactory = (prisonApi, logError) => {
       })
     } catch (error) {
       if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-      return res.render('courtServiceError.njk', { url: `/prisoner-search`, homeUrl: '/' })
+      return res.render('error.njk', { url: `/prisoner-search`, homeUrl: '/' })
     }
   }
 

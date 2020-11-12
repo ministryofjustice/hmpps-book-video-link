@@ -667,7 +667,7 @@ describe('Request a booking', () => {
       controller.confirm(req, res)
 
       expect(raiseAnalyticsEvent).not.toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith('courtServiceError.njk', { url: 'http://localhost' })
+      expect(res.render).toHaveBeenCalledWith('error.njk', { url: 'http://localhost' })
     })
   })
 })

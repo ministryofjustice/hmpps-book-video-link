@@ -32,7 +32,7 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
     if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
     const { offenderNo, agencyId } = req.params
 
-    return res.render('courtServiceError.njk', {
+    return res.render('error.njk', {
       url: `/${agencyId}/offenders/${offenderNo}/add-appointment`,
       homeUrl: '/',
     })

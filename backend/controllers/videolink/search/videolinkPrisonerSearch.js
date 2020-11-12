@@ -67,6 +67,6 @@ module.exports = ({ oauthApi, prisonApi, logError }) => async (req, res) => {
   } catch (error) {
     if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
 
-    return res.render('courtServiceError.njk', { url: '/', homeUrl: '/' })
+    return res.render('error.njk', { url: '/', homeUrl: '/' })
   }
 }

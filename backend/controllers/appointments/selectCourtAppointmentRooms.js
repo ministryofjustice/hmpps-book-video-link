@@ -162,7 +162,7 @@ const selectCourtAppointmentRoomsFactory = ({
       })
     } catch (error) {
       logError(req.originalUrl, error, serviceUnavailableMessage)
-      res.render('courtServiceError.njk', {
+      res.render('error.njk', {
         url: `/${agencyId}/offenders/${offenderNo}/add-appointment`,
         homeUrl: '/',
       })
@@ -282,7 +282,7 @@ const selectCourtAppointmentRoomsFactory = ({
       return next()
     } catch (error) {
       logError(req.originalUrl, error, serviceUnavailableMessage)
-      return res.render('courtServiceError.njk', { url: `/${agencyId}/offenders/${offenderNo}/add-appointment` })
+      return res.render('error.njk', { url: `/${agencyId}/offenders/${offenderNo}/add-appointment` })
     }
   }
 
