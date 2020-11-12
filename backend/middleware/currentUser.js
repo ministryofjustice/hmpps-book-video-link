@@ -1,9 +1,10 @@
 module.exports = ({ oauthApi }) => async (req, res, next) => {
   if (!req.xhr) {
     if (!req.session.userDetails) {
-      const userDetails = await oauthApi.currentUser(res.locals)
-
-      req.session.userDetails = userDetails
+      req.session.userDetails = await oauthApi.currentUser(res.locals)
+    }
+    if (!req.session.userRoles) {
+      req.session.userRoles = await oauthApi.userRoles(res.locals)
     }
 
     if (typeof req.csrfToken === 'function') {
@@ -17,6 +18,8 @@ module.exports = ({ oauthApi }) => async (req, res, next) => {
       displayName: name,
       username,
     }
+
+    res.locals.userRoles = req.session.userRoles
   }
   next()
 }
