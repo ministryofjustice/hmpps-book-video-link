@@ -4,11 +4,11 @@ const requiredRoles = ['VIDEO_LINK_COURT_USER', 'GLOBAL_SEARCH']
 const router = express.Router()
 
 module.exports = () => {
-  router.use(async (req, res, next) => {
-    const { userRoles } = res.locals
-    const userHasRequiredRole =
-      userRoles.filter(role => requiredRoles.includes(role.roleCode)).length === requiredRoles.length
-    if (userHasRequiredRole) {
+  router.use((req, res, next) => {
+    const userRolesExtracted = res.locals.userRoles.map(userRole => userRole.roleCode)
+
+    const userHasRequiredRoles = requiredRoles.every(requiredRole => userRolesExtracted.includes(requiredRole))
+    if (userHasRequiredRoles) {
       next()
     } else {
       res.redirect(301, '/no-service-access')
