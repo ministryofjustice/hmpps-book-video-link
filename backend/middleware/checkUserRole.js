@@ -1,6 +1,6 @@
 const express = require('express')
 
-const requiredRoles = ['VIDEO_LINK_COURT_USER', 'GLOBAL_SEARCH']
+const requiredRoles = ['VIDEO_LINK_COURT_ USER', 'GLOBAL_SEARCH']
 const router = express.Router()
 
 module.exports = () => {
@@ -11,7 +11,7 @@ module.exports = () => {
     if (userHasRequiredRole) {
       next()
     } else {
-      res.redirect(301, '/invalidRole')
+      res.redirect(301, '/no-service-access')
     }
   })
   return router
