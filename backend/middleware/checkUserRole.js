@@ -1,6 +1,6 @@
 const express = require('express')
 
-const requiredRoles = ['VIDEO_LINK_COURT_ USER', 'GLOBAL_SEARCH']
+const requiredRoles = ['VIDEO_LINK_COURT_USER', 'GLOBAL_SEARCH']
 const router = express.Router()
 
 module.exports = () => {
