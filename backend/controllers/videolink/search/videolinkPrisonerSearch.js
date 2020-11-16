@@ -1,11 +1,11 @@
 const moment = require('moment')
-const { serviceUnavailableMessage } = require('../../../common-messages')
+const errorHandler = require('../../../middleware/errorHandler')
 const { formatName } = require('../../../utils')
 const config = require('../../../config')
 const videolinkPrisonerSearchValidation = require('./videolinkPrisonerSearchValidation')
 const dobValidation = require('../../../shared/dobValidation')
 
-module.exports = ({ prisonApi, logError }) => async (req, res) => {
+module.exports = ({ prisonApi }) => async (req, res) => {
   try {
     const prisons = await prisonApi.getAgencies(res.locals)
     let searchResults = []
@@ -58,8 +58,6 @@ module.exports = ({ prisonApi, logError }) => async (req, res) => {
       hasOtherSearchDetails: prisonNumber || dobDay || dobMonth || dobYear || prison,
     })
   } catch (error) {
-    if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-
-    return res.render('error.njk', { url: '/', homeUrl: '/' })
+    return errorHandler(req, res, error, '/')
   }
 }

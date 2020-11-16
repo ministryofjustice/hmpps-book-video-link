@@ -3,16 +3,15 @@ const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC } = require('../../shared/dateHelpers')
 const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 
 const { prepostDurations } = require('../../shared/appointmentConstants')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
 
-const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError }) => {
+const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
   const index = async (req, res) => {
     const { offenderNo } = req.params
     const { activeCaseLoadId } = req.session.userDetails
-
     try {
       const { locationTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
 
@@ -103,12 +102,7 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService, logError })
         `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
       )
     } catch (error) {
-      logError(req.originalUrl, error, serviceUnavailableMessage)
-      const pageData = {
-        url: '/prisoner-search',
-        homeUrl: '/',
-      }
-      res.render('error.njk', pageData)
+      errorHandler(req, res, error, '/prisoner-search')
     }
   }
   return { index }

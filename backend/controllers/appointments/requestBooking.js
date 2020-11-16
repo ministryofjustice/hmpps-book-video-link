@@ -1,6 +1,6 @@
 const moment = require('moment')
 const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 const { validateComments } = require('../../shared/appointmentConstants')
 const {
   notifications: { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId, emails: emailConfig },
@@ -87,10 +87,6 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
         description: vlp.formattedDescription || vlp.description,
       }))
   }
-  const renderError = (req, res, error) => {
-    if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-    return res.render('error.njk', { url: req.originalUrl })
-  }
 
   const renderTemplate = async (req, res, pageData, template) => {
     try {
@@ -100,7 +96,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
         ...(pageData || {}),
       })
     } catch (error) {
-      return renderError(req, res, error)
+      return errorHandler(req, res, error, req.originalUrl)
     }
   }
 
@@ -349,7 +345,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
 
       return res.redirect('/request-booking/confirmation')
     } catch (error) {
-      return renderError(req, res, error)
+      return errorHandler(req, res, error, req.originalUrl)
     }
   }
 
@@ -406,7 +402,7 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
         },
       })
     } catch (error) {
-      return renderError(req, res, error)
+      return errorHandler(req, res, error, req.originalUrl)
     }
   }
   return {

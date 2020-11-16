@@ -4,7 +4,7 @@ const {
   notifications: { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails },
 } = require('../../config')
 
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
 const { properCaseName } = require('../../utils')
 
@@ -88,7 +88,6 @@ const selectCourtAppointmentRoomsFactory = ({
   whereaboutsApi,
   appointmentsService,
   existingEventsService,
-  logError,
   oauthApi,
   notifyClient,
 }) => {
@@ -161,11 +160,7 @@ const selectCourtAppointmentRoomsFactory = ({
         homeUrl: '/',
       })
     } catch (error) {
-      logError(req.originalUrl, error, serviceUnavailableMessage)
-      res.render('error.njk', {
-        url: `/${agencyId}/offenders/${offenderNo}/add-appointment`,
-        homeUrl: '/',
-      })
+      errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
     }
   }
 
@@ -281,8 +276,7 @@ const selectCourtAppointmentRoomsFactory = ({
 
       return next()
     } catch (error) {
-      logError(req.originalUrl, error, serviceUnavailableMessage)
-      return res.render('error.njk', { url: `/${agencyId}/offenders/${offenderNo}/add-appointment` })
+      return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
     }
   }
 

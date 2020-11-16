@@ -14,24 +14,21 @@ const { notifyClient } = require('./shared/notifyClient')
 const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
-  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ prisonApi, logError }))
+  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ prisonApi }))
 
-  router.use(
-    '/:agencyId/offenders/:offenderNo/add-court-appointment',
-    addCourtAppointmentRouter({ prisonApi, logError })
-  )
+  router.use('/:agencyId/offenders/:offenderNo/add-court-appointment', addCourtAppointmentRouter({ prisonApi }))
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court',
-    selectCourtAppointmentCourt({ prisonApi, whereaboutsApi, logError })
+    selectCourtAppointmentCourt({ prisonApi, whereaboutsApi })
   )
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms',
-    selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, logError, oauthApi, notifyClient })
+    selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, oauthApi, notifyClient })
   )
 
-  router.get('/prisoner-search', videolinkPrisonerSearchController({ prisonApi, logError }))
+  router.get('/prisoner-search', videolinkPrisonerSearchController({ prisonApi }))
 
   router.get('/', async (req, res) => {
     res.render('courtsVideolink.njk', {
@@ -40,7 +37,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     })
   })
 
-  router.use('/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi, logError }))
+  router.use('/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 

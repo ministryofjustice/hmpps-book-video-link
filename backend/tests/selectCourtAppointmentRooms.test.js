@@ -1,6 +1,9 @@
 const { selectCourtAppointmentRoomsFactory } = require('../controllers/appointments/selectCourtAppointmentRooms')
 const { notifyClient } = require('../shared/notifyClient')
+const errorHandler = require('../middleware/errorHandler')
 const config = require('../config')
+
+jest.mock('../middleware/errorHandler')
 
 describe('Select court appointment rooms', () => {
   const prisonApi = {}
@@ -17,7 +20,6 @@ describe('Select court appointment rooms', () => {
     body: {},
   }
   const res = { locals: {}, redirect: jest.fn() }
-  const logError = jest.fn()
 
   const bookingId = 1
   const appointmentDetails = {
@@ -97,7 +99,6 @@ describe('Select court appointment rooms', () => {
       whereaboutsApi,
       appointmentsService,
       existingEventsService,
-      logError,
       oauthApi,
       notifyClient,
     })
@@ -141,15 +142,12 @@ describe('Select court appointment rooms', () => {
 
       await index(req, res)
 
-      expect(logError).toHaveBeenCalledWith(
-        'http://localhost',
+      expect(errorHandler).toHaveBeenCalledWith(
+        req,
+        res,
         new Error('Appointment details are missing'),
-        'Sorry, the service is unavailable'
+        '/MDI/offenders/A12345/add-appointment'
       )
-      expect(res.render).toHaveBeenCalledWith('error.njk', {
-        url: '/MDI/offenders/A12345/add-appointment',
-        homeUrl: '/',
-      })
     })
 
     it('should call getAvailableLocationsForVLB with the correct parameters', async () => {
@@ -284,12 +282,12 @@ describe('Select court appointment rooms', () => {
 
       await validateInput(req, res)
 
-      expect(logError).toHaveBeenCalledWith(
-        'http://localhost',
+      expect(errorHandler).toHaveBeenCalledWith(
+        req,
+        res,
         new Error('Appointment details are missing'),
-        'Sorry, the service is unavailable'
+        '/MDI/offenders/A12345/add-appointment'
       )
-      expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/MDI/offenders/A12345/add-appointment' })
     })
 
     it('should pack appointment details back into flash before rendering', async () => {
@@ -382,7 +380,6 @@ describe('Select court appointment rooms', () => {
         prisonApi,
         whereaboutsApi,
         appointmentsService,
-        logError,
         notifyClient,
         oauthApi,
         existingEventsService,
@@ -483,7 +480,6 @@ describe('Select court appointment rooms', () => {
         whereaboutsApi,
         oauthApi,
         notifyClient,
-        logError,
         appointmentsService,
         existingEventsService,
       })

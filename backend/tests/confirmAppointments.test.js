@@ -1,9 +1,12 @@
 const confirmAppointments = require('../controllers/appointments/confirmAppointment')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
+const errorHandler = require('../middleware/errorHandler')
 
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
+
+jest.mock('../middleware/errorHandler')
 
 describe('Confirm appointments', () => {
   const prisonApi = {}
@@ -60,7 +63,6 @@ describe('Confirm appointments', () => {
     const { index } = confirmAppointments.confirmAppointmentFactory({
       prisonApi,
       appointmentsService,
-      logError: () => {},
     })
 
     req.session = { userDetails: { authSource: '' } }
@@ -112,25 +114,20 @@ describe('Confirm appointments', () => {
   })
 
   it('should throw and log a court service error for a court user when appointment details are missing from flash', async () => {
-    const logError = jest.fn()
     const { index } = confirmAppointments.confirmAppointmentFactory({
       prisonApi,
       appointmentsService,
-      logError,
     })
     req.flash.mockImplementation(() => [])
     req.session.userDetails.authSource = 'auth'
 
     await index(req, res)
 
-    expect(logError).toHaveBeenCalledWith(
-      'http://localhost',
+    expect(errorHandler).toHaveBeenCalledWith(
+      req,
+      res,
       new Error('Appointment details are missing'),
-      'Sorry, the service is unavailable'
+      '/prisoner-search'
     )
-    expect(res.render).toHaveBeenCalledWith('error.njk', {
-      url: '/prisoner-search',
-      homeUrl: '/',
-    })
   })
 })

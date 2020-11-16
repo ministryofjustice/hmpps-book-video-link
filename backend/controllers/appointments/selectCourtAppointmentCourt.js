@@ -1,7 +1,7 @@
 const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC, Time } = require('../../shared/dateHelpers')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')
@@ -16,7 +16,7 @@ const unpackAppointmentDetails = req => {
   )
 }
 
-const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError) => {
+const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
   const getCourts = async context => {
     const { courtLocations } = await whereaboutsApi.getCourtLocations(context)
 
@@ -26,16 +26,6 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
     }, {})
 
     return courts
-  }
-
-  const renderError = (req, res, error) => {
-    if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-    const { offenderNo, agencyId } = req.params
-
-    return res.render('error.njk', {
-      url: `/${agencyId}/offenders/${offenderNo}/add-appointment`,
-      homeUrl: '/',
-    })
   }
 
   const renderTemplate = async (req, res, pageData) => {
@@ -91,7 +81,7 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi, logError)
         homeUrl: '/',
       })
     } catch (error) {
-      return renderError(req, res, error)
+      return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
     }
   }
 

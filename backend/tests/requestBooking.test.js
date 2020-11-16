@@ -8,12 +8,15 @@ const { requestBookingFactory } = require('../controllers/appointments/requestBo
 const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyClient } = require('../shared/notifyClient')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
+const errorHandler = require('../middleware/errorHandler')
 
 const { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId } = config.notifications
 
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
+
+jest.mock('../middleware/errorHandler')
 
 describe('Request a booking', () => {
   let req
@@ -667,7 +670,8 @@ describe('Request a booking', () => {
       controller.confirm(req, res)
 
       expect(raiseAnalyticsEvent).not.toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith('error.njk', { url: 'http://localhost' })
+
+      expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Request details are missing'), 'http://localhost')
     })
   })
 })

@@ -1,8 +1,10 @@
 const videolinkPrisonerSearchController = require('../controllers/videolink/search/videolinkPrisonerSearch')
-const { serviceUnavailableMessage } = require('../common-messages')
+const errorHandler = require('../middleware/errorHandler')
 const config = require('../config')
 
 config.app.videoLinkEnabledFor = ['MDI']
+
+jest.mock('../middleware/errorHandler')
 
 describe('Video link prisoner search', () => {
   const prisonApi = {}
@@ -10,7 +12,6 @@ describe('Video link prisoner search', () => {
 
   let req
   let res
-  let logError
   let controller
 
   beforeEach(() => {
@@ -19,8 +20,6 @@ describe('Video link prisoner search', () => {
       query: {},
     }
     res = { locals: {}, render: jest.fn(), redirect: jest.fn() }
-
-    logError = jest.fn()
 
     oauthApi.userRoles = jest.fn()
     prisonApi.getAgencies = jest.fn().mockReturnValue([
@@ -37,7 +36,7 @@ describe('Video link prisoner search', () => {
     ])
     prisonApi.globalSearch = jest.fn()
 
-    controller = videolinkPrisonerSearchController({ prisonApi, logError })
+    controller = videolinkPrisonerSearchController({ prisonApi })
   })
 
   const agencyOptions = [
@@ -215,8 +214,7 @@ describe('Video link prisoner search', () => {
         prisonApi.getAgencies.mockImplementation(() => Promise.reject(new Error('Network error')))
         await controller(req, res)
 
-        expect(logError).toHaveBeenCalledWith('http://localhost', new Error('Network error'), serviceUnavailableMessage)
-        expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/', homeUrl: '/' })
+        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), '/')
       })
 
       it('should render the error template if there is an error with global search', async () => {
@@ -225,8 +223,7 @@ describe('Video link prisoner search', () => {
         req.query = { lastName: 'Offender' }
         await controller(req, res)
 
-        expect(logError).toHaveBeenCalledWith('http://localhost', new Error('Network error'), serviceUnavailableMessage)
-        expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/', homeUrl: '/' })
+        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), '/')
       })
     })
   })

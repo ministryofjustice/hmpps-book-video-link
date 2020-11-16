@@ -46,7 +46,6 @@ const appointmentDetails = {
 
 describe('Room check middleware', () => {
   let middleware
-  let logError
   let next
 
   beforeEach(() => {
@@ -59,12 +58,11 @@ describe('Room check middleware', () => {
     res.send = jest.fn()
     res.redirect = jest.fn()
     req.flash = jest.fn()
-    logError = jest.fn()
     next = jest.fn()
 
     req.flash.mockImplementation(() => [appointmentDetails])
 
-    middleware = checkAppointmentRooms(existingEventsService, availableSlotsService, logError)
+    middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
   })
 
   afterEach(() => {
@@ -254,7 +252,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService, logError)
+      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
       await middleware(req, res, next)
 
       expect(next).toHaveBeenCalled()
@@ -282,7 +280,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService, logError)
+      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -311,7 +309,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService, logError)
+      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -340,7 +338,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService, logError)
+      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)

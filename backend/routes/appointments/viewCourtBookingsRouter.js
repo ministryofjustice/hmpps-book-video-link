@@ -1,8 +1,8 @@
 const moment = require('moment')
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 const { getTime, properCaseName } = require('../../utils')
 
-module.exports = ({ prisonApi, whereaboutsApi, logError }) => async (req, res) => {
+module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
   const { date, courtOption } = req.query
   const searchDate = date ? moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')
   // FIXME: Temporary fix while waiting for new API
@@ -96,7 +96,6 @@ module.exports = ({ prisonApi, whereaboutsApi, logError }) => async (req, res) =
       title: courtOption ? `${title} - ${courtOption}` : title,
     })
   } catch (error) {
-    logError(req.originalUrl, error, serviceUnavailableMessage)
-    return res.render('error.njk', { url: '/bookings' })
+    return errorHandler(req, res, error, '/bookings')
   }
 }

@@ -1,4 +1,5 @@
 const { DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../shared/dateHelpers')
+const errorHandler = require('./errorHandler')
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')
@@ -13,7 +14,7 @@ const unpackAppointmentDetails = req => {
   )
 }
 
-module.exports = (existingEventsService, availableSlotsService, logError) => async (req, res, next) => {
+module.exports = (existingEventsService, availableSlotsService) => async (req, res, next) => {
   const appointmentDetails = unpackAppointmentDetails(req)
   const {
     date,
@@ -113,7 +114,6 @@ module.exports = (existingEventsService, availableSlotsService, logError) => asy
     req.flash('appointmentDetails', appointmentDetails)
     return next()
   } catch (error) {
-    if (error) logError(req.originalUrl, error, 'message')
-    return res.render('error.njk', { url: `/${agencyId}/offenders/${offenderNo}/add-court-appointment/` })
+    return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-court-appointment/`)
   }
 }

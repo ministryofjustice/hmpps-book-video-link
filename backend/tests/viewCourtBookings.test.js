@@ -1,5 +1,7 @@
 const viewCourtBookingsRouter = require('../routes/appointments/viewCourtBookingsRouter')
-const { serviceUnavailableMessage } = require('../common-messages')
+const errorHandler = require('../middleware/errorHandler')
+
+jest.mock('../middleware/errorHandler')
 
 describe('View court bookings', () => {
   const prisonApi = {}
@@ -7,7 +9,6 @@ describe('View court bookings', () => {
 
   let req
   let res
-  let logError
   let controller
 
   beforeEach(() => {
@@ -22,8 +23,6 @@ describe('View court bookings', () => {
     }
     res = { locals: {}, render: jest.fn() }
 
-    logError = jest.fn()
-
     prisonApi.getAppointmentsForAgency = jest.fn()
 
     prisonApi.getAppointmentsForAgency.mockReturnValue([])
@@ -34,7 +33,7 @@ describe('View court bookings', () => {
     whereaboutsApi.getCourtLocations = jest.fn()
     whereaboutsApi.getCourtLocations.mockReturnValue({ courtLocations: [] })
 
-    controller = viewCourtBookingsRouter({ prisonApi, whereaboutsApi, logError })
+    controller = viewCourtBookingsRouter({ prisonApi, whereaboutsApi })
   })
 
   beforeAll(() => {
@@ -313,13 +312,7 @@ describe('View court bookings', () => {
         whereaboutsApi.getCourtLocations.mockRejectedValue(new Error('Problem retrieving courts'))
 
         await controller(req, res)
-
-        expect(logError).toHaveBeenCalledWith(
-          'http://localhost',
-          new Error('Problem retrieving courts'),
-          serviceUnavailableMessage
-        )
-        expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/bookings' })
+        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Problem retrieving courts'), '/bookings')
       })
     })
   })

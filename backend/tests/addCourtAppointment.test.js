@@ -1,4 +1,7 @@
 const { addCourtAppointmentsFactory } = require('../controllers/appointments/addCourtAppointment')
+const errorHandler = require('../middleware/errorHandler')
+
+jest.mock('../middleware/errorHandler')
 
 const prisonApi = {}
 
@@ -15,7 +18,6 @@ const res = { locals: {}, send: jest.fn(), redirect: jest.fn() }
 
 describe('Add court appointment', () => {
   let controller
-  let logError
 
   beforeEach(() => {
     prisonApi.getDetails = jest.fn()
@@ -29,8 +31,7 @@ describe('Add court appointment', () => {
     res.redirect = jest.fn()
 
     req.flash = jest.fn()
-    logError = jest.fn()
-    controller = addCourtAppointmentsFactory(prisonApi, logError)
+    controller = addCourtAppointmentsFactory(prisonApi)
   })
 
   afterEach(() => {
@@ -74,8 +75,7 @@ describe('Add court appointment', () => {
 
     await controller.index(req, res)
 
-    expect(res.render).toHaveBeenCalledWith('error.njk', expect.objectContaining({}))
-    expect(logError).toHaveBeenCalledWith(undefined, new Error('Network error'), 'Sorry, the service is unavailable')
+    expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), expect.objectContaining({}))
   })
 
   describe('validation errors', () => {

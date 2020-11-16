@@ -4,9 +4,9 @@ const {
 } = require('../../config')
 const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../../shared/dateHelpers')
 const { formatName } = require('../../utils')
-const { serviceUnavailableMessage } = require('../../common-messages')
+const errorHandler = require('../../middleware/errorHandler')
 
-const addCourtAppointmentsFactory = (prisonApi, logError) => {
+const addCourtAppointmentsFactory = prisonApi => {
   const getValidationMessages = fields => {
     const {
       date,
@@ -95,8 +95,7 @@ const addCourtAppointmentsFactory = (prisonApi, logError) => {
         bookingId,
       })
     } catch (error) {
-      if (error) logError(req.originalUrl, error, serviceUnavailableMessage)
-      return res.render('error.njk', { url: `/prisoner-search`, homeUrl: '/' })
+      return errorHandler(req, res, error, '/prisoner-search')
     }
   }
 
