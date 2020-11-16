@@ -119,9 +119,6 @@ env:
   - name: SUPPORT_URL
     value: {{ .Values.env.SUPPORT_URL | quote }}
 
-  - name: LOGIN_URL
-    value: {{ .Values.env.LOGIN_URL | quote }}
-
   - name: NODE_ENV
     value: production
 
