@@ -41,6 +41,7 @@ context('A user can book an appointment if has all the required roles', () => {
   })
 
   it('should go to the login page when clicking Exit link', () => {
+    cy.login()
     cy.visit('/no-service-access')
     const noServiceAccessPage = NoServiceAccessPage.verifyOnPage()
     noServiceAccessPage.exitLink().click()
