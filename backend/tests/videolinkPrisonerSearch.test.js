@@ -40,6 +40,31 @@ describe('Video link prisoner search', () => {
     controller = videolinkPrisonerSearchController({ prisonApi, logError })
   })
 
+  const agencyOptions = [
+    {
+      value: 'PRISON1',
+      text: 'Prison 1',
+    },
+    {
+      value: 'PRISON2',
+      text: 'Prison 2',
+    },
+  ]
+  describe('when a search has not been made', () => {
+    it('should render the prisoner search template', async () => {
+      await controller(req, res)
+
+      expect(prisonApi.getAgencies).toHaveBeenCalled()
+      expect(res.render).toHaveBeenCalledWith('videolinkPrisonerSearch.njk', {
+        agencyOptions,
+        errors: [],
+        formValues: {},
+        hasSearched: false,
+        homeUrl: '/',
+        results: [],
+      })
+    })
+  })
   describe('index', () => {
     describe('when the user does have the correct roles', () => {
       describe('when a search has been made', () => {
