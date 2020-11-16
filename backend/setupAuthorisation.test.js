@@ -1,6 +1,6 @@
 const express = require('express')
 const request = require('supertest')
-const checkUserRole = require('./checkUserRole')
+const setupAuthorisation = require('./setupAuthorisation')
 
 describe('Check user roles', () => {
   const app = express()
@@ -12,7 +12,7 @@ describe('Check user roles', () => {
       next()
     })
 
-    app.use(checkUserRole())
+    app.use(setupAuthorisation())
 
     app.get('/', (req, res) => {
       return res.send('protected resource')

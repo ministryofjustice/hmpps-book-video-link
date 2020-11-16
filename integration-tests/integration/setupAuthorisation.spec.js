@@ -1,6 +1,6 @@
-const NoServiceAccessPage = require('../../pages/appointments/noServiceAccessPage')
-const CourtVideoLinkHomePage = require('../../pages/videolink/courtVideoLinkHomePage')
-const LoginPage = require('../../pages/loginPage')
+const NoServiceAccessPage = require('../pages/noServiceAccessPage')
+const CourtVideoLinkHomePage = require('../pages/videolink/courtVideoLinkHomePage')
+const LoginPage = require('../pages/loginPage')
 
 context('A user can book an appointment if has all the required roles', () => {
   before(() => {

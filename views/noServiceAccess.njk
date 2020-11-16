@@ -8,7 +8,7 @@
     <h1 class="govuk-heading-l">You do not have permission to access this service</h1>
     <p>
       You should email
-      <span> <a href={{ email }}>feedback@digital.justice.gov.uk</a></span> if you work in
+      <span> <a href='mailto:${supportEmail}'>{{supportEmail}}</a></span> if you work in
       a court and you think you do have permission to access this service
     </p>
     <p>If you work in a prison, you cannot access this service</p>
@@ -18,7 +18,7 @@
         {{ govukButton({
             text: "Exit",
             element: 'a',
-            href: loginUrl,
+            href: '/logout',
             attributes: {
                 'data-qa': 'back-to-login'
             }

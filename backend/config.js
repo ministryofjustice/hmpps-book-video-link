@@ -10,7 +10,6 @@ module.exports = {
     maximumFileUploadSizeInMb: toInt(process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB, 200),
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
     supportUrl: process.env.SUPPORT_URL || 'http://localhost:3000/',
-    loginUrl: process.env.LOGIN_URL || 'https://sign-in-dev.hmpps.service.justice.gov.uk/auth/login',
   },
   analytics: {
     googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID,

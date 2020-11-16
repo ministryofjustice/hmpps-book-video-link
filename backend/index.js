@@ -13,7 +13,6 @@ const path = require('path')
 const { oauthApi, prisonApi, tokenVerificationApi, whereaboutsApi } = require('./apis')
 const config = require('./config')
 const routes = require('./routes')
-const checkUserRole = require('./middleware/checkUserRole')
 
 const setupWebSession = require('./setupWebSession')
 const setupHealthChecks = require('./setupHealthChecks')
@@ -24,6 +23,7 @@ const setupStaticContent = require('./setupStaticContent')
 const nunjucksSetup = require('./utils/nunjucksSetup')
 const setupRedirects = require('./setupRedirects')
 const setupCurrentUserAndRequestLogging = require('./setupCurrentUserAndRequestLogging')
+const setupAuthorisation = require('./setupAuthorisation')
 
 app.set('trust proxy', 1) // trust first proxy
 app.set('view engine', 'njk')
@@ -39,7 +39,7 @@ app.use(setupWebSession())
 app.use(setupAuth({ oauthApi, tokenVerificationApi }))
 app.use(csrf())
 app.use(setupCurrentUserAndRequestLogging({ oauthApi }))
-app.use(checkUserRole())
+app.use(setupAuthorisation())
 app.use(
   routes({
     prisonApi,

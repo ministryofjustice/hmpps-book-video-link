@@ -7,7 +7,7 @@ const dobValidation = require('../../../shared/dobValidation')
 
 module.exports = ({ prisonApi, logError }) => async (req, res) => {
   try {
-    const agencies = await prisonApi.getAgencies(res.locals)
+    const prisons = await prisonApi.getAgencies(res.locals)
     let searchResults = []
     const hasSearched = Boolean(Object.keys(req.query).length)
     const errors = hasSearched ? videolinkPrisonerSearchValidation(req.query) : []
@@ -30,7 +30,7 @@ module.exports = ({ prisonApi, logError }) => async (req, res) => {
     }
 
     return res.render('videolinkPrisonerSearch.njk', {
-      agencyOptions: agencies
+      agencyOptions: prisons
         .map(agency => ({ value: agency.agencyId, text: agency.formattedDescription || agency.description }))
         .sort((a, b) => a.text.localeCompare(b.text)),
       errors,
