@@ -12,20 +12,32 @@ describe('Page not found ', () => {
   let request
   beforeEach(() => {
     const app = express()
-    const router = express.Router()
-
     nunjucksSetup(app, path)
-    router.use(routes({ prisonApi, whereaboutsApi, oauthApi }))
-    app.use(router)
+
+    app.use((req, res, next) => {
+      req.session = { userDetails: { name: 'Jim' } }
+      next()
+    })
+    app.use(routes({ prisonApi, whereaboutsApi, oauthApi }))
+
     request = supertest(app)
   })
 
   it("should present 'Page not found' page", async () => {
     await request
       .get('/unknown-endpoint')
-      .expect(200)
+      .expect(404)
       .expect(res => {
         expect(res.text).toContain('Page not found')
+      })
+  })
+
+  it("should present 'home' page", async () => {
+    await request
+      .get('/')
+      .expect(200)
+      .expect(res => {
+        expect(res.text).toContain('Book a video link with a prison')
       })
   })
 })

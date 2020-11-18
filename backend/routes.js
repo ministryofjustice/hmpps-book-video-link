@@ -41,7 +41,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
   router.use((req, res, next) => {
-    res.render('notFoundPage.njk', { title: 'Page not found' })
+    res.status(404).render('notFoundPage.njk')
   })
 
   return router
