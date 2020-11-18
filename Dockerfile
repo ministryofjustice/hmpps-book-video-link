@@ -16,14 +16,15 @@ RUN addgroup --gid 2000 --system appgroup && \
 WORKDIR /app
 
 RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y make python
+    apt-get upgrade -y
 
 # Build stage 2.
 # This stage builds our assets.
 FROM base as build
 ARG BUILD_NUMBER
 ARG GIT_REF
+
+RUN apt-get install -y make python g++
 
 COPY . .
 
@@ -53,9 +54,12 @@ COPY --from=build --chown=appuser:appgroup \
         /app/build ./build
 
 COPY --from=build --chown=appuser:appgroup \
+        /app/node_modules ./node_modules
+
+COPY --from=build --chown=appuser:appgroup \
         /app/views ./views
 
-RUN npm ci --only=production
+RUN npm prune --production
 
 EXPOSE 3000
 USER 2000
