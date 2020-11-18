@@ -6,13 +6,18 @@ orbs:
 executors:
   integration-tests:
     docker:
-      - image: circleci/node:12-buster-browsers
+      - image: circleci/node:14-buster-browsers
       - image: circleci/redis:buster
     working_directory: ~/app
+  builder:
+    docker:
+      - image: 'circleci/node:14-buster-browsers'
+    working_directory: ~/app   
+  
 
 jobs:
   build:
-    executor: hmpps/node
+    executor: builder
     steps:
       - checkout
       - run:
@@ -48,7 +53,7 @@ jobs:
             - .cache/Cypress
 
   unit_test:
-    executor: hmpps/node
+    executor: builder
     steps:
       - checkout
       - restore_cache:

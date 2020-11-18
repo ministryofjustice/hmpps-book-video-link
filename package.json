@@ -6,7 +6,7 @@
   "private": false,
   "engines": {
     "npm": ">=6",
-    "node": ">=12.*"
+    "node": ">=14.*"
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^0.0.21",
@@ -29,11 +29,11 @@
     "govuk-frontend": "^3.9.1",
     "helmet": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
-    "jwt-decode": "^3.1.1",
+    "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "moment-business-days": "^1.2.0",
     "nocache": "^2.1.0",
-    "nock": "^13.0.4",
+    "nock": "^13.0.5",
     "notifications-node-client": "^5.0.0",
     "nunjucks": "^3.2.2",
     "passport": "^0.4.1",
@@ -46,12 +46,12 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
-    "@types/node": "^14.14.6",
-    "@typescript-eslint/eslint-plugin": "^4.6.1",
-    "@typescript-eslint/parser": "^4.6.1",
+    "@types/node": "^14.14.8",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
     "audit-ci": "^3.1.1",
     "concurrently": "^5.3.0",
-    "cypress": "^5.5.0",
+    "cypress": "^5.6.0",
     "cypress-file-upload": "^4.1.1",
     "cypress-multi-reporters": "^1.4.0",
     "dotenv-expand": "^5.1.0",
