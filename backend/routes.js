@@ -1,7 +1,6 @@
 const express = require('express')
 
 const { logError } = require('./logError')
-
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
 const selectCourtAppointmentRooms = require('./routes/appointments/selectCourtAppointmentRoomsRouter')
@@ -40,6 +39,10 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   router.use('/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
+
+  router.use((req, res, next) => {
+    res.render('notFoundPage.njk', { title: 'Page not found' })
+  })
 
   return router
 }
