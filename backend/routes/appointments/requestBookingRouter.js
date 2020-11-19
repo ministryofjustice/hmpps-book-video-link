@@ -30,7 +30,6 @@ const controller = ({ logError, notifyClient, whereaboutsApi, oauthApi, prisonAp
   router.get('/prisoner-not-listed', async (req, res) => {
     return res.render('requestBooking/prisonerNotListed.njk', {
       url: req.originalUrl,
-      homeUrl: '/',
       user: { displayName: req.session.userDetails.name },
     })
   })

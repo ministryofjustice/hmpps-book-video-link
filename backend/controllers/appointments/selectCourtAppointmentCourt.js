@@ -78,7 +78,6 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
           courtHearingEndTime: details.endTime,
         },
         prePostData,
-        homeUrl: '/',
       })
     } catch (error) {
       return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)

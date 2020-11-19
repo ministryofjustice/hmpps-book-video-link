@@ -35,7 +35,6 @@ module.exports = ({ prisonApi }) => async (req, res) => {
         .sort((a, b) => a.text.localeCompare(b.text)),
       errors,
       formValues: req.query,
-      homeUrl: '/',
       results: searchResults
         .filter(result => (prison ? prison === result.latestLocationId : result))
         .map(result => {

@@ -16,9 +16,8 @@ const isXHRRequest = req =>
  * @param {any} params.app an Express instance.
  * @param {any} params.tokenRefresher a function which uses the 'context' object to perform an OAuth token refresh (returns a promise).
  * @param {any} params.tokenVerifier a function which uses the 'context' object to check whether the token is valid (returns a promise).
- * @param {any} params.homeLink The URL for the home page.
  */
-const configureRoutes = ({ app, tokenRefresher, tokenVerifier, homeLink }) => {
+const configureRoutes = ({ app, tokenRefresher, tokenVerifier }) => {
   const authLogoutUrl = `${config.apis.oauth2.ui_url}logout?client_id=${config.apis.oauth2.clientId}&redirect_uri=${config.app.url}`
 
   const remoteLoginIndex = (req, res, next) => {
@@ -125,9 +124,7 @@ const configureRoutes = ({ app, tokenRefresher, tokenVerifier, homeLink }) => {
 
   app.get('/autherror', (req, res) => {
     res.status(401)
-    return res.render('autherror.njk', {
-      homeLink,
-    })
+    return res.render('autherror.njk')
   })
 
   app.get('/auth/logout', logout)

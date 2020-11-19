@@ -91,7 +91,6 @@ module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
       courtOption,
       appointmentRows: appointmentsEnhanced,
       user,
-      homeUrl: '/',
       date: moment(searchDate).format('DD/MM/YYYY'),
       title: courtOption ? `${title} - ${courtOption}` : title,
     })

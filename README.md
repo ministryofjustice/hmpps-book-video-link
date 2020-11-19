@@ -63,5 +63,10 @@ Just on the command line (any console log outputs will not be visible, they appe
 npm run int-test
 ```
 
+### Route Map
+Generated using a Graphviz online editor. Raw file is present [here](./route-map.dot)
+
+![Route map](./routes.svg?raw=true "Routes")
+
 ### Useful links
 - WireMock: http://wiremock.org/

@@ -4,7 +4,6 @@ module.exports = {
   app: {
     port: process.env.PORT || 3000,
     production: process.env.NODE_ENV === 'production',
-    notmEndpointUrl: process.env.NN_ENDPOINT_URL || 'http://localhost:3000/',
     tokenRefreshThresholdSeconds: toInt(process.env.TOKEN_REFRESH_THRESHOLD_SECONDS, 60),
     url: process.env.BOOK_VIDEO_LINK_UI_URL || `http://localhost:${process.env.PORT || 3000}/`,
     maximumFileUploadSizeInMb: toInt(process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB, 200),
@@ -18,7 +17,7 @@ module.exports = {
     name: process.env.HMPPS_COOKIE_NAME || 'hmpps-session-dev',
     domain: process.env.HMPPS_COOKIE_DOMAIN || 'localhost',
     expiryMinutes: toInt(process.env.WEB_SESSION_TIMEOUT_IN_MINUTES, 60),
-    sessionSecret: process.env.SESSION_COOKIE_SECRET || 'notm-insecure-session',
+    sessionSecret: process.env.SESSION_COOKIE_SECRET || 'bvl-insecure-session',
   },
   redis: {
     enabled: process.env.REDIS_ENABLED === 'true',

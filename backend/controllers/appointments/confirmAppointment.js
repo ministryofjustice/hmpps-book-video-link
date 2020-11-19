@@ -93,7 +93,6 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
         court: {
           courtLocation: details.court,
         },
-        homeUrl: '/',
       })
 
       raiseAnalyticsEvent(

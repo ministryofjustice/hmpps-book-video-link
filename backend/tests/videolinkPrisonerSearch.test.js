@@ -59,7 +59,6 @@ describe('Video link prisoner search', () => {
         errors: [],
         formValues: {},
         hasSearched: false,
-        homeUrl: '/',
         results: [],
       })
     })

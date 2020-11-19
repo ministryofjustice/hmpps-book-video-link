@@ -92,7 +92,6 @@ describe('Confirm appointments', () => {
       'videolinkBookingConfirmHearingCourt.njk',
       expect.objectContaining({
         videolinkPrisonerSearchLink: '/prisoner-search',
-        homeUrl: '/',
         title: 'The video link has been booked',
         offender: {
           name: 'John Doe',

@@ -66,7 +66,6 @@ describe('View court bookings', () => {
         courtOption: undefined,
         courts: [{ value: 'Other', text: 'Other' }],
         user: { displayName: 'Test User' },
-        homeUrl: '/',
       })
     })
 
@@ -239,7 +238,6 @@ describe('View court bookings', () => {
               { text: 'Wimbledon', value: 'Wimbledon' },
               { text: 'Other', value: 'Other' },
             ],
-            homeUrl: '/',
             user: { displayName: 'Test User' },
           })
         )

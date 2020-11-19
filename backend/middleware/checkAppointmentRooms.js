@@ -73,7 +73,6 @@ module.exports = (existingEventsService, availableSlotsService) => async (req, r
         return res.render('noAppointmentsForWholeDay.njk', {
           date: startTime.format('dddd D MMMM YYYY'),
           continueLink: `/${agencyId}/offenders/${offenderNo}/add-court-appointment`,
-          homeUrl: '/',
         })
       }
 
@@ -83,7 +82,6 @@ module.exports = (existingEventsService, availableSlotsService) => async (req, r
           startTime: startTime.format('HH:mm'),
           endTime: endTime.format('HH:mm'),
           continueLink: `/${agencyId}/offenders/${offenderNo}/add-court-appointment`,
-          homeUrl: '/',
         })
       }
     }

@@ -86,9 +86,6 @@ env:
   - name: OAUTH_ENDPOINT_URL
     value: {{ .Values.env.OAUTH_ENDPOINT_URL | quote }}
 
-  - name: NN_ENDPOINT_URL
-    value: {{ .Values.env.NN_ENDPOINT_URL | quote }}
-
   - name: BOOK_VIDEO_LINK_UI_URL
     value: "https://{{ .Values.ingress.host }}/"
 

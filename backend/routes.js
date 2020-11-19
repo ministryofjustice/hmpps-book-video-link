@@ -32,7 +32,6 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   router.get('/', async (req, res) => {
     res.render('courtsVideolink.njk', {
       user: { displayName: req.session.userDetails.name },
-      homeUrl: '/',
     })
   })
 

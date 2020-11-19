@@ -1,0 +1,59 @@
+digraph G {
+  start [shape=Mdiamond];
+  start -> a1;
+  start -> viewBookings;
+
+  subgraph cluster_1 {
+    label = "Book a video link"
+      
+    a1 [label="Search for a prisoner"]
+    a2 [label="Prisoner not listed", style=filled]
+    
+    a1 -> { a2, b0 }
+    a2 -> c0
+    a1 -> c0
+
+    subgraph cluster_2 {
+      b0 [label="add-court-appointment"]
+      b1 [label="no-appointments-for-day", style=filled]
+      b2 [label="no-appointments-for-time", style=filled]
+      b3 [label="appointment-no-longer-available", style=filled]
+      b4 [label="select-court"]
+      b5 [label="select-rooms"]
+      b6 [label="confirm-appointment"]
+        
+      b0 -> b4
+      b4 -> b5
+      b5 -> b6
+      b6 -> { a1 }
+        
+      b0 -> { b1, b2, b3 } [style=dashed, color=grey]
+        
+      b1 -> b0 [style=dashed, color=grey]
+      b2 -> b0 [style=dashed, color=grey]
+      b3 -> b5 [style=dashed, color=grey]
+        
+      b5 -> {b1, b2, b3} [style=dashed, color=grey]
+        
+      label = "Request booking for found prisoner";
+    }
+      
+    subgraph cluster_3 {
+      c0 [label="request-booking"]
+      c1 [label="check-availability"]
+      c2 [label="select-court"]
+      c3 [label="validate-court"]
+      c4 [label="enter-offender-details"]
+      c5 [label="create-booking-request"]
+      c6 [label="confirmation"]
+    
+      node [style=filled];
+      c0 -> c1 -> c2 -> c3 -> c4 -> c5 -> c6 -> c0;
+      label = "Request booking when not in prison";
+    }
+  }
+  subgraph cluster_4 {
+    viewBookings [label="View bookings"]
+    label = "View all video link bookings";
+  }
+}

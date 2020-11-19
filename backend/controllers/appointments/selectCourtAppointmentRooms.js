@@ -157,7 +157,6 @@ const selectCourtAppointmentRoomsFactory = ({
         }),
         preAppointmentRequired: preAppointmentRequired === 'yes',
         postAppointmentRequired: postAppointmentRequired === 'yes',
-        homeUrl: '/',
       })
     } catch (error) {
       errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
