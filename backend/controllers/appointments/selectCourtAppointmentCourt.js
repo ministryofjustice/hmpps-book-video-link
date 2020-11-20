@@ -1,7 +1,6 @@
 const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC, Time } = require('../../shared/dateHelpers')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
-const errorHandler = require('../../middleware/errorHandler')
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')
@@ -32,56 +31,52 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
     const appointmentDetails = unpackAppointmentDetails(req)
     const { offenderNo, agencyId } = req.params
 
-    try {
-      const [offenderDetails, agencyDetails] = await Promise.all([
-        prisonApi.getDetails(res.locals, offenderNo),
-        prisonApi.getAgencyDetails(res.locals, agencyId),
-      ])
-      const courts = await getCourts(res.locals)
-      const { firstName, lastName } = offenderDetails
-      const { startTime, endTime, preAppointmentRequired, postAppointmentRequired } = appointmentDetails
+    const [offenderDetails, agencyDetails] = await Promise.all([
+      prisonApi.getDetails(res.locals, offenderNo),
+      prisonApi.getAgencyDetails(res.locals, agencyId),
+    ])
+    const courts = await getCourts(res.locals)
+    const { firstName, lastName } = offenderDetails
+    const { startTime, endTime, preAppointmentRequired, postAppointmentRequired } = appointmentDetails
 
-      req.flash('appointmentDetails', appointmentDetails)
+    req.flash('appointmentDetails', appointmentDetails)
 
-      const details = toAppointmentDetailsSummary({
-        firstName,
-        lastName,
-        startTime,
-        endTime,
-        agencyDescription: agencyDetails.description,
-      })
+    const details = toAppointmentDetailsSummary({
+      firstName,
+      lastName,
+      startTime,
+      endTime,
+      agencyDescription: agencyDetails.description,
+    })
 
-      const prePostData = {}
+    const prePostData = {}
 
-      if (preAppointmentRequired === 'yes') {
-        prePostData['pre-court hearing briefing'] = `${Time(
-          moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
-        )} to ${details.startTime}`
-      }
-
-      if (postAppointmentRequired === 'yes') {
-        prePostData['post-court hearing briefing'] = `${details.endTime} to ${Time(
-          moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes')
-        )}`
-      }
-
-      return res.render('addAppointment/selectCourtAppointmentCourt.njk', {
-        ...pageData,
-        courts: Object.keys(courts).map(key => ({ value: key, text: courts[key] })),
-        offender: {
-          name: details.prisonerName,
-          prison: details.prison,
-        },
-        details: {
-          date: details.date,
-          courtHearingStartTime: details.startTime,
-          courtHearingEndTime: details.endTime,
-        },
-        prePostData,
-      })
-    } catch (error) {
-      return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
+    if (preAppointmentRequired === 'yes') {
+      prePostData['pre-court hearing briefing'] = `${Time(
+        moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
+      )} to ${details.startTime}`
     }
+
+    if (postAppointmentRequired === 'yes') {
+      prePostData['post-court hearing briefing'] = `${details.endTime} to ${Time(
+        moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes')
+      )}`
+    }
+
+    return res.render('addAppointment/selectCourtAppointmentCourt.njk', {
+      ...pageData,
+      courts: Object.keys(courts).map(key => ({ value: key, text: courts[key] })),
+      offender: {
+        name: details.prisonerName,
+        prison: details.prison,
+      },
+      details: {
+        date: details.date,
+        courtHearingStartTime: details.startTime,
+        courtHearingEndTime: details.endTime,
+      },
+      prePostData,
+    })
   }
 
   const index = async (req, res) => renderTemplate(req, res)

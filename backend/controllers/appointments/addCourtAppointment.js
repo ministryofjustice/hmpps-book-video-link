@@ -1,7 +1,6 @@
 const moment = require('moment')
 const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../../shared/dateHelpers')
 const { formatName } = require('../../utils')
-const errorHandler = require('../../middleware/errorHandler')
 
 const addCourtAppointmentsFactory = prisonApi => {
   const getValidationMessages = fields => {
@@ -64,34 +63,31 @@ const addCourtAppointmentsFactory = prisonApi => {
   }
 
   const renderTemplate = async (req, res, data) => {
-    try {
-      const { offenderNo, agencyId } = req.params
-      const [offenderDetails, agencyDetails] = await Promise.all([
-        prisonApi.getDetails(res.locals, offenderNo),
-        prisonApi.getAgencyDetails(res.locals, agencyId),
-      ])
-      const { firstName, lastName, bookingId } = offenderDetails
-      const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
-      const agencyDescription = agencyDetails.description
+    const { offenderNo, agencyId } = req.params
+    const [offenderDetails, agencyDetails] = await Promise.all([
+      prisonApi.getDetails(res.locals, offenderNo),
+      prisonApi.getAgencyDetails(res.locals, agencyId),
+    ])
+    const { firstName, lastName, bookingId } = offenderDetails
+    const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
+    const agencyDescription = agencyDetails.description
 
-      req.session.userDetails = {
-        ...req.session.userDetails,
-        activeCaseLoadId: agencyId,
-      }
-
-      return res.render('addAppointment/addCourtAppointment.njk', {
-        formValues: {
-          appointmentType: 'VLB',
-        },
-        ...data,
-        offenderNo,
-        offenderNameWithNumber,
-        agencyDescription,
-        bookingId,
-      })
-    } catch (error) {
-      return errorHandler(req, res, error, '/prisoner-search')
+    req.session.userDetails = {
+      ...req.session.userDetails,
+      activeCaseLoadId: agencyId,
     }
+
+    return res.render('addAppointment/addCourtAppointment.njk', {
+      formValues: {
+        appointmentType: 'VLB',
+      },
+      ...data,
+      offenderNo,
+      offenderNameWithNumber,
+      agencyDescription,
+      homeUrl: '/',
+      bookingId,
+    })
   }
 
   const index = async (req, res) => renderTemplate(req, res)

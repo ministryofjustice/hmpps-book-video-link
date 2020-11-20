@@ -24,6 +24,7 @@ const nunjucksSetup = require('./utils/nunjucksSetup')
 const setupRedirects = require('./setupRedirects')
 const setupCurrentUserAndRequestLogging = require('./setupCurrentUserAndRequestLogging')
 const setupAuthorisation = require('./setupAuthorisation')
+const errorHandler = require('./middleware/errorHandler')
 
 app.set('trust proxy', 1) // trust first proxy
 app.set('view engine', 'njk')
@@ -47,6 +48,8 @@ app.use(
     oauthApi,
   })
 )
+
+app.use(errorHandler)
 
 app.listen(config.app.port, () => {
   // eslint-disable-next-line no-console

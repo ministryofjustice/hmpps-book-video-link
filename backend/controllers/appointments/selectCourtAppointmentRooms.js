@@ -4,7 +4,6 @@ const {
   notifications: { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails },
 } = require('../../config')
 
-const errorHandler = require('../../middleware/errorHandler')
 const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
 const { properCaseName } = require('../../utils')
 
@@ -95,72 +94,62 @@ const selectCourtAppointmentRoomsFactory = ({
     const { offenderNo, agencyId } = req.params
     const { activeCaseLoadId } = req.session.userDetails
 
-    try {
-      const appointmentDetails = unpackAppointmentDetails(req)
-      const {
-        appointmentType,
+    const appointmentDetails = unpackAppointmentDetails(req)
+    const { appointmentType, startTime, endTime, preAppointmentRequired, postAppointmentRequired } = appointmentDetails
+
+    const { appointmentTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
+    const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
+
+    const [offenderDetails, agencyDetails] = await Promise.all([
+      prisonApi.getDetails(res.locals, offenderNo),
+      prisonApi.getAgencyDetails(res.locals, agencyId),
+    ])
+    const { firstName, lastName, bookingId } = offenderDetails
+
+    const agencyDescription = agencyDetails.description
+
+    const date = moment(startTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
+
+    const { mainLocations, preLocations, postLocations } = await existingEventsService.getAvailableLocationsForVLB(
+      res.locals,
+      {
+        agencyId,
         startTime,
         endTime,
+        date,
         preAppointmentRequired,
         postAppointmentRequired,
-      } = appointmentDetails
+      }
+    )
 
-      const { appointmentTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
-      const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
+    packAppointmentDetails(req, {
+      ...appointmentDetails,
+      mainLocations,
+      preLocations,
+      postLocations,
+      agencyDescription,
+      appointmentTypeDescription,
+      firstName,
+      lastName,
+      bookingId,
+      date,
+    })
 
-      const [offenderDetails, agencyDetails] = await Promise.all([
-        prisonApi.getDetails(res.locals, offenderNo),
-        prisonApi.getAgencyDetails(res.locals, agencyId),
-      ])
-      const { firstName, lastName, bookingId } = offenderDetails
-
-      const agencyDescription = agencyDetails.description
-
-      const date = moment(startTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
-
-      const { mainLocations, preLocations, postLocations } = await existingEventsService.getAvailableLocationsForVLB(
-        res.locals,
-        {
-          agencyId,
-          startTime,
-          endTime,
-          date,
-          preAppointmentRequired,
-          postAppointmentRequired,
-        }
-      )
-
-      packAppointmentDetails(req, {
-        ...appointmentDetails,
-        mainLocations,
-        preLocations,
-        postLocations,
-        agencyDescription,
-        appointmentTypeDescription,
+    res.render('addAppointment/selectCourtAppointmentRooms.njk', {
+      mainLocations,
+      preLocations,
+      postLocations,
+      date,
+      details: toAppointmentDetailsSummary({
         firstName,
         lastName,
-        bookingId,
-        date,
-      })
-
-      res.render('addAppointment/selectCourtAppointmentRooms.njk', {
-        mainLocations,
-        preLocations,
-        postLocations,
-        date,
-        details: toAppointmentDetailsSummary({
-          firstName,
-          lastName,
-          startTime,
-          endTime,
-          agencyDescription,
-        }),
-        preAppointmentRequired: preAppointmentRequired === 'yes',
-        postAppointmentRequired: postAppointmentRequired === 'yes',
-      })
-    } catch (error) {
-      errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
-    }
+        startTime,
+        endTime,
+        agencyDescription,
+      }),
+      preAppointmentRequired: preAppointmentRequired === 'yes',
+      postAppointmentRequired: postAppointmentRequired === 'yes',
+    })
   }
 
   const createAppointment = async (context, appointmentDetails) => {
@@ -213,70 +202,63 @@ const selectCourtAppointmentRoomsFactory = ({
   }
 
   const validateInput = async (req, res, next) => {
-    const { offenderNo, agencyId } = req.params
-
     const {
       selectPreAppointmentLocation,
       selectMainAppointmentLocation,
       selectPostAppointmentLocation,
       comment,
     } = req.body
+    const appointmentDetails = unpackAppointmentDetails(req)
+    const {
+      startTime,
+      endTime,
+      firstName,
+      lastName,
+      date,
+      preAppointmentRequired,
+      postAppointmentRequired,
+      agencyDescription,
+      mainLocations,
+      preLocations,
+      postLocations,
+    } = appointmentDetails
 
-    try {
-      const appointmentDetails = unpackAppointmentDetails(req)
-      const {
-        startTime,
-        endTime,
-        firstName,
-        lastName,
-        date,
-        preAppointmentRequired,
-        postAppointmentRequired,
-        agencyDescription,
+    const errors = validate({
+      preAppointmentRequired,
+      postAppointmentRequired,
+      selectPreAppointmentLocation,
+      selectPostAppointmentLocation,
+      selectMainAppointmentLocation,
+      comment,
+    })
+
+    packAppointmentDetails(req, appointmentDetails)
+    if (errors.length) {
+      return res.render('addAppointment/selectCourtAppointmentRooms.njk', {
         mainLocations,
         preLocations,
         postLocations,
-      } = appointmentDetails
-
-      const errors = validate({
-        preAppointmentRequired,
-        postAppointmentRequired,
-        selectPreAppointmentLocation,
-        selectPostAppointmentLocation,
-        selectMainAppointmentLocation,
-        comment,
+        formValues: {
+          preAppointmentLocation: selectPreAppointmentLocation && Number(selectPreAppointmentLocation),
+          mainAppointmentLocation: selectMainAppointmentLocation && Number(selectMainAppointmentLocation),
+          postAppointmentLocation: selectPostAppointmentLocation && Number(selectPostAppointmentLocation),
+          comment,
+        },
+        errors,
+        date,
+        details: toAppointmentDetailsSummary({
+          firstName,
+          lastName,
+          startTime,
+          endTime,
+          agencyDescription,
+        }),
+        preAppointmentRequired: preAppointmentRequired === 'yes',
+        postAppointmentRequired: postAppointmentRequired === 'yes',
       })
-
-      packAppointmentDetails(req, appointmentDetails)
-      if (errors.length) {
-        return res.render('addAppointment/selectCourtAppointmentRooms.njk', {
-          mainLocations,
-          preLocations,
-          postLocations,
-          formValues: {
-            preAppointmentLocation: selectPreAppointmentLocation && Number(selectPreAppointmentLocation),
-            mainAppointmentLocation: selectMainAppointmentLocation && Number(selectMainAppointmentLocation),
-            postAppointmentLocation: selectPostAppointmentLocation && Number(selectPostAppointmentLocation),
-            comment,
-          },
-          errors,
-          date,
-          details: toAppointmentDetailsSummary({
-            firstName,
-            lastName,
-            startTime,
-            endTime,
-            agencyDescription,
-          }),
-          preAppointmentRequired: preAppointmentRequired === 'yes',
-          postAppointmentRequired: postAppointmentRequired === 'yes',
-        })
-      }
-
-      return next()
-    } catch (error) {
-      return errorHandler(req, res, error, `/${agencyId}/offenders/${offenderNo}/add-appointment`)
     }
+
+    return next()
   }
 
   const createAppointments = async (req, res) => {

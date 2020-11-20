@@ -1,6 +1,8 @@
 const express = require('express')
 
 const { logError } = require('./logError')
+const asyncMiddleware = require('./middleware/asyncMiddleware')
+const withRetryLink = require('./middleware/withRetryLink')
 const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
 const selectCourtAppointmentRooms = require('./routes/appointments/selectCourtAppointmentRoomsRouter')
@@ -27,15 +29,22 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, oauthApi, notifyClient })
   )
 
-  router.get('/prisoner-search', videolinkPrisonerSearchController({ prisonApi }))
+  router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(videolinkPrisonerSearchController({ prisonApi })))
 
-  router.get('/', async (req, res) => {
-    res.render('courtsVideolink.njk', {
-      user: { displayName: req.session.userDetails.name },
+  router.get(
+    '/',
+    asyncMiddleware(async (req, res) => {
+      res.render('courtsVideolink.njk', {
+        user: { displayName: req.session.userDetails.name },
+      })
     })
-  })
+  )
 
-  router.use('/bookings', viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))
+  router.use(
+    '/bookings',
+    withRetryLink('/bookings'),
+    asyncMiddleware(viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))
+  )
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 

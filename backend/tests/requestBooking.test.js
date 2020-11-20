@@ -8,15 +8,12 @@ const { requestBookingFactory } = require('../controllers/appointments/requestBo
 const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyClient } = require('../shared/notifyClient')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
-const errorHandler = require('../middleware/errorHandler')
 
 const { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId } = config.notifications
 
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
-
-jest.mock('../middleware/errorHandler')
 
 describe('Request a booking', () => {
   let req
@@ -662,14 +659,12 @@ describe('Request a booking', () => {
       })
     })
 
-    it('should render an error and not raise analytics event if there are no request details', () => {
+    it('should throw an error and not raise analytics event if there are no request details', async () => {
       const details = {}
       req.flash.mockReturnValue([details])
-      controller.confirm(req, res)
+      await expect(controller.confirm(req, res)).rejects.toThrow('Request details are missing')
 
       expect(raiseAnalyticsEvent).not.toHaveBeenCalled()
-
-      expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Request details are missing'), 'http://localhost')
     })
   })
 })

@@ -1,10 +1,7 @@
 const videolinkPrisonerSearchController = require('../controllers/videolink/search/videolinkPrisonerSearch')
-const errorHandler = require('../middleware/errorHandler')
 const config = require('../config')
 
 config.app.videoLinkEnabledFor = ['MDI']
-
-jest.mock('../middleware/errorHandler')
 
 describe('Video link prisoner search', () => {
   const prisonApi = {}
@@ -211,18 +208,14 @@ describe('Video link prisoner search', () => {
       it('should render the error template if there is an error retrieving agencies', async () => {
         oauthApi.userRoles.mockReturnValue([{ roleCode: 'VIDEO_LINK_COURT_USER' }])
         prisonApi.getAgencies.mockImplementation(() => Promise.reject(new Error('Network error')))
-        await controller(req, res)
-
-        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), '/')
+        await expect(controller(req, res)).rejects.toThrow('Network error')
       })
 
       it('should render the error template if there is an error with global search', async () => {
         oauthApi.userRoles.mockReturnValue([{ roleCode: 'VIDEO_LINK_COURT_USER' }])
         prisonApi.globalSearch.mockImplementation(() => Promise.reject(new Error('Network error')))
         req.query = { lastName: 'Offender' }
-        await controller(req, res)
-
-        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), '/')
+        await expect(controller(req, res)).rejects.toThrow('Network error')
       })
     })
   })

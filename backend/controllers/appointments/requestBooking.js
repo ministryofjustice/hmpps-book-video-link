@@ -1,6 +1,5 @@
 const moment = require('moment')
 const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
-const errorHandler = require('../../middleware/errorHandler')
 const { validateComments } = require('../../shared/appointmentConstants')
 const {
   notifications: { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId, emails: emailConfig },
@@ -88,17 +87,6 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
       }))
   }
 
-  const renderTemplate = async (req, res, pageData, template) => {
-    try {
-      return res.render(template || 'requestBooking/requestBooking.njk', {
-        user: { displayName: req.session.userDetails.name },
-        ...(pageData || {}),
-      })
-    } catch (error) {
-      return errorHandler(req, res, error, req.originalUrl)
-    }
-  }
-
   const startOfJourney = async (req, res) => {
     const prisonDropdownValues = (await getVideoLinkEnabledPrisons(res.locals)).map(prison => ({
       text: prison.description,
@@ -149,7 +137,8 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
         text: p.description,
         value: p.agencyId,
       }))
-      return renderTemplate(req, res, {
+      return res.render('requestBooking/requestBooking.njk', {
+        user: { displayName: req.session.userDetails.name },
         errors,
         prisons: prisonDropdownValues,
         formValues: req.body,
@@ -243,164 +232,155 @@ const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthAp
   }
 
   const createBookingRequest = async (req, res) => {
-    try {
-      const { firstName, lastName, dobDay, dobMonth, dobYear, comments } = req.body
+    const { firstName, lastName, dobDay, dobMonth, dobYear, comments } = req.body
 
-      const errors = []
+    const errors = []
 
-      const dateOfBirth = moment({
-        day: dobDay,
-        month: Number.isNaN(dobMonth) ? dobMonth : dobMonth - 1,
-        year: dobYear,
-      })
-      const dobIsValid =
-        dateOfBirth.isValid() && !Number.isNaN(dobDay) && !Number.isNaN(dobMonth) && !Number.isNaN(dobYear)
+    const dateOfBirth = moment({
+      day: dobDay,
+      month: Number.isNaN(dobMonth) ? dobMonth : dobMonth - 1,
+      year: dobYear,
+    })
+    const dobIsValid =
+      dateOfBirth.isValid() && !Number.isNaN(dobDay) && !Number.isNaN(dobMonth) && !Number.isNaN(dobYear)
 
-      if (!firstName) errors.push({ text: 'Enter a first name', href: '#first-name' })
-      if (!lastName) errors.push({ text: 'Enter a last name', href: '#last-name' })
-      if (!dobYear && !dobDay && !dobMonth) errors.push({ text: 'Enter a date of birth', href: '#dobDay' })
-      if (dobDay && dobMonth && dobYear) {
-        const dobInThePast = dobIsValid ? dateOfBirth.isBefore(moment(), 'day') : false
-        const dobIsTooEarly = dobIsValid ? dateOfBirth.isBefore(moment({ day: 1, month: 0, year: 1900 })) : true
+    if (!firstName) errors.push({ text: 'Enter a first name', href: '#first-name' })
+    if (!lastName) errors.push({ text: 'Enter a last name', href: '#last-name' })
+    if (!dobYear && !dobDay && !dobMonth) errors.push({ text: 'Enter a date of birth', href: '#dobDay' })
+    if (dobDay && dobMonth && dobYear) {
+      const dobInThePast = dobIsValid ? dateOfBirth.isBefore(moment(), 'day') : false
+      const dobIsTooEarly = dobIsValid ? dateOfBirth.isBefore(moment({ day: 1, month: 0, year: 1900 })) : true
 
-        if (!dobIsValid)
-          errors.push({ text: 'Enter a date of birth which is a real date', href: '#dobDay' }, { href: '#dobError' })
+      if (!dobIsValid)
+        errors.push({ text: 'Enter a date of birth which is a real date', href: '#dobDay' }, { href: '#dobError' })
 
-        if (dobIsValid && !dobInThePast)
-          errors.push({ text: 'Enter a date of birth which is in the past', href: '#dobDay' }, { href: '#dobError' })
+      if (dobIsValid && !dobInThePast)
+        errors.push({ text: 'Enter a date of birth which is in the past', href: '#dobDay' }, { href: '#dobError' })
 
-        if (dobIsValid && dobIsTooEarly)
-          errors.push({ text: 'Date of birth must be after 1900', href: '#dobDay' }, { href: '#dobError' })
-      }
-
-      if (!dobDay && (dobMonth || dobYear)) errors.push({ text: 'Date of birth must include a day', href: '#dobDay' })
-
-      if (!dobMonth && (dobDay || dobYear))
-        errors.push({ text: 'Date of birth must include a month', href: '#dobMonth' })
-
-      if (!dobYear && (dobDay || dobMonth)) errors.push({ text: 'Date of birth must include a year', href: '#dobYear' })
-
-      validateComments(comments, errors)
-
-      const bookingDetails = getBookingDetails(req)
-
-      if (errors.length > 0) {
-        packBookingDetails(req, bookingDetails)
-        req.flash('errors', errors)
-        req.flash('formValues', req.body)
-        return res.redirect('/request-booking/enter-offender-details')
-      }
-
-      const {
-        date,
-        startTime,
-        endTime,
-        prison,
-        preHearingStartAndEndTime,
-        postHearingStartAndEndTime,
-        hearingLocation,
-      } = bookingDetails
-
-      const prisons = await prisonApi.getAgencies(res.locals)
-      const matchingPrison = prisons.find(p => p.agencyId === prison)
-
-      const personalisation = {
-        firstName,
-        lastName,
-        dateOfBirth: dateOfBirth.format('D MMMM YYYY'),
-        date: moment(date, DAY_MONTH_YEAR).format('dddd D MMMM YYYY'),
-        startTime: Time(startTime),
-        endTime: endTime && Time(endTime),
-        prison: matchingPrison.formattedDescription || matchingPrison.description,
-        hearingLocation,
-        comment: comments || 'None entered',
-        preHearingStartAndEndTime,
-        postHearingStartAndEndTime,
-      }
-
-      const { username } = req.session.userDetails
-      const { email } = await oauthApi.userEmail(res.locals, username)
-      const { name } = await oauthApi.userDetails(res.locals, username)
-
-      packBookingDetails(req, personalisation)
-
-      const { vlb } = emailConfig[prison]
-
-      sendEmail({ templateId: requestBookingCourtTemplateVLBAdminId, email: vlb, personalisation }).catch(error => {
-        logError(req.originalUrl, error, 'Failed to email the prison about a booking request')
-      })
-
-      sendEmail({
-        templateId: requestBookingCourtTemplateRequesterId,
-        email,
-        personalisation: {
-          ...personalisation,
-          username: name,
-        },
-      }).catch(error => {
-        logError(req.originalUrl, error, 'Failed to email the requester a copy of the booking')
-      })
-
-      return res.redirect('/request-booking/confirmation')
-    } catch (error) {
-      return errorHandler(req, res, error, req.originalUrl)
+      if (dobIsValid && dobIsTooEarly)
+        errors.push({ text: 'Date of birth must be after 1900', href: '#dobDay' }, { href: '#dobError' })
     }
+
+    if (!dobDay && (dobMonth || dobYear)) errors.push({ text: 'Date of birth must include a day', href: '#dobDay' })
+
+    if (!dobMonth && (dobDay || dobYear)) errors.push({ text: 'Date of birth must include a month', href: '#dobMonth' })
+
+    if (!dobYear && (dobDay || dobMonth)) errors.push({ text: 'Date of birth must include a year', href: '#dobYear' })
+
+    validateComments(comments, errors)
+
+    const bookingDetails = getBookingDetails(req)
+
+    if (errors.length > 0) {
+      packBookingDetails(req, bookingDetails)
+      req.flash('errors', errors)
+      req.flash('formValues', req.body)
+      return res.redirect('/request-booking/enter-offender-details')
+    }
+
+    const {
+      date,
+      startTime,
+      endTime,
+      prison,
+      preHearingStartAndEndTime,
+      postHearingStartAndEndTime,
+      hearingLocation,
+    } = bookingDetails
+
+    const prisons = await prisonApi.getAgencies(res.locals)
+    const matchingPrison = prisons.find(p => p.agencyId === prison)
+
+    const personalisation = {
+      firstName,
+      lastName,
+      dateOfBirth: dateOfBirth.format('D MMMM YYYY'),
+      date: moment(date, DAY_MONTH_YEAR).format('dddd D MMMM YYYY'),
+      startTime: Time(startTime),
+      endTime: endTime && Time(endTime),
+      prison: matchingPrison.formattedDescription || matchingPrison.description,
+      hearingLocation,
+      comment: comments || 'None entered',
+      preHearingStartAndEndTime,
+      postHearingStartAndEndTime,
+    }
+
+    const { username } = req.session.userDetails
+    const { email } = await oauthApi.userEmail(res.locals, username)
+    const { name } = await oauthApi.userDetails(res.locals, username)
+
+    packBookingDetails(req, personalisation)
+
+    const { vlb } = emailConfig[prison]
+
+    sendEmail({ templateId: requestBookingCourtTemplateVLBAdminId, email: vlb, personalisation }).catch(error => {
+      logError(req.originalUrl, error, 'Failed to email the prison about a booking request')
+    })
+
+    sendEmail({
+      templateId: requestBookingCourtTemplateRequesterId,
+      email,
+      personalisation: {
+        ...personalisation,
+        username: name,
+      },
+    }).catch(error => {
+      logError(req.originalUrl, error, 'Failed to email the requester a copy of the booking')
+    })
+
+    return res.redirect('/request-booking/confirmation')
   }
 
   const confirm = async (req, res) => {
-    try {
-      const requestDetails = getBookingDetails(req)
-      if (!Object.keys(requestDetails).length) throw new Error('Request details are missing')
+    const requestDetails = getBookingDetails(req)
+    if (!Object.keys(requestDetails).length) throw new Error('Request details are missing')
 
-      const {
-        firstName,
-        lastName,
-        dateOfBirth,
+    const {
+      firstName,
+      lastName,
+      dateOfBirth,
+      prison,
+      startTime,
+      endTime,
+      comment,
+      date,
+      preAppointmentRequired,
+      postAppointmentRequired,
+      preHearingStartAndEndTime,
+      postHearingStartAndEndTime,
+      hearingLocation,
+    } = requestDetails
+
+    raiseAnalyticsEvent(
+      'VLB Appointments',
+      `Video link requested for ${hearingLocation}`,
+      `Pre: ${preAppointmentRequired === 'yes' ? 'Yes' : 'No'} | Post: ${
+        postAppointmentRequired === 'yes' ? 'Yes' : 'No'
+      }`
+    )
+
+    return res.render('requestBooking/requestBookingConfirmation.njk', {
+      user: { displayName: req.session.userDetails.name },
+      title: 'The video link has been requested',
+      details: {
         prison,
-        startTime,
-        endTime,
-        comment,
+        name: `${firstName} ${lastName}`,
+        dateOfBirth,
+      },
+      hearingDetails: {
         date,
-        preAppointmentRequired,
-        postAppointmentRequired,
-        preHearingStartAndEndTime,
-        postHearingStartAndEndTime,
-        hearingLocation,
-      } = requestDetails
-
-      raiseAnalyticsEvent(
-        'VLB Appointments',
-        `Video link requested for ${hearingLocation}`,
-        `Pre: ${preAppointmentRequired === 'yes' ? 'Yes' : 'No'} | Post: ${
-          postAppointmentRequired === 'yes' ? 'Yes' : 'No'
-        }`
-      )
-
-      return res.render('requestBooking/requestBookingConfirmation.njk', {
-        user: { displayName: req.session.userDetails.name },
-        title: 'The video link has been requested',
-        details: {
-          prison,
-          name: `${firstName} ${lastName}`,
-          dateOfBirth,
-        },
-        hearingDetails: {
-          date,
-          courtHearingStartTime: startTime,
-          courtHearingEndTime: endTime,
-          comment,
-        },
-        prePostDetails: {
-          'pre-court hearing briefing': preHearingStartAndEndTime,
-          'post-court hearing briefing': postHearingStartAndEndTime,
-        },
-        courtDetails: {
-          courtLocation: hearingLocation,
-        },
-      })
-    } catch (error) {
-      return errorHandler(req, res, error, req.originalUrl)
-    }
+        courtHearingStartTime: startTime,
+        courtHearingEndTime: endTime,
+        comment,
+      },
+      prePostDetails: {
+        'pre-court hearing briefing': preHearingStartAndEndTime,
+        'post-court hearing briefing': postHearingStartAndEndTime,
+      },
+      courtDetails: {
+        courtLocation: hearingLocation,
+      },
+    })
   }
   return {
     startOfJourney,

@@ -1,12 +1,9 @@
 const confirmAppointments = require('../controllers/appointments/confirmAppointment')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
-const errorHandler = require('../middleware/errorHandler')
 
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
-
-jest.mock('../middleware/errorHandler')
 
 describe('Confirm appointments', () => {
   const prisonApi = {}
@@ -120,13 +117,6 @@ describe('Confirm appointments', () => {
     req.flash.mockImplementation(() => [])
     req.session.userDetails.authSource = 'auth'
 
-    await index(req, res)
-
-    expect(errorHandler).toHaveBeenCalledWith(
-      req,
-      res,
-      new Error('Appointment details are missing'),
-      '/prisoner-search'
-    )
+    await expect(index(req, res)).rejects.toThrow('Appointment details are missing')
   })
 })

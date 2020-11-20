@@ -1,7 +1,4 @@
 const { addCourtAppointmentsFactory } = require('../controllers/appointments/addCourtAppointment')
-const errorHandler = require('../middleware/errorHandler')
-
-jest.mock('../middleware/errorHandler')
 
 const prisonApi = {}
 
@@ -72,9 +69,7 @@ describe('Add court appointment', () => {
   it('should render index error template', async () => {
     prisonApi.getDetails.mockImplementation(() => Promise.reject(new Error('Network error')))
 
-    await controller.index(req, res)
-
-    expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Network error'), expect.objectContaining({}))
+    await expect(controller.index(req, res)).rejects.toThrow('Network error')
   })
 
   describe('validation errors', () => {

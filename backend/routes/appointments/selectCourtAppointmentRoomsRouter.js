@@ -4,6 +4,7 @@ const { appointmentsServiceFactory } = require('../../services/appointmentsServi
 const existingEventsServiceFactory = require('../../services/existingEventsService')
 const availableSlotsService = require('../../services/availableSlotsService')
 const checkAppointmentRooms = require('../../middleware/checkAppointmentRooms')
+const asyncMiddleware = require('../../middleware/asyncMiddleware')
 
 const router = express.Router({ mergeParams: true })
 
@@ -20,8 +21,13 @@ const controller = ({ prisonApi, whereaboutsApi, oauthApi, notifyClient }) => {
     existingEventsService,
   })
 
-  router.get('/', index)
-  router.post('/', validateInput, checkAppointmentRooms(existingEventsService, availableSlots), createAppointments)
+  router.get('/', asyncMiddleware(index))
+  router.post(
+    '/',
+    asyncMiddleware(validateInput),
+    asyncMiddleware(checkAppointmentRooms(existingEventsService, availableSlots)),
+    asyncMiddleware(createAppointments)
+  )
 
   return router
 }

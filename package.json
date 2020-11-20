@@ -119,7 +119,8 @@
     ],
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
-      "<rootDir>/integration-tests/"
+      "<rootDir>/integration-tests/",
+      "dist"
     ],
     "moduleFileExtensions": [
       "web.js",

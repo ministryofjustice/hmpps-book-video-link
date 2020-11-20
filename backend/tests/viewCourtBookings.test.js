@@ -1,7 +1,4 @@
 const viewCourtBookingsRouter = require('../routes/appointments/viewCourtBookingsRouter')
-const errorHandler = require('../middleware/errorHandler')
-
-jest.mock('../middleware/errorHandler')
 
 describe('View court bookings', () => {
   const prisonApi = {}
@@ -308,9 +305,7 @@ describe('View court bookings', () => {
     describe('when there is an error retrieving information', () => {
       it('should render the error template', async () => {
         whereaboutsApi.getCourtLocations.mockRejectedValue(new Error('Problem retrieving courts'))
-
-        await controller(req, res)
-        expect(errorHandler).toHaveBeenCalledWith(req, res, new Error('Problem retrieving courts'), '/bookings')
+        await expect(controller(req, res)).rejects.toThrow('Problem retrieving courts')
       })
     })
   })

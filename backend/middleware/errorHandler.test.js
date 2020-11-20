@@ -15,19 +15,34 @@ describe('Error handling middleware', () => {
     render: jest.fn(),
   }
   const error = new Error('error message')
-  const redirectUrl = '/bookings'
+
+  const handleErrorWhenRetryLinkIs = redirectUrl => errorHandler(error, req, { ...res, locals: { redirectUrl } })
 
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
-  it('should throw and log an error with a 500 status code', async () => {
-    await errorHandler(req, res, error, redirectUrl)
+  it('should log an error when an error is thrown', async () => {
+    errorHandler(error, req, { ...res, locals: { redirectUrl: '/prisoner-search' } })
 
     expect(logError).toHaveBeenCalledWith(req.originalUrl, error, serviceUnavailableMessage)
+  })
+
+  it('should handle an error when the retry link is overridden', async () => {
+    handleErrorWhenRetryLinkIs('/bookings')
+
+    expect(res.render).toHaveBeenCalledWith('error.njk', { url: '/bookings' })
+  })
+
+  it('should handle an error when there is no retry link', async () => {
+    handleErrorWhenRetryLinkIs(null)
+
+    expect(res.render).toHaveBeenCalledWith('error.njk', { url: 'http://localhost' })
+  })
+
+  it('should produce a 500 status code when an error is thrown', async () => {
+    errorHandler(error, req, { ...res, locals: { redirectUrl: '/prisoner-search' } })
 
     expect(res.status).toHaveBeenCalledWith(500)
-
-    expect(res.render).toHaveBeenCalledWith('error.njk', { url: redirectUrl })
   })
 })
