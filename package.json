@@ -113,14 +113,16 @@
     "collectCoverageFrom": [
       "backend/**/*.{js,mjs}"
     ],
+    "testMatch": [
+      "<rootDir>/backend/**/?(*.)(test).{ts,js,jsx,mjs}"
+    ],
     "globalSetup": "<rootDir>/config/jest/globalSetup.js",
     "setupFilesAfterEnv": [
       "<rootDir>/config/jest/setupTests.js"
     ],
     "testEnvironment": "node",
     "testPathIgnorePatterns": [
-      "<rootDir>/integration-tests/",
-      "dist"
+      "<rootDir>/integration-tests/"
     ],
     "moduleFileExtensions": [
       "web.js",

@@ -85,7 +85,6 @@ const addCourtAppointmentsFactory = prisonApi => {
       offenderNo,
       offenderNameWithNumber,
       agencyDescription,
-      homeUrl: '/',
       bookingId,
     })
   }
