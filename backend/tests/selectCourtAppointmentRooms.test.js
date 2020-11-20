@@ -1,4 +1,7 @@
-const { selectCourtAppointmentRoomsFactory } = require('../controllers/appointments/selectCourtAppointmentRooms')
+const {
+  selectCourtAppointmentRoomsFactory,
+  appointmentFactory,
+} = require('../controllers/appointments/selectCourtAppointmentRooms')
 const { notifyClient } = require('../shared/notifyClient')
 const config = require('../config')
 
@@ -300,7 +303,7 @@ describe('Select court appointment rooms', () => {
 
       res.redirect = jest.fn()
     })
-    it('should create main appointment', async () => {
+    it('should send complete appointment object to whereaboutsApi', async () => {
       const { createAppointments } = service
 
       await createAppointments(req, res)
@@ -310,17 +313,22 @@ describe('Select court appointment rooms', () => {
         {
           bookingId: 1,
           court: 'Leeds',
-          hearingType: 'MAIN',
           comment: 'Test',
-          locationId: 2,
-          startTime: '2017-10-10T11:00',
-          endTime: '2017-10-10T14:00',
+          pre: { locationId: 1, startTime: '2017-10-10T10:40:00', endTime: '2017-10-10T11:00' },
+          main: { locationId: 2, startTime: '2017-10-10T11:00', endTime: '2017-10-10T14:00' },
+          post: { locationId: 3, startTime: '2017-10-10T14:00', endTime: '2017-10-10T14:20:00' },
         }
       )
     })
 
-    it('should create main pre appointment 20 minutes before main with 20 minute duration', async () => {
+    it('should not include comments in appointment details sent to whereaboutsApi', async () => {
       const { createAppointments } = service
+
+      req.body = {
+        selectPreAppointmentLocation: '1',
+        selectMainAppointmentLocation: '2',
+        selectPostAppointmentLocation: '3',
+      }
 
       await createAppointments(req, res)
 
@@ -329,58 +337,92 @@ describe('Select court appointment rooms', () => {
         {
           bookingId: 1,
           court: 'Leeds',
-          hearingType: 'PRE',
-          comment: 'Test',
-          locationId: 1,
-          startTime: '2017-10-10T10:40:00',
-          endTime: '2017-10-10T11:00',
+          pre: { locationId: 1, startTime: '2017-10-10T10:40:00', endTime: '2017-10-10T11:00' },
+          main: { locationId: 2, startTime: '2017-10-10T11:00', endTime: '2017-10-10T14:00' },
+          post: { locationId: 3, startTime: '2017-10-10T14:00', endTime: '2017-10-10T14:20:00' },
         }
       )
     })
 
-    it('should create main post appointment 20 minutes after main with 20 minute duration', async () => {
+    it('should not include preAppointment in appointment details sent to whereaboutsApi', async () => {
       const { createAppointments } = service
 
-      await createAppointments(req, res)
-
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
-        {},
-        {
-          bookingId: 1,
-          court: 'Leeds',
-          hearingType: 'POST',
-          comment: 'Test',
-          locationId: 3,
-          startTime: '2017-10-10T14:00',
-          endTime: '2017-10-10T14:20:00',
-        }
-      )
-    })
-
-    it('should not request pre or post appointments when "no" has been selected', async () => {
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
-        prisonApi,
-        whereaboutsApi,
-        appointmentsService,
-        notifyClient,
-        oauthApi,
-        existingEventsService,
-      })
-
-      req.flash.mockImplementation(() => [
-        {
-          ...appointmentDetails,
-          preAppointmentRequired: 'no',
-          postAppointmentRequired: 'no',
-        },
-      ])
+      appointmentDetails.preAppointmentRequired = 'no'
+      req.flash.mockImplementation(() => [appointmentDetails])
 
       req.body = {
         selectMainAppointmentLocation: '2',
+        selectPostAppointmentLocation: '3',
+        comment: 'Test',
       }
+
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment.mock.calls.length).toBe(1)
+      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+        {},
+        {
+          bookingId: 1,
+          court: 'Leeds',
+          comment: 'Test',
+          main: { locationId: 2, startTime: '2017-10-10T11:00', endTime: '2017-10-10T14:00' },
+          post: { locationId: 3, startTime: '2017-10-10T14:00', endTime: '2017-10-10T14:20:00' },
+        }
+      )
+      appointmentDetails.preAppointmentRequired = 'yes'
+    })
+
+    it('should not include postAppointment in appointment details sent to whereaboutsApi', async () => {
+      const { createAppointments } = service
+
+      appointmentDetails.postAppointmentRequired = 'no'
+      req.flash.mockImplementation(() => [appointmentDetails])
+
+      req.body = {
+        selectPreAppointmentLocation: '1',
+        selectMainAppointmentLocation: '2',
+        comment: 'Test',
+      }
+
+      await createAppointments(req, res)
+
+      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+        {},
+        {
+          bookingId: 1,
+          court: 'Leeds',
+          comment: 'Test',
+          pre: { locationId: 1, startTime: '2017-10-10T10:40:00', endTime: '2017-10-10T11:00' },
+          main: { locationId: 2, startTime: '2017-10-10T11:00', endTime: '2017-10-10T14:00' },
+        }
+      )
+      appointmentDetails.postAppointmentRequired = 'yes'
+    })
+
+    it('should not include pre or postAppointment in appointment details sent to whereaboutsApi', async () => {
+      const { createAppointments } = service
+
+      appointmentDetails.preAppointmentRequired = 'no'
+      appointmentDetails.postAppointmentRequired = 'no'
+      req.flash.mockImplementation(() => [appointmentDetails])
+
+      req.body = {
+        selectMainAppointmentLocation: '2',
+        comment: 'Test',
+      }
+
+      await createAppointments(req, res)
+
+      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+        {},
+        {
+          bookingId: 1,
+          court: 'Leeds',
+          comment: 'Test',
+          main: { locationId: 2, startTime: '2017-10-10T11:00', endTime: '2017-10-10T14:00' },
+        }
+      )
+      appointmentDetails.preAppointmentRequired = 'yes'
+      appointmentDetails.postAppointmentRequired = 'yes'
     })
 
     it('should place pre and post appointment details into flash', async () => {
@@ -498,6 +540,68 @@ describe('Select court appointment rooms', () => {
           reference: null,
         }
       )
+    })
+
+    describe('appointmentFactory', () => {
+      it('should return whole appointment details', () => {
+        const appointmentDetails = {
+          bookingId: 1000,
+          date: '20/11/2020',
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+          startTimeHours: '18',
+          startTimeMinutes: '00',
+          endTimeHours: '19',
+          endTimeMinutes: '00',
+          preAppointmentRequired: 'yes',
+          postAppointmentRequired: 'yes',
+          court: 'City of London',
+        }
+
+        const prepostAppointments = {
+          preAppointment: {
+            startTime: '2020-11-20T17:40:00',
+            endTime: '2020-11-20T18:00:00',
+            locationId: 100,
+          },
+          postAppointment: {
+            startTime: '2020-11-20T19:00:00',
+            endTime: '2020-11-20T19:20:00',
+            locationId: 300,
+          },
+        }
+
+        const comment = 'some comment'
+        const selectMainAppointmentLocation = 200
+
+        const result = appointmentFactory(
+          appointmentDetails,
+          comment,
+          prepostAppointments,
+          selectMainAppointmentLocation
+        )
+
+        expect(result).toStrictEqual({
+          bookingId: 1000,
+          court: 'City of London',
+          comment: 'some comment',
+          pre: {
+            startTime: '2020-11-20T17:40:00',
+            endTime: '2020-11-20T18:00:00',
+            locationId: 100,
+          },
+          main: {
+            locationId: 200,
+            startTime: '2020-11-20T18:00:00',
+            endTime: '2020-11-20T19:00:00',
+          },
+          post: {
+            startTime: '2020-11-20T19:00:00',
+            endTime: '2020-11-20T19:20:00',
+            locationId: 300,
+          },
+        })
+      })
     })
   })
 })

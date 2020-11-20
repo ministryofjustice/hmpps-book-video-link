@@ -152,21 +152,11 @@ const selectCourtAppointmentRoomsFactory = ({
     })
   }
 
-  const createAppointment = async (context, appointmentDetails) => {
-    const { startTime, endTime, bookingId, locationId, comment, court, hearingType } = appointmentDetails
-
-    await whereaboutsApi.addVideoLinkAppointment(context, {
-      bookingId,
-      locationId: Number(locationId),
-      startTime,
-      endTime,
-      comment,
-      court,
-      hearingType,
-    })
+  const createAppointment = async (context, appointmentDataToPersist) => {
+    await whereaboutsApi.addVideoLinkAppointment(context, appointmentDataToPersist)
   }
 
-  const createPreAppointment = async (context, { appointmentDetails, startTime, preAppointmentLocation }) => {
+  const createPreAppointment = async ({ startTime, preAppointmentLocation }) => {
     const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
     const preDetails = {
       startTime: preStartTime.format(DATE_TIME_FORMAT_SPEC),
@@ -174,16 +164,10 @@ const selectCourtAppointmentRoomsFactory = ({
       locationId: Number(preAppointmentLocation),
     }
 
-    await createAppointment(context, {
-      ...appointmentDetails,
-      ...preDetails,
-      hearingType: 'PRE',
-    })
-
     return preDetails
   }
 
-  const createPostAppointment = async (context, { appointmentDetails, endTime, postAppointmentLocation }) => {
+  const createPostAppointment = async ({ endTime, postAppointmentLocation }) => {
     const postEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes')
 
     const postDetails = {
@@ -191,12 +175,6 @@ const selectCourtAppointmentRoomsFactory = ({
       endTime: postEndTime.format(DATE_TIME_FORMAT_SPEC),
       locationId: Number(postAppointmentLocation),
     }
-
-    await createAppointment(context, {
-      ...appointmentDetails,
-      ...postDetails,
-      hearingType: 'POST',
-    })
 
     return postDetails
   }
@@ -286,26 +264,17 @@ const selectCourtAppointmentRoomsFactory = ({
       comment,
     } = req.body
 
-    await createAppointment(res.locals, {
-      ...appointmentDetails,
-      comment,
-      locationId: selectMainAppointmentLocation,
-      hearingType: 'MAIN',
-    })
-
     const prepostAppointments = {}
 
     if (preAppointmentRequired === 'yes') {
-      prepostAppointments.preAppointment = await createPreAppointment(res.locals, {
-        appointmentDetails,
+      prepostAppointments.preAppointment = await createPreAppointment({
         startTime,
         preAppointmentLocation: selectPreAppointmentLocation,
       })
     }
 
     if (postAppointmentRequired === 'yes') {
-      prepostAppointments.postAppointment = await createPostAppointment(res.locals, {
-        appointmentDetails,
+      prepostAppointments.postAppointment = await createPostAppointment({
         endTime,
         postAppointmentLocation: selectPostAppointmentLocation,
       })
@@ -364,6 +333,15 @@ const selectCourtAppointmentRoomsFactory = ({
       }
     }
 
+    const fullAppointmentDetails = appointmentFactory(
+      appointmentDetails,
+      comment,
+      prepostAppointments,
+      selectMainAppointmentLocation
+    )
+
+    await createAppointment(res.locals, fullAppointmentDetails)
+
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
 
@@ -376,4 +354,31 @@ const selectCourtAppointmentRoomsFactory = ({
 
 module.exports = {
   selectCourtAppointmentRoomsFactory,
+  appointmentFactory,
+}
+
+function appointmentFactory(appointmentDetails, comment, prepostAppointments, selectMainAppointmentLocation) {
+  const appointment = {
+    bookingId: appointmentDetails.bookingId,
+    court: appointmentDetails.court,
+    main: {
+      locationId: parseInt(selectMainAppointmentLocation, 10),
+      startTime: appointmentDetails.startTime,
+      endTime: appointmentDetails.endTime,
+    },
+  }
+
+  if (comment) {
+    appointment.comment = comment
+  }
+
+  if (prepostAppointments.preAppointment) {
+    appointment.pre = prepostAppointments.preAppointment
+  }
+
+  if (prepostAppointments.postAppointment) {
+    appointment.post = prepostAppointments.postAppointment
+  }
+
+  return appointment
 }
