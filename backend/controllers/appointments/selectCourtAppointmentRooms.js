@@ -152,10 +152,6 @@ const selectCourtAppointmentRoomsFactory = ({
     })
   }
 
-  const createAppointment = async (context, appointmentDataToPersist) => {
-    await whereaboutsApi.addVideoLinkAppointment(context, appointmentDataToPersist)
-  }
-
   const createPreAppointment = async ({ startTime, preAppointmentLocation }) => {
     const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
     const preDetails = {
@@ -340,7 +336,7 @@ const selectCourtAppointmentRoomsFactory = ({
       selectMainAppointmentLocation
     )
 
-    await createAppointment(res.locals, fullAppointmentDetails)
+    await whereaboutsApi.addVideoLinkAppointment(res.locals, fullAppointmentDetails)
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
