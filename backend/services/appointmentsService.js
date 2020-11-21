@@ -63,9 +63,41 @@ const appointmentsServiceFactory = prisonApi => {
     }
   }
 
+  const createAppointmentRequest = (
+    appointmentDetails,
+    comment,
+    prepostAppointments,
+    selectMainAppointmentLocation
+  ) => {
+    const appointment = {
+      bookingId: appointmentDetails.bookingId,
+      court: appointmentDetails.court,
+      main: {
+        locationId: parseInt(selectMainAppointmentLocation, 10),
+        startTime: appointmentDetails.startTime,
+        endTime: appointmentDetails.endTime,
+      },
+    }
+
+    if (comment) {
+      appointment.comment = comment
+    }
+
+    if (prepostAppointments.preAppointment) {
+      appointment.pre = prepostAppointments.preAppointment
+    }
+
+    if (prepostAppointments.postAppointment) {
+      appointment.post = prepostAppointments.postAppointment
+    }
+
+    return appointment
+  }
+
   return {
     getAppointmentOptions,
     getVideoLinkLocations,
+    createAppointmentRequest,
   }
 }
 

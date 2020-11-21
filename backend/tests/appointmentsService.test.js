@@ -63,4 +63,64 @@ describe('Appointments service', () => {
       ],
     })
   })
+
+  it('should return the most complete appointment details', () => {
+    const appointmentDetails = {
+      bookingId: 1000,
+      date: '20/11/2020',
+      startTime: '2020-11-20T18:00:00',
+      endTime: '2020-11-20T19:00:00',
+      startTimeHours: '18',
+      startTimeMinutes: '00',
+      endTimeHours: '19',
+      endTimeMinutes: '00',
+      preAppointmentRequired: 'yes',
+      postAppointmentRequired: 'yes',
+      court: 'City of London',
+    }
+
+    const comment = 'some comment'
+    const selectMainAppointmentLocation = 2
+
+    const prepostAppointments = {
+      preAppointment: {
+        startTime: '2020-11-20T17:40:00',
+        endTime: '2020-11-20T18:00:00',
+        locationId: 1,
+      },
+      postAppointment: {
+        startTime: '2020-11-20T19:00:00',
+        endTime: '2020-11-20T19:20:00',
+        locationId: 3,
+      },
+    }
+
+    const result = service.createAppointmentRequest(
+      appointmentDetails,
+      comment,
+      prepostAppointments,
+      selectMainAppointmentLocation
+    )
+
+    expect(result).toStrictEqual({
+      bookingId: 1000,
+      court: 'City of London',
+      comment: 'some comment',
+      pre: {
+        startTime: '2020-11-20T17:40:00',
+        endTime: '2020-11-20T18:00:00',
+        locationId: 1,
+      },
+      main: {
+        locationId: 2,
+        startTime: '2020-11-20T18:00:00',
+        endTime: '2020-11-20T19:00:00',
+      },
+      post: {
+        startTime: '2020-11-20T19:00:00',
+        endTime: '2020-11-20T19:20:00',
+        locationId: 3,
+      },
+    })
+  })
 })

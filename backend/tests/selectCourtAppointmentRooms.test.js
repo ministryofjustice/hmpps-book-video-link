@@ -1,7 +1,4 @@
-const {
-  selectCourtAppointmentRoomsFactory,
-  appointmentFactory,
-} = require('../controllers/appointments/selectCourtAppointmentRooms')
+const { selectCourtAppointmentRoomsFactory } = require('../controllers/appointments/selectCourtAppointmentRooms')
 const { notifyClient } = require('../shared/notifyClient')
 const config = require('../config')
 
@@ -62,10 +59,11 @@ describe('Select court appointment rooms', () => {
 
     oauthApi.userEmail = jest.fn()
 
-    whereaboutsApi.addVideoLinkAppointment = jest.fn()
+    whereaboutsApi.videoLinkBooking = jest.fn()
 
     appointmentsService.getAppointmentOptions = jest.fn()
     appointmentsService.getVideoLinkLocations = jest.fn()
+    appointmentsService.createAppointmentRequest = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()
@@ -304,11 +302,31 @@ describe('Select court appointment rooms', () => {
       res.redirect = jest.fn()
     })
     it('should send complete appointment object to whereaboutsApi', async () => {
-      const { createAppointments } = service
+      appointmentsService.createAppointmentRequest.mockReturnValue({
+        bookingId: 1,
+        court: 'Leeds',
+        comment: 'Test',
+        pre: {
+          startTime: '2017-10-10T10:40:00',
+          endTime: '2017-10-10T11:00',
+          locationId: 1,
+        },
+        main: {
+          locationId: 2,
+          startTime: '2017-10-10T11:00',
+          endTime: '2017-10-10T14:00',
+        },
+        post: {
+          startTime: '2017-10-10T14:00',
+          endTime: '2017-10-10T14:20:00',
+          locationId: 3,
+        },
+      })
 
+      const { createAppointments } = service
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+      expect(whereaboutsApi.videoLinkBooking).toHaveBeenCalledWith(
         {},
         {
           bookingId: 1,
@@ -322,6 +340,25 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should not include comments in appointment details sent to whereaboutsApi', async () => {
+      appointmentsService.createAppointmentRequest.mockReturnValue({
+        bookingId: 1,
+        court: 'Leeds',
+        pre: {
+          startTime: '2017-10-10T10:40:00',
+          endTime: '2017-10-10T11:00',
+          locationId: 1,
+        },
+        main: {
+          locationId: 2,
+          startTime: '2017-10-10T11:00',
+          endTime: '2017-10-10T14:00',
+        },
+        post: {
+          startTime: '2017-10-10T14:00',
+          endTime: '2017-10-10T14:20:00',
+          locationId: 3,
+        },
+      })
       const { createAppointments } = service
 
       req.body = {
@@ -332,7 +369,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+      expect(whereaboutsApi.videoLinkBooking).toHaveBeenCalledWith(
         {},
         {
           bookingId: 1,
@@ -345,6 +382,21 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should not include preAppointment in appointment details sent to whereaboutsApi', async () => {
+      appointmentsService.createAppointmentRequest.mockReturnValue({
+        bookingId: 1,
+        court: 'Leeds',
+        comment: 'Test',
+        main: {
+          locationId: 2,
+          startTime: '2017-10-10T11:00',
+          endTime: '2017-10-10T14:00',
+        },
+        post: {
+          startTime: '2017-10-10T14:00',
+          endTime: '2017-10-10T14:20:00',
+          locationId: 3,
+        },
+      })
       const { createAppointments } = service
 
       appointmentDetails.preAppointmentRequired = 'no'
@@ -358,7 +410,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+      expect(whereaboutsApi.videoLinkBooking).toHaveBeenCalledWith(
         {},
         {
           bookingId: 1,
@@ -372,6 +424,21 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should not include postAppointment in appointment details sent to whereaboutsApi', async () => {
+      appointmentsService.createAppointmentRequest.mockReturnValue({
+        bookingId: 1,
+        court: 'Leeds',
+        comment: 'Test',
+        pre: {
+          startTime: '2017-10-10T10:40:00',
+          endTime: '2017-10-10T11:00',
+          locationId: 1,
+        },
+        main: {
+          locationId: 2,
+          startTime: '2017-10-10T11:00',
+          endTime: '2017-10-10T14:00',
+        },
+      })
       const { createAppointments } = service
 
       appointmentDetails.postAppointmentRequired = 'no'
@@ -385,7 +452,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+      expect(whereaboutsApi.videoLinkBooking).toHaveBeenCalledWith(
         {},
         {
           bookingId: 1,
@@ -399,6 +466,16 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should not include pre or postAppointment in appointment details sent to whereaboutsApi', async () => {
+      appointmentsService.createAppointmentRequest.mockReturnValue({
+        bookingId: 1,
+        court: 'Leeds',
+        comment: 'Test',
+        main: {
+          locationId: 2,
+          startTime: '2017-10-10T11:00',
+          endTime: '2017-10-10T14:00',
+        },
+      })
       const { createAppointments } = service
 
       appointmentDetails.preAppointmentRequired = 'no'
@@ -412,7 +489,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(whereaboutsApi.addVideoLinkAppointment).toHaveBeenCalledWith(
+      expect(whereaboutsApi.videoLinkBooking).toHaveBeenCalledWith(
         {},
         {
           bookingId: 1,
@@ -540,68 +617,6 @@ describe('Select court appointment rooms', () => {
           reference: null,
         }
       )
-    })
-
-    describe('appointmentFactory', () => {
-      it('should return whole appointment details', () => {
-        const appointmentDetails = {
-          bookingId: 1000,
-          date: '20/11/2020',
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-          startTimeHours: '18',
-          startTimeMinutes: '00',
-          endTimeHours: '19',
-          endTimeMinutes: '00',
-          preAppointmentRequired: 'yes',
-          postAppointmentRequired: 'yes',
-          court: 'City of London',
-        }
-
-        const prepostAppointments = {
-          preAppointment: {
-            startTime: '2020-11-20T17:40:00',
-            endTime: '2020-11-20T18:00:00',
-            locationId: 100,
-          },
-          postAppointment: {
-            startTime: '2020-11-20T19:00:00',
-            endTime: '2020-11-20T19:20:00',
-            locationId: 300,
-          },
-        }
-
-        const comment = 'some comment'
-        const selectMainAppointmentLocation = 200
-
-        const result = appointmentFactory(
-          appointmentDetails,
-          comment,
-          prepostAppointments,
-          selectMainAppointmentLocation
-        )
-
-        expect(result).toStrictEqual({
-          bookingId: 1000,
-          court: 'City of London',
-          comment: 'some comment',
-          pre: {
-            startTime: '2020-11-20T17:40:00',
-            endTime: '2020-11-20T18:00:00',
-            locationId: 100,
-          },
-          main: {
-            locationId: 200,
-            startTime: '2020-11-20T18:00:00',
-            endTime: '2020-11-20T19:00:00',
-          },
-          post: {
-            startTime: '2020-11-20T19:00:00',
-            endTime: '2020-11-20T19:20:00',
-            locationId: 300,
-          },
-        })
-      })
     })
   })
 })

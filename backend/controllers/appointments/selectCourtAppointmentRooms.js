@@ -329,14 +329,14 @@ const selectCourtAppointmentRoomsFactory = ({
       }
     }
 
-    const fullAppointmentDetails = appointmentFactory(
+    const completeAppointmentDetails = appointmentsService.createAppointmentRequest(
       appointmentDetails,
       comment,
       prepostAppointments,
       selectMainAppointmentLocation
     )
 
-    await whereaboutsApi.addVideoLinkAppointment(res.locals, fullAppointmentDetails)
+    await whereaboutsApi.videoLinkBooking(res.locals, completeAppointmentDetails)
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
@@ -350,31 +350,4 @@ const selectCourtAppointmentRoomsFactory = ({
 
 module.exports = {
   selectCourtAppointmentRoomsFactory,
-  appointmentFactory,
-}
-
-function appointmentFactory(appointmentDetails, comment, prepostAppointments, selectMainAppointmentLocation) {
-  const appointment = {
-    bookingId: appointmentDetails.bookingId,
-    court: appointmentDetails.court,
-    main: {
-      locationId: parseInt(selectMainAppointmentLocation, 10),
-      startTime: appointmentDetails.startTime,
-      endTime: appointmentDetails.endTime,
-    },
-  }
-
-  if (comment) {
-    appointment.comment = comment
-  }
-
-  if (prepostAppointments.preAppointment) {
-    appointment.pre = prepostAppointments.preAppointment
-  }
-
-  if (prepostAppointments.postAppointment) {
-    appointment.post = prepostAppointments.postAppointment
-  }
-
-  return appointment
 }
