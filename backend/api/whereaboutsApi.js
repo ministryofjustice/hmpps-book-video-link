@@ -6,7 +6,7 @@ const whereaboutsApiFactory = client => {
 
   const getCourtLocations = context => get(context, '/court/all-courts')
 
-  const videoLinkBookings = (context, body) => post(context, '/video-link-bookings', body)
+  const videoLinkBookings = (context, body) => post(context, '/court/video-link-bookings', body)
 
   const getVideoLinkAppointments = (context, body) => post(context, '/court/video-link-appointments', body)
 

@@ -84,7 +84,6 @@ const validate = ({
 
 const selectCourtAppointmentRoomsFactory = ({
   prisonApi,
-  whereaboutsApi,
   appointmentsService,
   existingEventsService,
   oauthApi,
@@ -152,7 +151,7 @@ const selectCourtAppointmentRoomsFactory = ({
     })
   }
 
-  const createPreAppointment = async ({ startTime, preAppointmentLocation }) => {
+  const createPreAppointment = ({ startTime, preAppointmentLocation }) => {
     const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
     const preDetails = {
       startTime: preStartTime.format(DATE_TIME_FORMAT_SPEC),
@@ -163,7 +162,7 @@ const selectCourtAppointmentRoomsFactory = ({
     return preDetails
   }
 
-  const createPostAppointment = async ({ endTime, postAppointmentLocation }) => {
+  const createPostAppointment = ({ endTime, postAppointmentLocation }) => {
     const postEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes')
 
     const postDetails = {
@@ -329,14 +328,13 @@ const selectCourtAppointmentRoomsFactory = ({
       }
     }
 
-    const completeAppointmentDetails = appointmentsService.createAppointmentRequest(
+    await appointmentsService.createAppointmentRequest(
       appointmentDetails,
       comment,
       prepostAppointments,
-      selectMainAppointmentLocation
+      selectMainAppointmentLocation,
+      res.locals
     )
-
-    await whereaboutsApi.videoLinkBookings(res.locals, completeAppointmentDetails)
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
