@@ -174,6 +174,7 @@ context('A user can add a video link', () => {
       expect(request).to.deep.equal({
         bookingId: 14,
         court: 'London',
+        madeByTheCourt: true,
         pre: {
           locationId: 1,
           startTime: moment().add(1, 'days').format(`YYYY-MM-DD[T10:35:00]`),
