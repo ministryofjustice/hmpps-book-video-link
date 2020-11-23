@@ -31,7 +31,7 @@ module.exports = on => {
     stubUser: (username, caseload) => auth.stubUser(username, caseload),
     stubCourts: courts => whereabouts.stubCourtLocations(courts),
     stubGroups: caseload => whereabouts.stubGroups(caseload),
-    stubVideoLinkBooking: appointment => whereabouts.stubVideoLinkBooking(appointment),
+    stubVideoLinkBookings: appointment => whereabouts.stubVideoLinkBookings(appointment),
 
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,

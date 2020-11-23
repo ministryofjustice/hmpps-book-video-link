@@ -336,7 +336,7 @@ const selectCourtAppointmentRoomsFactory = ({
       selectMainAppointmentLocation
     )
 
-    await whereaboutsApi.videoLinkBooking(res.locals, completeAppointmentDetails)
+    await whereaboutsApi.videoLinkBookings(res.locals, completeAppointmentDetails)
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }

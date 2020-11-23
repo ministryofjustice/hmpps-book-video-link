@@ -32,11 +32,11 @@ module.exports = {
       },
     })
   },
-  stubVideoLinkBooking: (appointment, status = 200) => {
+  stubVideoLinkBookings: (appointment, status = 200) => {
     return stubFor({
       request: {
         method: 'POST',
-        url: '/whereabouts/video-link-booking',
+        url: '/whereabouts/video-link-bookings',
       },
       response: {
         status,
