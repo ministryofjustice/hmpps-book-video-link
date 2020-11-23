@@ -24,7 +24,7 @@ const controller = ({ prisonApi, whereaboutsApi, oauthApi, notifyClient }) => {
   router.get('/', asyncMiddleware(index))
   router.post(
     '/',
-    asyncMiddleware(validateInput),
+    validateInput,
     asyncMiddleware(checkAppointmentRooms(existingEventsService, availableSlots)),
     asyncMiddleware(createAppointments)
   )

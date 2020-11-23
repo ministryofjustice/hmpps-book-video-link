@@ -40,7 +40,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     })
   )
 
-  router.use(
+  router.get(
     '/bookings',
     withRetryLink('/bookings'),
     asyncMiddleware(viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))

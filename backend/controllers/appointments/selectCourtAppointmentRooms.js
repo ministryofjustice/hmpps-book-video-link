@@ -201,7 +201,7 @@ const selectCourtAppointmentRoomsFactory = ({
     return postDetails
   }
 
-  const validateInput = async (req, res, next) => {
+  const validateInput = (req, res, next) => {
     const {
       selectPreAppointmentLocation,
       selectMainAppointmentLocation,
