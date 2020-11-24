@@ -8,8 +8,8 @@ $(document).ready(function () {
 
     $(element).datepicker({
       dateFormat,
-      showOtherMonths: false,
-      selectOtherMonths: false,
+      showOtherMonths: true,
+      selectOtherMonths: true,
       maxDate: maxDate,
       minDate: minDate,
     })
