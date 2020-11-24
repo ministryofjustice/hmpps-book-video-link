@@ -34,7 +34,7 @@ describe('Appointments service', () => {
   beforeEach(() => {
     prisonApi.getLocationsForAppointments = jest.fn()
     prisonApi.getAppointmentTypes = jest.fn()
-    whereaboutsApi.videoLinkBookings = jest.fn()
+    whereaboutsApi.createVideoLinkBooking = jest.fn()
     appointmentService = appointmentsServiceFactory(prisonApi, whereaboutsApi)
     res = { locals: {} }
   })
@@ -106,7 +106,7 @@ describe('Appointments service', () => {
       res.locals
     )
 
-    expect(whereaboutsApi.videoLinkBookings).toHaveBeenCalledWith(res.locals, {
+    expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(res.locals, {
       bookingId: 1000,
       court: 'City of London',
       comment: 'some comment',
@@ -156,7 +156,7 @@ describe('Appointments service', () => {
       res.locals
     )
 
-    expect(whereaboutsApi.videoLinkBookings).toHaveBeenCalledWith(res.locals, {
+    expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(res.locals, {
       bookingId: 1000,
       court: 'City of London',
       madeByTheCourt: true,

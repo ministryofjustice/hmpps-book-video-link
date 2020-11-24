@@ -32,7 +32,7 @@ module.exports = {
       },
     })
   },
-  stubVideoLinkBookings: (status = 200) => {
+  stubCreateVideoLinkBooking: (status = 200) => {
     return stubFor({
       request: {
         method: 'POST',

@@ -262,14 +262,14 @@ const selectCourtAppointmentRoomsFactory = ({
     const prepostAppointments = {}
 
     if (preAppointmentRequired === 'yes') {
-      prepostAppointments.preAppointment = await createPreAppointment({
+      prepostAppointments.preAppointment = createPreAppointment({
         startTime,
         preAppointmentLocation: selectPreAppointmentLocation,
       })
     }
 
     if (postAppointmentRequired === 'yes') {
-      prepostAppointments.postAppointment = await createPostAppointment({
+      prepostAppointments.postAppointment = createPostAppointment({
         endTime,
         postAppointmentLocation: selectPostAppointmentLocation,
       })

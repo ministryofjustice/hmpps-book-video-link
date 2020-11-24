@@ -63,19 +63,19 @@ const appointmentsServiceFactory = (prisonApi, whereaboutsApi) => {
     }
   }
 
-  const createAppointmentRequest = (
+  const createAppointmentRequest = async (
     appointmentDetails,
     comment,
     prepostAppointments,
-    selectMainAppointmentLocation,
-    resLocals
+    mainLocationId,
+    context
   ) => {
     const appointment = {
       bookingId: appointmentDetails.bookingId,
       court: appointmentDetails.court,
       madeByTheCourt: true,
       main: {
-        locationId: parseInt(selectMainAppointmentLocation, 10),
+        locationId: parseInt(mainLocationId, 10),
         startTime: appointmentDetails.startTime,
         endTime: appointmentDetails.endTime,
       },
@@ -93,7 +93,7 @@ const appointmentsServiceFactory = (prisonApi, whereaboutsApi) => {
       appointment.post = prepostAppointments.postAppointment
     }
 
-    whereaboutsApi.videoLinkBookings(resLocals, appointment)
+    await whereaboutsApi.createVideoLinkBooking(context, appointment)
   }
 
   return {
