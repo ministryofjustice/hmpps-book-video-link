@@ -1,3 +1,4 @@
+const moment = require('moment')
 const viewCourtBookingsRouter = require('../routes/appointments/viewCourtBookingsRouter')
 
 describe('View court bookings', () => {
@@ -58,7 +59,7 @@ describe('View court bookings', () => {
 
       expect(res.render).toHaveBeenCalledWith('viewCourtBookings.njk', {
         appointmentRows: [],
-        date: '01/01/2020',
+        date: moment(),
         title: 'Video link bookings for 1 January 2020',
         courtOption: undefined,
         courts: [{ value: 'Other', text: 'Other' }],
@@ -181,7 +182,7 @@ describe('View court bookings', () => {
         })
 
         req.query = {
-          date: '02/01/2020',
+          date: '2 January 2020',
         }
       })
       it('should make the correct API calls', async () => {
@@ -227,7 +228,7 @@ describe('View court bookings', () => {
                 { text: 'Not available' },
               ],
             ],
-            date: '02/01/2020',
+            date: moment('2 January 2020', 'D MMMM YYYY'),
             title: 'Video link bookings for 2 January 2020',
             courtOption: undefined,
             courts: [
