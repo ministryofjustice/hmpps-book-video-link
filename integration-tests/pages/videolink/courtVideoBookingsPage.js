@@ -4,6 +4,7 @@ const courtVideoBookingsPage = () =>
   page('Video link bookings for', {
     searchResultsTableRows: () => cy.get("[data-qa='court-bookings-table'] tr"),
     noResultsMessage: () => cy.get("[data-qa='no-results-message']"),
+    dateInput: () => cy.get('#date'),
     courtOption: () => cy.get('#courtOption'),
     submitButton: () => cy.get('button[type="submit"]'),
   })

@@ -117,9 +117,10 @@ context('A user can view the video link home page', () => {
       })
   })
 
-  it('Returns unsupported courts when Other is selected', () => {
+  it('Has correct date format and returns unsupported courts when Other is selected', () => {
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
+    courtVideoBookingsPage.dateInput().should('have.value', Cypress.moment().format('D MMMM YYYY'))
     courtVideoBookingsPage.courtOption().select('Other')
     courtVideoBookingsPage.submitButton().click()
 

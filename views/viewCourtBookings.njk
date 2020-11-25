@@ -22,7 +22,8 @@
       id: 'date',
       label: 'Date',
       name: 'date',
-      date: date,
+      date: date | formatDate('DD MMMM YYYY'),
+      attributes: {"date-format": "d MM yy"},
       errorMessage: errors | findError('date')
     }) }}
 

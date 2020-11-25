@@ -3,7 +3,7 @@ const { getTime, properCaseName } = require('../../utils')
 
 module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
   const { date, courtOption } = req.query
-  const searchDate = date ? moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')
+  const searchDate = date ? moment(date, 'D MMMM YYYY') : moment()
   // FIXME: Temporary fix while waiting for new API
   const agencyId = 'WWI'
   const user = {
@@ -25,7 +25,7 @@ module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
     getCourts(res.locals),
     prisonApi.getAppointmentsForAgency(res.locals, {
       agencyId,
-      date: searchDate,
+      date: searchDate.format('YYYY-MM-DD'),
     }),
   ])
 
@@ -89,7 +89,7 @@ module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
     courtOption,
     appointmentRows: appointmentsEnhanced,
     user,
-    date: moment(searchDate).format('DD/MM/YYYY'),
+    date: searchDate,
     title: courtOption ? `${title} - ${courtOption}` : title,
   })
 }
