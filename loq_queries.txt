@@ -1,0 +1,45 @@
+// Which prisoners have bookings been started for?
+traces
+| where cloud_RoleName == 'book-video-link'
+| where operation_Name endswith "add-court-appointment"
+| where operation_Name contains "GET"
+| where parse_json(tostring(parse_json(message).res)).username != ''
+| project timestamp, name=extract('^GET /(.*?)/offenders/(.*)/add-court-appointment$', 2, operation_Name )
+| order by timestamp
+
+// What appointments are being made in the service?
+requests
+| where cloud_RoleName == 'book-video-link'
+| where url endswith "/confirm-appointment"
+
+// Who is using the site?
+traces
+| where cloud_RoleName == 'book-video-link'
+| where parse_json(tostring(parse_json(message).res)).username != ''
+| project name=tostring(parse_json(tostring(parse_json(message).res)).username)
+| distinct name
+| order by name
+
+// What are they doing?
+traces
+| where cloud_RoleName == 'book-video-link'
+| where parse_json(tostring(parse_json(message).res)).username == '<username>'
+| order by timestamp
+
+// Which users are trying to access the service but can't due to role issues
+requests
+| where cloud_RoleName == "book-video-link"
+| where name contains "no-service-access"
+
+// Use of redirect link
+requests
+| where cloud_RoleName == "prisonstaffhub"
+| where operation_Name endswith "/videolink"
+| where resultCode == 302
+
+// Request status histogram:
+requests
+| where cloud_RoleName == "book-video-link"
+| where operation_Name !contains "/health" and operation_Name !contains "/ping"
+| summarize count() by NotifyTime=bin(timestamp, 1h),Kind=resultCode
+| project NotifyTime , Notifications=count_, Kind
