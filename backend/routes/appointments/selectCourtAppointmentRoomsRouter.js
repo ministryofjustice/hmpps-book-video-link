@@ -9,12 +9,11 @@ const asyncMiddleware = require('../../middleware/asyncMiddleware')
 const router = express.Router({ mergeParams: true })
 
 const controller = ({ prisonApi, whereaboutsApi, oauthApi, notifyClient }) => {
-  const appointmentsService = appointmentsServiceFactory(prisonApi)
+  const appointmentsService = appointmentsServiceFactory(prisonApi, whereaboutsApi)
   const existingEventsService = existingEventsServiceFactory(prisonApi)
   const availableSlots = availableSlotsService({ existingEventsService, appointmentsService })
   const { index, validateInput, createAppointments } = selectCourtAppointmentRoomsFactory({
     prisonApi,
-    whereaboutsApi,
     oauthApi,
     notifyClient,
     appointmentsService,

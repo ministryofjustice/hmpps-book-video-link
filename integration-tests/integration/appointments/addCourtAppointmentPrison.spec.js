@@ -23,7 +23,7 @@ context('A user can add a video link', () => {
       { code: 'VLB', description: 'Video Link Booking' },
     ])
     cy.task('stubCourts')
-    cy.task('stubAddVideoLinkAppointment')
+    cy.task('stubCreateVideoLinkBooking')
     cy.task('stubAgencyDetails', {
       agencyId: 'MDI',
       details: { agencyId: 'MDI', description: 'Moorland', agencyType: 'INST' },
@@ -169,6 +169,29 @@ context('A user can add a video link', () => {
     confirmVideoLinkCourtPage.legalBriefingBefore().contains('10:35 to 10:55')
     confirmVideoLinkCourtPage.legalBriefingAfter().contains('11:55 to 12:15')
     confirmVideoLinkCourtPage.courtLocation().contains('London')
+
+    cy.task('getBookingRequest').then(request => {
+      expect(request).to.deep.equal({
+        bookingId: 14,
+        court: 'London',
+        madeByTheCourt: true,
+        pre: {
+          locationId: 1,
+          startTime: moment().add(1, 'days').format(`YYYY-MM-DD[T10:35:00]`),
+          endTime: moment().add(1, 'days').format(`YYYY-MM-DD[T10:55:00]`),
+        },
+        main: {
+          locationId: 2,
+          startTime: moment().add(1, 'days').format(`YYYY-MM-DD[T10:55:00]`),
+          endTime: moment().add(1, 'days').format(`YYYY-MM-DD[T11:55:00]`),
+        },
+        post: {
+          locationId: 3,
+          startTime: moment().add(1, 'days').format(`YYYY-MM-DD[T11:55:00]`),
+          endTime: moment().add(1, 'days').format(`YYYY-MM-DD[T12:15:00]`),
+        },
+      })
+    })
   })
 
   it('A user is redirected to no availability for today page', () => {

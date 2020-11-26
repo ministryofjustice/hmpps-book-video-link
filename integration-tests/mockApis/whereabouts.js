@@ -1,4 +1,4 @@
-const { stubFor, verifyPosts } = require('./wiremock')
+const { stubFor, verifyPosts, getMatchingRequests } = require('./wiremock')
 
 module.exports = {
   stubHealth: (status = 200) => {
@@ -32,21 +32,31 @@ module.exports = {
       },
     })
   },
-  stubAddVideoLinkAppointment: (appointment, status = 200) => {
+  stubCreateVideoLinkBooking: (status = 200) => {
     return stubFor({
       request: {
         method: 'POST',
-        url: '/whereabouts/court/add-video-link-appointment',
+        url: '/whereabouts/court/video-link-bookings',
       },
       response: {
         status,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: appointment || {},
+        jsonBody: 1 || {},
       },
     })
   },
+
+  getBookingRequest: () =>
+    getMatchingRequests({
+      method: 'POST',
+      urlPath: '/whereabouts/court/video-link-bookings',
+    }).then(data => {
+      const { requests } = data.body
+      return JSON.parse(requests[0].body)
+    }),
+
   stubVideoLinkAppointments: (appointments, status = 200) => {
     return stubFor({
       request: {

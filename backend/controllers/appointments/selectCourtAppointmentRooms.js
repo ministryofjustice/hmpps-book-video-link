@@ -84,7 +84,6 @@ const validate = ({
 
 const selectCourtAppointmentRoomsFactory = ({
   prisonApi,
-  whereaboutsApi,
   appointmentsService,
   existingEventsService,
   oauthApi,
@@ -152,21 +151,7 @@ const selectCourtAppointmentRoomsFactory = ({
     })
   }
 
-  const createAppointment = async (context, appointmentDetails) => {
-    const { startTime, endTime, bookingId, locationId, comment, court, hearingType } = appointmentDetails
-
-    await whereaboutsApi.addVideoLinkAppointment(context, {
-      bookingId,
-      locationId: Number(locationId),
-      startTime,
-      endTime,
-      comment,
-      court,
-      hearingType,
-    })
-  }
-
-  const createPreAppointment = async (context, { appointmentDetails, startTime, preAppointmentLocation }) => {
+  const createPreAppointment = ({ startTime, preAppointmentLocation }) => {
     const preStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minutes')
     const preDetails = {
       startTime: preStartTime.format(DATE_TIME_FORMAT_SPEC),
@@ -174,16 +159,10 @@ const selectCourtAppointmentRoomsFactory = ({
       locationId: Number(preAppointmentLocation),
     }
 
-    await createAppointment(context, {
-      ...appointmentDetails,
-      ...preDetails,
-      hearingType: 'PRE',
-    })
-
     return preDetails
   }
 
-  const createPostAppointment = async (context, { appointmentDetails, endTime, postAppointmentLocation }) => {
+  const createPostAppointment = ({ endTime, postAppointmentLocation }) => {
     const postEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minutes')
 
     const postDetails = {
@@ -191,12 +170,6 @@ const selectCourtAppointmentRoomsFactory = ({
       endTime: postEndTime.format(DATE_TIME_FORMAT_SPEC),
       locationId: Number(postAppointmentLocation),
     }
-
-    await createAppointment(context, {
-      ...appointmentDetails,
-      ...postDetails,
-      hearingType: 'POST',
-    })
 
     return postDetails
   }
@@ -286,26 +259,17 @@ const selectCourtAppointmentRoomsFactory = ({
       comment,
     } = req.body
 
-    await createAppointment(res.locals, {
-      ...appointmentDetails,
-      comment,
-      locationId: selectMainAppointmentLocation,
-      hearingType: 'MAIN',
-    })
-
     const prepostAppointments = {}
 
     if (preAppointmentRequired === 'yes') {
-      prepostAppointments.preAppointment = await createPreAppointment(res.locals, {
-        appointmentDetails,
+      prepostAppointments.preAppointment = createPreAppointment({
         startTime,
         preAppointmentLocation: selectPreAppointmentLocation,
       })
     }
 
     if (postAppointmentRequired === 'yes') {
-      prepostAppointments.postAppointment = await createPostAppointment(res.locals, {
-        appointmentDetails,
+      prepostAppointments.postAppointment = createPostAppointment({
         endTime,
         postAppointmentLocation: selectPostAppointmentLocation,
       })
@@ -363,6 +327,14 @@ const selectCourtAppointmentRoomsFactory = ({
         })
       }
     }
+
+    await appointmentsService.createAppointmentRequest(
+      appointmentDetails,
+      comment,
+      prepostAppointments,
+      selectMainAppointmentLocation,
+      res.locals
+    )
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }

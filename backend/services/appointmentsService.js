@@ -45,7 +45,7 @@ const mapAppointmentType = appointment => ({
   text: appointment.description,
 })
 
-const appointmentsServiceFactory = prisonApi => {
+const appointmentsServiceFactory = (prisonApi, whereaboutsApi) => {
   const getVideoLinkLocations = async (context, agency) =>
     (await prisonApi.getLocationsForAppointments(context, agency))
       .filter(loc => loc.locationType === 'VIDE')
@@ -63,9 +63,43 @@ const appointmentsServiceFactory = prisonApi => {
     }
   }
 
+  const createAppointmentRequest = async (
+    appointmentDetails,
+    comment,
+    prepostAppointments,
+    mainLocationId,
+    context
+  ) => {
+    const appointment = {
+      bookingId: appointmentDetails.bookingId,
+      court: appointmentDetails.court,
+      madeByTheCourt: true,
+      main: {
+        locationId: parseInt(mainLocationId, 10),
+        startTime: appointmentDetails.startTime,
+        endTime: appointmentDetails.endTime,
+      },
+    }
+
+    if (comment) {
+      appointment.comment = comment
+    }
+
+    if (prepostAppointments.preAppointment) {
+      appointment.pre = prepostAppointments.preAppointment
+    }
+
+    if (prepostAppointments.postAppointment) {
+      appointment.post = prepostAppointments.postAppointment
+    }
+
+    await whereaboutsApi.createVideoLinkBooking(context, appointment)
+  }
+
   return {
     getAppointmentOptions,
     getVideoLinkLocations,
+    createAppointmentRequest,
   }
 }
 
