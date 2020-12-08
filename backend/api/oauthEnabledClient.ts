@@ -114,4 +114,16 @@ export = class Client {
         })
     })
   }
+
+  public delete(context: any, path: string): Promise<superagent.Response> {
+    return new Promise((resolve, reject) => {
+      superagent
+        .delete(this.remoteUrl + path)
+        .set(getHeaders(context))
+        .end((error, response) => {
+          if (error) reject(errorLogger(error))
+          else if (response) resolve(resultLogger(response))
+        })
+    })
+  }
 }

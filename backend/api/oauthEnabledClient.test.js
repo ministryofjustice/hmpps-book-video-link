@@ -174,4 +174,39 @@ describe('Test clients built by oauthEnabledClient', () => {
       expect(logger.warn).toHaveBeenCalledWith('API error in GET /api/users/me 500 Internal Server Error {}')
     })
   })
+
+  describe('Delete', () => {
+    const client = new Client({ baseUrl: `${hostname}/`, timeout: 20000 })
+    logger.warn = jest.fn()
+    afterEach(() => {
+      nock.cleanAll()
+    })
+
+    it('Should set the authorization header with "Bearer <access token>"', async () => {
+      const context = {}
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
+      nock(hostname).delete('/api/users/me').reply(200)
+      /** @type {any} */
+      const response = await client.delete(context, '/api/users/me')
+
+      expect(response.status).toEqual(200)
+      expect(response.request.header.authorization).toEqual('Bearer a')
+    })
+
+    it('Should log 404 correctly', async () => {
+      nock(hostname).delete('/api/users/me').reply(404)
+
+      await expect(client.delete({}, '/api/users/me')).rejects.toThrow('Not Found')
+
+      expect(logger.warn).toHaveBeenCalledWith('DELETE /api/users/me No record found')
+    })
+
+    it('Should log 500 correctly', async () => {
+      nock(hostname).delete('/api/users/me').reply(500).get('/api/users/me').reply(500).get('/api/users/me').reply(500)
+
+      await expect(client.delete({}, '/api/users/me')).rejects.toThrow('Internal Server Error')
+
+      expect(logger.warn).toHaveBeenCalledWith('API error in DELETE /api/users/me 500 Internal Server Error {}')
+    })
+  })
 })
