@@ -48,7 +48,7 @@ interface ClientOptions {
  *     post: (context: any, path: string, body: any) => Promise<any>
  * }}
  */
-export default class Client {
+export = class Client {
   constructor(private readonly options: ClientOptions) {}
 
   private baseUrl = this.options.baseUrl
@@ -77,7 +77,7 @@ export default class Client {
    *        The header isn't set if resultLimit is falsy.
    * @returns {Promise<any>} A Promise which settles to the superagent result object if the promise is resolved, otherwise to the 'error' object.
    */
-  public get(context: any, path: string, resultLimit: number): Promise<superagent.Response> {
+  public get(context: any, path: string, resultLimit?: number): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .get(this.remoteUrl + path)

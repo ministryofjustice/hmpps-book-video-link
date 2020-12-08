@@ -1,6 +1,7 @@
+import Client from './oauthEnabledClient'
+
 const querystring = require('querystring')
 const oauthApi = require('./oauthApi')
-const clientFactory = require('./oauthEnabledClient')
 
 const config = require('../config')
 const logger = require('../log')
@@ -12,7 +13,7 @@ const getClientCredentialsTokens = async username => {
 
   const oauthResult = await oauthApi
     .oauthApiFactory(
-      clientFactory({
+      new Client({
         baseUrl: config.apis.oauth2.url,
         timeout: config.apis.oauth2.timeoutSeconds * 1000,
       }),

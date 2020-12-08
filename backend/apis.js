@@ -1,5 +1,5 @@
-import WhereaboutsApi from './api/whereaboutsApi'
-import Client from './api/oauthEnabledClient'
+const WhereaboutsApi = require('./api/whereaboutsApi')
+const Client = require('./api/oauthEnabledClient')
 
 const config = require('./config')
 const { prisonApiFactory } = require('./api/prisonApi')

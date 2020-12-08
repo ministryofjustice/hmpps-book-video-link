@@ -1,3 +1,7 @@
+jest.mock('../raiseAnalyticsEvent', () => ({
+  raiseAnalyticsEvent: jest.fn(),
+}))
+
 const moment = require('moment')
 
 process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
@@ -10,10 +14,6 @@ const { notifyClient } = require('../shared/notifyClient')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
 const { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId } = config.notifications
-
-jest.mock('../raiseAnalyticsEvent', () => ({
-  raiseAnalyticsEvent: jest.fn(),
-}))
 
 describe('Request a booking', () => {
   let req

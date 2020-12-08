@@ -1,5 +1,7 @@
-export default class WhereaboutsApi {
-  constructor(private readonly client) {}
+import type Client from './oauthEnabledClient'
+
+export = class WhereaboutsApi {
+  constructor(private readonly client: Client) {}
 
   private processResponse(response) {
     return response.body

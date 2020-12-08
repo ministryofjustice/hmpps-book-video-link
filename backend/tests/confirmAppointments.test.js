@@ -1,9 +1,9 @@
-const confirmAppointments = require('../controllers/appointments/confirmAppointment')
-const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
-
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
+
+const confirmAppointments = require('../controllers/appointments/confirmAppointment')
+const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
 describe('Confirm appointments', () => {
   const prisonApi = {}

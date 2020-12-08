@@ -1,10 +1,10 @@
-const errorHandler = require('./errorHandler')
-const { logError } = require('../logError')
-const { serviceUnavailableMessage } = require('../common-messages')
-
 jest.mock('../logError', () => ({
   logError: jest.fn(),
 }))
+
+const errorHandler = require('./errorHandler')
+const { logError } = require('../logError')
+const { serviceUnavailableMessage } = require('../common-messages')
 
 describe('Error handling middleware', () => {
   const req = {
