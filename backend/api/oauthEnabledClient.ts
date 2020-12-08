@@ -1,10 +1,9 @@
-const superagent = require('superagent')
-const Agent = require('agentkeepalive')
-const { HttpsAgent } = require('agentkeepalive')
-const logger = require('../log')
+import superagent from 'superagent'
+import Agent from 'agentkeepalive'
+import logger from '../log'
+import { getHeaders } from './axios-config-decorators'
 
-const { getHeaders } = require('./axios-config-decorators')
-
+const { HttpsAgent } = Agent
 const resultLogger = result => {
   logger.debug(`${result.req.method} ${result.req.path} ${result.status}`)
   return result
@@ -32,6 +31,11 @@ const errorLogger = error => {
   return error
 }
 
+interface ClientOptions {
+  baseUrl: string
+  timeout: number
+}
+
 /**
  * Build a client for the supplied configuration. The client wraps axios get, post, put etc while ensuring that
  * the remote calls carry valid oauth headers.
@@ -44,16 +48,25 @@ const errorLogger = error => {
  *     post: (context: any, path: string, body: any) => Promise<any>
  * }}
  */
-const factory = ({ baseUrl, timeout }) => {
-  // strip off any excess / from the required url
-  const remoteUrl = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl
+export default class Client {
+  constructor(private readonly options: ClientOptions) {}
 
-  const agentOptions = {
+  private baseUrl = this.options.baseUrl
+
+  private timeout = this.options.timeout
+
+  // strip off any excess / from the required url
+  private remoteUrl = this.baseUrl.endsWith('/') ? this.baseUrl.substring(0, this.baseUrl.length - 1) : this.baseUrl
+
+  private agentOptions = {
     maxSockets: 100,
     maxFreeSockets: 10,
     freeSocketTimeout: 30000,
   }
-  const keepaliveAgent = remoteUrl.startsWith('https') ? new HttpsAgent(agentOptions) : new Agent(agentOptions)
+
+  private keepaliveAgent = this.remoteUrl.startsWith('https')
+    ? new HttpsAgent(this.agentOptions)
+    : new Agent(this.agentOptions)
 
   /**
    * A superagent GET request with Oauth token
@@ -64,22 +77,23 @@ const factory = ({ baseUrl, timeout }) => {
    *        The header isn't set if resultLimit is falsy.
    * @returns {Promise<any>} A Promise which settles to the superagent result object if the promise is resolved, otherwise to the 'error' object.
    */
-  const get = (context, path, resultLimit) =>
-    new Promise((resolve, reject) => {
+  public get(context: any, path: string, resultLimit: number): Promise<superagent.Response> {
+    return new Promise((resolve, reject) => {
       superagent
-        .get(remoteUrl + path)
-        .agent(keepaliveAgent)
+        .get(this.remoteUrl + path)
+        .agent(this.keepaliveAgent)
         .set(getHeaders(context, resultLimit))
         .retry(2, (err, res) => {
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
-        .timeout({ deadline: timeout / 3 })
+        .timeout({ deadline: this.timeout / 3 })
         .end((error, response) => {
           if (error) reject(errorLogger(error))
           else if (response) resolve(resultLogger(response))
         })
     })
+  }
 
   /**
    * An superagent POST with Oauth token refresh and retry behaviour
@@ -88,10 +102,10 @@ const factory = ({ baseUrl, timeout }) => {
    * @param {any} body
    * @returns {any} A Promise which resolves to the superagent result object, or the superagent error object if it is rejected
    */
-  const post = (context, path, body) =>
-    new Promise((resolve, reject) => {
+  public post(context: any, path: string, body: any): Promise<superagent.Response> {
+    return new Promise((resolve, reject) => {
       superagent
-        .post(remoteUrl + path)
+        .post(this.remoteUrl + path)
         .send(body)
         .set(getHeaders(context))
         .end((error, response) => {
@@ -99,11 +113,5 @@ const factory = ({ baseUrl, timeout }) => {
           else if (response) resolve(resultLogger(response))
         })
     })
-
-  return {
-    get,
-    post,
   }
 }
-
-module.exports = factory
