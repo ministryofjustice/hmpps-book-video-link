@@ -2,11 +2,12 @@ const existingEventsService = require('../services/existingEventsService')
 
 describe('existing events', () => {
   const prisonApi = {}
+  const appointmentsService = {}
   let service
 
   beforeEach(() => {
     prisonApi.getActivityList = jest.fn()
-    service = existingEventsService(prisonApi)
+    service = existingEventsService(prisonApi, appointmentsService)
   })
 
   describe('location availability', () => {
@@ -15,10 +16,11 @@ describe('existing events', () => {
       prisonApi.getEventsAtLocations = jest.fn()
       prisonApi.getVideoLinkLocations.mockReturnValue(Promise.resolve([]))
       prisonApi.getLocationsForAppointments = jest.fn()
+      appointmentsService.getVideoLinkLocations = jest.fn()
     })
 
     it('should adjust the main appointment time by one minute in the future', async () => {
-      const locations = [{ locationId: 1, description: 'Location 1', locationType: 'VIDE' }]
+      const locations = [{ value: 1, text: 'Location 1' }]
       const eventsAtLocations = [
         {
           locationId: 1,
@@ -28,7 +30,7 @@ describe('existing events', () => {
         },
       ]
 
-      prisonApi.getLocationsForAppointments.mockReturnValue(locations)
+      appointmentsService.getVideoLinkLocations.mockReturnValue(locations)
       prisonApi.getActivityList.mockReturnValue(Promise.resolve(eventsAtLocations))
 
       const availableLocations = await service.getAvailableLocationsForVLB(

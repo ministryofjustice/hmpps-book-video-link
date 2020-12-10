@@ -1,11 +1,17 @@
-const { appointmentsServiceFactory } = require('../services/appointmentsService')
+import AppointmentsService from '../services/appointmentsService'
+import PrisonApi from '../api/prisonApi'
+import WhereaboutsApi from '../api/whereaboutsApi'
+
+jest.mock('../api/prisonApi')
+jest.mock('../api/whereaboutsApi')
+
+const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
+const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
 describe('Appointments service', () => {
-  const prisonApi = {}
-  const whereaboutsApi = {}
   const context = {}
   const agency = 'LEI'
-  const appointmentTypes = [{ code: 'ACTI', description: 'Activities' }]
+  const appointmentTypes = [{ code: 'ACTI', description: 'Activities', activeFlag: 'Y' as const, domain: '' }]
   const locationTypes = [
     {
       locationId: 27187,
@@ -29,13 +35,10 @@ describe('Appointments service', () => {
   ]
 
   let appointmentService
-  let res = {}
+  let res = { locals: {} }
 
   beforeEach(() => {
-    prisonApi.getLocationsForAppointments = jest.fn()
-    prisonApi.getAppointmentTypes = jest.fn()
-    whereaboutsApi.createVideoLinkBooking = jest.fn()
-    appointmentService = appointmentsServiceFactory(prisonApi, whereaboutsApi)
+    appointmentService = new AppointmentsService(prisonApi, whereaboutsApi)
     res = { locals: {} }
   })
 
@@ -53,8 +56,8 @@ describe('Appointments service', () => {
   })
 
   it('should map appointment types and locations correctly', async () => {
-    prisonApi.getLocationsForAppointments.mockReturnValue(locationTypes)
-    prisonApi.getAppointmentTypes.mockReturnValue(appointmentTypes)
+    prisonApi.getLocationsForAppointments.mockResolvedValue(locationTypes)
+    prisonApi.getAppointmentTypes.mockResolvedValue(appointmentTypes)
 
     const response = await appointmentService.getAppointmentOptions(context, agency)
 

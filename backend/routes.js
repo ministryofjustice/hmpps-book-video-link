@@ -12,13 +12,20 @@ const requestBookingRouter = require('./routes/appointments/requestBookingRouter
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const { notifyClient } = require('./shared/notifyClient')
 const BookingService = require('./services/bookingService')
+const DeleteAppointmentController = require('./controllers/appointments/deleteAppointment')
+const AppointmentsService = require('./services/appointmentsService')
 
 const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
-  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter({ prisonApi }))
+  const appointmentsService = new AppointmentsService(prisonApi, whereaboutsApi)
 
-  router.use('/:agencyId/offenders/:offenderNo/add-court-appointment', addCourtAppointmentRouter({ prisonApi }))
+  router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter(prisonApi, appointmentsService))
+
+  router.use(
+    '/:agencyId/offenders/:offenderNo/add-court-appointment',
+    addCourtAppointmentRouter({ prisonApi, appointmentsService })
+  )
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court',
@@ -27,7 +34,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
 
   router.use(
     '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms',
-    selectCourtAppointmentRooms({ prisonApi, whereaboutsApi, oauthApi, notifyClient })
+    selectCourtAppointmentRooms({ prisonApi, oauthApi, notifyClient, appointmentsService })
   )
 
   router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(videolinkPrisonerSearchController({ prisonApi })))
@@ -46,6 +53,20 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   router.get('/bookings', withRetryLink('/bookings'), asyncMiddleware(viewCourtBookingsController(bookingService)))
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
+
+  const deleteBooking = new DeleteAppointmentController(prisonApi, whereaboutsApi, appointmentsService)
+
+  router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete))
+
+  router.post('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.confirmDelete))
+
+  router.get('/court/booking-delete-confirmed', (req, res) => {
+    return res.render('deleteAppointment/bookingDeleteConfirmed.njk', {
+      offenderName: req.flash('offenderName'),
+      offenderNo: req.flash('offenderNo'),
+      agencyId: req.flash('agencyId'),
+    })
+  })
 
   router.use((req, res, next) => {
     res.status(404).render('notFoundPage.njk')

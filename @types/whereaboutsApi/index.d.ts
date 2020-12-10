@@ -5,12 +5,12 @@ declare module 'whereaboutsApi' {
 
   export type NewVideoLinkBooking = {
     bookingId: number
-    comment: string
+    comment?: string
     court: string
     madeByTheCourt: boolean
     main: NewAppointment
-    post: NewAppointment
-    pre: NewAppointment
+    post?: NewAppointment
+    pre?: NewAppointment
   }
 
   export type HearingType = 'MAIN' | 'PRE' | 'POST'

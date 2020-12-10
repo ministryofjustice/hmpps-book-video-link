@@ -1,6 +1,6 @@
 const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC, Time } = require('../../shared/dateHelpers')
-const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
+const toAppointmentDetailsSummary = require('../../services/toAppointmentDetailsSummary')
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')

@@ -4,7 +4,8 @@ const {
   notifications: { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails },
 } = require('../../config')
 
-const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
+const toAppointmentDetailsSummary = require('../../services/toAppointmentDetailsSummary')
+
 const { properCaseName } = require('../../utils')
 
 const unpackAppointmentDetails = req => {

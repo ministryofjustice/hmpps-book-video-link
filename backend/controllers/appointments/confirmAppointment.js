@@ -1,10 +1,11 @@
 const moment = require('moment')
 
-const { DATE_TIME_FORMAT_SPEC } = require('../../shared/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC, Time } = require('../../shared/dateHelpers')
 const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
 const { prepostDurations } = require('../../shared/appointmentConstants')
-const { toAppointmentDetailsSummary } = require('../../services/appointmentsService')
+
+const { formatName } = require('../../utils')
 
 const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
   const index = async (req, res) => {
@@ -35,16 +36,6 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
 
     const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
     const { firstName, lastName } = await prisonApi.getPrisonerDetails(res.locals, offenderNo)
-
-    const details = toAppointmentDetailsSummary({
-      firstName,
-      lastName,
-      location: locationDescription,
-      startTime,
-      endTime,
-      comment,
-      court,
-    })
 
     const prepostData = {}
 
@@ -77,25 +68,25 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
       title: 'The video link has been booked',
       videolinkPrisonerSearchLink: '/prisoner-search',
       offender: {
-        name: details.prisonerName,
+        name: formatName(firstName, lastName),
         prison: agencyDescription,
-        prisonRoom: details.location,
+        prisonRoom: locationDescription,
       },
       details: {
-        date: details.date,
-        courtHearingStartTime: details.startTime,
-        courtHearingEndTime: details.endTime,
-        comments: details.comment,
+        date: moment(startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
+        courtHearingStartTime: Time(startTime),
+        courtHearingEndTime: endTime && Time(endTime),
+        comments: comment,
       },
       prepostData,
       court: {
-        courtLocation: details.court,
+        courtLocation: court,
       },
     })
 
     raiseAnalyticsEvent(
       'VLB Appointments',
-      `Video link booked for ${details.court}`,
+      `Video link booked for ${court}`,
       `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
     )
   }

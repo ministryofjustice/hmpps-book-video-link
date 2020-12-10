@@ -1,7 +1,6 @@
 const moment = require('moment')
 const { DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers')
 const { switchDateFormat, getTime } = require('../utils')
-const { appointmentsServiceFactory } = require('./appointmentsService')
 
 const getEventDescription = ({ eventDescription, eventLocation, comment }) => {
   const description = eventDescription === 'Prison Activities' ? 'Activity' : eventDescription
@@ -20,7 +19,7 @@ const toEvent = event => ({
   eventDescription: getEventDescription(event),
 })
 
-module.exports = prisonApi => {
+module.exports = (prisonApi, appointmentsService) => {
   const getAppointmentsAtLocationEnhanceWithLocationId = (context, agency, locationId, date) =>
     new Promise((resolve, reject) => {
       prisonApi
@@ -66,7 +65,6 @@ module.exports = prisonApi => {
     context,
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
   ) => {
-    const appointmentsService = appointmentsServiceFactory(prisonApi)
     const locations = await appointmentsService.getVideoLinkLocations(context, agencyId)
 
     const eventsAtLocations = await getAppointmentsAtLocations(context, {
