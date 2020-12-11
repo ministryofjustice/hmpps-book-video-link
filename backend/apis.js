@@ -2,11 +2,11 @@ const WhereaboutsApi = require('./api/whereaboutsApi')
 const Client = require('./api/oauthEnabledClient')
 
 const config = require('./config')
-const { prisonApiFactory } = require('./api/prisonApi')
+const PrisonApi = require('./api/prisonApi')
 const { oauthApiFactory } = require('./api/oauthApi')
 const { tokenVerificationApiFactory } = require('./api/tokenVerificationApi')
 
-const prisonApi = prisonApiFactory(
+const prisonApi = new PrisonApi(
   new Client({
     baseUrl: config.apis.prison.url,
     timeout: config.apis.prison.timeoutSeconds * 1000,
