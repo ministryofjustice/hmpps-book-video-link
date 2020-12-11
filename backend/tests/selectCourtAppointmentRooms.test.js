@@ -44,7 +44,7 @@ describe('Select court appointment rooms', () => {
   }
 
   beforeEach(() => {
-    prisonApi.getDetails = jest.fn()
+    prisonApi.getPrisonerDetails = jest.fn()
     prisonApi.getAgencyDetails = jest.fn()
     prisonApi.addSingleAppointment = jest.fn()
     prisonApi.getLocation = jest.fn()
@@ -67,7 +67,7 @@ describe('Select court appointment rooms', () => {
 
     existingEventsService.getAvailableLocationsForVLB.mockReturnValue(availableLocations)
 
-    prisonApi.getDetails.mockReturnValue({
+    prisonApi.getPrisonerDetails.mockReturnValue({
       bookingId,
       offenderNo: 'A12345',
       firstName: 'john',

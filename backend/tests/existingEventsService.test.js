@@ -15,7 +15,6 @@ describe('existing events', () => {
       prisonApi.getEventsAtLocations = jest.fn()
       prisonApi.getVideoLinkLocations.mockReturnValue(Promise.resolve([]))
       prisonApi.getLocationsForAppointments = jest.fn()
-      prisonApi.getActivitiesAtLocation = jest.fn()
     })
 
     it('should adjust the main appointment time by one minute in the future', async () => {
@@ -56,10 +55,7 @@ describe('existing events', () => {
     beforeEach(() => {
       prisonApi.getSentenceData = jest.fn()
       prisonApi.getVisits = jest.fn()
-      prisonApi.getAppointments = jest.fn()
       prisonApi.getExternalTransfers = jest.fn()
-      prisonApi.getCourtEvents = jest.fn()
-      prisonApi.getActivities = jest.fn()
     })
 
     describe('when there are no errors', () => {
@@ -89,19 +85,6 @@ describe('existing events', () => {
             endTime: '2019-12-11T15:00:00',
           },
         ])
-        prisonApi.getAppointments = jest.fn().mockResolvedValue([
-          {
-            offenderNo: 'ABC123',
-            locationId: 2,
-            firstName: 'Test',
-            lastName: 'Offender',
-            event: 'APPT',
-            eventDescription: 'An appointment',
-            eventLocation: 'Office 1',
-            startTime: '2019-12-11T12:00:00',
-            endTime: '2019-12-11T13:00:00',
-          },
-        ])
         prisonApi.getExternalTransfers = jest.fn().mockResolvedValue([
           {
             offenderNo: 'ABC123',
@@ -116,59 +99,17 @@ describe('existing events', () => {
             endTime: '2019-12-11T17:00:00',
           },
         ])
-        prisonApi.getCourtEvents = jest.fn().mockResolvedValue([
-          {
-            offenderNo: 'ABC123',
-            eventId: 4,
-            firstName: 'Test',
-            lastName: 'Offender',
-            event: 'CRT',
-            eventType: 'COURT',
-            eventDescription: 'Court Appearance',
-            eventStatus: 'SCH',
-            startTime: '2019-12-11T11:00:00',
-          },
-        ])
-        prisonApi.getActivities = jest.fn().mockResolvedValue([
-          {
-            offenderNo: 'ABC123',
-            locationId: 5,
-            firstName: 'Test',
-            lastName: 'Offender',
-            event: 'ACTIVITY',
-            eventDescription: 'Prison Activities',
-            eventLocation: 'Somewhere',
-            comment: 'A comment.',
-            startTime: '2019-12-11T18:00:00',
-            endTime: '2019-12-11T19:00:00',
-          },
-        ])
       })
     })
   })
 
   describe('get events for a location', () => {
     beforeEach(() => {
-      prisonApi.getActivitiesAtLocation = jest.fn()
       prisonApi.getActivityList = jest.fn()
     })
 
     describe('when there are no errors', () => {
       beforeEach(() => {
-        prisonApi.getActivitiesAtLocation = jest.fn().mockResolvedValue([
-          {
-            offenderNo: 'ABC123',
-            locationId: 1,
-            firstName: 'Test',
-            lastName: 'Offender',
-            event: 'PRISON_ACT',
-            eventDescription: 'Prison activity',
-            eventLocation: 'Gym',
-            comment: 'A comment.',
-            startTime: '2019-12-11T15:00:00',
-            endTime: '2019-12-11T16:00:00',
-          },
-        ])
         prisonApi.getActivityList = jest
           .fn()
           .mockResolvedValueOnce([

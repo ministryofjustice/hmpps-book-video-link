@@ -65,7 +65,7 @@ const addCourtAppointmentsFactory = prisonApi => {
   const renderTemplate = async (req, res, data) => {
     const { offenderNo, agencyId } = req.params
     const [offenderDetails, agencyDetails] = await Promise.all([
-      prisonApi.getDetails(res.locals, offenderNo),
+      prisonApi.getPrisonerDetails(res.locals, offenderNo),
       prisonApi.getAgencyDetails(res.locals, agencyId),
     ])
     const { firstName, lastName, bookingId } = offenderDetails

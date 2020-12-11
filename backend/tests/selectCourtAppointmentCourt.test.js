@@ -35,7 +35,7 @@ describe('Select court appoinment court', () => {
   }
 
   beforeEach(() => {
-    prisonApi.getDetails = jest.fn()
+    prisonApi.getPrisonerDetails = jest.fn()
     prisonApi.getAgencyDetails = jest.fn()
 
     whereaboutsApi.getCourtLocations = jest.fn()
@@ -44,7 +44,7 @@ describe('Select court appoinment court', () => {
     res.render = jest.fn()
     res.redirect = jest.fn()
 
-    prisonApi.getDetails.mockReturnValue({
+    prisonApi.getPrisonerDetails.mockReturnValue({
       bookingId,
       offenderNo: 'A12345',
       firstName: 'John',

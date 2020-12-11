@@ -32,7 +32,7 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
     const { offenderNo, agencyId } = req.params
 
     const [offenderDetails, agencyDetails] = await Promise.all([
-      prisonApi.getDetails(res.locals, offenderNo),
+      prisonApi.getPrisonerDetails(res.locals, offenderNo),
       prisonApi.getAgencyDetails(res.locals, agencyId),
     ])
     const courts = await getCourts(res.locals)

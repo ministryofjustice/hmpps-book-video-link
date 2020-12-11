@@ -17,10 +17,10 @@ describe('Add court appointment', () => {
   let controller
 
   beforeEach(() => {
-    prisonApi.getDetails = jest.fn()
+    prisonApi.getPrisonerDetails = jest.fn()
     prisonApi.getAgencyDetails = jest.fn()
 
-    prisonApi.getDetails.mockReturnValue({ firstName: 'firstName', lastName: 'lastName', bookingId: 1 })
+    prisonApi.getPrisonerDetails.mockReturnValue({ firstName: 'firstName', lastName: 'lastName', bookingId: 1 })
     prisonApi.getAgencyDetails.mockReturnValue({ description: 'Moorland' })
 
     res.render = jest.fn()
@@ -39,7 +39,7 @@ describe('Add court appointment', () => {
   it('should request user and agency details', async () => {
     await controller.index(req, res)
 
-    expect(prisonApi.getDetails).toHaveBeenCalledWith({}, 'A12345')
+    expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith({}, 'A12345')
     expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith({}, 'MDI')
   })
 
@@ -67,7 +67,7 @@ describe('Add court appointment', () => {
   })
 
   it('should render index error template', async () => {
-    prisonApi.getDetails.mockImplementation(() => Promise.reject(new Error('Network error')))
+    prisonApi.getPrisonerDetails.mockImplementation(() => Promise.reject(new Error('Network error')))
 
     await expect(controller.index(req, res)).rejects.toThrow('Network error')
   })

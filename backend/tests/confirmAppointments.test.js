@@ -24,7 +24,7 @@ describe('Confirm appointments', () => {
   }
 
   beforeEach(() => {
-    prisonApi.getDetails = jest.fn()
+    prisonApi.getPrisonerDetails = jest.fn()
     appointmentsService.getAppointmentOptions = jest.fn()
 
     appointmentsService.getAppointmentOptions.mockReturnValue({
@@ -39,7 +39,7 @@ describe('Confirm appointments', () => {
       ],
     })
 
-    prisonApi.getDetails.mockReturnValue({
+    prisonApi.getPrisonerDetails.mockReturnValue({
       offenderNo: 'A12345',
       firstName: 'john',
       lastName: 'doe',

@@ -9,23 +9,12 @@ const prisonApiFactory = client => {
 
   const get = (context, url, resultsLimit) => client.get(context, url, resultsLimit).then(processResponse(context))
 
-  const post = (context, url, data) => client.post(context, url, data).then(processResponse(context))
-
-  const userLocations = context => (context.authSource !== 'auth' ? get(context, '/api/users/me/locations') : [])
-
   const getActivityList = (context, { agencyId, locationId, usage, date, timeSlot }) =>
     get(
       context,
       `/api/schedules/${agencyId}/locations/${locationId}/usage/${usage}?${
         timeSlot ? `timeSlot=${timeSlot}&` : ''
       }date=${date}`
-    )
-
-  const getAppointments = (context, { agencyId, date, timeSlot, offenderNumbers }) =>
-    post(
-      context,
-      `/api/schedules/${agencyId}/appointments?${timeSlot ? `timeSlot=${timeSlot}&` : ''}date=${date}`,
-      offenderNumbers
     )
 
   const getAppointmentsForAgency = (context, { agencyId, date, locationId, timeSlot }) => {
@@ -38,19 +27,9 @@ const prisonApiFactory = client => {
     return get(context, `/api/schedules/${agencyId}/appointments?${searchParams}`)
   }
 
-  const getActivities = (context, { agencyId, date, timeSlot, offenderNumbers }) =>
-    post(
-      context,
-      `/api/schedules/${agencyId}/activities?${timeSlot ? `timeSlot=${timeSlot}&` : ''}date=${date}`,
-      offenderNumbers
-    )
-
   const getAgencies = context => get(context, '/api/agencies/prison')
 
   const getAgencyDetails = (context, agencyId) => get(context, `/api/agencies/${agencyId}?activeOnly=false`)
-
-  const getCourtEvents = (context, { agencyId, date, offenderNumbers }) =>
-    post(context, `/api/schedules/${agencyId}/courtEvents?date=${date}`, offenderNumbers)
 
   const globalSearch = (context, params, resultsLimit) => {
     const { offenderNo, lastName, firstName, gender, location, dateOfBirth, includeAliases } = params
@@ -68,7 +47,7 @@ const prisonApiFactory = client => {
     return get(context, `/api/prisoners?${searchParams}`, resultsLimit)
   }
 
-  const getDetails = (context, offenderNo, fullInfo = false) =>
+  const getPrisonerDetails = (context, offenderNo, fullInfo = false) =>
     get(context, `/api/bookings/offenderNo/${offenderNo}?fullInfo=${fullInfo}`)
 
   const getLocation = (context, livingUnitId) => get(context, `/api/locations/${livingUnitId}`)
@@ -78,23 +57,16 @@ const prisonApiFactory = client => {
 
   const getAppointmentTypes = context => get(context, '/api/reference-domains/scheduleReasons?eventType=APP')
 
-  const getPrisonerDetails = (context, offenderNo) => get(context, `/api/prisoners/${offenderNo}`)
-
   return {
-    userLocations,
     getActivityList,
-    getAppointments,
     getAppointmentsForAgency,
-    getActivities,
     getAgencies,
     getAgencyDetails,
-    getCourtEvents,
     globalSearch,
-    getDetails,
+    getPrisonerDetails,
     getLocation,
     getLocationsForAppointments,
     getAppointmentTypes,
-    getPrisonerDetails,
   }
 }
 

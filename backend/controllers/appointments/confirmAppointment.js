@@ -34,7 +34,7 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
     )
 
     const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
-    const { firstName, lastName } = await prisonApi.getDetails(res.locals, offenderNo)
+    const { firstName, lastName } = await prisonApi.getPrisonerDetails(res.locals, offenderNo)
 
     const details = toAppointmentDetailsSummary({
       firstName,
