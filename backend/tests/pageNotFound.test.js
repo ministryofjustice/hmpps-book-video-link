@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const express = require('express')
 const path = require('path')
+const { Session } = require('express-session')
 const routes = require('../routes')
 const nunjucksSetup = require('../utils/nunjucksSetup')
 
@@ -15,7 +16,8 @@ describe('Page not found ', () => {
     nunjucksSetup(app, path)
 
     app.use((req, res, next) => {
-      req.session = { userDetails: { name: 'Jim' } }
+      req.session = /** @type {Session} */ ({})
+      req.session.userDetails = { name: 'Jim' }
       next()
     })
     app.use(routes({ prisonApi, whereaboutsApi, oauthApi }))

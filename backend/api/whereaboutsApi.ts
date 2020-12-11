@@ -2,8 +2,8 @@ import type Client from './oauthEnabledClient'
 import {
   CourtLocations,
   NewVideoLinkBooking,
-  VideoLinkAppointment,
   VideoLinkAppointmentIds,
+  VideoLinkAppointments,
   VideoLinkBooking,
 } from './whereaboutsApiTypes'
 import { mapToQueryString } from '../utils'
@@ -35,7 +35,7 @@ export = class WhereaboutsApi {
     return this.post(context, '/court/video-link-bookings', body)
   }
 
-  public getVideoLinkAppointments(context, body: VideoLinkAppointmentIds): Promise<VideoLinkAppointment> {
+  public getVideoLinkAppointments(context, body: VideoLinkAppointmentIds): Promise<VideoLinkAppointments> {
     return this.post(context, '/court/video-link-appointments', body)
   }
 

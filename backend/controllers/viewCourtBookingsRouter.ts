@@ -1,9 +1,11 @@
-const moment = require('moment')
-const { getTime, properCaseName } = require('../../utils')
+import { RequestHandler } from 'express'
+import moment from 'moment'
+import WhereaboutsApi from '../api/whereaboutsApi'
+import { getTime, properCaseName } from '../utils'
 
-module.exports = ({ prisonApi, whereaboutsApi }) => async (req, res) => {
+export = (prisonApi, whereaboutsApi: WhereaboutsApi): RequestHandler => async (req, res) => {
   const { date, courtOption } = req.query
-  const searchDate = date ? moment(date, 'D MMMM YYYY') : moment()
+  const searchDate = date ? moment(date as string, 'D MMMM YYYY') : moment()
   // FIXME: Temporary fix while waiting for new API
   const agencyId = 'WWI'
   const user = {

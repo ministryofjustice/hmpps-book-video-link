@@ -13,7 +13,8 @@
     "checkJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./backend/@types", "./node_modules/@types"]
   },
   "exclude": ["node_modules", "assets", "integration-tests", "build", "dist", "static", "config",],
   "include": ["**/*.js", "**/*.ts"]

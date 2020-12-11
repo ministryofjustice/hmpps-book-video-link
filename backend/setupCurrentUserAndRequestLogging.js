@@ -12,7 +12,6 @@ module.exports = ({ oauthApi }) => {
     res.locals = {
       ...res.locals,
       currentUrlPath: req.originalUrl,
-      prisonerSearchUrl: req.session.prisonerSearchUrl,
     }
     next()
   })

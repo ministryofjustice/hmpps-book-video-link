@@ -1,9 +1,14 @@
-const moment = require('moment')
-const viewCourtBookingsRouter = require('../routes/appointments/viewCourtBookingsRouter')
+import moment from 'moment'
+import viewCourtBookingsRouter from '../controllers/viewCourtBookingsRouter'
+import WhereaboutsApi from '../api/whereaboutsApi'
+
+jest.mock('../api/whereaboutsApi')
 
 describe('View court bookings', () => {
-  const prisonApi = {}
-  const whereaboutsApi = {}
+  const prisonApi = {
+    getAppointmentsForAgency: jest.fn(),
+  }
+  const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
   let req
   let res
@@ -21,17 +26,12 @@ describe('View court bookings', () => {
     }
     res = { locals: {}, render: jest.fn() }
 
-    prisonApi.getAppointmentsForAgency = jest.fn()
-
     prisonApi.getAppointmentsForAgency.mockReturnValue([])
 
-    whereaboutsApi.getVideoLinkAppointments = jest.fn()
-    whereaboutsApi.getVideoLinkAppointments.mockReturnValue({ appointments: [] })
+    whereaboutsApi.getVideoLinkAppointments.mockResolvedValue({ appointments: [] })
+    whereaboutsApi.getCourtLocations.mockResolvedValue({ courtLocations: [] })
 
-    whereaboutsApi.getCourtLocations = jest.fn()
-    whereaboutsApi.getCourtLocations.mockReturnValue({ courtLocations: [] })
-
-    controller = viewCourtBookingsRouter({ prisonApi, whereaboutsApi })
+    controller = viewCourtBookingsRouter(prisonApi, whereaboutsApi)
   })
 
   beforeAll(() => {
@@ -146,7 +146,7 @@ describe('View court bookings', () => {
           },
         ])
 
-        whereaboutsApi.getVideoLinkAppointments.mockReturnValue({
+        whereaboutsApi.getVideoLinkAppointments.mockResolvedValue({
           appointments: [
             {
               id: 1,
@@ -170,6 +170,7 @@ describe('View court bookings', () => {
               id: 3,
               bookingId: 1,
               appointmentId: 5,
+              court: 'Yet another court',
               hearingType: 'MAIN',
               createdByUsername: 'username1',
               madeByTheCourt: true,
@@ -177,7 +178,7 @@ describe('View court bookings', () => {
           ],
         })
 
-        whereaboutsApi.getCourtLocations.mockReturnValue({
+        whereaboutsApi.getCourtLocations.mockResolvedValue({
           courtLocations: ['Wimbledon', 'Southwark'],
         })
 
@@ -225,7 +226,7 @@ describe('View court bookings', () => {
                   text: 'Offender Five',
                 },
                 { text: 'VCC ROOM' },
-                { text: 'Not available' },
+                { text: 'Yet another court' },
               ],
             ],
             date: moment('2 January 2020', 'D MMMM YYYY'),
@@ -294,7 +295,7 @@ describe('View court bookings', () => {
                   text: 'Offender Five',
                 },
                 { text: 'VCC ROOM' },
-                { text: 'Not available' },
+                { text: 'Yet another court' },
               ],
             ],
             title: 'Video link bookings for 2 January 2020 - Other',

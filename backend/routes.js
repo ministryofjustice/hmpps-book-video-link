@@ -7,7 +7,7 @@ const addCourtAppointmentRouter = require('./routes/appointments/courtRouter')
 const confirmAppointmentRouter = require('./routes/appointments/confirmAppointmentRouter')
 const selectCourtAppointmentRooms = require('./routes/appointments/selectCourtAppointmentRoomsRouter')
 const selectCourtAppointmentCourt = require('./routes/appointments/selectCourtAppointmentCourtRouter')
-const viewCourtBookingsRouter = require('./routes/appointments/viewCourtBookingsRouter')
+const viewCourtBookingsController = require('./controllers/viewCourtBookingsRouter')
 const requestBookingRouter = require('./routes/appointments/requestBookingRouter')
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const { notifyClient } = require('./shared/notifyClient')
@@ -43,7 +43,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   router.get(
     '/bookings',
     withRetryLink('/bookings'),
-    asyncMiddleware(viewCourtBookingsRouter({ prisonApi, whereaboutsApi }))
+    asyncMiddleware(viewCourtBookingsController(prisonApi, whereaboutsApi))
   )
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
