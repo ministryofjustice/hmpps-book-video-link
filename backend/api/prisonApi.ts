@@ -1,11 +1,11 @@
-import type { components } from 'prisonApi'
+import type prisonApi from 'prisonApi'
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
 import { mapToQueryString } from '../utils'
 import Client from './oauthEnabledClient'
 
 type Context = any
-type Schemas = components['schemas']
+type Schemas = prisonApi.schemas
 
 type ActivityListRequest = {
   agencyId: string
@@ -17,9 +17,9 @@ type ActivityListRequest = {
 
 type AgencyAppointmentRequest = {
   agencyId: string
-  locationId: number
+  locationId?: number
   date: string
-  timeSlot: 'AM' | 'ED' | 'PM'
+  timeSlot?: 'AM' | 'ED' | 'PM'
 }
 
 type GlobalSearchRequest = {
@@ -44,6 +44,10 @@ export = class PrisonApi {
 
   private get<T>(context: Context, url: string, resultsLimit?: number): Promise<T> {
     return this.client.get(context, url, resultsLimit).then(this.processResponse(context))
+  }
+
+  public getPrisonBookings(context: Context, bookingIds: number[]): Promise<Schemas['OffenderBooking'][]> {
+    return this.get(context, `/api/bookings?bookingId=${bookingIds}`, 1000)
   }
 
   public getActivityList(

@@ -13,23 +13,7 @@ declare module 'whereaboutsApi' {
     pre: NewAppointment
   }
 
-  export type VideoLinkAppointmentIds = number[]
-
   export type HearingType = 'MAIN' | 'PRE' | 'POST'
-
-  export type VideoLinkAppointment = {
-    appointmentId: number
-    bookingId: number
-    court: string
-    createdByUsername: string
-    hearingType: HearingType
-    id: number
-    madeByTheCourt: boolean
-  }
-
-  export type VideoLinkAppointments = {
-    appointments: VideoLinkAppointment[]
-  }
 
   export type VideoLinkBooking = {
     agencyId: string

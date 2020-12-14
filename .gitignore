@@ -52,7 +52,7 @@ typings/
 
 # testing
 /coverage
-test_results/
+test-results/
 
 # production
 **/build

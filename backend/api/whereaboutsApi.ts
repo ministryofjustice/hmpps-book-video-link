@@ -1,10 +1,4 @@
-import {
-  CourtLocations,
-  NewVideoLinkBooking,
-  VideoLinkAppointmentIds,
-  VideoLinkAppointments,
-  VideoLinkBooking,
-} from 'whereaboutsApi'
+import { CourtLocations, NewVideoLinkBooking, VideoLinkBooking } from 'whereaboutsApi'
 import { Response } from 'superagent'
 import type Client from './oauthEnabledClient'
 import { mapToQueryString } from '../utils'
@@ -38,21 +32,16 @@ export = class WhereaboutsApi {
     return this.post(context, '/court/video-link-bookings', body)
   }
 
-  public getVideoLinkAppointments(context: Context, body: VideoLinkAppointmentIds): Promise<VideoLinkAppointments> {
-    return this.post(context, '/court/video-link-appointments', body)
-  }
-
   public getVideoLinkBooking(context: Context, videoBookingId: number): Promise<VideoLinkBooking> {
     return this.get(context, `/court/video-link-bookings/${videoBookingId}`)
   }
 
   public getVideoLinkBookings(context: Context, date: string, court?: string): Promise<VideoLinkBooking[]> {
     const searchParams = mapToQueryString({
-      date,
       court,
     })
 
-    return this.get(context, `/court/video-link-bookings/${searchParams}`)
+    return this.get(context, `/court/video-link-bookings/date/${date}?${searchParams}`)
   }
 
   public deleteVideoLinkBooking(context: Context, videoBookingId: number): Promise<void> {

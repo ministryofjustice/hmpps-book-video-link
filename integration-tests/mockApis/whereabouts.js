@@ -57,18 +57,18 @@ module.exports = {
       return JSON.parse(requests[0].body)
     }),
 
-  stubVideoLinkAppointments: (appointments, status = 200) => {
+  stubGetVideoLinkBookings: (date, bookings) => {
     return stubFor({
       request: {
-        method: 'POST',
-        url: '/whereabouts/court/video-link-appointments',
+        method: 'GET',
+        url: `/whereabouts/court/video-link-bookings/date/${date}`,
       },
       response: {
-        status,
+        status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: appointments || [],
+        jsonBody: bookings || [],
       },
     })
   },

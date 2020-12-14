@@ -65,21 +65,6 @@ module.exports = {
       },
     })
   },
-  stubAppointmentsGet: (appointments, status = 200) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: '/api/schedules/[A-Z].+?/appointments.+?',
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: appointments || [],
-      },
-    })
-  },
   stubAppointmentLocations: (agency, locations, status = 200) => {
     return stubFor({
       request: {
@@ -139,6 +124,22 @@ module.exports = {
         jsonBody: response,
       },
     }),
+
+  stubOffenderBookings: response =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/api/bookings\\?bookingId=.*`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response,
+      },
+    }),
+
   stubActivityLocations: (locations, status = 200) => {
     return stubFor({
       request: {
