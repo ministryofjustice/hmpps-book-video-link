@@ -21,6 +21,7 @@ export declare global {
       }
       flash(type: string, message: any): number
       flash(message: string): any[]
+      flash(): { [key: string]: any[] }
     }
   }
 }

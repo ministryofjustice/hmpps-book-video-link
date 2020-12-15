@@ -1,36 +1,23 @@
-import { Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import AppointmentsService from '../../services/appointmentsService'
 
 export = class DeleteAppointmentController {
   public constructor(private readonly appointmentsService: AppointmentsService) {}
 
-  private get() {
-    return async (req: Request, res: Response) => {
+  public viewDelete(): RequestHandler {
+    return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.appointmentsService.getBookingDetails(res.locals, parseInt(bookingId, 10))
-      req.flash('confirmDelete', req.body.confirmDelete)
-      res.render('deleteAppointment/videolinkBookingConfirmDelete.njk', { bookingDetails, errors: req.flash('errors') })
+      res.render('deleteAppointment/videolinkBookingConfirmDelete.njk', {
+        bookingDetails,
+        errors: req.flash('errors'),
+      })
     }
   }
 
-  private post() {
-    return async (req: Request, res: Response): Promise<void> => {
+  public confirmDelete(): RequestHandler {
+    return async (req, res): Promise<void> => {
       const { bookingId } = req.params
-      if (req.body.confirmDelete === 'yes') {
-        const offenderNameAndBookingIds = await this.appointmentsService.deleteBooking(
-          res.locals,
-          parseInt(bookingId, 10)
-        )
-
-        req.flash('offenderName', offenderNameAndBookingIds.offenderName)
-        req.flash('offenderNo', offenderNameAndBookingIds.offenderNo)
-
-        res.redirect('/court/booking-delete-confirmed')
-      }
-
-      if (req.body.confirmDelete === 'no') {
-        res.redirect('/bookings')
-      }
 
       if (!req.body.confirmDelete) {
         const errors = [
@@ -40,12 +27,35 @@ export = class DeleteAppointmentController {
           },
         ]
         req.flash('errors', errors)
-        res.redirect(`/delete-booking/${bookingId}`)
+        return res.redirect(`/delete-booking/${bookingId}`)
       }
+
+      if (req.body.confirmDelete === 'no') {
+        return res.redirect('/bookings')
+      }
+
+      const offenderNameAndBookingIds = await this.appointmentsService.deleteBooking(
+        res.locals,
+        parseInt(bookingId, 10)
+      )
+
+      req.flash('offenderName', offenderNameAndBookingIds.offenderName)
+      req.flash('offenderNo', offenderNameAndBookingIds.offenderNo)
+
+      return res.redirect('/booking-delete-confirmed')
     }
   }
 
-  public viewDelete = this.get()
-
-  public confirmDelete = this.post()
+  public deleteConfirmed(): RequestHandler {
+    return (req, res) => {
+      const { offenderName, offenderNo } = req.flash()
+      if (!offenderName) {
+        return res.redirect('/bookings')
+      }
+      return res.render('deleteAppointment/bookingDeleteConfirmed.njk', {
+        offenderName: offenderName[0],
+        offenderNo: offenderNo[0],
+      })
+    }
+  }
 }

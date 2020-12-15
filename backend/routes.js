@@ -19,6 +19,8 @@ const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   const appointmentsService = new AppointmentsService(prisonApi, whereaboutsApi)
+  const deleteBooking = new DeleteAppointmentController(appointmentsService)
+  const bookingService = new BookingService(prisonApi, whereaboutsApi)
 
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter(prisonApi, appointmentsService))
 
@@ -48,25 +50,15 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
     })
   )
 
-  const bookingService = new BookingService(prisonApi, whereaboutsApi)
-
   router.get('/bookings', withRetryLink('/bookings'), asyncMiddleware(viewCourtBookingsController(bookingService)))
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
-  const deleteBooking = new DeleteAppointmentController(appointmentsService)
+  router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
 
-  router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete))
+  router.post('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.confirmDelete()))
 
-  router.post('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.confirmDelete))
-
-  router.get('/court/booking-delete-confirmed', (req, res) => {
-    return res.render('deleteAppointment/bookingDeleteConfirmed.njk', {
-      offenderName: req.flash('offenderName'),
-      offenderNo: req.flash('offenderNo'),
-      agencyId: req.flash('agencyId'),
-    })
-  })
+  router.get('/booking-delete-confirmed', asyncMiddleware(deleteBooking.deleteConfirmed()))
 
   router.use((req, res, next) => {
     res.status(404).render('notFoundPage.njk')

@@ -18,7 +18,7 @@ declare module 'whereaboutsApi' {
   export type VideoLinkBooking = {
     agencyId: string
     bookingId: number
-    comment: string
+    comment?: string
     court: string
     main: Appointment
     post: Appointment

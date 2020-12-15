@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { NewVideoLinkBooking } from 'whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
-import { properCaseName } from '../utils'
+import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 
@@ -21,6 +21,28 @@ type OffenderIdentifiers = {
   offenderNo: string
   bookingId: number
   offenderName: string
+}
+
+type BookingDetails = {
+  videoBookingId: number
+  details: {
+    name: string
+    prison: string
+    prisonRoom: string
+  }
+  hearingDetails: {
+    date: string
+    courtHearingStartTime: string
+    courtHearingEndTime: string
+    comments: string | undefined
+  }
+  prePostDetails: {
+    'pre-court hearing briefing': string | undefined
+    'post-court hearing briefing': string | undefined
+  }
+  courtDetails: {
+    courtLocation: string
+  }
 }
 
 export = class AppointmentService {
@@ -84,7 +106,7 @@ export = class AppointmentService {
     await this.whereaboutsApi.createVideoLinkBooking(context, appointment)
   }
 
-  public async getBookingDetails(context: Context, videoBookingId: number) {
+  public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {
     const appointmentDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
 
     const [offenderNameAndBookingIds, prisonName, vccRoom] = await Promise.all([
@@ -104,7 +126,7 @@ export = class AppointmentService {
         date: moment(appointmentDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
         courtHearingStartTime: Time(appointmentDetails.main.startTime),
         courtHearingEndTime: Time(appointmentDetails.main.endTime),
-        comments: appointmentDetails.comment ? appointmentDetails.comment : null,
+        comments: appointmentDetails.comment,
       },
       prePostDetails: {
         'pre-court hearing briefing': appointmentDetails.pre
@@ -134,7 +156,7 @@ export = class AppointmentService {
     const offenderIdentifiers = {
       offenderNo: offenderDetails.offenderNo,
       bookingId: offenderDetails.bookingId,
-      offenderName: `${properCaseName(offenderDetails.firstName)} ${properCaseName(offenderDetails.lastName)}`,
+      offenderName: formatName(offenderDetails.firstName, offenderDetails.lastName),
     }
 
     return offenderIdentifiers
