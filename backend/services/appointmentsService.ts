@@ -104,15 +104,15 @@ export = class AppointmentService {
         date: moment(appointmentDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
         courtHearingStartTime: Time(appointmentDetails.main.startTime),
         courtHearingEndTime: Time(appointmentDetails.main.endTime),
-        comments: appointmentDetails.comment,
+        comments: appointmentDetails.comment ? appointmentDetails.comment : null,
       },
       prePostDetails: {
-        'pre-court hearing briefing': `${Time(appointmentDetails.pre.startTime)} to ${Time(
-          appointmentDetails.pre.endTime
-        )}`,
-        'post-court hearing briefing': `${Time(appointmentDetails.post.startTime)} to ${Time(
-          appointmentDetails.post.endTime
-        )}`,
+        'pre-court hearing briefing': appointmentDetails.pre
+          ? `${Time(appointmentDetails.pre.startTime)} to ${Time(appointmentDetails.pre.endTime)}`
+          : null,
+        'post-court hearing briefing': appointmentDetails.post
+          ? `${Time(appointmentDetails.post.startTime)} to ${Time(appointmentDetails.post.endTime)}`
+          : null,
       },
       courtDetails: {
         courtLocation: appointmentDetails.court,
