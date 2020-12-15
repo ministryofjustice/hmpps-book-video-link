@@ -54,7 +54,7 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
-  const deleteBooking = new DeleteAppointmentController(prisonApi, whereaboutsApi, appointmentsService)
+  const deleteBooking = new DeleteAppointmentController(appointmentsService)
 
   router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete))
 

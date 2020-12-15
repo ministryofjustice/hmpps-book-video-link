@@ -1,14 +1,8 @@
 import { Request, Response } from 'express'
-import type WhereaboutsApi from '../../api/whereaboutsApi'
-import type PrisonApi from '../../api/prisonApi'
 import AppointmentsService from '../../services/appointmentsService'
 
 export = class DeleteAppointmentController {
-  public constructor(
-    private readonly prisonApi: PrisonApi,
-    private readonly whereaboutsApi: WhereaboutsApi,
-    private readonly appointmentsService: AppointmentsService
-  ) {}
+  public constructor(private readonly appointmentsService: AppointmentsService) {}
 
   private get() {
     return async (req: Request, res: Response) => {
@@ -23,14 +17,13 @@ export = class DeleteAppointmentController {
     return async (req: Request, res: Response): Promise<void> => {
       const { bookingId } = req.params
       if (req.body.confirmDelete === 'yes') {
-        const [offenderNameAndBookingIds, appointmentDetails] = await Promise.all([
-          this.appointmentsService.deleteBooking(res.locals, parseInt(bookingId, 10)),
-          this.whereaboutsApi.getVideoLinkBooking(res.locals, parseInt(bookingId, 10)),
-        ])
+        const offenderNameAndBookingIds = await this.appointmentsService.deleteBooking(
+          res.locals,
+          parseInt(bookingId, 10)
+        )
 
         req.flash('offenderName', offenderNameAndBookingIds.offenderName)
         req.flash('offenderNo', offenderNameAndBookingIds.offenderNo)
-        req.flash('agencyId', appointmentDetails.agencyId)
 
         res.redirect('/court/booking-delete-confirmed')
       }
