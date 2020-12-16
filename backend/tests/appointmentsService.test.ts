@@ -170,4 +170,103 @@ describe('Appointments service', () => {
       },
     })
   })
+
+  it('should call whereaboutsApi with the correct videolink booking id', async () => {
+    type Appointment = {
+      startTime: string
+      endTime: string
+      locationId: number
+    }
+    const videoLinkBooking = {
+      agencyId: 'MDI',
+      bookingId: 789,
+      comment: 'some comment',
+      court: 'City of London',
+      main: { startTime: 'string', endTime: 'string', locationId: 1 },
+      post: { startTime: 'string', endTime: 'string', locationId: 2 },
+      pre: { startTime: 'string', endTime: 'string', locationId: 3 },
+      videoLinkBookingId: 1234,
+    }
+    const offenderDetails = {
+      activeAlertCount: 0,
+      activeFlag: false,
+      age: 0,
+      agencyId: 'string',
+      alerts: [],
+      alertsCodes: [],
+      aliases: [],
+      assessments: [],
+      assignedLivingUnit: {},
+      assignedLivingUnitId: 0,
+      birthCountryCode: 'GBR',
+      birthPlace: 'WALES',
+      bookingId: 1000,
+      bookingNo: 'string',
+      category: 'string',
+      categoryCode: 'string',
+      csra: 'string',
+      dateOfBirth: '1970-03-15T00:00:00.000+00:00',
+      facialImageId: 0,
+      firstName: 'john',
+      identifiers: [],
+      imprisonmentStatus: 'LIFE',
+      inOutStatus: 'IN' as 'IN' | 'OUT',
+      inactiveAlertCount: 0,
+      interpreterRequired: false,
+      language: 'string',
+      lastName: 'doe',
+      legalStatus: 'REMAND' as
+        | 'REMAND'
+        | 'CIVIL_PRISONER'
+        | 'CONVICTED_UNSENTENCED'
+        | 'DEAD'
+        | 'IMMIGRATION_DETAINEE'
+        | 'INDETERMINATE_SENTENCE'
+        | 'OTHER'
+        | 'RECALL'
+        | 'SENTENCED'
+        | 'UNKNOWN',
+      locationDescription: 'Outside - released from Leeds',
+      middleName: 'string',
+      offenceHistory: [],
+      offenderId: 0,
+      offenderNo: 'A1234AA',
+      personalCareNeeds: [],
+      physicalAttributes: {},
+      physicalCharacteristics: [],
+      physicalMarks: [],
+      privilegeSummary: {},
+      profileInformation: [],
+      recall: true,
+      receptionDate: '1980-01-01T00:00:00.000+00:00',
+      religion: 'string',
+      rootOffenderId: 0,
+      sentenceDetail: {},
+      sentenceTerms: [],
+      status: 'ACTIVE IN' as 'ACTIVE IN' | 'ACTIVE OUT',
+      writtenLanguage: 'string',
+    }
+
+    whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+    prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+    await appointmentService.deleteBooking(context, 123)
+    expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+    expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
+
+
+    
+    whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+    prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+    // appointmentService.getOffenderIdentifiers.mockResolvedValue(offenderIdentifiers)
+    await appointmentService.deleteBooking(context, videoLinkBooking.videoLinkBookingId)
+
+    expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(res.locals, 123)
+    expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(res.locals, 123)
+    expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(res.locals, videoLinkBooking.bookingId)
+    expect(appointmentService.deleteBooking).toHaveReturned({
+      offenderNo: offenderDetails.offenderNo,
+      bookingId: offenderDetails.bookingId,
+      offenderName: 'john doe',
+    })
+  })
 })
