@@ -46,8 +46,7 @@ export = class PrisonApi {
     return this.client.get(context, url, resultsLimit).then(this.processResponse(context))
   }
 
-
-  public getPrisonBooking (context: Context, bookingId: number): Promise<Schemas['InmateDetail']> {
+  public getPrisonBooking(context: Context, bookingId: number): Promise<Schemas['InmateDetail']> {
     return this.get(context, `/api/bookings/${bookingId}`)
   }
 

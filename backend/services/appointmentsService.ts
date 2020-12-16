@@ -107,12 +107,12 @@ export = class AppointmentService {
   }
 
   public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {
-    const appointmentDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
+    const bookingDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
 
     const [offenderNameAndBookingIds, prisonName, vccRoom] = await Promise.all([
-      this.getOffenderIdentifiers(context, appointmentDetails.bookingId),
-      this.prisonApi.getAgencyDetails(context, appointmentDetails.agencyId),
-      this.prisonApi.getLocation(context, appointmentDetails.main.locationId),
+      this.getOffenderIdentifiers(context, bookingDetails.bookingId),
+      this.prisonApi.getAgencyDetails(context, bookingDetails.agencyId),
+      this.prisonApi.getLocation(context, bookingDetails.main.locationId),
     ])
 
     return {
@@ -123,21 +123,21 @@ export = class AppointmentService {
         prisonRoom: vccRoom.description,
       },
       hearingDetails: {
-        date: moment(appointmentDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
-        courtHearingStartTime: Time(appointmentDetails.main.startTime),
-        courtHearingEndTime: Time(appointmentDetails.main.endTime),
-        comments: appointmentDetails.comment,
+        date: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
+        courtHearingStartTime: Time(bookingDetails.main.startTime),
+        courtHearingEndTime: Time(bookingDetails.main.endTime),
+        comments: bookingDetails.comment,
       },
       prePostDetails: {
-        'pre-court hearing briefing': appointmentDetails.pre
-          ? `${Time(appointmentDetails.pre.startTime)} to ${Time(appointmentDetails.pre.endTime)}`
+        'pre-court hearing briefing': bookingDetails.pre
+          ? `${Time(bookingDetails.pre.startTime)} to ${Time(bookingDetails.pre.endTime)}`
           : null,
-        'post-court hearing briefing': appointmentDetails.post
-          ? `${Time(appointmentDetails.post.startTime)} to ${Time(appointmentDetails.post.endTime)}`
+        'post-court hearing briefing': bookingDetails.post
+          ? `${Time(bookingDetails.post.startTime)} to ${Time(bookingDetails.post.endTime)}`
           : null,
       },
       courtDetails: {
-        courtLocation: appointmentDetails.court,
+        courtLocation: bookingDetails.court,
       },
     }
   }

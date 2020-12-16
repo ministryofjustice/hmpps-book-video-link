@@ -1,3 +1,4 @@
+import type prisonApiTypes from 'prisonApi'
 import AppointmentsService from '../services/appointmentsService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
@@ -7,6 +8,8 @@ jest.mock('../api/whereaboutsApi')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
+
+type InmateDetail = prisonApiTypes.schemas['InmateDetail']
 
 describe('Appointments service', () => {
   const context = {}
@@ -170,103 +173,123 @@ describe('Appointments service', () => {
       },
     })
   })
-
-  it('should call whereaboutsApi with the correct videolink booking id', async () => {
-    type Appointment = {
-      startTime: string
-      endTime: string
-      locationId: number
-    }
+  describe('getBooking', () => {
     const videoLinkBooking = {
-      agencyId: 'MDI',
+      agencyId: 'WWI',
       bookingId: 789,
       comment: 'some comment',
       court: 'City of London',
-      main: { startTime: 'string', endTime: 'string', locationId: 1 },
-      post: { startTime: 'string', endTime: 'string', locationId: 2 },
-      pre: { startTime: 'string', endTime: 'string', locationId: 3 },
+      main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
       videoLinkBookingId: 1234,
     }
+
     const offenderDetails = {
-      activeAlertCount: 0,
-      activeFlag: false,
-      age: 0,
-      agencyId: 'string',
-      alerts: [],
-      alertsCodes: [],
-      aliases: [],
-      assessments: [],
-      assignedLivingUnit: {},
-      assignedLivingUnitId: 0,
-      birthCountryCode: 'GBR',
-      birthPlace: 'WALES',
-      bookingId: 1000,
-      bookingNo: 'string',
-      category: 'string',
-      categoryCode: 'string',
-      csra: 'string',
-      dateOfBirth: '1970-03-15T00:00:00.000+00:00',
-      facialImageId: 0,
+      bookingId: 789,
       firstName: 'john',
-      identifiers: [],
-      imprisonmentStatus: 'LIFE',
-      inOutStatus: 'IN' as 'IN' | 'OUT',
-      inactiveAlertCount: 0,
-      interpreterRequired: false,
-      language: 'string',
       lastName: 'doe',
-      legalStatus: 'REMAND' as
-        | 'REMAND'
-        | 'CIVIL_PRISONER'
-        | 'CONVICTED_UNSENTENCED'
-        | 'DEAD'
-        | 'IMMIGRATION_DETAINEE'
-        | 'INDETERMINATE_SENTENCE'
-        | 'OTHER'
-        | 'RECALL'
-        | 'SENTENCED'
-        | 'UNKNOWN',
-      locationDescription: 'Outside - released from Leeds',
-      middleName: 'string',
-      offenceHistory: [],
-      offenderId: 0,
       offenderNo: 'A1234AA',
-      personalCareNeeds: [],
-      physicalAttributes: {},
-      physicalCharacteristics: [],
-      physicalMarks: [],
-      privilegeSummary: {},
-      profileInformation: [],
-      recall: true,
-      receptionDate: '1980-01-01T00:00:00.000+00:00',
-      religion: 'string',
-      rootOffenderId: 0,
-      sentenceDetail: {},
-      sentenceTerms: [],
-      status: 'ACTIVE IN' as 'ACTIVE IN' | 'ACTIVE OUT',
-      writtenLanguage: 'string',
+    } as InmateDetail
+
+    it('should get booking details successfully', async () => {
+      const agencyDetail = {
+        active: true,
+        agencyId: 'WWI',
+        agencyType: '',
+        description: 'some prison',
+      }
+
+      const vccRoom = {
+        agencyId: 'WWI',
+        currentOccupancy: 2,
+        description: 'vcc room 1',
+        internalLocationCode: 'string',
+        locationId: 1,
+        locationPrefix: 'string',
+        locationType: 'string',
+        locationUsage: 'string',
+        operationalCapacity: 1,
+        parentLocationId: 1,
+        userDescription: 'string',
+      }
+
+      const result = {
+        courtDetails: {
+          courtLocation: 'City of London',
+        },
+        details: {
+          name: 'John Doe',
+          prison: 'some prison',
+          prisonRoom: 'vcc room 1',
+        },
+        hearingDetails: {
+          comments: 'some comment',
+          courtHearingEndTime: '19:00',
+          courtHearingStartTime: '18:00',
+          date: '20 November 2020',
+        },
+        prePostDetails: {
+          'post-court hearing briefing': '19:00 to 19:20',
+          'pre-court hearing briefing': '17:40 to 18:00',
+        },
+        videoBookingId: 123,
+      }
+
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getLocation.mockResolvedValue(vccRoom)
+
+      const bookingDetails = await appointmentService.getBookingDetails(context, 123)
+
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+      expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
+      expect(prisonApi.getLocation).toHaveBeenCalledWith(context, 1)
+
+      expect(bookingDetails).toStrictEqual(result)
+    })
+
+    it('should call whereaboutsApi and PrisonApi with the correct videolink booking id when deleting a booking', async () => {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+
+      await appointmentService.deleteBooking(context, 123)
+
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+      expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
+      expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+    })
+  })
+  describe('delete', () => {
+    const offenderIdentifiers = {
+      offenderNo: 'A1234AA',
+      bookingId: 789,
+      offenderName: 'John Doe',
     }
 
-    whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
-    prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-    await appointmentService.deleteBooking(context, 123)
-    expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
-    expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
+    const offenderDetails = {
+      bookingId: 789,
+      firstName: 'john',
+      lastName: 'doe',
+      offenderNo: 'A1234AA',
+    } as InmateDetail
 
+    const videoLinkBooking = {
+      agencyId: 'WWI',
+      bookingId: 789,
+      comment: 'some comment',
+      court: 'City of London',
+      main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      videoLinkBookingId: 1234,
+    }
 
-    
-    whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
-    prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-    // appointmentService.getOffenderIdentifiers.mockResolvedValue(offenderIdentifiers)
-    await appointmentService.deleteBooking(context, videoLinkBooking.videoLinkBookingId)
-
-    expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(res.locals, 123)
-    expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(res.locals, 123)
-    expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(res.locals, videoLinkBooking.bookingId)
-    expect(appointmentService.deleteBooking).toHaveReturned({
-      offenderNo: offenderDetails.offenderNo,
-      bookingId: offenderDetails.bookingId,
-      offenderName: 'john doe',
+    it('should return the offender identifiers when deleting a booking', async () => {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      expect(appointmentService.deleteBooking(context, 123)).resolves.toStrictEqual(offenderIdentifiers)
     })
   })
 })
