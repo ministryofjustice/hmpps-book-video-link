@@ -94,6 +94,14 @@
         ]
     }) }}
 
-  {{ govukButton({ text: 'Confirm', type: 'submit' }) }}
+  {{ govukButton({ 
+    text: 'Confirm', 
+  type: 'submit',      
+  attributes: {
+    'data-qa': 'confirm'
+    } 
+      }) 
+  }}
 </form>
 {% endblock %}
+

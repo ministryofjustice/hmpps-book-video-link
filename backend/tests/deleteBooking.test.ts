@@ -4,7 +4,7 @@ import AppointmentService from '../services/appointmentsService'
 
 jest.mock('../services/appointmentsService')
 
-describe('Delete appointments', () => {
+describe('Delete Booking', () => {
   const appointmentService = new AppointmentService(null, null) as jest.Mocked<AppointmentService>
   let controller: DeleteBooking
   const req = ({
@@ -57,7 +57,7 @@ describe('Delete appointments', () => {
       await controller.viewDelete()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'deleteAppointment/videolinkBookingConfirmDelete.njk',
+        'deleteAppointment/confirmDeleteBooking.njk',
         expect.objectContaining({
           bookingDetails,
           errors,

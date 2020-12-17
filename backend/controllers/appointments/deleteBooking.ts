@@ -8,7 +8,7 @@ export = class DeleteBookingController {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.appointmentsService.getBookingDetails(res.locals, parseInt(bookingId, 10))
-      res.render('deleteAppointment/videolinkBookingConfirmDelete.njk', {
+      res.render('deleteAppointment/confirmDeleteBooking.njk', {
         bookingDetails,
         errors: req.flash('errors'),
       })

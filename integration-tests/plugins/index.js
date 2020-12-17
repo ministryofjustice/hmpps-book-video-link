@@ -34,6 +34,8 @@ module.exports = on => {
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),
     stubGetVideoLinkBookings: ({ date, bookings }) => whereabouts.stubGetVideoLinkBookings(date, bookings),
+    stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
+    stubDeleteVideoLinkBooking: videoBookingId => whereabouts.stubDeleteVideoLinkBooking(videoBookingId),
 
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,
@@ -51,5 +53,7 @@ module.exports = on => {
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
     stubLocationGroups: locationGroups => whereabouts.stubLocationGroups(locationGroups),
     stubOffenderBookings: bookings => prisonApi.stubOffenderBookings(bookings),
+    stubOffenderBooking: ({ bookingId, response }) => prisonApi.stubOffenderBooking(bookingId, response),
+    stubLocation: ({ locationId, response }) => prisonApi.stubLocation(locationId, response),
   })
 }

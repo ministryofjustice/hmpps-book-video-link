@@ -16,6 +16,7 @@ module.exports = {
       },
     })
   },
+
   stubUserMe: () => {
     return stubFor({
       request: {
@@ -50,6 +51,7 @@ module.exports = {
       },
     })
   },
+
   stubAgencies: agencies => {
     return stubFor({
       request: {
@@ -65,6 +67,7 @@ module.exports = {
       },
     })
   },
+
   stubAppointmentLocations: (agency, locations, status = 200) => {
     return stubFor({
       request: {
@@ -80,6 +83,7 @@ module.exports = {
       },
     })
   },
+
   stubAppointmentTypes: (types, status = 200) => {
     return stubFor({
       request: {
@@ -95,6 +99,7 @@ module.exports = {
       },
     })
   },
+
   stubAgencyDetails: (agencyId, details, status = 200) => {
     return stubFor({
       request: {
@@ -110,6 +115,7 @@ module.exports = {
       },
     })
   },
+
   stubPrisonApiGlobalSearch: response =>
     stubFor({
       request: {
@@ -130,6 +136,36 @@ module.exports = {
       request: {
         method: 'GET',
         urlPattern: `/api/bookings\\?bookingId=.*`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response,
+      },
+    }),
+
+  stubOffenderBooking: (bookingId, response) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/api/bookings/${bookingId}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response,
+      },
+    }),
+
+  stubLocation: (locationId, response) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/api/locations/${locationId}`,
       },
       response: {
         status: 200,
@@ -168,6 +204,7 @@ module.exports = {
       },
     })
   },
+
   stubSchedulesAtAgency: (agency, location, type, date, schedules, status = 200) => {
     return stubFor({
       request: {

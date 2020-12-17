@@ -72,6 +72,39 @@ module.exports = {
       },
     })
   },
+
+  stubGetVideoLinkBooking: booking => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/whereabouts/court/video-link-bookings/${booking.videoLinkBookingId}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: booking || {},
+      },
+    })
+  },
+
+  stubDeleteVideoLinkBooking: videoBookingId => {
+    return stubFor({
+      request: {
+        method: 'DELETE',
+        url: `/whereabouts/court/video-link-bookings/${videoBookingId}`,
+      },
+      response: {
+        status: 204,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: {},
+      },
+    })
+  },
+
   verifyPostAttendance: () => {
     return verifyPosts('/whereabouts/attendance')
   },
