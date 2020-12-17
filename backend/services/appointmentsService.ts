@@ -109,7 +109,7 @@ export = class AppointmentService {
   public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {
     const bookingDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
 
-    const [offenderNameAndBookingIds, prisonName, vccRoom] = await Promise.all([
+    const [offenderIdentifiers, prisonName, vccRoom] = await Promise.all([
       this.getOffenderIdentifiers(context, bookingDetails.bookingId),
       this.prisonApi.getAgencyDetails(context, bookingDetails.agencyId),
       this.prisonApi.getLocation(context, bookingDetails.main.locationId),
@@ -118,7 +118,7 @@ export = class AppointmentService {
     return {
       videoBookingId,
       details: {
-        name: offenderNameAndBookingIds.offenderName,
+        name: offenderIdentifiers.offenderName,
         prison: prisonName.description,
         prisonRoom: vccRoom.description,
       },

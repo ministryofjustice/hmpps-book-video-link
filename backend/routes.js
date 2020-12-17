@@ -12,14 +12,14 @@ const requestBookingRouter = require('./routes/appointments/requestBookingRouter
 const videolinkPrisonerSearchController = require('./controllers/videolink/search/videolinkPrisonerSearch')
 const { notifyClient } = require('./shared/notifyClient')
 const BookingService = require('./services/bookingService')
-const DeleteAppointmentController = require('./controllers/appointments/deleteAppointment')
+const DeleteBookingController = require('./controllers/appointments/deleteBooking')
 const AppointmentsService = require('./services/appointmentsService')
 
 const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
   const appointmentsService = new AppointmentsService(prisonApi, whereaboutsApi)
-  const deleteBooking = new DeleteAppointmentController(appointmentsService)
+  const deleteBooking = new DeleteBookingController(appointmentsService)
   const bookingService = new BookingService(prisonApi, whereaboutsApi)
 
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter(prisonApi, appointmentsService))

@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import AppointmentsService from '../../services/appointmentsService'
 
-export = class DeleteAppointmentController {
+export = class DeleteBookingController {
   public constructor(private readonly appointmentsService: AppointmentsService) {}
 
   public viewDelete(): RequestHandler {
