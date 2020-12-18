@@ -8,29 +8,29 @@ export = class DeleteBookingController {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.appointmentsService.getBookingDetails(res.locals, parseInt(bookingId, 10))
-      res.render('deleteAppointment/confirmDeleteBooking.njk', {
+      res.render('deleteAppointment/confirmDeletion.njk', {
         bookingDetails,
         errors: req.flash('errors'),
       })
     }
   }
 
-  public confirmDelete(): RequestHandler {
+  public confirmDeletion(): RequestHandler {
     return async (req, res): Promise<void> => {
       const { bookingId } = req.params
 
-      if (!req.body.confirmDelete) {
+      if (!req.body.confirmDeletion) {
         const errors = [
           {
             text: 'Select Yes or No',
-            href: '#confirm-delete',
+            href: '#confirm-deletion',
           },
         ]
         req.flash('errors', errors)
-        return res.redirect(`/delete-booking/${bookingId}`)
+        return res.redirect(`/confirm-deletion/${bookingId}`)
       }
 
-      if (req.body.confirmDelete === 'no') {
+      if (req.body.confirmDeletion === 'no') {
         return res.redirect('/bookings')
       }
 
@@ -42,7 +42,7 @@ export = class DeleteBookingController {
       req.flash('offenderName', offenderNameAndBookingIds.offenderName)
       req.flash('offenderNo', offenderNameAndBookingIds.offenderNo)
 
-      return res.redirect('/booking-delete-confirmed')
+      return res.redirect('/video-link-deleted')
     }
   }
 
@@ -52,7 +52,7 @@ export = class DeleteBookingController {
       if (!offenderName) {
         return res.redirect('/bookings')
       }
-      return res.render('deleteAppointment/bookingDeleteConfirmed.njk', {
+      return res.render('deleteAppointment/videoLinkDeleted.njk', {
         offenderName: offenderName[0],
         offenderNo: offenderNo[0],
       })

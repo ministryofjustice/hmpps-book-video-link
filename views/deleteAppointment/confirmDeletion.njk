@@ -71,25 +71,25 @@
 <form
   method="POST"
   novalidate="novalidate"
-  action="/delete-booking/{{ bookingDetails.videoBookingId }}"
+  action="/confirm-deletion/{{ bookingDetails.videoBookingId }}"
 >
   <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
   {{ govukRadios({
         classes: "govuk-radios--inline",
-        idPrefix: "confirm-delete",
-        name: "confirmDelete",
-        errorMessage: errors | findError('confirm-delete'),
+        idPrefix: "confirm-deletion",
+        name: "confirmDeletion",
+        errorMessage: errors | findError('confirm-deletion'),
         items: [
             {
                 value: "yes",
                 text: "Yes",
-                checked: confirmDelete == 'yes'
+                checked: confirmDeletion == 'yes'
             },
             {
                 value: "no",
                 text: "No",
-                checked: confirmDelete == 'no'
+                checked: confirmDeletion == 'no'
             }
         ]
     }) }}

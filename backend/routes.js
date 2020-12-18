@@ -54,11 +54,11 @@ const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
 
   router.use('/request-booking', requestBookingRouter({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }))
 
-  router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
+  router.get('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
 
-  router.post('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.confirmDelete()))
+  router.post('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.confirmDeletion()))
 
-  router.get('/booking-delete-confirmed', asyncMiddleware(deleteBooking.deleteConfirmed()))
+  router.get('/video-link-deleted', asyncMiddleware(deleteBooking.deleteConfirmed()))
 
   router.use((req, res, next) => {
     res.status(404).render('notFoundPage.njk')

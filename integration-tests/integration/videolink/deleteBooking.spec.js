@@ -1,7 +1,7 @@
 const moment = require('moment')
 const CourtVideoLinkBookingsPage = require('../../pages/videolink/courtVideoBookingsPage')
-const ConfirmDeleteBookingPage = require('../../pages/videolink/confirmDeleteBookingPage')
-const BookingDeleteConfirmed = require('../../pages/videolink/bookingDeleteConfirmedPage')
+const ConfirmDeletionPage = require('../../pages/videolink/confirmDeletionPage')
+const VideoLinkDeletedPage = require('../../pages/videolink/videoLinkDeletedPage')
 const CourtVideoLinkHomePage = require('../../pages/videolink/courtVideoLinkHomePage')
 const PrisonerSearchPage = require('../../pages/videolink/prisonerSearchPage')
 
@@ -149,10 +149,10 @@ context('A user can delete a booking', () => {
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
 
-    const confirmDeleteBookingPage = ConfirmDeleteBookingPage.verifyOnPage()
-    confirmDeleteBookingPage.confirmButton().click()
-    confirmDeleteBookingPage.errorSummaryTitle().contains('There is a problem')
-    confirmDeleteBookingPage.inlineError().contains('Select Yes or No')
+    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
+    confirmDeletionPage.confirmButton().click()
+    confirmDeletionPage.errorSummaryTitle().contains('There is a problem')
+    confirmDeletionPage.inlineError().contains('Select Yes or No')
   })
 
   it('A user chooses not to delete a booking', () => {
@@ -162,9 +162,9 @@ context('A user can delete a booking', () => {
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
 
-    const confirmDeleteBookingPage = ConfirmDeleteBookingPage.verifyOnPage()
-    confirmDeleteBookingPage.selectNo()
-    confirmDeleteBookingPage.confirmButton().click()
+    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
+    confirmDeletionPage.selectNo()
+    confirmDeletionPage.confirmButton().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
   })
@@ -176,12 +176,12 @@ context('A user can delete a booking', () => {
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
 
-    const confirmDeleteBookingPage = ConfirmDeleteBookingPage.verifyOnPage()
-    confirmDeleteBookingPage.selectYes()
-    confirmDeleteBookingPage.confirmButton().click()
+    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
+    confirmDeletionPage.selectYes()
+    confirmDeletionPage.confirmButton().click()
 
-    const bookingDeleteConfirmedPage = BookingDeleteConfirmed.verifyOnPage()
-    bookingDeleteConfirmedPage.exit().click()
+    const videoLinkDeletedPage = VideoLinkDeletedPage.verifyOnPage()
+    videoLinkDeletedPage.exit().click()
 
     CourtVideoLinkHomePage.verifyOnPage()
   })
@@ -193,13 +193,13 @@ context('A user can delete a booking', () => {
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
 
-    const confirmDeleteBookingPage = ConfirmDeleteBookingPage.verifyOnPage()
-    confirmDeleteBookingPage.selectYes()
-    confirmDeleteBookingPage.confirmButton().click()
+    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
+    confirmDeletionPage.selectYes()
+    confirmDeletionPage.confirmButton().click()
 
-    const bookingDeleteConfirmedPage = BookingDeleteConfirmed.verifyOnPage()
+    const videoLinkDeletedPage = VideoLinkDeletedPage.verifyOnPage()
 
-    bookingDeleteConfirmedPage.addAppointment().click()
+    videoLinkDeletedPage.addAppointment().click()
 
     const prisonerSearchPage = PrisonerSearchPage.verifyOnPage()
     prisonerSearchPage.prisonNumber().should('have.value', 'A1234AA')
