@@ -2,7 +2,6 @@ const moment = require('moment')
 const CourtVideoLinkBookingsPage = require('../../pages/videolink/courtVideoBookingsPage')
 const ConfirmDeletionPage = require('../../pages/videolink/confirmDeletionPage')
 const VideoLinkDeletedPage = require('../../pages/videolink/videoLinkDeletedPage')
-const CourtVideoLinkHomePage = require('../../pages/videolink/courtVideoLinkHomePage')
 const PrisonerSearchPage = require('../../pages/videolink/prisonerSearchPage')
 
 context('A user can delete a booking', () => {
@@ -183,7 +182,7 @@ context('A user can delete a booking', () => {
     const videoLinkDeletedPage = VideoLinkDeletedPage.verifyOnPage()
     videoLinkDeletedPage.exit().click()
 
-    CourtVideoLinkHomePage.verifyOnPage()
+    CourtVideoLinkBookingsPage.verifyOnPage()
   })
 
   it('A user chooses to delete a booking then selects to add another', () => {
