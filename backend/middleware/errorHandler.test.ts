@@ -15,11 +15,6 @@ describe('Error handling middleware', () => {
     status: jest.fn(),
     render: jest.fn(),
     locals: {} as Record<string, any>,
-    // locals: jest.fn(),
-    // locals: { message: jest.fn() },
-    // locals: {
-    //   message: 'Something went wrong. The error has been logged. Please try again.',
-    // },
   }
   const error = new Error('error message')
   const production = false
