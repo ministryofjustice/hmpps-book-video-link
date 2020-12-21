@@ -9,7 +9,27 @@ export = class DeleteBookingController {
       const { bookingId } = req.params
       const bookingDetails = await this.appointmentsService.getBookingDetails(res.locals, parseInt(bookingId, 10))
       res.render('deleteAppointment/confirmDeletion.njk', {
-        bookingDetails,
+        bookingDetails: {
+          videoBookingId: bookingDetails.videoBookingId,
+          details: {
+            name: bookingDetails.prisonerName,
+            prison: bookingDetails.prisonName,
+            prisonRoom: bookingDetails.mainDetails.prisonRoom,
+          },
+          hearingDetails: {
+            date: bookingDetails.date,
+            courtHearingStartTime: bookingDetails.mainDetails.startTime,
+            courtHearingEndTime: bookingDetails.mainDetails.endTime,
+            comments: bookingDetails.comments,
+          },
+          prePostDetails: {
+            'pre-court hearing briefing': bookingDetails.preDetails?.description,
+            'post-court hearing briefing': bookingDetails.postDetails?.description,
+          },
+          courtDetails: {
+            courtLocation: bookingDetails.courtLocation,
+          },
+        },
         errors: req.flash('errors'),
       })
     }
@@ -34,13 +54,14 @@ export = class DeleteBookingController {
         return res.redirect('/bookings')
       }
 
-      const offenderNameAndBookingIds = await this.appointmentsService.deleteBooking(
+      const offenderIdentifiers = await this.appointmentsService.deleteBooking(
         res.locals,
+        req.session.userDetails.username,
         parseInt(bookingId, 10)
       )
 
-      req.flash('offenderName', offenderNameAndBookingIds.offenderName)
-      req.flash('offenderNo', offenderNameAndBookingIds.offenderNo)
+      req.flash('offenderName', offenderIdentifiers.offenderName)
+      req.flash('offenderNo', offenderIdentifiers.offenderNo)
 
       return res.redirect('/video-link-deleted')
     }

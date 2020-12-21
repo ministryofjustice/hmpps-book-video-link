@@ -3,7 +3,11 @@ const config = require('../config')
 
 const notifyClient = config.notifications.enabled
   ? new NotifyClient(config.notifications.notifyKey)
-  : { sendEmail() {} }
+  : {
+      sendEmail() {
+        return Promise.resolve({})
+      },
+    }
 
 module.exports = {
   notifyClient,

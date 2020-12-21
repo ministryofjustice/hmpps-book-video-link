@@ -14,13 +14,16 @@ const { notifyClient } = require('./shared/notifyClient')
 const BookingService = require('./services/bookingService')
 const DeleteBookingController = require('./controllers/appointments/deleteBooking')
 const AppointmentsService = require('./services/appointmentsService')
+const NotificationService = require('./services/notificationService')
 
 const router = express.Router()
 
 const setup = ({ prisonApi, whereaboutsApi, oauthApi }) => {
-  const appointmentsService = new AppointmentsService(prisonApi, whereaboutsApi)
-  const deleteBooking = new DeleteBookingController(appointmentsService)
+  const notificationService = new NotificationService(oauthApi, notifyClient)
+  const appointmentsService = new AppointmentsService(prisonApi, whereaboutsApi, notificationService)
   const bookingService = new BookingService(prisonApi, whereaboutsApi)
+
+  const deleteBooking = new DeleteBookingController(appointmentsService)
 
   router.use('/offenders/:offenderNo/confirm-appointment', confirmAppointmentRouter(prisonApi, appointmentsService))
 

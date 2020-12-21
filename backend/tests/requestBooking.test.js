@@ -44,7 +44,7 @@ describe('Request a booking', () => {
     req.flash.mockImplementation(() => [])
 
     logError = jest.fn()
-    notifyClient.sendEmail = jest.fn()
+    notifyClient.sendEmail = jest.fn().mockResolvedValue({})
     whereaboutsApi.getCourtLocations = jest.fn()
     oauthApi.userEmail = jest.fn()
     oauthApi.userDetails = jest.fn()

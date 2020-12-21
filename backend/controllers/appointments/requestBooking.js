@@ -64,16 +64,9 @@ const packBookingDetails = (req, data) => req.flash('requestBooking', data)
 
 const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }) => {
   const sendEmail = ({ templateId, email, personalisation }) =>
-    new Promise((resolve, reject) => {
-      try {
-        notifyClient.sendEmail(templateId, email, {
-          personalisation,
-          reference: null,
-        })
-        resolve()
-      } catch (error) {
-        reject(error)
-      }
+    notifyClient.sendEmail(templateId, email, {
+      personalisation,
+      reference: null,
     })
 
   const getVideoLinkEnabledPrisons = async locals => {

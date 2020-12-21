@@ -1,11 +1,11 @@
 import moment from 'moment'
-import { NewVideoLinkBooking } from 'whereaboutsApi'
+import { Appointment, NewVideoLinkBooking } from 'whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
-
-type Context = any
+import { BookingDetails, OffenderIdentifiers, Context } from './model'
+import NotificationService from './notificationService'
 
 type Option = {
   value: string
@@ -17,36 +17,12 @@ type AppointmentOptions = {
   appointmentTypes: Option[]
 }
 
-type OffenderIdentifiers = {
-  offenderNo: string
-  bookingId: number
-  offenderName: string
-}
-
-type BookingDetails = {
-  videoBookingId: number
-  details: {
-    name: string
-    prison: string
-    prisonRoom: string
-  }
-  hearingDetails: {
-    date: string
-    courtHearingStartTime: string
-    courtHearingEndTime: string
-    comments: string | undefined
-  }
-  prePostDetails: {
-    'pre-court hearing briefing': string | undefined
-    'post-court hearing briefing': string | undefined
-  }
-  courtDetails: {
-    courtLocation: string
-  }
-}
-
 export = class AppointmentService {
-  constructor(private readonly prisonApi: PrisonApi, private readonly whereaboutsApi: WhereaboutsApi) {}
+  constructor(
+    private readonly prisonApi: PrisonApi,
+    private readonly whereaboutsApi: WhereaboutsApi,
+    private readonly notificationService: NotificationService
+  ) {}
 
   private mapLocationType(location): Option {
     return { value: location.locationId, text: location.userDescription || location.description }
@@ -109,56 +85,46 @@ export = class AppointmentService {
   public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {
     const bookingDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
 
-    const [offenderIdentifiers, prisonName, vccRoom] = await Promise.all([
-      this.getOffenderIdentifiers(context, bookingDetails.bookingId),
+    const [prisonBooking, agencyDetails, locations] = await Promise.all([
+      this.prisonApi.getPrisonBooking(context, bookingDetails.bookingId),
       this.prisonApi.getAgencyDetails(context, bookingDetails.agencyId),
-      this.prisonApi.getLocation(context, bookingDetails.main.locationId),
+      this.prisonApi.getLocationsForAppointments(context, bookingDetails.agencyId),
     ])
+
+    const toAppointmentDetails = (appointment: Appointment) => {
+      const location = locations.find(loc => loc.locationId === appointment.locationId)
+      const prisonRoom = location?.userDescription || location?.description || ''
+      const description = `${prisonRoom} - ${Time(appointment.startTime)} to ${Time(appointment.endTime)}`
+      return { prisonRoom, description, startTime: Time(appointment.startTime), endTime: Time(appointment.endTime) }
+    }
 
     return {
       videoBookingId,
-      details: {
-        name: offenderIdentifiers.offenderName,
-        prison: prisonName.description,
-        prisonRoom: vccRoom.description,
-      },
-      hearingDetails: {
-        date: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
-        courtHearingStartTime: Time(bookingDetails.main.startTime),
-        courtHearingEndTime: Time(bookingDetails.main.endTime),
-        comments: bookingDetails.comment,
-      },
-      prePostDetails: {
-        'pre-court hearing briefing': bookingDetails.pre
-          ? `${Time(bookingDetails.pre.startTime)} to ${Time(bookingDetails.pre.endTime)}`
-          : null,
-        'post-court hearing briefing': bookingDetails.post
-          ? `${Time(bookingDetails.post.startTime)} to ${Time(bookingDetails.post.endTime)}`
-          : null,
-      },
-      courtDetails: {
-        courtLocation: bookingDetails.court,
-      },
+      prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
+      offenderNo: prisonBooking.offenderNo,
+      prisonBookingId: prisonBooking.bookingId,
+      prisonName: agencyDetails.description,
+      agencyId: agencyDetails.agencyId,
+      courtLocation: bookingDetails.court,
+      date: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
+      comments: bookingDetails.comment,
+      ...(bookingDetails.pre ? { preDetails: toAppointmentDetails(bookingDetails.pre) } : {}),
+      mainDetails: toAppointmentDetails(bookingDetails.main),
+      ...(bookingDetails.post ? { postDetails: toAppointmentDetails(bookingDetails.post) } : {}),
     }
   }
 
-  public async deleteBooking(context: Context, videoBookingId: number): Promise<OffenderIdentifiers> {
-    const { bookingId } = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
-
-    const offenderIdentifiers = await this.getOffenderIdentifiers(context, bookingId)
+  public async deleteBooking(
+    context: Context,
+    currentUsername: string,
+    videoBookingId: number
+  ): Promise<OffenderIdentifiers> {
+    const details = await this.getBookingDetails(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)
-    return offenderIdentifiers
-  }
-
-  private async getOffenderIdentifiers(context: Context, bookingId: number): Promise<OffenderIdentifiers> {
-    const offenderDetails = await this.prisonApi.getPrisonBooking(context, bookingId)
-
-    const offenderIdentifiers = {
-      offenderNo: offenderDetails.offenderNo,
-      bookingId: offenderDetails.bookingId,
-      offenderName: formatName(offenderDetails.firstName, offenderDetails.lastName),
+    await this.notificationService.sendCancellationEmails(context, currentUsername, details)
+    return {
+      offenderNo: details.offenderNo,
+      offenderName: details.prisonerName,
     }
-
-    return offenderIdentifiers
   }
 }

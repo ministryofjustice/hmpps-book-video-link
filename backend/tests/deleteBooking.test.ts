@@ -1,16 +1,17 @@
 import { Request, Response } from 'express'
 import DeleteBooking from '../controllers/appointments/deleteBooking'
 import AppointmentService from '../services/appointmentsService'
+import { BookingDetails } from '../services/model'
 
 jest.mock('../services/appointmentsService')
 
 describe('Delete Booking', () => {
-  const appointmentService = new AppointmentService(null, null) as jest.Mocked<AppointmentService>
+  const appointmentService = new AppointmentService(null, null, null) as jest.Mocked<AppointmentService>
   let controller: DeleteBooking
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { activeCaseLoadId: 'LEI' } },
+    session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
     body: {},
     flash: jest.fn(),
   } as unknown) as jest.Mocked<Request>
@@ -21,7 +22,37 @@ describe('Delete Booking', () => {
     redirect: jest.fn(),
   } as unknown) as jest.Mocked<Response>
 
-  const bookingDetails = {
+  const bookingDetails: BookingDetails = {
+    agencyId: 'WWI',
+    videoBookingId: 123,
+    courtLocation: 'City of London',
+    date: '20 November 2020',
+    offenderNo: 'A123AA',
+    prisonerName: 'John Doe',
+    prisonName: 'some prison',
+    prisonBookingId: 1,
+    comments: 'some comment',
+    preDetails: {
+      prisonRoom: 'vcc room 2',
+      startTime: '17:40',
+      endTime: '18:00',
+      description: 'vcc room 2 - 17:40 to 18:00',
+    },
+    mainDetails: {
+      prisonRoom: 'vcc room 1',
+      startTime: '18:00',
+      endTime: '19:00',
+      description: 'vcc room 1 - 18:00 to 19:00',
+    },
+    postDetails: {
+      prisonRoom: 'vcc room 3',
+      startTime: '17:40',
+      endTime: '18:00',
+      description: 'vcc room 3 - 19:00 to 19:20',
+    },
+  }
+
+  const bookingDetailsView = {
     courtDetails: {
       courtLocation: 'City of London',
     },
@@ -37,8 +68,8 @@ describe('Delete Booking', () => {
       date: '20 November 2020',
     },
     prePostDetails: {
-      'post-court hearing briefing': '19:00 to 19:20',
-      'pre-court hearing briefing': '17:40 to 18:00',
+      'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
+      'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
     },
     videoBookingId: 123,
   }
@@ -59,7 +90,7 @@ describe('Delete Booking', () => {
       expect(res.render).toHaveBeenCalledWith(
         'deleteAppointment/confirmDeletion.njk',
         expect.objectContaining({
-          bookingDetails,
+          bookingDetails: bookingDetailsView,
           errors,
         })
       )
@@ -90,7 +121,7 @@ describe('Delete Booking', () => {
 
       await controller.confirmDeletion()(req, res, null)
       expect(res.redirect).toHaveBeenCalledWith('/video-link-deleted')
-      expect(appointmentService.deleteBooking).toHaveBeenCalledWith(res.locals, 123)
+      expect(appointmentService.deleteBooking).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 123)
     })
   })
 

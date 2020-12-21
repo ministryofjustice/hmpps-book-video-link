@@ -17,7 +17,7 @@ describe('Page not found ', () => {
 
     app.use((req, res, next) => {
       req.session = /** @type {Session} */ ({})
-      req.session.userDetails = { name: 'Jim' }
+      req.session.userDetails = { name: 'Jim', username: 'JIM' }
       next()
     })
     app.use(routes({ prisonApi, whereaboutsApi, oauthApi }))

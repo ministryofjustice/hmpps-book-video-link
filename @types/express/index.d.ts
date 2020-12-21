@@ -7,6 +7,7 @@ declare module 'express-session' {
     nowInMinutes: number
     userDetails: {
       name: string
+      username: string
     }
   }
 }
