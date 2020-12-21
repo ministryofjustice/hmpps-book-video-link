@@ -1,3 +1,5 @@
+import errorHandler from './middleware/errorHandler'
+
 require('dotenv').config()
 
 // Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
@@ -24,7 +26,6 @@ const nunjucksSetup = require('./utils/nunjucksSetup')
 const setupRedirects = require('./setupRedirects')
 const setupCurrentUserAndRequestLogging = require('./setupCurrentUserAndRequestLogging')
 const setupAuthorisation = require('./setupAuthorisation')
-const errorHandler = require('./middleware/errorHandler')
 
 app.set('trust proxy', 1) // trust first proxy
 app.set('view engine', 'njk')
@@ -49,7 +50,7 @@ app.use(
   })
 )
 
-app.use(errorHandler)
+app.use(errorHandler(config.app.production))
 
 app.listen(config.app.port, () => {
   // eslint-disable-next-line no-console

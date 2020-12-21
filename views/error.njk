@@ -23,7 +23,13 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">{{ title }}</h1>
             <p class="govuk-body">
-                You can try again.
+               {{ message }}
+            </p>
+            <p class="govuk-body">
+                {{ status }}
+            </p>
+            <p class="govuk-body">
+                {{ stack }}
             </p>
             <p class="govuk-body">
                 {{ govukButton({
