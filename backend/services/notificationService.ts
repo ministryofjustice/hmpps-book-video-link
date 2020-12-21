@@ -17,7 +17,7 @@ export = class NotificationService {
       this.oauthApi.userEmail(context, username),
       this.oauthApi.userDetails(context, username),
     ])
-    const { omu } = notifications.emails[details.agencyId]
+    const { omu, vlb } = notifications.emails[details.agencyId]
 
     const personalisation = {
       prisonerName: details.prisonerName,
@@ -39,6 +39,14 @@ export = class NotificationService {
       personalisation: prisonPersonalisation,
     }).catch(error => {
       log.error('Failed to notify OMU about a booking cancellation', error)
+    })
+
+    this.sendEmail({
+      templateId: notifications.bookingCancellationPrison,
+      email: vlb,
+      personalisation: prisonPersonalisation,
+    }).catch(error => {
+      log.error('Failed to notify VLB Admin about a booking cancellation', error)
     })
 
     this.sendEmail({
