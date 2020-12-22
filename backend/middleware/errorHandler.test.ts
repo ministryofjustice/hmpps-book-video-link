@@ -14,7 +14,7 @@ describe('Error handling middleware', () => {
   const res = {
     status: jest.fn(),
     render: jest.fn(),
-    locals: {} as Record<string, any>,
+    locals: {} as Record<string, unknown>,
   }
   const error = new Error('error message')
   const production = false

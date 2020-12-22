@@ -13,9 +13,8 @@ export default function errorHandler(production: boolean) {
     res.locals.message = production
       ? 'Something went wrong. The error has been logged. Please try again.'
       : error.message
-    res.locals.status = production ? null : error.status
     res.locals.stack = production ? null : error.stack
-    res.status(error.status || 500)
+    res.status(500)
     res.render('error.njk', pageData)
   }
 }
