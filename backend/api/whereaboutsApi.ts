@@ -36,12 +36,17 @@ export = class WhereaboutsApi {
     return this.get(context, `/court/video-link-bookings/${videoBookingId}`)
   }
 
-  public getVideoLinkBookings(context: Context, date: string, court?: string): Promise<VideoLinkBooking[]> {
+  public getVideoLinkBookings(
+    context: Context,
+    agencyId: string,
+    date: string,
+    court?: string
+  ): Promise<VideoLinkBooking[]> {
     const searchParams = mapToQueryString({
       court,
     })
 
-    return this.get(context, `/court/video-link-bookings/date/${date}?${searchParams}`)
+    return this.get(context, `/court/video-link-bookings/prison/${agencyId}/date/${date}?${searchParams}`)
   }
 
   public deleteVideoLinkBooking(context: Context, videoBookingId: number): Promise<void> {

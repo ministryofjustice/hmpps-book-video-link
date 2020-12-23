@@ -17,6 +17,7 @@ const {
   putLastNameFirst,
   getNamesFromString,
   isPrisonerIdentifier,
+  flattenCalls,
 } = require('./utils')
 
 describe('capitalize()', () => {
@@ -375,5 +376,17 @@ describe('isPrisonerIdentifier()', () => {
   })
   it('should return false for name', () => {
     expect(isPrisonerIdentifier('John Smith')).toEqual(false)
+  })
+})
+
+describe('flatten call', () => {
+  it('Single item', () => {
+    const param = [Promise.resolve([1])]
+    return expect(flattenCalls(param)).resolves.toEqual([1])
+  })
+
+  it('Multiple items', () => {
+    const param = [Promise.resolve([1]), Promise.resolve([2, 3])]
+    return expect(flattenCalls(param)).resolves.toEqual([1, 2, 3])
   })
 })

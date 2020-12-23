@@ -1,7 +1,8 @@
 import moment from 'moment'
 import type prisonApiTypes from 'prisonApi'
-
 import { VideoLinkBooking } from 'whereaboutsApi'
+
+import config from '../config'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import BookingService from './bookingService'
@@ -11,6 +12,7 @@ jest.mock('../api/whereaboutsApi')
 
 type OffenderBooking = prisonApiTypes.schemas['OffenderBooking']
 type Location = prisonApiTypes.schemas['Location']
+type Prison = prisonApiTypes.schemas['PrisonContactDetail']
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
@@ -46,7 +48,9 @@ describe('Add court appointment', () => {
 
   beforeEach(() => {
     whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
+    prisonApi.getAgencies.mockResolvedValue([])
     bookingService = new BookingService(prisonApi, whereaboutsApi)
+    config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
 
   it('courts are returned', async () => {
@@ -65,6 +69,7 @@ describe('Add court appointment', () => {
       hearingType: 'PRE',
       locationId: 100,
       offenderName: 'Bob Smith',
+      prison: 'Wandsworth (HMP)',
       prisonLocation: 'Room 1',
       startTime: '2020-12-23T09:40:00',
       time: '09:40 to 10:00',
@@ -76,6 +81,7 @@ describe('Add court appointment', () => {
       hearingType: 'MAIN',
       locationId: 110,
       offenderName: 'Bob Smith',
+      prison: 'Wandsworth (HMP)',
       prisonLocation: 'Room 2',
       startTime: '2020-12-23T10:00:00',
       time: '10:00 to 10:30',
@@ -87,6 +93,7 @@ describe('Add court appointment', () => {
       hearingType: 'POST',
       locationId: 120,
       offenderName: 'Bob Smith',
+      prison: 'Wandsworth (HMP)',
       prisonLocation: 'Room 3',
       startTime: '2020-12-23T10:30:00',
       time: '10:30 to 10:50',
@@ -98,16 +105,20 @@ describe('Add court appointment', () => {
         { bookingId: 1, firstName: 'BOB', lastName: 'SMITH' } as OffenderBooking,
       ])
       prisonApi.getLocationsForAppointments.mockResolvedValue([
-        { locationId: 100, userDescription: 'Room 1' } as Location,
-        { locationId: 110, userDescription: 'Room 2' } as Location,
-        { locationId: 120, userDescription: 'Room 3' } as Location,
-      ])
+        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
+        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
+        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
+      ] as Location[])
+      prisonApi.getAgencies.mockResolvedValue([
+        { agencyId: 'WWI', formattedDescription: 'Wandsworth (HMP)' },
+        { agencyId: 'MDI', formattedDescription: 'Moorland (HMP)' },
+      ] as Prison[])
 
       whereaboutsApi.getCourtLocations.mockResolvedValue({ courtLocations: ['Westminster', 'Southwark'] })
     })
 
     it('A booking is turned into appointments', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([booking()])
+      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking()])
 
       const result = await bookingService.getAppointmentList(context, now, null)
 
@@ -129,21 +140,13 @@ describe('Add court appointment', () => {
       expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
       expect(prisonApi.getPrisonBookings).toHaveBeenCalledWith(context, [1, 2])
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
-    })
-
-    it('Bookings from other agencies are filtered out', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([booking({ agencyId: 'MDI' })])
-
-      const result = await bookingService.getAppointmentList(context, now, null)
-
-      expect(result).toStrictEqual({
-        appointments: [],
-        courts: ['Westminster', 'Southwark'],
-      })
+      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
     })
 
     it('multiple bookings', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([booking(), booking()])
+      whereaboutsApi.getVideoLinkBookings
+        .mockResolvedValueOnce([booking({ agencyId: 'WWI' })])
+        .mockResolvedValueOnce([booking({ agencyId: 'MDI' })])
 
       const result = await bookingService.getAppointmentList(context, now, null)
 
@@ -161,10 +164,9 @@ describe('Add court appointment', () => {
     })
 
     it('Can filter by court', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([
-        booking({ court: 'Westminster' }),
-        booking({ court: 'Southwark' }),
-      ])
+      whereaboutsApi.getVideoLinkBookings
+        .mockResolvedValueOnce([booking({ court: 'Westminster' })])
+        .mockResolvedValueOnce([booking({ court: 'Southwark' })])
 
       const result = await bookingService.getAppointmentList(context, now, 'Westminster')
 
@@ -176,7 +178,7 @@ describe('Add court appointment', () => {
 
     it('Other court filter selects any unknown court', async () => {
       const otherCourtName = 'Something else'
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([
+      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([
         booking({ court: 'Westminster' }),
         booking({ court: 'Southwark' }),
         booking({ court: otherCourtName }),
@@ -195,7 +197,7 @@ describe('Add court appointment', () => {
     })
 
     it('prisoner not found', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([booking({ bookingId: 2 })])
+      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking({ bookingId: 2 })])
 
       const result = await bookingService.getAppointmentList(context, now, null)
 
@@ -210,7 +212,7 @@ describe('Add court appointment', () => {
     })
 
     it('prison location not found', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([
+      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([
         booking({
           pre: {
             locationId: 10000,
@@ -224,7 +226,7 @@ describe('Add court appointment', () => {
 
       expect(result).toStrictEqual({
         appointments: [
-          { ...preAppointment, locationId: 10000, prisonLocation: '' },
+          { ...preAppointment, locationId: 10000, prison: '', prisonLocation: '' },
           { ...mainAppointment },
           { ...postAppointment },
         ],

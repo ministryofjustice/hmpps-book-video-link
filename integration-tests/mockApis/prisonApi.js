@@ -72,7 +72,7 @@ module.exports = {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/api/agencies/${agency}/locations?eventType=APP`,
+        urlPattern: `/api/agencies/${agency}/locations\\?eventType=APP`,
       },
       response: {
         status,

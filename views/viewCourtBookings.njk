@@ -21,7 +21,7 @@
       {% set rows = (rows.push([
           { text: item.time },
           { text: item.offenderName },
-          { text: item.prisonLocation },
+          { html: (item.prisonLocation | escape)+ '<br/>in: ' + (item.prison | escape) },
           { text: item.court },
           { text: hearingDescriptions[item.hearingType] },
           { html: '<a class="govuk-link" href="/confirm-deletion/' + item.videoLinkBookingId + '">Delete</a>' if item.hearingType == 'MAIN' else ''}

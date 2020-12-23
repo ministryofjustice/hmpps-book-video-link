@@ -12,12 +12,19 @@ context('A user can view the video link home page', () => {
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('stubCourts')
+    cy.task('stubAgencies', [{ agencyId: 'WWI', formattedDescription: 'HMP Wandsworth' }])
     cy.task('stubOffenderBookings', [
       { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])
 
     cy.task('stubGetVideoLinkBookings', {
+      agencyId: '.*?',
+      date: moment().format('yyyy-MM-DD'),
+      bookings: [],
+    })
+    cy.task('stubGetVideoLinkBookings', {
+      agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
       bookings: [
         {
@@ -63,11 +70,15 @@ context('A user can view the video link home page', () => {
     })
 
     cy.task('stubAppointmentLocations', {
+      agency: '.*?',
+      locations: [],
+    })
+    cy.task('stubAppointmentLocations', {
       agency: 'WWI',
       locations: [
-        { locationId: 100, userDescription: 'Room 1' },
-        { locationId: 110, userDescription: 'Room 2' },
-        { locationId: 120, userDescription: 'Room 3' },
+        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
+        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
+        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
       ],
     })
   })
@@ -82,6 +93,7 @@ context('A user can view the video link home page', () => {
       time().contains('12:40 to 13:00')
       prisoner().contains('Offender One')
       location().contains('Room 1')
+      location().contains('in: HMP Wandsworth')
       court().contains('Leeds')
       type().contains('Pre-court hearing')
       action().should('not.exist')
@@ -91,6 +103,7 @@ context('A user can view the video link home page', () => {
       time().contains('13:00 to 13:30')
       prisoner().contains('Offender One')
       location().contains('Room 2')
+      location().contains('in: HMP Wandsworth')
       court().contains('Leeds')
       type().contains('Court hearing')
       action().contains('Delete')
@@ -100,6 +113,7 @@ context('A user can view the video link home page', () => {
       time().contains('13:30 to 13:50')
       prisoner().contains('Offender One')
       location().contains('Room 3')
+      location().contains('in: HMP Wandsworth')
       court().contains('Leeds')
       type().contains('Post-court hearing')
       action().should('not.exist')
@@ -109,6 +123,7 @@ context('A user can view the video link home page', () => {
       time().contains('14:40 to 15:00')
       prisoner().contains('Offender Two')
       location().contains('Room 1')
+      location().contains('in: HMP Wandsworth')
       court().contains('Other court')
       type().contains('Pre-court hearing')
       action().should('not.exist')
@@ -118,6 +133,7 @@ context('A user can view the video link home page', () => {
       time().contains('15:00 to 15:30')
       prisoner().contains('Offender Two')
       location().contains('Room 2')
+      location().contains('in: HMP Wandsworth')
       court().contains('Other court')
       type().contains('Court hearing')
       action().contains('Delete')
@@ -154,6 +170,7 @@ context('A user can view the video link home page', () => {
 
   it('The no results message is displayed', () => {
     cy.task('stubGetVideoLinkBookings', {
+      agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })

@@ -57,11 +57,11 @@ module.exports = {
       return JSON.parse(requests[0].body)
     }),
 
-  stubGetVideoLinkBookings: (date, bookings) => {
+  stubGetVideoLinkBookings: (agencyId, date, bookings) => {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/whereabouts/court/video-link-bookings/date/${date}`,
+        urlPattern: `/whereabouts/court/video-link-bookings/prison/${agencyId}/date/${date}`,
       },
       response: {
         status: 200,

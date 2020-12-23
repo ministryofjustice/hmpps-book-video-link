@@ -24,6 +24,17 @@ context('A user can delete a booking', () => {
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])
 
+    cy.task('stubGetVideoLinkBookings', {
+      agencyId: '.*?',
+      date: moment().format('yyyy-MM-DD'),
+      bookings: [],
+    })
+
+    cy.task('stubAppointmentLocations', {
+      agency: '.*?',
+      locations: [],
+    })
+
     cy.task('stubAppointmentLocations', {
       agency: 'WWI',
       locations: [
@@ -34,6 +45,7 @@ context('A user can delete a booking', () => {
     })
 
     cy.task('stubGetVideoLinkBookings', {
+      agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
       bookings: [
         {

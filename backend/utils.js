@@ -261,6 +261,18 @@ const extractLocation = (location, agencyId) => {
   return withoutAgency
 }
 
+/**
+ * @template T
+ *
+ * Takes an array of promises containing arrays of T and converts to a promise containing an array of T
+ *
+ * @param {Promise<T[]>[]} arg
+ * @returns {Promise<T[]>}
+ */
+const flattenCalls = arg => {
+  return Promise.all(arg).then(r => r.flatMap(array => array))
+}
+
 module.exports = {
   isBeforeToday,
   isToday,
@@ -302,4 +314,5 @@ module.exports = {
   possessive,
   extractLocation,
   indefiniteArticle,
+  flattenCalls,
 }
