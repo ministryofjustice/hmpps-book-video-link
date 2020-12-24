@@ -7,7 +7,7 @@ const oauthApi = {
   userEmail: jest.fn(),
 }
 
-const notifyClient = {
+const notifyApi = {
   sendEmail: jest.fn(),
 }
 
@@ -46,7 +46,7 @@ describe('Notification service', () => {
   let notificationService: NotificationService
 
   beforeEach(() => {
-    notificationService = new NotificationService(oauthApi, notifyClient)
+    notificationService = new NotificationService(oauthApi, notifyApi)
     config.notifications.emails.WWI.omu = 'omu@prison.com'
     config.notifications.emails.WWI.vlb = 'vlb@prison.com'
   })
@@ -59,7 +59,7 @@ describe('Notification service', () => {
     it('Details are retrieved for user', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
-      notifyClient.sendEmail.mockResolvedValue({})
+      notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
@@ -70,11 +70,11 @@ describe('Notification service', () => {
     it('should send email to Offender Management Unit', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
-      notifyClient.sendEmail.mockResolvedValue({})
+      notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingCancellationPrison,
         'omu@prison.com',
         {
@@ -97,11 +97,11 @@ describe('Notification service', () => {
     it('should send email to Prison Video Link Booking Admin', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
-      notifyClient.sendEmail.mockResolvedValue({})
+      notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingCancellationPrison,
         'vlb@prison.com',
         {
@@ -123,10 +123,10 @@ describe('Notification service', () => {
     it('Should send email to court', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
-      notifyClient.sendEmail.mockResolvedValue({})
+      notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'USER', bookingDetail)
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingCancellationCourt,
         'user@email.com',
         {

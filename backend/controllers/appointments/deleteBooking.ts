@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express'
-import AppointmentsService from '../../services/appointmentsService'
+import type AppointmentService from '../../services/appointmentService'
 
 export = class DeleteBookingController {
-  public constructor(private readonly appointmentsService: AppointmentsService) {}
+  public constructor(private readonly appointmentService: AppointmentService) {}
 
   public viewDelete(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      const bookingDetails = await this.appointmentsService.getBookingDetails(res.locals, parseInt(bookingId, 10))
+      const bookingDetails = await this.appointmentService.getBookingDetails(res.locals, parseInt(bookingId, 10))
       res.render('deleteAppointment/confirmDeletion.njk', {
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
@@ -54,7 +54,7 @@ export = class DeleteBookingController {
         return res.redirect('/bookings')
       }
 
-      const offenderIdentifiers = await this.appointmentsService.deleteBooking(
+      const offenderIdentifiers = await this.appointmentService.deleteBooking(
         res.locals,
         req.session.userDetails.username,
         parseInt(bookingId, 10)

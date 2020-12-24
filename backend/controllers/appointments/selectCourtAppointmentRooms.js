@@ -85,10 +85,10 @@ const validate = ({
 
 const selectCourtAppointmentRoomsFactory = ({
   prisonApi,
-  appointmentsService,
+  appointmentService,
   existingEventsService,
   oauthApi,
-  notifyClient,
+  notifyApi,
 }) => {
   const index = async (req, res) => {
     const { offenderNo, agencyId } = req.params
@@ -97,7 +97,7 @@ const selectCourtAppointmentRoomsFactory = ({
     const appointmentDetails = unpackAppointmentDetails(req)
     const { appointmentType, startTime, endTime, preAppointmentRequired, postAppointmentRequired } = appointmentDetails
 
-    const { appointmentTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
+    const { appointmentTypes } = await appointmentService.getAppointmentOptions(res.locals, activeCaseLoadId)
     const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
 
     const [offenderDetails, agencyDetails] = await Promise.all([
@@ -316,20 +316,20 @@ const selectCourtAppointmentRoomsFactory = ({
         userName: name,
       }
 
-      notifyClient.sendEmail(confirmBookingCourtTemplateId, userEmailData.email, {
+      notifyApi.sendEmail(confirmBookingCourtTemplateId, userEmailData.email, {
         personalisation,
         reference: null,
       })
 
       if (emails[agencyId] && emails[agencyId].omu) {
-        notifyClient.sendEmail(prisonCourtBookingTemplateId, emails[agencyId].omu, {
+        notifyApi.sendEmail(prisonCourtBookingTemplateId, emails[agencyId].omu, {
           personalisation,
           reference: null,
         })
       }
     }
 
-    await appointmentsService.createAppointmentRequest(
+    await appointmentService.createAppointmentRequest(
       appointmentDetails,
       comment,
       prepostAppointments,

@@ -5,7 +5,7 @@ const withRetryLink = require('../../middleware/withRetryLink')
 
 const router = express.Router({ mergeParams: true })
 
-const controller = ({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }) => {
+const controller = ({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi }) => {
   const {
     startOfJourney,
     checkAvailability,
@@ -16,7 +16,7 @@ const controller = ({ logError, notifyClient, whereaboutsApi, oauthApi, prisonAp
     confirm,
   } = requestBookingFactory({
     logError,
-    notifyClient,
+    notifyApi,
     whereaboutsApi,
     oauthApi,
     prisonApi,

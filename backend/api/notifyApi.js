@@ -1,14 +1,14 @@
 const { NotifyClient } = require('notifications-node-client')
-const config = require('./config')
+const config = require('../config')
 
-const notifyClient = config.notifyClient.enabled
+const notifyApi = config.notifications.enabled
   ? new NotifyClient(config.notifications.notifyKey)
   : {
-      async sendEmail() {
-        return null
+      sendEmail() {
+        return Promise.resolve({})
       },
     }
 
 module.exports = {
-  notifyClient,
+  notifyApi,
 }

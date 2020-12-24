@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import DeleteBooking from '../controllers/appointments/deleteBooking'
-import AppointmentService from '../services/appointmentsService'
+import AppointmentService from '../services/appointmentService'
 import { BookingDetails } from '../services/model'
 
-jest.mock('../services/appointmentsService')
+jest.mock('../services/appointmentService')
 
 describe('Delete Booking', () => {
   const appointmentService = new AppointmentService(null, null, null) as jest.Mocked<AppointmentService>

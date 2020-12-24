@@ -19,7 +19,7 @@ const toEvent = event => ({
   eventDescription: getEventDescription(event),
 })
 
-module.exports = (prisonApi, appointmentsService) => {
+module.exports = (prisonApi, appointmentService) => {
   const getAppointmentsAtLocationEnhanceWithLocationId = (context, agency, locationId, date) =>
     new Promise((resolve, reject) => {
       prisonApi
@@ -65,7 +65,7 @@ module.exports = (prisonApi, appointmentsService) => {
     context,
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
   ) => {
-    const locations = await appointmentsService.getVideoLinkLocations(context, agencyId)
+    const locations = await appointmentService.getVideoLinkLocations(context, agencyId)
 
     const eventsAtLocations = await getAppointmentsAtLocations(context, {
       agency: agencyId,

@@ -1,11 +1,11 @@
 const { selectCourtAppointmentRoomsFactory } = require('../controllers/appointments/selectCourtAppointmentRooms')
-const { notifyClient } = require('../shared/notifyClient')
+const { notifyApi } = require('../api/notifyApi')
 const config = require('../config')
 
 describe('Select court appointment rooms', () => {
   const prisonApi = {}
   const oauthApi = {}
-  const appointmentsService = {}
+  const appointmentService = {}
   const existingEventsService = {}
   let service
 
@@ -50,9 +50,9 @@ describe('Select court appointment rooms', () => {
     prisonApi.getLocation = jest.fn()
 
     oauthApi.userEmail = jest.fn()
-    appointmentsService.getAppointmentOptions = jest.fn()
-    appointmentsService.getVideoLinkLocations = jest.fn()
-    appointmentsService.createAppointmentRequest = jest.fn()
+    appointmentService.getAppointmentOptions = jest.fn()
+    appointmentService.getVideoLinkLocations = jest.fn()
+    appointmentService.createAppointmentRequest = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()
@@ -60,7 +60,7 @@ describe('Select court appointment rooms', () => {
     req.flash = jest.fn()
     res.render = jest.fn()
 
-    appointmentsService.getAppointmentOptions.mockReturnValue({
+    appointmentService.getAppointmentOptions.mockReturnValue({
       appointmentTypes: [{ value: 'VLB', text: 'Videolink' }],
       locationTypes: [{ value: 1, text: 'Room 3' }],
     })
@@ -79,14 +79,14 @@ describe('Select court appointment rooms', () => {
 
     req.flash.mockImplementation(() => [appointmentDetails])
 
-    notifyClient.sendEmail = jest.fn()
+    notifyApi.sendEmail = jest.fn()
 
     service = selectCourtAppointmentRoomsFactory({
       prisonApi,
-      appointmentsService,
+      appointmentService,
       existingEventsService,
       oauthApi,
-      notifyClient,
+      notifyApi,
     })
   })
 
@@ -303,7 +303,7 @@ describe('Select court appointment rooms', () => {
       await createAppointments(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment')
-      expect(notifyClient.sendEmail).not.toHaveBeenCalled()
+      expect(notifyApi.sendEmail).not.toHaveBeenCalled()
     })
 
     it('should redirect to confirmation page if no pre or post rooms are required', async () => {
@@ -324,7 +324,7 @@ describe('Select court appointment rooms', () => {
       await createAppointments(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment')
-      expect(notifyClient.sendEmail).not.toHaveBeenCalled()
+      expect(notifyApi.sendEmail).not.toHaveBeenCalled()
     })
 
     it('should call the appointment service with correct appointment details', async () => {
@@ -347,7 +347,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(appointmentsService.createAppointmentRequest).toBeCalledWith(
+      expect(appointmentService.createAppointmentRequest).toBeCalledWith(
         {
           appointmentType: 'VLB',
           appointmentTypeDescription: 'Videolink',
@@ -408,8 +408,8 @@ describe('Select court appointment rooms', () => {
       const { createAppointments } = selectCourtAppointmentRoomsFactory({
         prisonApi,
         oauthApi,
-        notifyClient,
-        appointmentsService,
+        notifyApi,
+        appointmentService,
         existingEventsService,
       })
 
@@ -437,7 +437,7 @@ describe('Select court appointment rooms', () => {
         userName: 'Court User',
       }
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.confirmBookingCourtTemplateId,
         'test@example.com',
         {

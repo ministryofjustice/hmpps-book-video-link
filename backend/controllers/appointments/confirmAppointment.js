@@ -7,12 +7,12 @@ const { prepostDurations } = require('../../shared/appointmentConstants')
 
 const { formatName } = require('../../utils')
 
-const confirmAppointmentFactory = ({ prisonApi, appointmentsService }) => {
+const confirmAppointmentFactory = ({ prisonApi, appointmentService }) => {
   const index = async (req, res) => {
     const { offenderNo } = req.params
     const { activeCaseLoadId } = req.session.userDetails
 
-    const { locationTypes } = await appointmentsService.getAppointmentOptions(res.locals, activeCaseLoadId)
+    const { locationTypes } = await appointmentService.getAppointmentOptions(res.locals, activeCaseLoadId)
 
     const appointmentDetails = req.flash('appointmentDetails')
     if (!appointmentDetails || !appointmentDetails.length) throw new Error('Appointment details are missing')

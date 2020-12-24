@@ -1,5 +1,5 @@
 import type prisonApiTypes from 'prisonApi'
-import AppointmentsService from './appointmentsService'
+import AppointmentService from './appointmentService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
@@ -73,10 +73,10 @@ describe('Appointments service', () => {
   const appointmentTypes = [{ code: 'ACTI', description: 'Activities', activeFlag: 'Y' as const, domain: '' }]
   const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj'), room(27188, 'RES-MCASU-MCASU', null)]
 
-  let appointmentService: AppointmentsService
+  let appointmentService: AppointmentService
 
   beforeEach(() => {
-    appointmentService = new AppointmentsService(prisonApi, whereaboutsApi, notificationService)
+    appointmentService = new AppointmentService(prisonApi, whereaboutsApi, notificationService)
   })
 
   afterEach(() => {

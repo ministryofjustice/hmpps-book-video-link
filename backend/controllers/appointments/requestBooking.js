@@ -62,9 +62,9 @@ const extractObjectFromFlash = ({ req, key }) =>
 const getBookingDetails = req => extractObjectFromFlash({ req, key: 'requestBooking' })
 const packBookingDetails = (req, data) => req.flash('requestBooking', data)
 
-const requestBookingFactory = ({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi }) => {
+const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi }) => {
   const sendEmail = ({ templateId, email, personalisation }) =>
-    notifyClient.sendEmail(templateId, email, {
+    notifyApi.sendEmail(templateId, email, {
       personalisation,
       reference: null,
     })

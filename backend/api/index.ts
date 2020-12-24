@@ -1,10 +1,11 @@
-const WhereaboutsApi = require('./api/whereaboutsApi')
-const Client = require('./api/oauthEnabledClient')
+import WhereaboutsApi from './whereaboutsApi'
+import Client from './oauthEnabledClient'
 
-const config = require('./config')
-const PrisonApi = require('./api/prisonApi')
-const { oauthApiFactory } = require('./api/oauthApi')
-const { tokenVerificationApiFactory } = require('./api/tokenVerificationApi')
+import config from '../config'
+import PrisonApi from './prisonApi'
+import { oauthApiFactory } from './oauthApi'
+import { tokenVerificationApiFactory } from './tokenVerificationApi'
+import { notifyApi } from './notifyApi'
 
 const prisonApi = new PrisonApi(
   new Client({
@@ -35,9 +36,12 @@ const tokenVerificationApi = tokenVerificationApiFactory(
   })
 )
 
-module.exports = {
-  prisonApi,
-  whereaboutsApi,
+export const apis = {
+  notifyApi,
   oauthApi,
+  prisonApi,
   tokenVerificationApi,
+  whereaboutsApi,
 }
+
+export type Apis = typeof apis

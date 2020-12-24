@@ -1,17 +1,12 @@
 const express = require('express')
 const { addCourtAppointmentsFactory } = require('../../controllers/appointments/addCourtAppointment')
-const existingEventsServiceFactory = require('../../services/existingEventsService')
-const availableSlots = require('../../services/availableSlotsService')
 const checkAppointmentRooms = require('../../middleware/checkAppointmentRooms')
 const asyncMiddleware = require('../../middleware/asyncMiddleware')
 const withRetryLink = require('../../middleware/withRetryLink')
 
 const router = express.Router({ mergeParams: true })
 
-const controller = ({ prisonApi, appointmentsService }) => {
-  const existingEventsService = existingEventsServiceFactory(prisonApi, appointmentsService)
-  const availableSlotsService = availableSlots({ existingEventsService, appointmentsService })
-
+const controller = ({ prisonApi, existingEventsService, availableSlotsService }) => {
   const { index, validateInput, goToCourtSelection } = addCourtAppointmentsFactory(prisonApi)
 
   router.get('/', withRetryLink('/prisoner-search'), asyncMiddleware(index))

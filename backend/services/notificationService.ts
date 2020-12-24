@@ -3,10 +3,10 @@ import log from '../log'
 import { Context, BookingDetails } from './model'
 
 export = class NotificationService {
-  constructor(private readonly oauthApi: any, private readonly notifyClient: any) {}
+  constructor(private readonly oauthApi: any, private readonly notifyApi: any) {}
 
   private sendEmail({ templateId, email, personalisation }): Promise<void> {
-    return this.notifyClient.sendEmail(templateId, email, {
+    return this.notifyApi.sendEmail(templateId, email, {
       personalisation,
       reference: null,
     })

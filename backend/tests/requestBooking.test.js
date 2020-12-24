@@ -10,7 +10,7 @@ const config = require('../config')
 
 const { requestBookingFactory } = require('../controllers/appointments/requestBooking')
 const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
-const { notifyClient } = require('../shared/notifyClient')
+const { notifyApi } = require('../api/notifyApi')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
 const { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId } = config.notifications
@@ -44,7 +44,7 @@ describe('Request a booking', () => {
     req.flash.mockImplementation(() => [])
 
     logError = jest.fn()
-    notifyClient.sendEmail = jest.fn().mockResolvedValue({})
+    notifyApi.sendEmail = jest.fn().mockResolvedValue({})
     whereaboutsApi.getCourtLocations = jest.fn()
     oauthApi.userEmail = jest.fn()
     oauthApi.userDetails = jest.fn()
@@ -55,7 +55,7 @@ describe('Request a booking', () => {
     oauthApi.userEmail.mockReturnValue({ email: 'test@test' })
     oauthApi.userDetails.mockReturnValue({ name: 'Staff member' })
 
-    controller = requestBookingFactory({ logError, notifyClient, whereaboutsApi, oauthApi, prisonApi })
+    controller = requestBookingFactory({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi })
 
     // @ts-ignore
     raiseAnalyticsEvent.mockRestore()
@@ -544,7 +544,7 @@ describe('Request a booking', () => {
         prison: 'HMP Wandsworth',
       }
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         requestBookingCourtTemplateVLBAdminId,
         'test@justice.gov.uk',
         expect.objectContaining({
@@ -553,7 +553,7 @@ describe('Request a booking', () => {
         })
       )
 
-      expect(notifyClient.sendEmail).toHaveBeenCalledWith(
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         requestBookingCourtTemplateRequesterId,
         'test@test',
         expect.objectContaining({
