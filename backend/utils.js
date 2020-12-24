@@ -270,7 +270,7 @@ const extractLocation = (location, agencyId) => {
  * @returns {Promise<T[]>}
  */
 const flattenCalls = arg => {
-  return Promise.all(arg).then(r => r.flatMap(array => array))
+  return Promise.all(arg).then(r => r.flat())
 }
 
 module.exports = {

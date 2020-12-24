@@ -45,14 +45,26 @@ export = class BookingService {
     return offenderBooking ? formatName(offenderBooking.firstName, offenderBooking.lastName) : ''
   }
 
-  private async toAppointment(context: any, prisons: Prison[], locations: Location[], bookings: VideoLinkBooking[]) {
+  private toMap<T, F extends keyof T>(items: T[] = [], name: F): Map<T[F], T> {
+    return items.reduce((result, item) => {
+      result.set(item[name], item)
+      return result
+    }, new Map<T[F], T>())
+  }
+
+  private async toAppointment(
+    context: any,
+    prisons: Map<string, Prison>,
+    locations: Map<number, Location>,
+    bookings: VideoLinkBooking[]
+  ) {
     const offenderBookings = await this.prisonApi.getPrisonBookings(context, [
       ...new Set(bookings.map(b => b.bookingId)),
     ])
 
     return (booking: VideoLinkBooking, slot: Appointment, hearingType: HearingType) => {
-      const location = locations.find(loc => loc.locationId === slot.locationId)
-      const prison = prisons.find(pri => pri.agencyId === location?.agencyId)
+      const location = locations.get(slot.locationId)
+      const prison = prisons.get(location?.agencyId)
       return {
         locationId: slot.locationId,
         court: booking.court,
@@ -74,7 +86,7 @@ export = class BookingService {
     courtFilter: string
   ): Promise<AppointmentResult> {
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
-      this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate.format('YYYY-MM-DD'))
+      this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate)
     )
     const locationRequests = app.videoLinkEnabledFor.map(prison =>
       this.prisonApi.getLocationsForAppointments(context, prison)
@@ -82,8 +94,8 @@ export = class BookingService {
 
     const [courts, prisons, locations, bookings] = await Promise.all([
       this.whereaboutsApi.getCourtLocations(context).then(r => r.courtLocations),
-      this.prisonApi.getAgencies(context),
-      flattenCalls(locationRequests),
+      this.prisonApi.getAgencies(context).then(result => this.toMap(result, 'agencyId')),
+      flattenCalls(locationRequests).then(result => this.toMap(result, 'locationId')),
       flattenCalls(bookingRequests),
     ])
 

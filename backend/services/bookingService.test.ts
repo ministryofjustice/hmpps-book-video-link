@@ -49,6 +49,7 @@ describe('Add court appointment', () => {
   beforeEach(() => {
     whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
     prisonApi.getAgencies.mockResolvedValue([])
+    prisonApi.getLocationsForAppointments.mockResolvedValue([])
     bookingService = new BookingService(prisonApi, whereaboutsApi)
     config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
