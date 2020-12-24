@@ -8,7 +8,7 @@ process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
 process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 const config = require('../config')
 
-const { requestBookingFactory } = require('../controllers/appointments/requestBooking')
+const { requestBookingFactory } = require('../routes/requestBooking/requestBooking')
 const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyApi } = require('../api/notifyApi')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')

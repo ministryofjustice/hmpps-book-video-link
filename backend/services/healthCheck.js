@@ -1,4 +1,4 @@
-const { serviceCheckFactory } = require('../controllers/healthCheck')
+const { serviceCheckFactory } = require('../api/healthCheck')
 
 const service = (name, url) => {
   const healthUrl = `${url.replace(/\/$/, '')}/health/ping`

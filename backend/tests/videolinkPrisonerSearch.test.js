@@ -1,4 +1,4 @@
-const videolinkPrisonerSearchController = require('../controllers/videolink/search/videolinkPrisonerSearch')
+const videolinkPrisonerSearchController = require('../routes/createBooking/videolinkPrisonerSearchController')
 const config = require('../config')
 
 config.app.videoLinkEnabledFor = ['MDI']

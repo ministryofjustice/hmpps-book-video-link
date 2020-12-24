@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 import moment from 'moment'
-import BookingService from '../services/bookingService'
+import BookingService from '../../services/bookingService'
 
 export = (bookingService: BookingService): RequestHandler => async (req, res) => {
   const { date, courtOption } = req.query as { date: string; courtOption?: string }

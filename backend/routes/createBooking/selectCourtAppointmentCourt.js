@@ -15,7 +15,7 @@ const unpackAppointmentDetails = req => {
   )
 }
 
-const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
+module.exports = function selectCourtAppointmentCourtFactory(prisonApi, whereaboutsApi) {
   const getCourts = async context => {
     const { courtLocations } = await whereaboutsApi.getCourtLocations(context)
 
@@ -102,8 +102,4 @@ const selectCourtAppointmentCourtFactory = (prisonApi, whereaboutsApi) => {
   }
 
   return { index, post }
-}
-
-module.exports = {
-  selectCourtAppointmentCourtFactory,
 }

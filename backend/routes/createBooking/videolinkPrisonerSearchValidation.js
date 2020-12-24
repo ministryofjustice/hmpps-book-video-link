@@ -1,4 +1,4 @@
-const dobValidation = require('../../../shared/dobValidation')
+const dobValidation = require('../../shared/dobValidation')
 
 module.exports = formValues => {
   const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear } = formValues

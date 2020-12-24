@@ -1,4 +1,4 @@
-const { addCourtAppointmentsFactory } = require('../controllers/appointments/addCourtAppointment')
+const addCourtAppointmentsFactory = require('../routes/createBooking/addCourtAppointment')
 
 const prisonApi = {}
 

@@ -1,4 +1,4 @@
-const { selectCourtAppointmentCourtFactory } = require('../controllers/appointments/selectCourtAppointmentCourt')
+const selectCourtAppointmentCourtFactory = require('../routes/createBooking/selectCourtAppointmentCourt')
 
 describe('Select court appoinment court', () => {
   const prisonApi = {}

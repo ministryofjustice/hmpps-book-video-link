@@ -83,13 +83,13 @@ const validate = ({
   return errors
 }
 
-const selectCourtAppointmentRoomsFactory = ({
+module.exports = function selectCourtAppointmentRoomsFactory({
   prisonApi,
   appointmentService,
   existingEventsService,
   oauthApi,
   notifyApi,
-}) => {
+}) {
   const index = async (req, res) => {
     const { offenderNo, agencyId } = req.params
     const { activeCaseLoadId } = req.session.userDetails
@@ -345,8 +345,4 @@ const selectCourtAppointmentRoomsFactory = ({
     validateInput,
     createAppointments,
   }
-}
-
-module.exports = {
-  selectCourtAppointmentRoomsFactory,
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import DeleteBooking from '../controllers/appointments/deleteBooking'
+import DeleteBooking from '../routes/changeBooking/deleteBookingController'
 import AppointmentService from '../services/appointmentService'
 import { BookingDetails } from '../services/model'
 

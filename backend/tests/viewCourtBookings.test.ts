@@ -1,5 +1,5 @@
 import moment from 'moment'
-import viewCourtBookingsController from '../controllers/viewCourtBookingsController'
+import viewCourtBookingsController from '../routes/viewBookings/viewCourtBookingsController'
 import BookingService from '../services/bookingService'
 
 jest.mock('../services/bookingService')

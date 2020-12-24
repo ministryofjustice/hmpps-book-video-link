@@ -7,8 +7,8 @@ const { prepostDurations } = require('../../shared/appointmentConstants')
 
 const { formatName } = require('../../utils')
 
-const confirmAppointmentFactory = ({ prisonApi, appointmentService }) => {
-  const index = async (req, res) => {
+module.exports = ({ prisonApi, appointmentService }) => {
+  return async (req, res) => {
     const { offenderNo } = req.params
     const { activeCaseLoadId } = req.session.userDetails
 
@@ -90,9 +90,4 @@ const confirmAppointmentFactory = ({ prisonApi, appointmentService }) => {
       `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
     )
   }
-  return { index }
-}
-
-module.exports = {
-  confirmAppointmentFactory,
 }
