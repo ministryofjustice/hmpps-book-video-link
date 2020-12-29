@@ -71,9 +71,6 @@ describe('Request a booking', () => {
             value: 'WWI',
           },
         ],
-        user: {
-          displayName: 'Test User',
-        },
       })
     })
 
@@ -655,7 +652,6 @@ describe('Request a booking', () => {
           courtLocation: 'London',
         },
         title: 'The video link has been requested',
-        user: { displayName: 'Test User' },
       })
     })
 

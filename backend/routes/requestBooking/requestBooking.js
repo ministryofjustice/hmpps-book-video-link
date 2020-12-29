@@ -86,7 +86,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
       value: prison.agencyId,
     }))
     return res.render('requestBooking/requestBooking.njk', {
-      user: { displayName: req.session.userDetails.name },
       prisons: prisonDropdownValues,
     })
   }
@@ -131,7 +130,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
         value: p.agencyId,
       }))
       return res.render('requestBooking/requestBooking.njk', {
-        user: { displayName: req.session.userDetails.name },
         errors,
         prisons: prisonDropdownValues,
         formValues: req.body,
@@ -353,7 +351,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
     )
 
     return res.render('requestBooking/requestBookingConfirmation.njk', {
-      user: { displayName: req.session.userDetails.name },
       title: 'The video link has been requested',
       details: {
         prison,

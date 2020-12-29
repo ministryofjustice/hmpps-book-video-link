@@ -39,15 +39,7 @@ export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, pris
     asyncMiddleware(createBookingRequest)
   )
   routes.get('/confirmation', withRetryLink('/request-booking/confirmation'), asyncMiddleware(confirm))
-  routes.get(
-    '/prisoner-not-listed',
-    asyncMiddleware(async (req, res) => {
-      return res.render('requestBooking/prisonerNotListed.njk', {
-        url: req.originalUrl,
-        user: { displayName: req.session.userDetails.name },
-      })
-    })
-  )
+  routes.get('/prisoner-not-listed', (req, res) => res.render('requestBooking/prisonerNotListed.njk'))
 
   const router = express.Router({ mergeParams: true })
   router.use('/request-booking', routes)

@@ -52,7 +52,6 @@ describe('View court bookings', () => {
           { value: 'Southwark', text: 'Southwark' },
           { value: 'Other', text: 'Other' },
         ],
-        user: { displayName: 'Test User' },
         hearingDescriptions: {
           MAIN: 'Court hearing',
           POST: 'Post-court hearing',
@@ -88,7 +87,6 @@ describe('View court bookings', () => {
           { value: 'Southwark', text: 'Southwark' },
           { value: 'Other', text: 'Other' },
         ],
-        user: { displayName: 'Test User' },
         hearingDescriptions: {
           MAIN: 'Court hearing',
           POST: 'Post-court hearing',
@@ -128,7 +126,6 @@ describe('View court bookings', () => {
           { value: 'Southwark', text: 'Southwark' },
           { value: 'Other', text: 'Other' },
         ],
-        user: { displayName: 'Test User' },
         hearingDescriptions: {
           MAIN: 'Court hearing',
           POST: 'Post-court hearing',
