@@ -1,6 +1,6 @@
 const page = require('../page')
 
-const addCourtAppointmentPage = () =>
+const startPage = () =>
   page('Add video link date and time', {
     form: () => ({
       location: () => cy.get('#location'),
@@ -25,9 +25,9 @@ const addCourtAppointmentPage = () =>
   })
 
 export default {
-  verifyOnPage: addCourtAppointmentPage,
+  verifyOnPage: startPage,
   goTo: (caseload, offenderNo) => {
     cy.visit(`/${caseload}/offenders/${offenderNo}/add-court-appointment`)
-    return addCourtAppointmentPage()
+    return startPage()
   },
 }

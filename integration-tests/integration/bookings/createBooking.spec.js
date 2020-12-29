@@ -1,10 +1,10 @@
 const moment = require('moment')
 const offenderBasicDetails = require('../../mockApis/responses/offenderBasicDetails.json')
-const AddCourtAppointmentPage = require('../../pages/appointments/addCourtAppointmentPage')
-const ConfirmVideoLinkCourtPage = require('../../pages/appointments/confirmVideoLinkCourtPage')
-const NoAvailabilityPage = require('../../pages/appointments/noAvailabilityPage')
-const SelectCourtAppointmentCourtPage = require('../../pages/appointments/selectCourtAppointmentCourtPage')
-const SelectCourtAppointmentRoomsPage = require('../../pages/appointments/selectCourtAppointmentRoomsPage')
+const StartPage = require('../../pages/createBooking/startPage')
+const SelectCourtPage = require('../../pages/createBooking/selectCourtPage')
+const SelectRoomsPage = require('../../pages/createBooking/selectRoomsPage')
+const ConfirmPage = require('../../pages/createBooking/confirmPage')
+const NoAvailabilityPage = require('../../pages/createBooking/noAvailabilityPage')
 
 context('A user can add a video link', () => {
   before(() => {
@@ -126,11 +126,11 @@ context('A user can add a video link', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
     cy.task('stubLoginCourt')
-    const addCourtAppointmentPage = AddCourtAppointmentPage.verifyOnPage()
-    const addAppointmentForm = addCourtAppointmentPage.form()
+    const startPage = StartPage.verifyOnPage()
+    const addAppointmentForm = startPage.form()
     addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
 
-    addCourtAppointmentPage.activeDate().click()
+    startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
     addAppointmentForm.startTimeMinutes().select('55')
     addAppointmentForm.endTimeHours().select('11')
@@ -139,36 +139,36 @@ context('A user can add a video link', () => {
     addAppointmentForm.postAppointmentRequiredYes().click()
     addAppointmentForm.submitButton().click()
 
-    const selectCourtAppointmentCourtPage = SelectCourtAppointmentCourtPage.verifyOnPage()
-    selectCourtAppointmentCourtPage.offenderName().contains('John Smith')
-    selectCourtAppointmentCourtPage.prison().contains('Moorland')
-    selectCourtAppointmentCourtPage.startTime().contains('10:55')
-    selectCourtAppointmentCourtPage.endTime().contains('11:55')
-    selectCourtAppointmentCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    selectCourtAppointmentCourtPage.preTime().contains('10:35 to 10:55')
-    selectCourtAppointmentCourtPage.postTime().contains('11:55 to 12:15')
+    const selectCourtPage = SelectCourtPage.verifyOnPage()
+    selectCourtPage.offenderName().contains('John Smith')
+    selectCourtPage.prison().contains('Moorland')
+    selectCourtPage.startTime().contains('10:55')
+    selectCourtPage.endTime().contains('11:55')
+    selectCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    selectCourtPage.preTime().contains('10:35 to 10:55')
+    selectCourtPage.postTime().contains('11:55 to 12:15')
 
-    const selectCourtForm = selectCourtAppointmentCourtPage.form()
+    const selectCourtForm = selectCourtPage.form()
     selectCourtForm.court().select('London')
     selectCourtForm.submitButton().click()
 
-    const selectCourtAppointmentRoomsPage = SelectCourtAppointmentRoomsPage.verifyOnPage()
-    const selectRoomsForm = selectCourtAppointmentRoomsPage.form()
+    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
+    const selectRoomsForm = selectRoomsPage.form()
     selectRoomsForm.selectPreAppointmentLocation().select('1')
     selectRoomsForm.selectMainAppointmentLocation().select('2')
     selectRoomsForm.selectPostAppointmentLocation().select('3')
     selectRoomsForm.submitButton().click()
 
-    const confirmVideoLinkCourtPage = ConfirmVideoLinkCourtPage.verifyOnPage()
-    confirmVideoLinkCourtPage.offenderName().contains('John Smith')
-    confirmVideoLinkCourtPage.prison().contains('Moorland')
-    confirmVideoLinkCourtPage.room().contains('Room 2')
-    confirmVideoLinkCourtPage.startTime().contains('10:55')
-    confirmVideoLinkCourtPage.endTime().contains('11:55')
-    confirmVideoLinkCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    confirmVideoLinkCourtPage.legalBriefingBefore().contains('10:35 to 10:55')
-    confirmVideoLinkCourtPage.legalBriefingAfter().contains('11:55 to 12:15')
-    confirmVideoLinkCourtPage.courtLocation().contains('London')
+    const confirmPage = ConfirmPage.verifyOnPage()
+    confirmPage.offenderName().contains('John Smith')
+    confirmPage.prison().contains('Moorland')
+    confirmPage.room().contains('Room 2')
+    confirmPage.startTime().contains('10:55')
+    confirmPage.endTime().contains('11:55')
+    confirmPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmPage.legalBriefingBefore().contains('10:35 to 10:55')
+    confirmPage.legalBriefingAfter().contains('11:55 to 12:15')
+    confirmPage.courtLocation().contains('London')
 
     cy.task('getBookingRequest').then(request => {
       expect(request).to.deep.equal({
@@ -259,11 +259,11 @@ context('A user can add a video link', () => {
       date: tomorrow.format('yyyy-MM-DD'),
     })
 
-    const addCourtAppointmentPage = AddCourtAppointmentPage.verifyOnPage()
-    const addAppointmentForm = addCourtAppointmentPage.form()
+    const startPage = StartPage.verifyOnPage()
+    const addAppointmentForm = startPage.form()
     addAppointmentForm.date().type(tomorrow.format('DD/MM/YYYY'))
 
-    addCourtAppointmentPage.activeDate().click()
+    startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
     addAppointmentForm.startTimeMinutes().select('55')
     addAppointmentForm.endTimeHours().select('11')
@@ -341,11 +341,11 @@ context('A user can add a video link', () => {
       date: tomorrow.format('yyyy-MM-DD'),
     })
 
-    const addCourtAppointmentPage = AddCourtAppointmentPage.verifyOnPage()
-    const addAppointmentForm = addCourtAppointmentPage.form()
+    const startPage = StartPage.verifyOnPage()
+    const addAppointmentForm = startPage.form()
     addAppointmentForm.date().type(tomorrow.format('DD/MM/YYYY'))
 
-    addCourtAppointmentPage.activeDate().click()
+    startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
     addAppointmentForm.startTimeMinutes().select('55')
     addAppointmentForm.endTimeHours().select('11')

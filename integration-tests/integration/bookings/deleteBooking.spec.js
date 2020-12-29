@@ -1,8 +1,8 @@
 const moment = require('moment')
-const CourtVideoLinkBookingsPage = require('../../pages/videolink/courtVideoBookingsPage')
-const ConfirmDeletionPage = require('../../pages/videolink/confirmDeletionPage')
-const VideoLinkDeletedPage = require('../../pages/videolink/videoLinkDeletedPage')
-const PrisonerSearchPage = require('../../pages/videolink/prisonerSearchPage')
+const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
+const ConfirmDeletionPage = require('../../pages/changeBooking/confirmDeletionPage')
+const VideoLinkDeletedPage = require('../../pages/changeBooking/videoLinkDeletedPage')
+const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage')
 
 context('A user can delete a booking', () => {
   before(() => {

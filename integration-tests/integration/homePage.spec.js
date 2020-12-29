@@ -1,4 +1,4 @@
-const CourtVideoLinkHomePage = require('../../pages/videolink/courtVideoLinkHomePage')
+const HomePage = require('../pages/homePage')
 
 context('A user can view the video link home page', () => {
   before(() => {
@@ -15,7 +15,7 @@ context('A user can view the video link home page', () => {
 
     cy.visit('/')
 
-    CourtVideoLinkHomePage.verifyOnPage()
+    HomePage.verifyOnPage()
   })
 
   it('should redirect a video court user to the video link home page', () => {
@@ -24,12 +24,14 @@ context('A user can view the video link home page', () => {
 
     cy.visit('/')
 
-    CourtVideoLinkHomePage.verifyOnPage()
+    HomePage.verifyOnPage()
   })
 
   it('A user can view the video link home page', () => {
-    const courtVideoLinkHomePage = CourtVideoLinkHomePage.goTo()
-    courtVideoLinkHomePage.bookingTitle().contains('Book a video link for a single person')
-    courtVideoLinkHomePage.appointmentsListTitle().contains('View all video link bookings')
+    const homePage = HomePage.goTo()
+
+    homePage.bookingTitle().contains('Book a video link for a single person')
+
+    homePage.appointmentsListTitle().contains('View all video link bookings')
   })
 })

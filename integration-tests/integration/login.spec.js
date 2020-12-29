@@ -1,4 +1,4 @@
-const CourtVideoLinkHomePage = require('../../pages/videolink/courtVideoLinkHomePage')
+const HomePage = require('../pages/homePage')
 
 context('Login functionality', () => {
   before(() => {
@@ -33,7 +33,7 @@ context('Login functionality', () => {
   it('Logout takes user to login page', () => {
     cy.task('stubLoginCourt')
     cy.login()
-    CourtVideoLinkHomePage.verifyOnPage()
+    HomePage.verifyOnPage()
 
     // can't do a visit here as cypress requires only one domain
     cy.request('/auth/logout').its('body').should('contain', 'Sign in')
@@ -42,7 +42,7 @@ context('Login functionality', () => {
   it('Token verification failure clears user session', () => {
     cy.task('stubLoginCourt')
     cy.login()
-    CourtVideoLinkHomePage.verifyOnPage()
+    HomePage.verifyOnPage()
     cy.task('stubVerifyToken', false)
 
     // can't do a visit here as cypress requires only one domain

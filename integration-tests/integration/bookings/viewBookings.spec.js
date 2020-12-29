@@ -1,5 +1,5 @@
 const moment = require('moment')
-const CourtVideoLinkBookingsPage = require('../../pages/videolink/courtVideoBookingsPage')
+const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
 
 context('A user can view the video link home page', () => {
   before(() => {

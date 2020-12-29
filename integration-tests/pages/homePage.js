@@ -1,4 +1,4 @@
-const page = require('../page')
+const page = require('./page')
 
 const courtVideoLinkHomePage = () =>
   page('Book a video link with a prison', {

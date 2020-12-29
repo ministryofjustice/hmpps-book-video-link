@@ -1,6 +1,6 @@
 const page = require('../page')
 
-const selectCourtAppointmentRoomsPage = () =>
+const selectRoomsPage = () =>
   page('Select an available room in the prison', {
     form: () => ({
       selectPreAppointmentLocation: () => cy.get('#selectPreAppointmentLocation'),
@@ -11,9 +11,9 @@ const selectCourtAppointmentRoomsPage = () =>
   })
 
 export default {
-  verifyOnPage: selectCourtAppointmentRoomsPage,
+  verifyOnPage: selectRoomsPage,
   goTo: (caseload, offenderNo) => {
     cy.visit(`/${caseload}/offenders/${offenderNo}/add-court-appointment/select-rooms`)
-    return selectCourtAppointmentRoomsPage()
+    return selectRoomsPage()
   },
 }
