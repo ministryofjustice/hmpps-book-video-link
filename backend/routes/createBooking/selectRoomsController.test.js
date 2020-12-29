@@ -5,7 +5,7 @@ const config = require('../../config')
 describe('Select court appointment rooms', () => {
   const prisonApi = {}
   const oauthApi = {}
-  const appointmentService = {}
+  const bookingService = {}
   const referenceDataService = {}
   const existingEventsService = {}
   let service
@@ -53,7 +53,7 @@ describe('Select court appointment rooms', () => {
     oauthApi.userEmail = jest.fn()
     referenceDataService.getAppointmentOptions = jest.fn()
     referenceDataService.getVideoLinkLocations = jest.fn()
-    appointmentService.createBooking = jest.fn()
+    bookingService.create = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()
@@ -84,7 +84,7 @@ describe('Select court appointment rooms', () => {
 
     service = selectRoomsController({
       prisonApi,
-      appointmentService,
+      bookingService,
       referenceDataService,
       existingEventsService,
       oauthApi,
@@ -349,7 +349,7 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(appointmentService.createBooking).toBeCalledWith(
+      expect(bookingService.create).toBeCalledWith(
         {},
         {
           bookingId: 1,
@@ -379,7 +379,7 @@ describe('Select court appointment rooms', () => {
         prisonApi,
         oauthApi,
         notifyApi,
-        appointmentService,
+        bookingService,
         referenceDataService,
         existingEventsService,
       })

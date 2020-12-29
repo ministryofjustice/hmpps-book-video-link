@@ -85,7 +85,7 @@ const validate = ({
 
 module.exports = function selectCourtAppointmentRoomsFactory({
   prisonApi,
-  appointmentService,
+  bookingService,
   referenceDataService,
   existingEventsService,
   oauthApi,
@@ -330,7 +330,7 @@ module.exports = function selectCourtAppointmentRoomsFactory({
       }
     }
 
-    await appointmentService.createBooking(res.locals, {
+    await bookingService.create(res.locals, {
       bookingId: appointmentDetails.bookingId,
       court: appointmentDetails.court,
       comment,

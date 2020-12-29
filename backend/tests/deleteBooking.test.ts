@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import DeleteBooking from '../routes/changeBooking/deleteBookingController'
-import AppointmentService from '../services/appointmentService'
+import BookingService from '../services/bookingService'
 import { BookingDetails } from '../services/model'
 
-jest.mock('../services/appointmentService')
+jest.mock('../services/bookingService')
 
 describe('Delete Booking', () => {
-  const appointmentService = new AppointmentService(null, null, null) as jest.Mocked<AppointmentService>
+  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
   let controller: DeleteBooking
   const req = ({
     originalUrl: 'http://localhost',
@@ -75,14 +75,14 @@ describe('Delete Booking', () => {
   }
 
   beforeEach(() => {
-    controller = new DeleteBooking(appointmentService)
+    controller = new DeleteBooking(bookingService)
   })
 
   describe('viewDelete', () => {
     const errors = [{ href: '/error', text: 'An error has occurred' }] as any
 
     it('should return booking details', async () => {
-      appointmentService.getBookingDetails.mockResolvedValue(bookingDetails)
+      bookingService.get.mockResolvedValue(bookingDetails)
       req.flash.mockReturnValue(errors)
 
       await controller.viewDelete()(req, res, null)
@@ -117,11 +117,11 @@ describe('Delete Booking', () => {
         offenderNo: 'A12345',
         bookingId: 789,
       }
-      appointmentService.deleteBooking.mockResolvedValue(offenderNameAndBookingIds)
+      bookingService.delete.mockResolvedValue(offenderNameAndBookingIds)
 
       await controller.confirmDeletion()(req, res, null)
       expect(res.redirect).toHaveBeenCalledWith('/video-link-deleted')
-      expect(appointmentService.deleteBooking).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 123)
+      expect(bookingService.delete).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 123)
     })
   })
 

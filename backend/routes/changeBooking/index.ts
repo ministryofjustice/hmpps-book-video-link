@@ -3,8 +3,8 @@ import { Services } from '../../services'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import DeleteBookingController from './deleteBookingController'
 
-export default function createRoutes({ appointmentService }: Services): Router {
-  const deleteBooking = new DeleteBookingController(appointmentService)
+export default function createRoutes({ bookingService }: Services): Router {
+  const deleteBooking = new DeleteBookingController(bookingService)
 
   const router = express.Router({ mergeParams: true })
 

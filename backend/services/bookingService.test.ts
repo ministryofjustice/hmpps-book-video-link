@@ -1,9 +1,9 @@
 import type { Location, InmateDetail } from 'prisonApi'
-import AppointmentService from './appointmentService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
 import { BookingDetails, NewBooking } from './model'
+import BookingService from './bookingService'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -64,20 +64,20 @@ const bookingDetail: BookingDetails = {
   },
 }
 
-describe('Appointments service', () => {
+describe('Booking service', () => {
   const context = {}
-  let appointmentService: AppointmentService
+  let service: BookingService
 
   beforeEach(() => {
-    appointmentService = new AppointmentService(prisonApi, whereaboutsApi, notificationService)
+    service = new BookingService(prisonApi, whereaboutsApi, notificationService)
   })
 
   afterEach(() => {
     jest.resetAllMocks()
   })
-  describe('Create booking', () => {
+  describe('Create', () => {
     it('Creating a booking with mandatory fields', async () => {
-      await appointmentService.createBooking(context, {
+      await service.create(context, {
         bookingId: 1000,
         court: 'City of London',
         comment: 'some comment',
@@ -122,7 +122,7 @@ describe('Appointments service', () => {
     })
 
     it('Extra fields are removed from locations', async () => {
-      await appointmentService.createBooking(context, {
+      await service.create(context, {
         bookingId: 1000,
         court: 'City of London',
         comment: 'some comment',
@@ -169,7 +169,7 @@ describe('Appointments service', () => {
     })
 
     it('Creating a booking with only mandatory fields', async () => {
-      await appointmentService.createBooking(context, {
+      await service.create(context, {
         bookingId: 1000,
         court: 'City of London',
         comment: undefined,
@@ -213,7 +213,7 @@ describe('Appointments service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      const result = await appointmentService.getBookingDetails(context, 123)
+      const result = await service.get(context, 123)
 
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
@@ -242,7 +242,7 @@ describe('Appointments service', () => {
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      await appointmentService.deleteBooking(context, 'A_USER', 123)
+      await service.delete(context, 'A_USER', 123)
 
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
       expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
@@ -256,7 +256,7 @@ describe('Appointments service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      return expect(appointmentService.deleteBooking(context, 'A_USER', 123)).resolves.toStrictEqual({
+      return expect(service.delete(context, 'A_USER', 123)).resolves.toStrictEqual({
         offenderNo: 'A1234AA',
         offenderName: 'John Doe',
       })

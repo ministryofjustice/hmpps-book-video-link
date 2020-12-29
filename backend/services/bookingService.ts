@@ -7,34 +7,31 @@ import type PrisonApi from '../api/prisonApi'
 import { BookingDetails, OffenderIdentifiers, Context, NewBooking } from './model'
 import NotificationService from './notificationService'
 
-export = class AppointmentService {
+export = class BookingService {
   constructor(
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService
   ) {}
 
-  /** Trim object to only include relevant fields. */
-  private trim(appointment: NewAppointment): NewAppointment {
+  /** filter object keys to only include fields relevant to type. */
+  private pick(appointment: NewAppointment): NewAppointment {
     return { locationId: appointment.locationId, startTime: appointment.startTime, endTime: appointment.endTime }
   }
 
-  public async createBooking(
-    context: Context,
-    { bookingId, court, comment, main, pre, post }: NewBooking
-  ): Promise<void> {
+  public async create(context: Context, { bookingId, court, comment, main, pre, post }: NewBooking): Promise<void> {
     await this.whereaboutsApi.createVideoLinkBooking(context, {
       bookingId,
       court,
       madeByTheCourt: true,
       ...(comment ? { comment } : {}),
       main,
-      ...(pre ? { pre: this.trim(pre) } : {}),
-      ...(post ? { post: this.trim(post) } : {}),
+      ...(pre ? { pre: this.pick(pre) } : {}),
+      ...(post ? { post: this.pick(post) } : {}),
     })
   }
 
-  public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {
+  public async get(context: Context, videoBookingId: number): Promise<BookingDetails> {
     const bookingDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
 
     const [prisonBooking, agencyDetails, locations] = await Promise.all([
@@ -66,12 +63,8 @@ export = class AppointmentService {
     }
   }
 
-  public async deleteBooking(
-    context: Context,
-    currentUsername: string,
-    videoBookingId: number
-  ): Promise<OffenderIdentifiers> {
-    const details = await this.getBookingDetails(context, videoBookingId)
+  public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {
+    const details = await this.get(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)
     await this.notificationService.sendCancellationEmails(context, currentUsername, details)
     return {
