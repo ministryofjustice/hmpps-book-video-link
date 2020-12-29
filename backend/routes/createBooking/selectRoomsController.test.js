@@ -53,7 +53,7 @@ describe('Select court appointment rooms', () => {
     oauthApi.userEmail = jest.fn()
     referenceDataService.getAppointmentOptions = jest.fn()
     referenceDataService.getVideoLinkLocations = jest.fn()
-    appointmentService.createAppointmentRequest = jest.fn()
+    appointmentService.createBooking = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()
@@ -349,48 +349,16 @@ describe('Select court appointment rooms', () => {
 
       await createAppointments(req, res)
 
-      expect(appointmentService.createAppointmentRequest).toBeCalledWith(
+      expect(appointmentService.createBooking).toBeCalledWith(
+        {},
         {
-          appointmentType: 'VLB',
-          appointmentTypeDescription: 'Videolink',
           bookingId: 1,
-          comment: 'Test',
           court: 'Leeds',
-          date: '10/10/2019',
-          endTime: '2017-10-10T14:00',
-          firstName: 'john',
-          lastName: 'doe',
-          locationId: 1,
-          preAppointmentRequired: 'yes',
-          postAppointmentRequired: 'yes',
-          preLocations: [
-            {
-              text: 'Room 1',
-              value: 1,
-            },
-          ],
-          postLocations: [
-            {
-              text: 'Room 3',
-              value: 3,
-            },
-          ],
-          mainLocations: [
-            {
-              text: 'Room 2',
-              value: 2,
-            },
-          ],
-          offenderNo: 'A12345',
-          startTime: '2017-10-10T11:00',
-        },
-        'Test',
-        {
-          postAppointment: { endTime: '2017-10-10T14:20:00', locationId: 3, startTime: '2017-10-10T14:00' },
-          preAppointment: { endTime: '2017-10-10T11:00', locationId: 1, startTime: '2017-10-10T10:40:00' },
-        },
-        '2',
-        {}
+          comment: 'Test',
+          pre: { endTime: '2017-10-10T11:00', locationId: 1, startTime: '2017-10-10T10:40:00' },
+          main: { endTime: '2017-10-10T14:00', locationId: 2, startTime: '2017-10-10T11:00' },
+          post: { endTime: '2017-10-10T14:20:00', locationId: 3, startTime: '2017-10-10T14:00' },
+        }
       )
     })
     it('should try to send email with court template when court user has email', async () => {

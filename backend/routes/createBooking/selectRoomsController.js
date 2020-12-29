@@ -330,13 +330,18 @@ module.exports = function selectCourtAppointmentRoomsFactory({
       }
     }
 
-    await appointmentService.createAppointmentRequest(
-      appointmentDetails,
+    await appointmentService.createBooking(res.locals, {
+      bookingId: appointmentDetails.bookingId,
+      court: appointmentDetails.court,
       comment,
-      prepostAppointments,
-      selectMainAppointmentLocation,
-      res.locals
-    )
+      pre: prepostAppointments.preAppointment,
+      main: {
+        locationId: parseInt(selectMainAppointmentLocation, 10),
+        startTime: appointmentDetails.startTime,
+        endTime: appointmentDetails.endTime,
+      },
+      post: prepostAppointments.postAppointment,
+    })
 
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }

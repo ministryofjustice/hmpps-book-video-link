@@ -1,10 +1,10 @@
 import moment from 'moment'
-import { Appointment, NewVideoLinkBooking } from 'whereaboutsApi'
+import { Appointment, NewAppointment } from 'whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
-import { BookingDetails, OffenderIdentifiers, Context } from './model'
+import { BookingDetails, OffenderIdentifiers, Context, NewBooking } from './model'
 import NotificationService from './notificationService'
 
 export = class AppointmentService {
@@ -14,37 +14,24 @@ export = class AppointmentService {
     private readonly notificationService: NotificationService
   ) {}
 
-  public async createAppointmentRequest(
-    appointmentDetails,
-    comment: string,
-    prepostAppointments,
-    mainLocationId: string,
-    context: Context
+  /** Trim object to only include relevant fields. */
+  private trim(appointment: NewAppointment): NewAppointment {
+    return { locationId: appointment.locationId, startTime: appointment.startTime, endTime: appointment.endTime }
+  }
+
+  public async createBooking(
+    context: Context,
+    { bookingId, court, comment, main, pre, post }: NewBooking
   ): Promise<void> {
-    const appointment: NewVideoLinkBooking = {
-      bookingId: appointmentDetails.bookingId,
-      court: appointmentDetails.court,
+    await this.whereaboutsApi.createVideoLinkBooking(context, {
+      bookingId,
+      court,
       madeByTheCourt: true,
-      main: {
-        locationId: parseInt(mainLocationId, 10),
-        startTime: appointmentDetails.startTime,
-        endTime: appointmentDetails.endTime,
-      },
-    }
-
-    if (comment) {
-      appointment.comment = comment
-    }
-
-    if (prepostAppointments.preAppointment) {
-      appointment.pre = prepostAppointments.preAppointment
-    }
-
-    if (prepostAppointments.postAppointment) {
-      appointment.post = prepostAppointments.postAppointment
-    }
-
-    await this.whereaboutsApi.createVideoLinkBooking(context, appointment)
+      ...(comment ? { comment } : {}),
+      main,
+      ...(pre ? { pre: this.trim(pre) } : {}),
+      ...(post ? { post: this.trim(post) } : {}),
+    })
   }
 
   public async getBookingDetails(context: Context, videoBookingId: number): Promise<BookingDetails> {

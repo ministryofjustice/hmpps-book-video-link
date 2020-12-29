@@ -3,7 +3,7 @@ import AppointmentService from './appointmentService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
-import { BookingDetails } from './model'
+import { BookingDetails, NewBooking } from './model'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -77,38 +77,26 @@ describe('Appointments service', () => {
   })
   describe('Create booking', () => {
     it('Creating a booking with mandatory fields', async () => {
-      const appointmentDetails = {
+      await appointmentService.createBooking(context, {
         bookingId: 1000,
-        date: '20/11/2020',
-        startTime: '2020-11-20T18:00:00',
-        endTime: '2020-11-20T19:00:00',
-        startTimeHours: '18',
-        startTimeMinutes: '00',
-        endTimeHours: '19',
-        endTimeMinutes: '00',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
         court: 'City of London',
-      }
-
-      await appointmentService.createAppointmentRequest(
-        appointmentDetails,
-        'some comment',
-        {
-          preAppointment: {
-            startTime: '2020-11-20T17:40:00',
-            endTime: '2020-11-20T18:00:00',
-            locationId: 1,
-          },
-          postAppointment: {
-            startTime: '2020-11-20T19:00:00',
-            endTime: '2020-11-20T19:20:00',
-            locationId: 3,
-          },
+        comment: 'some comment',
+        main: {
+          locationId: 2,
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
         },
-        '2',
-        context
-      )
+        pre: {
+          startTime: '2020-11-20T17:40:00',
+          endTime: '2020-11-20T18:00:00',
+          locationId: 1,
+        },
+        post: {
+          startTime: '2020-11-20T19:00:00',
+          endTime: '2020-11-20T19:20:00',
+          locationId: 3,
+        },
+      })
 
       expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
         bookingId: 1000,
@@ -133,22 +121,66 @@ describe('Appointments service', () => {
       })
     })
 
-    it('Creating a booking with optional fields', async () => {
-      const appointmentDetails = {
+    it('Extra fields are removed from locations', async () => {
+      await appointmentService.createBooking(context, {
         bookingId: 1000,
-        date: '20/11/2020',
-        startTime: '2020-11-20T18:00:00',
-        endTime: '2020-11-20T19:00:00',
-        startTimeHours: '18',
-        startTimeMinutes: '00',
-        endTimeHours: '19',
-        endTimeMinutes: '00',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
         court: 'City of London',
-      }
+        comment: 'some comment',
+        main: {
+          locationId: 2,
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+        },
+        pre: {
+          startTime: '2020-11-20T17:40:00',
+          endTime: '2020-11-20T18:00:00',
+          locationId: 1,
+          anExtraField: true,
+        },
+        post: {
+          startTime: '2020-11-20T19:00:00',
+          endTime: '2020-11-20T19:20:00',
+          locationId: 3,
+          anotherExtraField: 1234,
+        },
+      } as NewBooking)
 
-      await appointmentService.createAppointmentRequest(appointmentDetails, undefined, {}, '2', context)
+      expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
+        bookingId: 1000,
+        court: 'City of London',
+        comment: 'some comment',
+        madeByTheCourt: true,
+        pre: {
+          startTime: '2020-11-20T17:40:00',
+          endTime: '2020-11-20T18:00:00',
+          locationId: 1,
+        },
+        main: {
+          locationId: 2,
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+        },
+        post: {
+          startTime: '2020-11-20T19:00:00',
+          endTime: '2020-11-20T19:20:00',
+          locationId: 3,
+        },
+      })
+    })
+
+    it('Creating a booking with only mandatory fields', async () => {
+      await appointmentService.createBooking(context, {
+        bookingId: 1000,
+        court: 'City of London',
+        comment: undefined,
+        main: {
+          locationId: 2,
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+        },
+        pre: undefined,
+        post: undefined,
+      })
 
       expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
         bookingId: 1000,

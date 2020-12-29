@@ -1,3 +1,5 @@
+import { NewAppointment } from 'whereaboutsApi'
+
 export type Context = unknown
 
 export type AppointmentDetail = {
@@ -43,4 +45,13 @@ export type Bookings = {
   courts: string[]
   // Each booking is split into up to 3 separate appointments, this is the flattened list.
   appointments: Row[]
+}
+
+export type NewBooking = {
+  bookingId: number
+  court: string
+  comment: string | undefined
+  main: NewAppointment
+  pre: NewAppointment | undefined
+  post: NewAppointment | undefined
 }
