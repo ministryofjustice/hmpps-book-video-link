@@ -1,27 +1,11 @@
 const moment = require('moment')
 const { DAY_MONTH_YEAR } = require('./dateHelpers')
-const { calculateEndDate } = require('./RecurringAppointments')
 
 const prepostDurations = {
   15: '15 minutes',
   30: '30 minutes',
   45: '45 minutes',
   60: '1 hour',
-}
-
-const endRecurringEndingDate = ({ date, startTime, times, repeats }) => {
-  const recurringStartTime = (startTime && moment(startTime)) || moment(date, DAY_MONTH_YEAR).hours(0).minutes(0)
-
-  const endOfPeriod = calculateEndDate({
-    startTime: recurringStartTime,
-    repeats,
-    numberOfTimes: times,
-  })
-
-  return {
-    endOfPeriod,
-    recurringStartTime,
-  }
 }
 
 const validateDate = (date, errors) => {
@@ -57,7 +41,6 @@ const validateComments = (comments, errors) => {
 }
 
 module.exports = {
-  endRecurringEndingDate,
   validateDate,
   validateStartEndTime,
   validateComments,

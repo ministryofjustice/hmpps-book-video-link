@@ -13,7 +13,7 @@ const unpackAppointmentDetails = req => {
   )
 }
 
-module.exports = (existingEventsService, availableSlotsService) => async (req, res, next) => {
+module.exports = ({ existingEventsService, availableSlotsService }) => async (req, res, next) => {
   const appointmentDetails = unpackAppointmentDetails(req)
   const {
     date,

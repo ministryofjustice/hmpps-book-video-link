@@ -1,6 +1,6 @@
-const selectCourtAppointmentRoomsFactory = require('../routes/createBooking/selectCourtAppointmentRooms')
-const { notifyApi } = require('../api/notifyApi')
-const config = require('../config')
+const selectRoomsController = require('./selectRoomsController')
+const { notifyApi } = require('../../api/notifyApi')
+const config = require('../../config')
 
 describe('Select court appointment rooms', () => {
   const prisonApi = {}
@@ -81,7 +81,7 @@ describe('Select court appointment rooms', () => {
 
     notifyApi.sendEmail = jest.fn()
 
-    service = selectCourtAppointmentRoomsFactory({
+    service = selectRoomsController({
       prisonApi,
       appointmentService,
       existingEventsService,
@@ -405,7 +405,7 @@ describe('Select court appointment rooms', () => {
         email: 'test@example.com',
       })
 
-      const { createAppointments } = selectCourtAppointmentRoomsFactory({
+      const { createAppointments } = selectRoomsController({
         prisonApi,
         oauthApi,
         notifyApi,

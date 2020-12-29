@@ -2,7 +2,7 @@ const moment = require('moment')
 const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../../shared/dateHelpers')
 const { formatName } = require('../../utils')
 
-module.exports = prisonApi => {
+module.exports = ({ prisonApi }) => {
   const getValidationMessages = fields => {
     const {
       date,

@@ -1,4 +1,4 @@
-const selectCourtAppointmentCourtFactory = require('../routes/createBooking/selectCourtAppointmentCourt')
+const selectCourtController = require('./selectCourtController')
 
 describe('Select court appoinment court', () => {
   const prisonApi = {}
@@ -62,7 +62,7 @@ describe('Select court appoinment court', () => {
 
   describe('index', () => {
     it('should render the template correctly with the court values sorted alphabetically', async () => {
-      const { index } = selectCourtAppointmentCourtFactory(prisonApi, whereaboutsApi)
+      const { index } = selectCourtController({ prisonApi, whereaboutsApi })
 
       await index(req, res)
 
@@ -85,7 +85,7 @@ describe('Select court appoinment court', () => {
     })
 
     it('should not include pre post data if not required', async () => {
-      const { index } = selectCourtAppointmentCourtFactory(prisonApi, whereaboutsApi)
+      const { index } = selectCourtController({ prisonApi, whereaboutsApi })
 
       req.flash.mockImplementation(() => [
         {
@@ -108,7 +108,7 @@ describe('Select court appoinment court', () => {
   describe('post', () => {
     describe('when no court has been selected', () => {
       it('should return an error', async () => {
-        const { post } = selectCourtAppointmentCourtFactory(prisonApi, whereaboutsApi)
+        const { post } = selectCourtController({ prisonApi, whereaboutsApi })
 
         await post(req, res)
 
@@ -123,7 +123,7 @@ describe('Select court appoinment court', () => {
 
     describe('when a court has been selected', () => {
       it('should populate the details with the selected court and redirect to room selection page ', async () => {
-        const { post } = selectCourtAppointmentCourtFactory(prisonApi, whereaboutsApi)
+        const { post } = selectCourtController({ prisonApi, whereaboutsApi })
 
         req.body = { court: 'city-of-london' }
         await post(req, res)

@@ -62,7 +62,7 @@ describe('Room check middleware', () => {
 
     req.flash.mockImplementation(() => [appointmentDetails])
 
-    middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
+    middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
   })
 
   afterEach(() => {
@@ -250,7 +250,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
+      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(next).toHaveBeenCalled()
@@ -278,7 +278,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
+      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -307,7 +307,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
+      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -336,7 +336,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms(existingEventsService, availableSlotsService)
+      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)

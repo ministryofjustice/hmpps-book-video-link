@@ -1,4 +1,4 @@
-const addCourtAppointmentsFactory = require('../routes/createBooking/addCourtAppointment')
+const startController = require('./startController')
 
 const prisonApi = {}
 
@@ -28,7 +28,7 @@ describe('Add court appointment', () => {
     res.redirect = jest.fn()
 
     req.flash = jest.fn()
-    controller = addCourtAppointmentsFactory(prisonApi)
+    controller = startController({ prisonApi })
   })
 
   afterEach(() => {

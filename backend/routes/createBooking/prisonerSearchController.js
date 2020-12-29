@@ -1,7 +1,7 @@
 const moment = require('moment')
 const { formatName } = require('../../utils')
 const config = require('../../config')
-const videolinkPrisonerSearchValidation = require('./videolinkPrisonerSearchValidation')
+const videolinkPrisonerSearchValidation = require('./prisonerSearchValidation')
 const dobValidation = require('../../shared/dobValidation')
 
 module.exports = ({ prisonApi }) => async (req, res) => {

@@ -1,5 +1,5 @@
-const videolinkPrisonerSearchController = require('../routes/createBooking/videolinkPrisonerSearchController')
-const config = require('../config')
+const prisonerSearchController = require('./prisonerSearchController')
+const config = require('../../config')
 
 config.app.videoLinkEnabledFor = ['MDI']
 
@@ -33,7 +33,7 @@ describe('Video link prisoner search', () => {
     ])
     prisonApi.globalSearch = jest.fn()
 
-    controller = videolinkPrisonerSearchController({ prisonApi })
+    controller = prisonerSearchController({ prisonApi })
   })
 
   const agencyOptions = [

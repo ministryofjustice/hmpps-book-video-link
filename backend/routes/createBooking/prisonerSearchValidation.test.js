@@ -1,4 +1,4 @@
-const videolinkPrisonerSearchValidation = require('./videolinkPrisonerSearchValidation')
+const videolinkPrisonerSearchValidation = require('./prisonerSearchValidation')
 
 describe('prisoner search validation', () => {
   it('should error with no last name or prison number', async () => {

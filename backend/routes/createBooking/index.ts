@@ -1,10 +1,10 @@
 import express, { Router } from 'express'
 
-import confirmAppointment from './confirmAppointment'
-import addCourtAppointment from './addCourtAppointment'
-import selectCourtAppointmentCourt from './selectCourtAppointmentCourt'
-import selectCourtAppointmentRooms from './selectCourtAppointmentRooms'
-import videolinkPrisonerSearchController from './videolinkPrisonerSearchController'
+import confirm from './confirmController'
+import start from './startController'
+import selectCourt from './selectCourtController'
+import selectRooms from './selectRoomsController'
+import prisonerSearch from './prisonerSearchController'
 
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
@@ -15,47 +15,36 @@ import { Services } from '../../services'
 export default function createRoutes(services: Services): Router {
   const router = express.Router({ mergeParams: true })
 
-  const checkRooms = asyncMiddleware(
-    checkAppointmentRooms(services.existingEventsService, services.availableSlotsService)
-  )
+  const checkRooms = asyncMiddleware(checkAppointmentRooms(services))
+
+  router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch(services)))
+
+  {
+    const { index, validateInput, goToCourtSelection } = start(services)
+    const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
+    router.get(path, withRetryLink('/prisoner-search'), asyncMiddleware(index))
+    router.post(path, validateInput, checkRooms, goToCourtSelection)
+  }
+
+  {
+    const { index, post } = selectCourt(services)
+    const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court'
+    router.get(path, asyncMiddleware(index))
+    router.post(path, asyncMiddleware(post))
+  }
+
+  {
+    const { index, validateInput, createAppointments } = selectRooms(services)
+    const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms'
+    router.get(path, asyncMiddleware(index))
+    router.post(path, validateInput, checkRooms, asyncMiddleware(createAppointments))
+  }
 
   router.get(
     '/offenders/:offenderNo/confirm-appointment',
     withRetryLink('/prisoner-search'),
-    asyncMiddleware(confirmAppointment(services))
+    asyncMiddleware(confirm(services))
   )
-
-  {
-    const { index, validateInput, goToCourtSelection } = addCourtAppointment(services.prisonApi)
-
-    router.get(
-      '/:agencyId/offenders/:offenderNo/add-court-appointment',
-      withRetryLink('/prisoner-search'),
-      asyncMiddleware(index)
-    )
-
-    router.post('/:agencyId/offenders/:offenderNo/add-court-appointment', validateInput, checkRooms, goToCourtSelection)
-  }
-
-  {
-    const { index, post } = selectCourtAppointmentCourt(services.prisonApi, services.whereaboutsApi)
-    router.get('/:agencyId/offenders/:offenderNo/add-court-appointment/select-court', asyncMiddleware(index))
-    router.post('/:agencyId/offenders/:offenderNo/add-court-appointment/select-court', asyncMiddleware(post))
-  }
-
-  {
-    const { index, validateInput, createAppointments } = selectCourtAppointmentRooms(services)
-
-    router.get('/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms', asyncMiddleware(index))
-    router.post(
-      '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms',
-      validateInput,
-      checkRooms,
-      asyncMiddleware(createAppointments)
-    )
-  }
-
-  router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(videolinkPrisonerSearchController(services)))
 
   return router
 }
