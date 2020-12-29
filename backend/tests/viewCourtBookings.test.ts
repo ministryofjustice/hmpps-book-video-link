@@ -1,11 +1,11 @@
 import moment from 'moment'
 import viewCourtBookingsController from '../routes/viewBookings/viewCourtBookingsController'
-import BookingService from '../services/bookingService'
+import ViewBookingsService from '../services/viewBookingsService'
 
-jest.mock('../services/bookingService')
+jest.mock('../services/viewBookingsService')
 
 describe('View court bookings', () => {
-  const bookingService = new BookingService(null, null) as jest.Mocked<BookingService>
+  const viewBookingsService = new ViewBookingsService(null, null) as jest.Mocked<ViewBookingsService>
 
   let req
   let res
@@ -25,8 +25,8 @@ describe('View court bookings', () => {
     }
     res = { locals: {}, render: jest.fn() }
 
-    bookingService.getAppointmentList.mockResolvedValue({ courts: ['Wimbledon', 'Southwark'], appointments: [] })
-    controller = viewCourtBookingsController(bookingService)
+    viewBookingsService.getList.mockResolvedValue({ courts: ['Wimbledon', 'Southwark'], appointments: [] })
+    controller = viewCourtBookingsController(viewBookingsService)
   })
 
   afterEach(() => {
@@ -36,7 +36,7 @@ describe('View court bookings', () => {
   describe('ViewCourtBookingsController', () => {
     it('When no search params - API calls', async () => {
       await controller(req, res)
-      expect(bookingService.getAppointmentList).toHaveBeenCalledWith(res.locals, moment(), undefined)
+      expect(viewBookingsService.getList).toHaveBeenCalledWith(res.locals, moment(), undefined)
     })
 
     it('When no search params - template render ', async () => {
@@ -66,7 +66,7 @@ describe('View court bookings', () => {
         courtOption: 'Wimbledon',
       }
       await controller(req, res)
-      expect(bookingService.getAppointmentList).toHaveBeenCalledWith(res.locals, moment(), 'Wimbledon')
+      expect(viewBookingsService.getList).toHaveBeenCalledWith(res.locals, moment(), 'Wimbledon')
     })
 
     it('When selecting a court - template render ', async () => {
@@ -101,7 +101,7 @@ describe('View court bookings', () => {
         date: '2 January 2020',
       }
       await controller(req, res)
-      expect(bookingService.getAppointmentList).toHaveBeenCalledWith(
+      expect(viewBookingsService.getList).toHaveBeenCalledWith(
         res.locals,
         moment('2 January 2020', 'D MMMM YYYY'),
         undefined
@@ -136,7 +136,7 @@ describe('View court bookings', () => {
 
     describe('when there is an error retrieving information', () => {
       it('should render the error template', async () => {
-        bookingService.getAppointmentList.mockRejectedValue(new Error('Problem retrieving courts'))
+        viewBookingsService.getList.mockRejectedValue(new Error('Problem retrieving courts'))
         await expect(controller(req, res)).rejects.toThrow('Problem retrieving courts')
       })
     })

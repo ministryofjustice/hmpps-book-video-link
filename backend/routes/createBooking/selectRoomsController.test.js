@@ -6,6 +6,7 @@ describe('Select court appointment rooms', () => {
   const prisonApi = {}
   const oauthApi = {}
   const appointmentService = {}
+  const referenceDataService = {}
   const existingEventsService = {}
   let service
 
@@ -50,8 +51,8 @@ describe('Select court appointment rooms', () => {
     prisonApi.getLocation = jest.fn()
 
     oauthApi.userEmail = jest.fn()
-    appointmentService.getAppointmentOptions = jest.fn()
-    appointmentService.getVideoLinkLocations = jest.fn()
+    referenceDataService.getAppointmentOptions = jest.fn()
+    referenceDataService.getVideoLinkLocations = jest.fn()
     appointmentService.createAppointmentRequest = jest.fn()
 
     existingEventsService.getAppointmentsAtLocations = jest.fn()
@@ -60,7 +61,7 @@ describe('Select court appointment rooms', () => {
     req.flash = jest.fn()
     res.render = jest.fn()
 
-    appointmentService.getAppointmentOptions.mockReturnValue({
+    referenceDataService.getAppointmentOptions.mockReturnValue({
       appointmentTypes: [{ value: 'VLB', text: 'Videolink' }],
       locationTypes: [{ value: 1, text: 'Room 3' }],
     })
@@ -84,6 +85,7 @@ describe('Select court appointment rooms', () => {
     service = selectRoomsController({
       prisonApi,
       appointmentService,
+      referenceDataService,
       existingEventsService,
       oauthApi,
       notifyApi,
@@ -410,6 +412,7 @@ describe('Select court appointment rooms', () => {
         oauthApi,
         notifyApi,
         appointmentService,
+        referenceDataService,
         existingEventsService,
       })
 

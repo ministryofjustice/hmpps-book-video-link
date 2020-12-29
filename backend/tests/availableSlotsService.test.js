@@ -9,17 +9,17 @@ const getTime = ({ momentDate = moment(), hour, minutes }) =>
 const getTimeWithFormat = options => getTime(options).format(DATE_TIME_FORMAT_SPEC)
 
 describe('Available slots service', () => {
-  const appointmentService = {}
+  const referenceDataService = {}
   const existingEventsService = {}
 
   beforeEach(() => {
-    appointmentService.getVideoLinkLocations = jest.fn()
+    referenceDataService.getVideoLinkLocations = jest.fn()
     existingEventsService.getAppointmentsAtLocations = jest.fn()
   })
 
   it('should break day up into 30 minute chucks', () => {
     const availableSlotsService = availableSlotsServiceFactory(
-      { existingEventsService, appointmentService },
+      { existingEventsService, referenceDataService },
       { startOfDay: 9, endOfDay: 11, byMinutes: 30 }
     )
     const date = moment().format(DATE_ONLY_FORMAT_SPEC)
@@ -61,7 +61,7 @@ describe('Available slots service', () => {
     ]
 
     const availableSlotsService = availableSlotsServiceFactory(
-      { existingEventsService, appointmentService },
+      { existingEventsService, referenceDataService },
       { startOfDay: 9, endOfDay: 11, byMinutes: 30 }
     )
     const availableRooms = availableSlotsService.getAvailableLocationsForSlots(
@@ -72,7 +72,7 @@ describe('Available slots service', () => {
   })
 
   it('should return no available rooms', async () => {
-    appointmentService.getVideoLinkLocations.mockReturnValue([{ value: 1 }])
+    referenceDataService.getVideoLinkLocations.mockReturnValue([{ value: 1 }])
     existingEventsService.getAppointmentsAtLocations.mockReturnValue([
       {
         locationId: 1,
@@ -82,7 +82,7 @@ describe('Available slots service', () => {
     ])
 
     const availableSlotsService = availableSlotsServiceFactory(
-      { existingEventsService, appointmentService },
+      { existingEventsService, referenceDataService },
       { startOfDay: 9, endOfDay: 17 }
     )
 
@@ -94,7 +94,7 @@ describe('Available slots service', () => {
   })
 
   it('should return a two locations, one of each id', async () => {
-    appointmentService.getVideoLinkLocations.mockReturnValue([{ value: 1 }, { value: 2 }])
+    referenceDataService.getVideoLinkLocations.mockReturnValue([{ value: 1 }, { value: 2 }])
     existingEventsService.getAppointmentsAtLocations.mockReturnValue([
       {
         locationId: 1,
@@ -119,7 +119,7 @@ describe('Available slots service', () => {
     ])
 
     const availableSlotsService = availableSlotsServiceFactory(
-      { existingEventsService, appointmentService },
+      { existingEventsService, referenceDataService },
       { startOfDay: 9, endOfDay: 15 }
     )
 

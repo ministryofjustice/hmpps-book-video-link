@@ -7,7 +7,7 @@ const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
 describe('Confirm appointments', () => {
   const prisonApi = {}
-  const appointmentService = {}
+  const referenceDataService = {}
   const req = {}
   const res = {}
   const appointmentDetails = {
@@ -25,9 +25,9 @@ describe('Confirm appointments', () => {
 
   beforeEach(() => {
     prisonApi.getPrisonerDetails = jest.fn()
-    appointmentService.getAppointmentOptions = jest.fn()
+    referenceDataService.getAppointmentOptions = jest.fn()
 
-    appointmentService.getAppointmentOptions.mockReturnValue({
+    referenceDataService.getAppointmentOptions.mockReturnValue({
       appointmentTypes: [
         { value: 'VLB', text: 'Videolink' },
         { value: 'appointment1', text: 'Appointment 1' },
@@ -59,7 +59,7 @@ describe('Confirm appointments', () => {
   it('should load court confirmation page when user is not prison staff', async () => {
     const index = controller({
       prisonApi,
-      appointmentService,
+      referenceDataService,
     })
 
     req.session = { userDetails: { authSource: '' } }
@@ -111,7 +111,7 @@ describe('Confirm appointments', () => {
   it('should throw and log a court service error for a court user when appointment details are missing from flash', async () => {
     const index = controller({
       prisonApi,
-      appointmentService,
+      referenceDataService,
     })
     req.flash.mockImplementation(() => [])
     req.session.userDetails.authSource = 'auth'

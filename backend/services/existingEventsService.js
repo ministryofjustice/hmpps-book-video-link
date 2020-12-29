@@ -19,7 +19,7 @@ const toEvent = event => ({
   eventDescription: getEventDescription(event),
 })
 
-module.exports = (prisonApi, appointmentService) => {
+module.exports = (prisonApi, referenceDataService) => {
   const getAppointmentsAtLocationEnhanceWithLocationId = (context, agency, locationId, date) =>
     new Promise((resolve, reject) => {
       prisonApi
@@ -30,13 +30,12 @@ module.exports = (prisonApi, appointmentService) => {
         .catch(reject)
     })
 
-  const getAppointmentsAtLocations = async (context, { agency, date, locations }) => {
-    return (
+  const getAppointmentsAtLocations = async (context, { agency, date, locations }) =>
+    (
       await Promise.all(
         locations.map(location => getAppointmentsAtLocationEnhanceWithLocationId(context, agency, location.value, date))
       )
     ).reduce((acc, current) => acc.concat(current), [])
-  }
 
   const getAvailableLocations = async (context, { timeSlot, locations, eventsAtLocations }) => {
     const requestedStartTime = moment(timeSlot.startTime, DATE_TIME_FORMAT_SPEC)
@@ -65,7 +64,7 @@ module.exports = (prisonApi, appointmentService) => {
     context,
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
   ) => {
-    const locations = await appointmentService.getVideoLinkLocations(context, agencyId)
+    const locations = await referenceDataService.getVideoLinkLocations(context, agencyId)
 
     const eventsAtLocations = await getAppointmentsAtLocations(context, {
       agency: agencyId,

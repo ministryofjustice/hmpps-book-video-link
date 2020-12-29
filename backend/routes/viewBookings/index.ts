@@ -6,10 +6,10 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import { Services } from '../../services'
 
-export default function createRoutes({ bookingService }: Services): Router {
+export default function createRoutes({ viewBookingsService }: Services): Router {
   const router = express.Router({ mergeParams: true })
 
-  router.get('/bookings', withRetryLink('/bookings'), asyncMiddleware(viewCourtBookingsController(bookingService)))
+  router.get('/bookings', withRetryLink('/bookings'), asyncMiddleware(viewCourtBookingsController(viewBookingsService)))
 
   return router
 }

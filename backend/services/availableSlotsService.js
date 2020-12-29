@@ -13,7 +13,7 @@ const getDiffInMinutes = (startTime, endTime) => {
 
 const sortByStartTime = (a, b) => a.startTime.diff(b.startTime)
 
-module.exports = ({ appointmentService, existingEventsService }, { startOfDay, endOfDay } = defaultOptions) => {
+module.exports = ({ referenceDataService, existingEventsService }, { startOfDay, endOfDay } = defaultOptions) => {
   const breakDayIntoSlots = ({ date, minutesNeeded }) => {
     const startTime = moment(date, DATE_ONLY_FORMAT_SPEC).hour(Number(startOfDay)).minute(0).seconds(0).millisecond(0)
 
@@ -67,7 +67,7 @@ module.exports = ({ appointmentService, existingEventsService }, { startOfDay, e
   const getAvailableRooms = async (context, { agencyId, startTime, endTime }) => {
     const date = moment(startTime, DATE_TIME_FORMAT_SPEC)
 
-    const locations = await appointmentService.getVideoLinkLocations(context, agencyId)
+    const locations = await referenceDataService.getVideoLinkLocations(context, agencyId)
     const eventsAtLocations = await existingEventsService.getAppointmentsAtLocations(context, {
       agency: agencyId,
       date: date.format(DAY_MONTH_YEAR),

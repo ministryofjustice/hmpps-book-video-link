@@ -5,9 +5,9 @@ import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls } from '../utils'
 import { app } from '../config'
-import { Context, HearingType, AppointmentResult } from './model'
+import { Context, HearingType, Bookings } from './model'
 
-export = class BookingService {
+export = class ViewBookingsService {
   constructor(private readonly prisonApi: PrisonApi, private readonly whereaboutsApi: WhereaboutsApi) {}
 
   private filterByCourt(option: string, courts: string[], booking: VideoLinkBooking) {
@@ -60,11 +60,7 @@ export = class BookingService {
     }
   }
 
-  public async getAppointmentList(
-    context: Context,
-    searchDate: moment.Moment,
-    courtFilter: string
-  ): Promise<AppointmentResult> {
+  public async getList(context: Context, searchDate: moment.Moment, courtFilter: string): Promise<Bookings> {
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
       this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate)
     )

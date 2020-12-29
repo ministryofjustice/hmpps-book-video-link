@@ -86,6 +86,7 @@ const validate = ({
 module.exports = function selectCourtAppointmentRoomsFactory({
   prisonApi,
   appointmentService,
+  referenceDataService,
   existingEventsService,
   oauthApi,
   notifyApi,
@@ -97,7 +98,7 @@ module.exports = function selectCourtAppointmentRoomsFactory({
     const appointmentDetails = unpackAppointmentDetails(req)
     const { appointmentType, startTime, endTime, preAppointmentRequired, postAppointmentRequired } = appointmentDetails
 
-    const { appointmentTypes } = await appointmentService.getAppointmentOptions(res.locals, activeCaseLoadId)
+    const { appointmentTypes } = await referenceDataService.getAppointmentOptions(res.locals, activeCaseLoadId)
     const { text: appointmentTypeDescription } = appointmentTypes.find(app => app.value === appointmentType)
 
     const [offenderDetails, agencyDetails] = await Promise.all([

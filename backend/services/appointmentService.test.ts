@@ -66,10 +66,6 @@ const bookingDetail: BookingDetails = {
 
 describe('Appointments service', () => {
   const context = {}
-  const agency = 'LEI'
-  const appointmentTypes = [{ code: 'ACTI', description: 'Activities', activeFlag: 'Y' as const, domain: '' }]
-  const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj'), room(27188, 'RES-MCASU-MCASU', null)]
-
   let appointmentService: AppointmentService
 
   beforeEach(() => {
@@ -79,37 +75,6 @@ describe('Appointments service', () => {
   afterEach(() => {
     jest.resetAllMocks()
   })
-
-  describe('Get appointment options', () => {
-    it('Should make a request for appointment locations and types', async () => {
-      await appointmentService.getAppointmentOptions(context, agency)
-
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, agency)
-      expect(prisonApi.getAppointmentTypes).toHaveBeenCalledWith(context)
-    })
-
-    it('Should handle empty responses from appointment types and locations', async () => {
-      const response = await appointmentService.getAppointmentOptions(context, agency)
-
-      expect(response).toEqual({})
-    })
-
-    it('Should map appointment types and locations correctly', async () => {
-      prisonApi.getLocationsForAppointments.mockResolvedValue(locations)
-      prisonApi.getAppointmentTypes.mockResolvedValue(appointmentTypes)
-
-      const response = await appointmentService.getAppointmentOptions(context, agency)
-
-      expect(response).toEqual({
-        appointmentTypes: [{ value: 'ACTI', text: 'Activities' }],
-        locationTypes: [
-          { value: 27187, text: 'Adj' },
-          { value: 27188, text: 'RES-MCASU-MCASU' },
-        ],
-      })
-    })
-  })
-
   describe('Create booking', () => {
     it('Creating a booking with mandatory fields', async () => {
       const appointmentDetails = {

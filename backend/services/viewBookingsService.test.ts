@@ -5,7 +5,7 @@ import { VideoLinkBooking } from 'whereaboutsApi'
 import config from '../config'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
-import BookingService from './bookingService'
+import ViewBookingsService from './viewBookingsService'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -14,7 +14,7 @@ const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
 describe('Add court appointment', () => {
-  let bookingService: BookingService
+  let viewBookingsService: ViewBookingsService
   const context = { context: 'some-context' }
   const now = moment()
 
@@ -46,14 +46,14 @@ describe('Add court appointment', () => {
     whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
     prisonApi.getAgencies.mockResolvedValue([])
     prisonApi.getLocationsForAppointments.mockResolvedValue([])
-    bookingService = new BookingService(prisonApi, whereaboutsApi)
+    viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
     config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
 
   it('courts are returned', async () => {
     whereaboutsApi.getCourtLocations.mockResolvedValue({ courtLocations: ['Westminster', 'Southwark'] })
 
-    const result = await bookingService.getAppointmentList(context, now, null)
+    const result = await viewBookingsService.getList(context, now, null)
 
     expect(result).toStrictEqual({ appointments: [], courts: ['Westminster', 'Southwark'] })
     expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
@@ -117,7 +117,7 @@ describe('Add court appointment', () => {
     it('A booking is turned into appointments', async () => {
       whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking()])
 
-      const result = await bookingService.getAppointmentList(context, now, null)
+      const result = await viewBookingsService.getList(context, now, null)
 
       expect(result).toStrictEqual({
         appointments: [preAppointment, mainAppointment, postAppointment],
@@ -132,7 +132,7 @@ describe('Add court appointment', () => {
         booking({ bookingId: 1 }),
       ])
 
-      await bookingService.getAppointmentList(context, now, null)
+      await viewBookingsService.getList(context, now, null)
 
       expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
       expect(prisonApi.getPrisonBookings).toHaveBeenCalledWith(context, [1, 2])
@@ -145,7 +145,7 @@ describe('Add court appointment', () => {
         .mockResolvedValueOnce([booking({ agencyId: 'WWI' })])
         .mockResolvedValueOnce([booking({ agencyId: 'MDI' })])
 
-      const result = await bookingService.getAppointmentList(context, now, null)
+      const result = await viewBookingsService.getList(context, now, null)
 
       expect(result).toStrictEqual({
         appointments: [
@@ -165,7 +165,7 @@ describe('Add court appointment', () => {
         .mockResolvedValueOnce([booking({ court: 'Westminster' })])
         .mockResolvedValueOnce([booking({ court: 'Southwark' })])
 
-      const result = await bookingService.getAppointmentList(context, now, 'Westminster')
+      const result = await viewBookingsService.getList(context, now, 'Westminster')
 
       expect(result).toStrictEqual({
         appointments: [preAppointment, mainAppointment, postAppointment],
@@ -181,7 +181,7 @@ describe('Add court appointment', () => {
         booking({ court: otherCourtName }),
       ])
 
-      const result = await bookingService.getAppointmentList(context, now, 'Other')
+      const result = await viewBookingsService.getList(context, now, 'Other')
 
       expect(result).toStrictEqual({
         appointments: [
@@ -196,7 +196,7 @@ describe('Add court appointment', () => {
     it('prisoner not found', async () => {
       whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking({ bookingId: 2 })])
 
-      const result = await bookingService.getAppointmentList(context, now, null)
+      const result = await viewBookingsService.getList(context, now, null)
 
       expect(result).toStrictEqual({
         appointments: [
@@ -219,7 +219,7 @@ describe('Add court appointment', () => {
         }),
       ])
 
-      const result = await bookingService.getAppointmentList(context, now, null)
+      const result = await viewBookingsService.getList(context, now, null)
 
       expect(result).toStrictEqual({
         appointments: [

@@ -1,12 +1,12 @@
 import { RequestHandler } from 'express'
 import moment from 'moment'
-import BookingService from '../../services/bookingService'
+import type ViewBookingsService from '../../services/viewBookingsService'
 
-export = (bookingService: BookingService): RequestHandler => async (req, res) => {
+export = (viewBookingsService: ViewBookingsService): RequestHandler => async (req, res) => {
   const { date, courtOption } = req.query as { date: string; courtOption?: string }
   const searchDate = date ? moment(date as string, 'D MMMM YYYY') : moment()
 
-  const { appointments, courts } = await bookingService.getAppointmentList(res.locals, searchDate, courtOption)
+  const { appointments, courts } = await viewBookingsService.getList(res.locals, searchDate, courtOption)
 
   const title = `Video link bookings for ${moment(searchDate).format('D MMMM YYYY')}`
 

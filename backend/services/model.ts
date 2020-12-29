@@ -39,7 +39,8 @@ type Row = {
 
 export type HearingType = 'PRE' | 'MAIN' | 'POST'
 
-export type AppointmentResult = {
+export type Bookings = {
   courts: string[]
+  // Each booking is split into up to 3 separate appointments, this is the flattened list.
   appointments: Row[]
 }
