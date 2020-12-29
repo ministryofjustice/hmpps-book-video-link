@@ -135,7 +135,7 @@ module.exports = function selectCourtAppointmentRoomsFactory({
       date,
     })
 
-    res.render('addAppointment/selectCourtAppointmentRooms.njk', {
+    res.render('createBooking/selectRooms.njk', {
       mainLocations,
       preLocations,
       postLocations,
@@ -208,7 +208,7 @@ module.exports = function selectCourtAppointmentRoomsFactory({
 
     packAppointmentDetails(req, appointmentDetails)
     if (errors.length) {
-      return res.render('addAppointment/selectCourtAppointmentRooms.njk', {
+      return res.render('createBooking/selectRooms.njk', {
         mainLocations,
         preLocations,
         postLocations,

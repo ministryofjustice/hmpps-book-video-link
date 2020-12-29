@@ -1,5 +1,5 @@
 const moment = require('moment')
-const checkAppointmentRooms = require('./checkAppointmentRooms')
+const checkAvailability = require('./checkAvailability')
 const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers')
 
 const existingEventsService = {}
@@ -62,7 +62,7 @@ describe('Room check middleware', () => {
 
     req.flash.mockImplementation(() => [appointmentDetails])
 
-    middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
+    middleware = checkAvailability({ existingEventsService, availableSlotsService })
   })
 
   afterEach(() => {
@@ -153,7 +153,7 @@ describe('Room check middleware', () => {
 
       await middleware(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('noAppointmentsForWholeDay.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/noAvailabilityForWholeDay.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment',
         date: 'Sunday 1 January 2017',
       })
@@ -172,7 +172,7 @@ describe('Room check middleware', () => {
 
       await middleware(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('noAppointmentsForDateTime.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/noAvailabilityForDateTime.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment',
         date: 'Sunday 1 January 2017',
         endTime: '13:20',
@@ -250,7 +250,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(next).toHaveBeenCalled()
@@ -278,11 +278,11 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('appointmentRoomNoLongerAvailable.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
       })
     })
@@ -307,11 +307,11 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('appointmentRoomNoLongerAvailable.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
       })
     })
@@ -336,11 +336,11 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAppointmentRooms({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('appointmentRoomNoLongerAvailable.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
       })
     })

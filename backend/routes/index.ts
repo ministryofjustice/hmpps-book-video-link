@@ -10,7 +10,7 @@ import viewBookingsRoutes from './viewBookings'
 const router = express.Router()
 
 export = function createRoutes(services: Services): Router {
-  router.get('/', (req, res) => res.render('courtsVideolink.njk'))
+  router.get('/', (req, res) => res.render('home.njk'))
 
   router.use(createBookingRoutes(services))
   router.use(changeBookingRoutes(services))

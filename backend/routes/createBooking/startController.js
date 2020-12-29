@@ -77,7 +77,7 @@ module.exports = ({ prisonApi }) => {
       activeCaseLoadId: agencyId,
     }
 
-    return res.render('addAppointment/addCourtAppointment.njk', {
+    return res.render('createBooking/start.njk', {
       formValues: {
         appointmentType: 'VLB',
       },

@@ -51,7 +51,7 @@ describe('Video link prisoner search', () => {
       await controller(req, res)
 
       expect(prisonApi.getAgencies).toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith('videolinkPrisonerSearch.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/prisonerSearch.njk', {
         agencyOptions,
         errors: [],
         formValues: {},
@@ -104,7 +104,7 @@ describe('Video link prisoner search', () => {
               1000
             )
             expect(res.render).toHaveBeenCalledWith(
-              'videolinkPrisonerSearch.njk',
+              'createBooking/prisonerSearch.njk',
               expect.objectContaining({
                 formValues: { prisonNumber },
                 hasSearched: true,
@@ -132,7 +132,7 @@ describe('Video link prisoner search', () => {
               1000
             )
             expect(res.render).toHaveBeenCalledWith(
-              'videolinkPrisonerSearch.njk',
+              'createBooking/prisonerSearch.njk',
               expect.objectContaining({
                 formValues: { lastName },
                 hasSearched: true,
@@ -144,7 +144,7 @@ describe('Video link prisoner search', () => {
             await controller(req, res)
 
             expect(res.render).toHaveBeenCalledWith(
-              'videolinkPrisonerSearch.njk',
+              'createBooking/prisonerSearch.njk',
               expect.objectContaining({
                 formValues: { lastName },
                 hasSearched: true,
@@ -182,7 +182,7 @@ describe('Video link prisoner search', () => {
               await controller(req, res)
 
               expect(res.render).toHaveBeenCalledWith(
-                'videolinkPrisonerSearch.njk',
+                'createBooking/prisonerSearch.njk',
                 expect.objectContaining({
                   results: [
                     {

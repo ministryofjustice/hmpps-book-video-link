@@ -67,7 +67,7 @@ describe('Select court appoinment court', () => {
       await index(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentCourt.njk',
+        'createBooking/selectCourt.njk',
         expect.objectContaining({
           courts: [
             { text: 'City of London', value: 'city-of-london' },
@@ -97,7 +97,7 @@ describe('Select court appoinment court', () => {
       await index(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentCourt.njk',
+        'createBooking/selectCourt.njk',
         expect.objectContaining({
           prePostData: {},
         })
@@ -113,7 +113,7 @@ describe('Select court appoinment court', () => {
         await post(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
-          'addAppointment/selectCourtAppointmentCourt.njk',
+          'createBooking/selectCourt.njk',
           expect.objectContaining({
             errors: [{ text: 'Select which court you are in', href: '#court' }],
           })

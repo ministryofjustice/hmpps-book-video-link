@@ -632,7 +632,7 @@ describe('Request a booking', () => {
         'Pre: Yes | Post: Yes'
       )
 
-      expect(res.render).toHaveBeenCalledWith('requestBooking/requestBookingConfirmation.njk', {
+      expect(res.render).toHaveBeenCalledWith('requestBooking/confirmation.njk', {
         details: {
           prison: 'HMP Wandsworth',
           name: 'John Doe',
@@ -651,7 +651,6 @@ describe('Request a booking', () => {
         courtDetails: {
           courtLocation: 'London',
         },
-        title: 'The video link has been requested',
       })
     })
 

@@ -27,7 +27,7 @@ module.exports = ({ prisonApi }) => async (req, res) => {
     )
   }
 
-  return res.render('videolinkPrisonerSearch.njk', {
+  return res.render('createBooking/prisonerSearch.njk', {
     agencyOptions: prisons
       .map(agency => ({ value: agency.agencyId, text: agency.formattedDescription || agency.description }))
       .sort((a, b) => a.text.localeCompare(b.text)),

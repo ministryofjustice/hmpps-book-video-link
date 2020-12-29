@@ -66,14 +66,14 @@ module.exports = ({ existingEventsService, availableSlotsService }) => async (re
     const minRooms = atLeastTwoRoomsNeeded ? 2 : 1
 
     if (availableRooms.length < minRooms) {
-      return res.render('noAppointmentsForWholeDay.njk', {
+      return res.render('createBooking/noAvailabilityForWholeDay.njk', {
         date: startTime.format('dddd D MMMM YYYY'),
         continueLink: `/${agencyId}/offenders/${offenderNo}/add-court-appointment`,
       })
     }
 
     if (availableRooms.length >= minRooms) {
-      return res.render('noAppointmentsForDateTime.njk', {
+      return res.render('createBooking/noAvailabilityForDateTime.njk', {
         date: startTime.format('dddd D MMMM YYYY'),
         startTime: startTime.format('HH:mm'),
         endTime: endTime.format('HH:mm'),
@@ -100,7 +100,7 @@ module.exports = ({ existingEventsService, availableSlotsService }) => async (re
     !postLocationAvailableOrNotRequired
   ) {
     req.flash('appointmentDetails', appointmentDetails)
-    return res.render('appointmentRoomNoLongerAvailable.njk', {
+    return res.render('createBooking/roomNoLongerAvailable.njk', {
       continueLink: `/${agencyId}/offenders/${offenderNo}/add-court-appointment/select-rooms`,
     })
   }

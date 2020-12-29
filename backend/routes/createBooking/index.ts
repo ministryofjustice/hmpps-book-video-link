@@ -8,14 +8,14 @@ import prisonerSearch from './prisonerSearchController'
 
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
-import checkAppointmentRooms from '../../middleware/checkAppointmentRooms'
+import checkAvailability from '../../middleware/checkAvailability'
 
 import { Services } from '../../services'
 
 export default function createRoutes(services: Services): Router {
   const router = express.Router({ mergeParams: true })
 
-  const checkRooms = asyncMiddleware(checkAppointmentRooms(services))
+  const checkRooms = asyncMiddleware(checkAvailability(services))
 
   router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch(services)))
 

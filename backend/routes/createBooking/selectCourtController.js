@@ -63,7 +63,7 @@ module.exports = function selectCourtAppointmentCourtFactory({ prisonApi, wherea
       )}`
     }
 
-    return res.render('addAppointment/selectCourtAppointmentCourt.njk', {
+    return res.render('createBooking/selectCourt.njk', {
       ...pageData,
       courts: Object.keys(courts).map(key => ({ value: key, text: courts[key] })),
       offender: {

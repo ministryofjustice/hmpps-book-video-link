@@ -53,7 +53,7 @@ describe('Add court appointment', () => {
     await controller.index(req, res)
 
     expect(res.render).toHaveBeenCalledWith(
-      'addAppointment/addCourtAppointment.njk',
+      'createBooking/start.njk',
       expect.objectContaining({
         formValues: {
           appointmentType: 'VLB',
@@ -78,7 +78,7 @@ describe('Add court appointment', () => {
       await controller.validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/addCourtAppointment.njk',
+        'createBooking/start.njk',
         expect.objectContaining({
           bookingId: 1,
           errors: [
@@ -101,7 +101,7 @@ describe('Add court appointment', () => {
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
-          'addAppointment/addCourtAppointment.njk',
+          'createBooking/start.njk',
           expect.objectContaining({
             errors: expect.arrayContaining([
               { href: '#start-time-hours', text: 'Select a full start time of the court hearing video link' },
@@ -116,7 +116,7 @@ describe('Add court appointment', () => {
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
-          'addAppointment/addCourtAppointment.njk',
+          'createBooking/start.njk',
           expect.objectContaining({
             errors: expect.arrayContaining([
               { href: '#start-time-hours', text: 'Select a full start time of the court hearing video link' },
@@ -137,7 +137,7 @@ describe('Add court appointment', () => {
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
-          'addAppointment/addCourtAppointment.njk',
+          'createBooking/start.njk',
           expect.objectContaining({
             errors: expect.arrayContaining([{ href: '#date', text: 'Select a date that is not in the past' }]),
           })
@@ -149,7 +149,7 @@ describe('Add court appointment', () => {
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
-          'addAppointment/addCourtAppointment.njk',
+          'createBooking/start.njk',
           expect.objectContaining({
             errors: expect.arrayContaining([
               { href: '#start-time-hours', text: 'Select a start time that is not in the past' },
@@ -170,7 +170,7 @@ describe('Add court appointment', () => {
       await controller.validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/addCourtAppointment.njk',
+        'createBooking/start.njk',
         expect.objectContaining({
           errors: expect.arrayContaining([
             { href: '#end-time-hours', text: 'Select an end time that is not in the past' },

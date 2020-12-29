@@ -86,10 +86,9 @@ describe('Confirm appointments', () => {
     )
 
     expect(res.render).toHaveBeenCalledWith(
-      'videolinkBookingConfirmHearingCourt.njk',
+      'createBooking/confirmation.njk',
       expect.objectContaining({
         videolinkPrisonerSearchLink: '/prisoner-search',
-        title: 'The video link has been booked',
         offender: {
           name: 'John Doe',
           prisonRoom: 'Room 3',

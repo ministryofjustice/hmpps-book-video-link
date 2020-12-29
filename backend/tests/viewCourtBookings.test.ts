@@ -42,7 +42,7 @@ describe('View court bookings', () => {
     it('When no search params - template render ', async () => {
       await controller(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('viewCourtBookings.njk', {
+      expect(res.render).toHaveBeenCalledWith('viewBookings/index.njk', {
         appointments: [],
         date: moment(),
         title: 'Video link bookings for 1 January 2020',
@@ -77,7 +77,7 @@ describe('View court bookings', () => {
 
       await controller(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('viewCourtBookings.njk', {
+      expect(res.render).toHaveBeenCalledWith('viewBookings/index.njk', {
         appointments: [],
         date: moment(),
         title: 'Video link bookings for 1 January 2020 - Wimbledon',
@@ -116,7 +116,7 @@ describe('View court bookings', () => {
 
       await controller(req, res)
 
-      expect(res.render).toHaveBeenCalledWith('viewCourtBookings.njk', {
+      expect(res.render).toHaveBeenCalledWith('viewBookings/index.njk', {
         appointments: [],
         date: moment('2 January 2020', 'D MMMM YYYY'),
         title: 'Video link bookings for 2 January 2020',

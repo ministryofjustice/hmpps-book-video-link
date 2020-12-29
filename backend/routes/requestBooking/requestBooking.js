@@ -350,8 +350,7 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
       }`
     )
 
-    return res.render('requestBooking/requestBookingConfirmation.njk', {
-      title: 'The video link has been requested',
+    return res.render('requestBooking/confirmation.njk', {
       details: {
         prison,
         name: `${firstName} ${lastName}`,

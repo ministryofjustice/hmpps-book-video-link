@@ -10,7 +10,7 @@ export = (bookingService: BookingService): RequestHandler => async (req, res) =>
 
   const title = `Video link bookings for ${moment(searchDate).format('D MMMM YYYY')}`
 
-  return res.render('viewCourtBookings.njk', {
+  return res.render('viewBookings/index.njk', {
     courts: [...courts.map(key => ({ value: key, text: key })), { value: 'Other', text: 'Other' }],
     courtOption,
     appointments,

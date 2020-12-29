@@ -64,8 +64,7 @@ module.exports = ({ prisonApi, appointmentService }) => {
       ).format('HH:mm')} to ${moment(postAppointment.endTime, DATE_TIME_FORMAT_SPEC).format('HH:mm')}`
     }
 
-    res.render('videolinkBookingConfirmHearingCourt.njk', {
-      title: 'The video link has been booked',
+    res.render('createBooking/confirmation.njk', {
       videolinkPrisonerSearchLink: '/prisoner-search',
       offender: {
         name: formatName(firstName, lastName),

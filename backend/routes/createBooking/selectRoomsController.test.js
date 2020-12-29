@@ -97,7 +97,7 @@ describe('Select court appointment rooms', () => {
       await index(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining(availableLocations)
       )
     })
@@ -108,7 +108,7 @@ describe('Select court appointment rooms', () => {
       await index(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining({
           details: {
             date: '10 October 2017',
@@ -163,7 +163,7 @@ describe('Select court appointment rooms', () => {
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining({
           errors: [
             {
@@ -194,7 +194,7 @@ describe('Select court appointment rooms', () => {
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining({
           errors: [
             { text: 'Select a prison room for the court hearing video link', href: '#selectMainAppointmentLocation' },
@@ -217,7 +217,7 @@ describe('Select court appointment rooms', () => {
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining({
           formValues: { comment },
         })
@@ -239,7 +239,7 @@ describe('Select court appointment rooms', () => {
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
-        'addAppointment/selectCourtAppointmentRooms.njk',
+        'createBooking/selectRooms.njk',
         expect.objectContaining({
           mainLocations: [{ value: 1, text: 'Room 3' }],
           postLocations: [{ value: 1, text: 'Room 3' }],
