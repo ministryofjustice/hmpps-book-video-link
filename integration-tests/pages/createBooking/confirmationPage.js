@@ -1,6 +1,6 @@
 const page = require('../page')
 
-const confirmPage = () =>
+const confirmationPage = () =>
   page('The video link has been booked', {
     backLink: () => cy.get('[data-qa="back-to-prisoner-search"]'),
     finishLink: () => cy.get('a.govuk-button.govuk-button--primary'),
@@ -16,9 +16,9 @@ const confirmPage = () =>
   })
 
 export default {
-  verifyOnPage: confirmPage,
+  verifyOnPage: confirmationPage,
   goTo: offenderNo => {
     cy.visit(`/offenders/${offenderNo}/confirm-appointment`)
-    return confirmPage()
+    return confirmationPage()
   },
 }

@@ -3,7 +3,7 @@ const offenderBasicDetails = require('../../mockApis/responses/offenderBasicDeta
 const StartPage = require('../../pages/createBooking/startPage')
 const SelectCourtPage = require('../../pages/createBooking/selectCourtPage')
 const SelectRoomsPage = require('../../pages/createBooking/selectRoomsPage')
-const ConfirmPage = require('../../pages/createBooking/confirmPage')
+const ConfirmationPage = require('../../pages/createBooking/confirmationPage')
 const NoAvailabilityPage = require('../../pages/createBooking/noAvailabilityPage')
 
 context('A user can add a video link', () => {
@@ -159,16 +159,16 @@ context('A user can add a video link', () => {
     selectRoomsForm.selectPostAppointmentLocation().select('3')
     selectRoomsForm.submitButton().click()
 
-    const confirmPage = ConfirmPage.verifyOnPage()
-    confirmPage.offenderName().contains('John Smith')
-    confirmPage.prison().contains('Moorland')
-    confirmPage.room().contains('Room 2')
-    confirmPage.startTime().contains('10:55')
-    confirmPage.endTime().contains('11:55')
-    confirmPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    confirmPage.legalBriefingBefore().contains('10:35 to 10:55')
-    confirmPage.legalBriefingAfter().contains('11:55 to 12:15')
-    confirmPage.courtLocation().contains('London')
+    const confirmationPage = ConfirmationPage.verifyOnPage()
+    confirmationPage.offenderName().contains('John Smith')
+    confirmationPage.prison().contains('Moorland')
+    confirmationPage.room().contains('Room 2')
+    confirmationPage.startTime().contains('10:55')
+    confirmationPage.endTime().contains('11:55')
+    confirmationPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmationPage.legalBriefingBefore().contains('10:35 to 10:55')
+    confirmationPage.legalBriefingAfter().contains('11:55 to 12:15')
+    confirmationPage.courtLocation().contains('London')
 
     cy.task('getBookingRequest').then(request => {
       expect(request).to.deep.equal({

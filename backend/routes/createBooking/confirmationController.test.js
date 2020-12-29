@@ -2,7 +2,7 @@ jest.mock('../../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
 
-const confirmController = require('./confirmController')
+const controller = require('./confirmationController')
 const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
 describe('Confirm appointments', () => {
@@ -57,7 +57,7 @@ describe('Confirm appointments', () => {
   })
 
   it('should load court confirmation page when user is not prison staff', async () => {
-    const index = confirmController({
+    const index = controller({
       prisonApi,
       appointmentService,
     })
@@ -109,7 +109,7 @@ describe('Confirm appointments', () => {
   })
 
   it('should throw and log a court service error for a court user when appointment details are missing from flash', async () => {
-    const index = confirmController({
+    const index = controller({
       prisonApi,
       appointmentService,
     })

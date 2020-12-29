@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 
-import confirm from './confirmController'
+import confirmation from './confirmationController'
 import start from './startController'
 import selectCourt from './selectCourtController'
 import selectRooms from './selectRoomsController'
@@ -43,7 +43,7 @@ export default function createRoutes(services: Services): Router {
   router.get(
     '/offenders/:offenderNo/confirm-appointment',
     withRetryLink('/prisoner-search'),
-    asyncMiddleware(confirm(services))
+    asyncMiddleware(confirmation(services))
   )
 
   return router
