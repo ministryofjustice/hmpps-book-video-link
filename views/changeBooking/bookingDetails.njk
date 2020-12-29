@@ -1,0 +1,78 @@
+{% extends "../partials/layout.njk" %} 
+{% from "govuk/components/button/macro.njk" import govukButton %} 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
+{% from "govuk/components/radios/macro.njk" import govukRadios %} 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% set title = "Video link details" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">{{prisonerName | possessive}} video link details</h1>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ govukButton({
+      text: "Delete video link",
+      href: '/confirm-deletion/' + bookingDetails.videoBookingId,
+      classes: "govuk-button--warning"
+    }) }}
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
+          'Date': { 
+            text: 'Change date',
+            href: '/change-date/' + bookingDetails.videoBookingId
+          }, 
+          'Court hearing start time': { 
+            text: 'Change time',
+            href: '/change-time/' + bookingDetails.videoBookingId
+          }
+        })
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.courtDetails | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<p class="govuk-body govuk-!-margin-top-8">
+  <a href='/bookings' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="back-to-all-bookings">Return to all video link bookings</a>
+</p>
+{% endblock %}
+

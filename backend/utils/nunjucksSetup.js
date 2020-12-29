@@ -100,6 +100,17 @@ module.exports = (app, path) => {
   )
 
   njkEnv.addFilter(
+    'addActions',
+    (items, actions) =>
+      items &&
+      items.map(entry => ({
+        key: entry.key,
+        value: entry.value,
+        actions: { items: [actions[entry.key.text]] },
+      }))
+  )
+
+  njkEnv.addFilter(
     'removePaddingBottom',
     items =>
       items &&
