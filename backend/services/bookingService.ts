@@ -1,31 +1,11 @@
-import type prisonApiTypes from 'prisonApi'
+import type { OffenderBooking, Location, Prison } from 'prisonApi'
 import moment from 'moment'
 import type { Appointment, VideoLinkBooking } from 'whereaboutsApi'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls } from '../utils'
 import { app } from '../config'
-
-type AppointmentDto = {
-  videoLinkBookingId: number
-  offenderName: string
-  prison: string
-  prisonLocation: string
-  court: string
-  time: string
-  hearingType: HearingType
-}
-
-type HearingType = 'PRE' | 'MAIN' | 'POST'
-
-type AppointmentResult = {
-  courts: string[]
-  appointments: AppointmentDto[]
-}
-
-type OffenderBooking = prisonApiTypes.schemas['OffenderBooking']
-type Location = prisonApiTypes.schemas['Location']
-type Prison = prisonApiTypes.schemas['PrisonContactDetail']
+import { Context, HearingType, AppointmentResult } from './model'
 
 export = class BookingService {
   constructor(private readonly prisonApi: PrisonApi, private readonly whereaboutsApi: WhereaboutsApi) {}
@@ -53,7 +33,7 @@ export = class BookingService {
   }
 
   private async toAppointment(
-    context: any,
+    context: Context,
     prisons: Map<string, Prison>,
     locations: Map<number, Location>,
     bookings: VideoLinkBooking[]
@@ -81,7 +61,7 @@ export = class BookingService {
   }
 
   public async getAppointmentList(
-    context: any,
+    context: Context,
     searchDate: moment.Moment,
     courtFilter: string
   ): Promise<AppointmentResult> {

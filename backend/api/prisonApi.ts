@@ -1,11 +1,20 @@
-import type prisonApi from 'prisonApi'
+import type {
+  InmateDetail,
+  OffenderBooking,
+  PrisonerSchedule,
+  ScheduledAppointment,
+  PrisonContactDetail,
+  PrisonerDetail,
+  Agency,
+  Location,
+  ReferenceCode,
+} from 'prisonApi'
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
 import { mapToQueryString } from '../utils'
 import Client from './oauthEnabledClient'
 
 type Context = any
-type Schemas = prisonApi.schemas
 
 type ActivityListRequest = {
   agencyId: string
@@ -35,7 +44,7 @@ type GlobalSearchRequest = {
 export = class PrisonApi {
   constructor(private readonly client: Client) {}
 
-  private processResponse(context: Context): (Response) => any {
+  private processResponse<T>(context: Context): (Response) => T {
     return (response: Response) => {
       contextProperties.setResponsePagination(context, response.headers)
       return response.body
@@ -46,18 +55,18 @@ export = class PrisonApi {
     return this.client.get(context, url, resultsLimit).then(this.processResponse(context))
   }
 
-  public getPrisonBooking(context: Context, bookingId: number): Promise<Schemas['InmateDetail']> {
+  public getPrisonBooking(context: Context, bookingId: number): Promise<InmateDetail> {
     return this.get(context, `/api/bookings/${bookingId}`)
   }
 
-  public getPrisonBookings(context: Context, bookingIds: number[]): Promise<Schemas['OffenderBooking'][]> {
+  public getPrisonBookings(context: Context, bookingIds: number[]): Promise<OffenderBooking[]> {
     return this.get(context, `/api/bookings?bookingId=${bookingIds}`, 1000)
   }
 
   public getActivityList(
     context: Context,
     { agencyId, locationId, usage, date, timeSlot }: ActivityListRequest
-  ): Promise<Schemas['PrisonerSchedule'][]> {
+  ): Promise<PrisonerSchedule[]> {
     return this.get(
       context,
       `/api/schedules/${agencyId}/locations/${locationId}/usage/${usage}?${
@@ -69,7 +78,7 @@ export = class PrisonApi {
   public getAppointmentsForAgency = (
     context: Context,
     { agencyId, date, locationId, timeSlot }: AgencyAppointmentRequest
-  ): Promise<Schemas['ScheduledAppointmentDto'][]> => {
+  ): Promise<ScheduledAppointment[]> => {
     const searchParams = mapToQueryString({
       date,
       locationId,
@@ -79,19 +88,15 @@ export = class PrisonApi {
     return this.get(context, `/api/schedules/${agencyId}/appointments?${searchParams}`)
   }
 
-  public getAgencies(context: Context): Promise<Schemas['PrisonContactDetail'][]> {
+  public getAgencies(context: Context): Promise<PrisonContactDetail[]> {
     return this.get(context, '/api/agencies/prison')
   }
 
-  public getAgencyDetails(context: Context, agencyId: string): Promise<Schemas['Agency']> {
+  public getAgencyDetails(context: Context, agencyId: string): Promise<Agency> {
     return this.get(context, `/api/agencies/${agencyId}?activeOnly=false`)
   }
 
-  public globalSearch(
-    context: Context,
-    params: GlobalSearchRequest,
-    resultsLimit: number
-  ): Promise<Schemas['PrisonerDetail']> {
+  public globalSearch(context: Context, params: GlobalSearchRequest, resultsLimit: number): Promise<PrisonerDetail[]> {
     const { offenderNo, lastName, firstName, gender, location, dateOfBirth, includeAliases } = params
 
     const searchParams = mapToQueryString({
@@ -107,19 +112,19 @@ export = class PrisonApi {
     return this.get(context, `/api/prisoners?${searchParams}`, resultsLimit)
   }
 
-  public getPrisonerDetails(context: Context, offenderNo: string, fullInfo = false): Promise<Schemas['InmateDetail']> {
+  public getPrisonerDetails(context: Context, offenderNo: string, fullInfo = false): Promise<InmateDetail> {
     return this.get(context, `/api/bookings/offenderNo/${offenderNo}?fullInfo=${fullInfo}`)
   }
 
-  public getLocation(context: Context, locationId: number): Promise<Schemas['Location']> {
+  public getLocation(context: Context, locationId: number): Promise<Location> {
     return this.get(context, `/api/locations/${locationId}`)
   }
 
-  public getLocationsForAppointments(context: Context, agencyId: string): Promise<Schemas['Location'][]> {
+  public getLocationsForAppointments(context: Context, agencyId: string): Promise<Location[]> {
     return this.get(context, `/api/agencies/${agencyId}/locations?eventType=APP`)
   }
 
-  public getAppointmentTypes(context: Context): Promise<Schemas['ReferenceCode'][]> {
+  public getAppointmentTypes(context: Context): Promise<ReferenceCode[]> {
     return this.get(context, '/api/reference-domains/scheduleReasons?eventType=APP')
   }
 }

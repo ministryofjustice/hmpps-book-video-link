@@ -1,5 +1,5 @@
 import moment from 'moment'
-import type prisonApiTypes from 'prisonApi'
+import type { OffenderBooking, Location, Prison } from 'prisonApi'
 import { VideoLinkBooking } from 'whereaboutsApi'
 
 import config from '../config'
@@ -9,10 +9,6 @@ import BookingService from './bookingService'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
-
-type OffenderBooking = prisonApiTypes.schemas['OffenderBooking']
-type Location = prisonApiTypes.schemas['Location']
-type Prison = prisonApiTypes.schemas['PrisonContactDetail']
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>

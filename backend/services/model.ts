@@ -1,4 +1,4 @@
-export type Context = any
+export type Context = unknown
 
 export type AppointmentDetail = {
   startTime: string
@@ -25,4 +25,21 @@ export type BookingDetails = {
 export type OffenderIdentifiers = {
   offenderNo: string
   offenderName: string
+}
+
+type Row = {
+  videoLinkBookingId: number
+  offenderName: string
+  prison: string
+  prisonLocation: string
+  court: string
+  time: string
+  hearingType: HearingType
+}
+
+export type HearingType = 'PRE' | 'MAIN' | 'POST'
+
+export type AppointmentResult = {
+  courts: string[]
+  appointments: Row[]
 }

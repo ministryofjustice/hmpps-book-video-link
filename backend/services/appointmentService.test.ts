@@ -1,4 +1,4 @@
-import type prisonApiTypes from 'prisonApi'
+import type { Location, InmateDetail } from 'prisonApi'
 import AppointmentService from './appointmentService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
@@ -12,9 +12,6 @@ jest.mock('./notificationService')
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
-
-type InmateDetail = prisonApiTypes.schemas['InmateDetail']
-type Location = prisonApiTypes.schemas['Location']
 
 const offenderDetails = {
   bookingId: 789,
