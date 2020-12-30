@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
-import ConfirmationController from './confirmationController'
-import BookingService from '../../../services/bookingService'
-import { BookingDetails } from '../../../services/model'
+import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
+import BookingService from '../../services/bookingService'
+import { BookingDetails } from '../../services/model'
 
-jest.mock('../../../services/bookingService')
+jest.mock('../../services/bookingService')
 
 describe('video link is available controller', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
-  let controller: ConfirmationController
+  let controller: VideoLinkIsAvailableController
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
@@ -53,7 +53,7 @@ describe('video link is available controller', () => {
   }
 
   beforeEach(() => {
-    controller = new ConfirmationController(bookingService)
+    controller = new VideoLinkIsAvailableController(bookingService)
   })
 
   describe('view', () => {
@@ -63,7 +63,7 @@ describe('video link is available controller', () => {
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'changeBooking/amend/confirmation.njk',
+        'amendBooking/videoLinkIsAvailable.njk',
         expect.objectContaining({
           prisonerName: 'John Doe',
           bookingDetails: {
@@ -88,6 +88,17 @@ describe('video link is available controller', () => {
           },
         })
       )
+    })
+  })
+
+  describe('submit', () => {
+    it('should display booking details', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      req.params.bookingId = '12'
+
+      await controller.submit()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/select-available-rooms/12`)
     })
   })
 })

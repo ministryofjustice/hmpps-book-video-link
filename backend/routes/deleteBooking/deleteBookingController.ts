@@ -8,7 +8,7 @@ export = class DeleteBookingController {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      res.render('changeBooking/confirmDeletion.njk', {
+      res.render('deleteBooking/confirmDeletion.njk', {
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {

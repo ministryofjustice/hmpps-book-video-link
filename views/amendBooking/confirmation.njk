@@ -3,13 +3,13 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
 {% from "govuk/components/radios/macro.njk" import govukRadios %} 
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% set title = "Video link details" %}
+{% set title = "The video link has been booked" %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{prisonerName | possessive}} video link details</h1>
+    <h1 class="govuk-heading-l">{{title}}</h1>
   </div>
 </div>
 
@@ -72,7 +72,7 @@
 </div>
 
 <p class="govuk-body govuk-!-margin-top-8">
-  <a href='/bookings' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="back-to-all-bookings">Return to all video link bookings</a>
+  <a href='/bookings' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="exit-to-all-bookings">Exit to all video link bookings</a>
 </p>
 {% endblock %}
 

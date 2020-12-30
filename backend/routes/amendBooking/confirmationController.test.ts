@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
-import ChangeDateAndTimeController from './changeDateAndTimeController'
-import BookingService from '../../../services/bookingService'
-import { BookingDetails } from '../../../services/model'
+import ConfirmationController from './confirmationController'
+import BookingService from '../../services/bookingService'
+import { BookingDetails } from '../../services/model'
 
-jest.mock('../../../services/bookingService')
+jest.mock('../../services/bookingService')
 
-describe('change date and time controller', () => {
+describe('video link is available controller', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
-  let controller: ChangeDateAndTimeController
+  let controller: ConfirmationController
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
@@ -53,7 +53,7 @@ describe('change date and time controller', () => {
   }
 
   beforeEach(() => {
-    controller = new ChangeDateAndTimeController(bookingService)
+    controller = new ConfirmationController(bookingService)
   })
 
   describe('view', () => {
@@ -63,7 +63,7 @@ describe('change date and time controller', () => {
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'changeBooking/amend/changeDateAndTime.njk',
+        'amendBooking/confirmation.njk',
         expect.objectContaining({
           prisonerName: 'John Doe',
           bookingDetails: {
@@ -88,17 +88,6 @@ describe('change date and time controller', () => {
           },
         })
       )
-    })
-  })
-
-  describe('submit', () => {
-    it('should display booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      req.params.bookingId = '12'
-
-      await controller.submit()(req, res, null)
-
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-is-available/12`)
     })
   })
 })

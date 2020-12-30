@@ -88,7 +88,7 @@ describe('Delete Booking', () => {
       await controller.viewDelete()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'changeBooking/confirmDeletion.njk',
+        'deleteBooking/confirmDeletion.njk',
         expect.objectContaining({
           bookingDetails: bookingDetailsView,
           errors,

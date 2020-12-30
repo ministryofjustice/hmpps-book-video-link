@@ -1,14 +1,14 @@
 import { RequestHandler } from 'express'
-import type BookingService from '../../../services/bookingService'
+import type BookingService from '../../services/bookingService'
 
-export = class SelectAvailableRoomsController {
+export = class ChangeDateAndTimeController {
   public constructor(private readonly bookingService: BookingService) {}
 
   public view(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      res.render('changeBooking/amend/selectAvailableRooms.njk', {
+      res.render('amendBooking/changeDateAndTime.njk', {
         prisonerName: bookingDetails.prisonerName,
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
@@ -37,7 +37,7 @@ export = class SelectAvailableRoomsController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      res.redirect(`/video-link-amended-confirmation/${bookingId}`)
+      res.redirect(`/video-link-is-available/${bookingId}`)
     }
   }
 }

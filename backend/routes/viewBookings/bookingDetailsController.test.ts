@@ -1,13 +1,13 @@
 import { Request, Response } from 'express'
-import SelectAvailableRoomsController from './selectAvailableRoomsController'
-import BookingService from '../../../services/bookingService'
-import { BookingDetails } from '../../../services/model'
+import BookingDetailsController from './bookingDetailsController'
+import BookingService from '../../services/bookingService'
+import { BookingDetails } from '../../services/model'
 
-jest.mock('../../../services/bookingService')
+jest.mock('../../services/bookingService')
 
-describe('Select available rooms controller', () => {
+describe('Booking details', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
-  let controller: SelectAvailableRoomsController
+  let controller: BookingDetailsController
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
@@ -53,17 +53,17 @@ describe('Select available rooms controller', () => {
   }
 
   beforeEach(() => {
-    controller = new SelectAvailableRoomsController(bookingService)
+    controller = new BookingDetailsController(bookingService)
   })
 
-  describe('view', () => {
-    it('should display booking details', async () => {
+  describe('viewDetails', () => {
+    it('should return booking details', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      await controller.view()(req, res, null)
+      await controller.viewDetails()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'changeBooking/amend/selectAvailableRooms.njk',
+        'viewBookings/bookingDetails.njk',
         expect.objectContaining({
           prisonerName: 'John Doe',
           bookingDetails: {
@@ -88,17 +88,6 @@ describe('Select available rooms controller', () => {
           },
         })
       )
-    })
-  })
-
-  describe('submit', () => {
-    it('should display booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      req.params.bookingId = '12'
-
-      await controller.submit()(req, res, null)
-
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-amended-confirmation/12`)
     })
   })
 })

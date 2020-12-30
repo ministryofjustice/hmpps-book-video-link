@@ -1,24 +1,18 @@
 import express, { Router } from 'express'
 import { Services } from '../../services'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
-import DeleteBookingController from './deleteBookingController'
-import BookingDetailsController from './bookingDetailsController'
-import ChangeDateAndTimeController from './amend/changeDateAndTimeController'
-import VideoLinkIsAvailableController from './amend/videoLinkIsAvailableController'
-import SelectAvailableRoomsController from './amend/selectAvailableRoomsController'
-import ConfirmationController from './amend/confirmationController'
+import ChangeDateAndTimeController from './changeDateAndTimeController'
+import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
+import SelectAvailableRoomsController from './selectAvailableRoomsController'
+import ConfirmationController from './confirmationController'
 
 export default function createRoutes({ bookingService }: Services): Router {
-  const deleteBooking = new DeleteBookingController(bookingService)
-  const bookingDetails = new BookingDetailsController(bookingService)
   const changeDateAndTime = new ChangeDateAndTimeController(bookingService)
   const videoLinkIsAvailable = new VideoLinkIsAvailableController(bookingService)
   const selectAvailableRooms = new SelectAvailableRoomsController(bookingService)
   const confirmation = new ConfirmationController(bookingService)
 
   const router = express.Router({ mergeParams: true })
-
-  router.get('/booking-details/:bookingId', asyncMiddleware(bookingDetails.viewDetails()))
 
   router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view()))
   router.post('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
@@ -30,11 +24,6 @@ export default function createRoutes({ bookingService }: Services): Router {
   router.post('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.submit()))
 
   router.get('/video-link-amended-confirmation/:bookingId', asyncMiddleware(confirmation.view()))
-
-  router.get('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
-  router.post('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.confirmDeletion()))
-
-  router.get('/video-link-deleted', asyncMiddleware(deleteBooking.deleteConfirmed()))
 
   return router
 }

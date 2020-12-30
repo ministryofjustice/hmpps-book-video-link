@@ -1,10 +1,11 @@
 const moment = require('moment')
-const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
-const ConfirmDeletionPage = require('../../pages/deleteBooking/confirmDeletionPage')
-const VideoLinkDeletedPage = require('../../pages/deleteBooking/videoLinkDeletedPage')
-const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage')
+const BookingDetailsPage = require('../../pages/viewBookings/bookingDetailsPage')
+const ChangeDateAndTimePage = require('../../pages/amendBooking/changeDateAndTimePage')
+const VideoLinkIsAvailablePage = require('../../pages/amendBooking/videoLinkIsAvailablePage')
+const SelectAvailableRoomsPage = require('../../pages/amendBooking/selectAvailableRoomsPage')
+const ConfirmationPage = require('../../pages/amendBooking/confirmationPage')
 
-context('A user can delete a booking', () => {
+context('A user can amend a booking', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
@@ -155,66 +156,21 @@ context('A user can delete a booking', () => {
     ])
   })
 
-  it('A user is required to confirm they wish to delete a booking', () => {
+  it('A user successfully amends a booking', () => {
     cy.task('stubLoginCourt')
 
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.getRow(1).action().click()
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeDate().click()
 
-    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
-    confirmDeletionPage.confirmButton().click()
-    confirmDeletionPage.errorSummaryTitle().contains('There is a problem')
-    confirmDeletionPage.inlineError().contains('Select Yes or No')
-  })
+    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
+    changeDateAndTimePage.continue().click()
 
-  it('A user chooses not to delete a booking', () => {
-    cy.task('stubLoginCourt')
+    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
+    videoLinkIsAvailablePage.continue().click()
 
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.getRow(1).action().click()
+    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
+    selectAvailableRoomsPage.bookVideoLink().click()
 
-    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
-    confirmDeletionPage.selectNo()
-    confirmDeletionPage.confirmButton().click()
-
-    CourtVideoLinkBookingsPage.verifyOnPage()
-  })
-
-  it('A user chooses to delete a booking', () => {
-    cy.task('stubLoginCourt')
-
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.getRow(1).action().click()
-
-    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
-    confirmDeletionPage.selectYes()
-    confirmDeletionPage.confirmButton().click()
-
-    const videoLinkDeletedPage = VideoLinkDeletedPage.verifyOnPage()
-    videoLinkDeletedPage.exit().click()
-
-    CourtVideoLinkBookingsPage.verifyOnPage()
-  })
-
-  it('A user chooses to delete a booking then selects to add another', () => {
-    cy.task('stubLoginCourt')
-
-    cy.visit('/bookings')
-    const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
-    courtVideoBookingsPage.getRow(1).action().click()
-
-    const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
-    confirmDeletionPage.selectYes()
-    confirmDeletionPage.confirmButton().click()
-
-    const videoLinkDeletedPage = VideoLinkDeletedPage.verifyOnPage()
-
-    videoLinkDeletedPage.addAppointment().click()
-
-    const prisonerSearchPage = PrisonerSearchPage.verifyOnPage()
-    prisonerSearchPage.prisonNumber().should('have.value', 'A1234AA')
+    ConfirmationPage.verifyOnPage()
   })
 })
