@@ -7,11 +7,8 @@
 {% from "components/datePicker/datePicker.njk" import datePicker %}
 {% from "components/timePicker/timePicker.njk" import timePicker %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% set title = 'Request video link date and time' %}
 
-{% macro errorClass(field) -%}
-  {{ ' govuk-input--error' if errors | hasErrorWithPrefix([field, 'dobError']) else '' }}
-{%- endmacro %}
+{% set title = 'Request video link date and time' %}
 
 {% block content %}
     <div class="govuk-grid-row">
@@ -67,7 +64,6 @@
                     errorMessage: errors | findError('end-time-hours')
                 }) }}
 
-
                 {{ govukRadios({
                     classes: "govuk-radios--inline",
                     idPrefix: "pre-appointment-required",
@@ -118,7 +114,10 @@
                     ]
                 }) }}
 
-                {{ govukButton({ text: "Continue", type: "submit" }) }}
+                {{ govukButton({ 
+                    text: "Continue",
+                    type: "submit"
+                    }) }}
             </form>
         </div>
     </div>

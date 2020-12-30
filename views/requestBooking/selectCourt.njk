@@ -6,10 +6,6 @@
 
 {% set title = 'The video link date and time is available' %}
 
-{% macro errorClass(field) -%}
-    {{ ' govuk-input--error' if errors | hasErrorWithPrefix([field, 'dobError']) else '' }}
-{%- endmacro %}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">

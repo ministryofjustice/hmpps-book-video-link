@@ -1,23 +1,17 @@
-/* eslint-disable import/order */
 /* eslint-disable import/first */
-import dotenv from 'dotenv'
-import errorHandler from './middleware/errorHandler'
+/* eslint-disable import/order */
+import { initialiseAppInsights } from './azure-appinsights'
 
-dotenv.config()
-
-// Do appinsights first as it does some magic instrumentation work, i.e. it affects other 'require's
-// In particular, applicationinsights automatically collects bunyan logs
-import _ from './azure-appinsights'
+initialiseAppInsights()
 
 import express from 'express'
 import csrf from 'csurf'
-
-const app = express()
-
 import path from 'path'
+
 import { services } from './services'
 import config from './config'
 import routes from './routes'
+import errorHandler from './middleware/errorHandler'
 
 import setupWebSession from './setupWebSession'
 import setupHealthChecks from './setupHealthChecks'
@@ -29,6 +23,8 @@ import nunjucksSetup from './utils/nunjucksSetup'
 import setupRedirects from './setupRedirects'
 import setupCurrentUserAndRequestLogging from './setupCurrentUserAndRequestLogging'
 import setupAuthorisation from './setupAuthorisation'
+
+const app = express()
 
 app.set('trust proxy', 1) // trust first proxy
 app.set('view engine', 'njk')
