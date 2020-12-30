@@ -1,0 +1,62 @@
+{% extends "../../partials/layout.njk" %} 
+{% from "govuk/components/button/macro.njk" import govukButton %} 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
+{% from "govuk/components/radios/macro.njk" import govukRadios %} 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% set title = "This video link date and time is available" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-l">{{ title }}</h1>
+  </div>
+</div>
+
+<form method="POST" novalidate="novalidate">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {{govukSummaryList({
+            classes: 'govuk-summary-list--no-border',
+            rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
+            'Date': { 
+                text: 'Change date',
+                href: '/change-date/' + bookingDetails.videoBookingId
+            }, 
+            'Court hearing start time': { 
+                text: 'Change time',
+                href: '/change-time/' + bookingDetails.videoBookingId
+            }
+            })
+        })
+        }}
+    </div>
+    </div>
+
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{
+        govukSummaryList({
+            classes: 'govuk-summary-list--no-border',
+            rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
+        })
+        }}
+    </div>
+    </div>
+
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{
+        govukSummaryList({
+            classes: 'govuk-summary-list--no-border',
+            rows: bookingDetails.courtDetails | toSummaryViewModel | removePaddingBottom
+        })
+        }}
+    </div>
+    </div>
+
+    {{ govukButton({ text: "Continue", type: "submit" }) }}
+</form>
+{% endblock %}

@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 
-import { Services } from '../services'
+import type { Services } from '../services'
 
 import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
