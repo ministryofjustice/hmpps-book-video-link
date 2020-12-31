@@ -65,12 +65,12 @@ describe('video link is available controller', () => {
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/confirmation.njk',
         expect.objectContaining({
-          prisonerName: 'John Doe',
           bookingDetails: {
             courtDetails: {
               courtLocation: 'City of London',
             },
             details: {
+              prisonerName: 'John Doe',
               prison: 'some prison',
               prisonRoom: 'vcc room 1',
             },

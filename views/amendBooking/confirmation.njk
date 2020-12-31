@@ -1,5 +1,6 @@
 {% extends "../partials/layout.njk" %} 
 {% from "govuk/components/button/macro.njk" import govukButton %} 
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
 {% from "govuk/components/radios/macro.njk" import govukRadios %} 
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
@@ -9,17 +10,17 @@
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{title}}</h1>
+    {{ govukPanel({
+                titleText: title,
+                classes: "govuk-!-margin-bottom-6"
+            }) }}
+      <p class="govuk-body">We have sent you an email confirming deletion. An email has also been sent to the prison.</p>
+    <h3 class="govuk-heading-m">Video link details</h3>
   </div>
 </div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    {{ govukButton({
-      text: "Delete video link",
-      href: '/confirm-deletion/' + bookingDetails.videoBookingId,
-      classes: "govuk-button--warning"
-    }) }}
     {{
       govukSummaryList({
         classes: 'govuk-summary-list--no-border',
@@ -34,16 +35,7 @@
     {{
       govukSummaryList({
         classes: 'govuk-summary-list--no-border',
-        rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
-          'Date': { 
-            text: 'Change date',
-            href: '/change-date-and-time/' + bookingDetails.videoBookingId
-          }, 
-          'Court hearing start time': { 
-            text: 'Change time',
-            href: '/change-time/' + bookingDetails.videoBookingId
-          }
-        })
+        rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom
       })
     }}
   </div>
@@ -71,7 +63,7 @@
   </div>
 </div>
 
-<p class="govuk-body govuk-!-margin-top-8">
+<p class="govuk-body govuk-!-margin-top-2">
   <a href='/bookings' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="exit-to-all-bookings">Exit to all video link bookings</a>
 </p>
 {% endblock %}

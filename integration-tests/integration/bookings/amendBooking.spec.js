@@ -4,6 +4,7 @@ const ChangeDateAndTimePage = require('../../pages/amendBooking/changeDateAndTim
 const VideoLinkIsAvailablePage = require('../../pages/amendBooking/videoLinkIsAvailablePage')
 const SelectAvailableRoomsPage = require('../../pages/amendBooking/selectAvailableRoomsPage')
 const ConfirmationPage = require('../../pages/amendBooking/confirmationPage')
+const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
 
 context('A user can amend a booking', () => {
   before(() => {
@@ -171,6 +172,19 @@ context('A user can amend a booking', () => {
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
     selectAvailableRoomsPage.bookVideoLink().click()
 
-    ConfirmationPage.verifyOnPage()
+    const confirmationPage = ConfirmationPage.verifyOnPage()
+    confirmationPage.offenderName().contains('John Doe')
+    confirmationPage.prison().contains('Wandsworth')
+    confirmationPage.room().contains('Room 2')
+    confirmationPage.date().contains('2 January 2020')
+    confirmationPage.startTime().contains('13:00')
+    confirmationPage.endTime().contains('13:30')
+    confirmationPage.comments().contains('A comment')
+    confirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
+    confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
+    confirmationPage.courtLocation().contains('Leeds')
+    confirmationPage.exitToAllBookings().click()
+
+    CourtVideoLinkBookingsPage.verifyOnPage()
   })
 })

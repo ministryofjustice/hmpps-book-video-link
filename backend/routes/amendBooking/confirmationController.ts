@@ -9,10 +9,10 @@ export = class ConfirmationController {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('amendBooking/confirmation.njk', {
-        prisonerName: bookingDetails.prisonerName,
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
+            prisonerName: bookingDetails.prisonerName,
             prison: bookingDetails.prisonName,
             prisonRoom: bookingDetails.mainDetails.prisonRoom,
           },
