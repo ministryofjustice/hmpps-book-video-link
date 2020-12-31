@@ -92,7 +92,7 @@
     "watch-ts": "tsc -w",
     "watch-node": "nodemon --watch dist/ dist/server.js | bunyan -o short",
     "start:dev": "npm run build && concurrently npm:watch-*",
-    "start-feature": "npm run copy-assets && npm run compile-sass && export $(cat feature.env) && node dist/server.js",
+    "start-feature": "npm run build && export $(cat feature.env) && node dist/server.js",
     "test-watch-node-feature": "export $(cat feature.env) && nodemon --watch dist/ dist/server.js | bunyan -o short",
     "start-feature:dev": "npm run build && concurrently -n \"Views,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" npm:watch-views npm:watch-ts npm:test-watch-node-feature",
     "build": "npm run copy-assets && tsc &&  npm run compile-sass && npm run copy-views",

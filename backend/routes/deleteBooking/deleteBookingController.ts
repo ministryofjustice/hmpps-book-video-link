@@ -73,7 +73,7 @@ export = class DeleteBookingController {
       if (!offenderName) {
         return res.redirect('/bookings')
       }
-      return res.render('changeBooking/videoLinkDeleted.njk', {
+      return res.render('deleteBooking/videoLinkDeleted.njk', {
         offenderName: offenderName[0],
         offenderNo: offenderNo[0],
       })

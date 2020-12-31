@@ -139,7 +139,7 @@ describe('Delete Booking', () => {
       await controller.deleteConfirmed()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'changeBooking/videoLinkDeleted.njk',
+        'deleteBooking/videoLinkDeleted.njk',
         expect.objectContaining({
           offenderName: 'John Doe',
           offenderNo: 'A12345',
