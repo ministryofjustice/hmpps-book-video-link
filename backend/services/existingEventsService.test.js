@@ -1,4 +1,4 @@
-const existingEventsService = require('../services/existingEventsService')
+const existingEventsService = require('./existingEventsService')
 
 describe('existing events', () => {
   const prisonApi = {}

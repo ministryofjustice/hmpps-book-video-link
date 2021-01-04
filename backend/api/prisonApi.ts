@@ -21,7 +21,7 @@ type ActivityListRequest = {
   locationId: number
   usage: string
   date: string
-  timeSlot: 'AM' | 'ED' | 'PM'
+  timeSlot?: 'AM' | 'ED' | 'PM'
 }
 
 type AgencyAppointmentRequest = {

@@ -1,10 +1,5 @@
 import type PrisonApi from '../api/prisonApi'
-import { Context } from './model'
-
-type Option = {
-  value: string
-  text: string
-}
+import { Context, Option } from './model'
 
 type AppointmentOptions = {
   locationTypes: Option[]
