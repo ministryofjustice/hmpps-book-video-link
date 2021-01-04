@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
-import { Option } from './model'
+import { Room } from './model'
 import ReferenceDataService from './referenceDataService'
 
 type TimeSlot = {
@@ -53,7 +53,7 @@ export default class AvailableSlotService {
       .sort(sortByStartTime)
   }
 
-  public getAvailableLocationsForSlots(timeSlots: TimeSlot[], locations: Option[], eventsAtLocations): Option[] {
+  public getAvailableLocationsForSlots(timeSlots: TimeSlot[], locations: Room[], eventsAtLocations): Room[] {
     return [
       ...new Set(
         timeSlots.flatMap(timeSlot => {
@@ -85,7 +85,7 @@ export default class AvailableSlotService {
   public async getAvailableRooms(context, { agencyId, startTime, endTime }) {
     const date = moment(startTime, DATE_TIME_FORMAT_SPEC)
 
-    const locations = await this.referenceDataService.getVideoLinkLocations(context, agencyId)
+    const locations = await this.referenceDataService.getRooms(context, agencyId)
     const eventsAtLocations = await this.existingEventsService.getAppointmentsAtLocations(context, {
       agency: agencyId,
       date: date.format(DAY_MONTH_YEAR),

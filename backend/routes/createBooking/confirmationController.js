@@ -11,7 +11,7 @@ module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
   const { offenderNo } = req.params
   const { activeCaseLoadId } = req.session.userDetails
 
-  const { locationTypes } = await referenceDataService.getAppointmentOptions(res.locals, activeCaseLoadId)
+  const locationTypes = await referenceDataService.getRooms(res.locals, activeCaseLoadId)
 
   const appointmentDetails = req.flash('appointmentDetails')
   if (!appointmentDetails || !appointmentDetails.length) throw new Error('Appointment details are missing')

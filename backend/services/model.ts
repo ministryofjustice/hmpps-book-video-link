@@ -2,7 +2,7 @@ import { NewAppointment } from 'whereaboutsApi'
 
 export type Context = unknown
 
-export type Option = {
+export type Room = {
   value: number
   text: string
 }

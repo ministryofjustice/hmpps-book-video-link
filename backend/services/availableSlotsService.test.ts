@@ -72,7 +72,7 @@ describe('Available slots service', () => {
   })
 
   it('should return no available rooms', async () => {
-    referenceDataService.getVideoLinkLocations.mockResolvedValue([{ value: 1, text: 'Location-1' }])
+    referenceDataService.getRooms.mockResolvedValue([{ value: 1, text: 'Location-1' }])
     existingEventsService.getAppointmentsAtLocations.mockReturnValue([
       {
         locationId: 1,
@@ -91,7 +91,7 @@ describe('Available slots service', () => {
   })
 
   it('should return a two locations, one of each id', async () => {
-    referenceDataService.getVideoLinkLocations.mockResolvedValue([
+    referenceDataService.getRooms.mockResolvedValue([
       { value: 1, text: 'Location-1' },
       { value: 2, text: 'Location-2' },
     ])
