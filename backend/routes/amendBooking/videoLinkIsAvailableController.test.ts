@@ -76,7 +76,6 @@ describe('video link is available controller', () => {
               date: '20 November 2020',
               courtHearingEndTime: '19:00',
               courtHearingStartTime: '18:00',
-              comments: 'some comment',
             },
             prePostDetails: {
               'pre-court hearing briefing': '17:40 to 18:00',

@@ -173,7 +173,6 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.date().contains('2 January 2020')
     videoLinkIsAvailablePage.startTime().contains('13:00')
     videoLinkIsAvailablePage.endTime().contains('13:30')
-    videoLinkIsAvailablePage.comments().contains('A comment')
     videoLinkIsAvailablePage.legalBriefingBefore().contains('12:40 to 13:00')
     videoLinkIsAvailablePage.legalBriefingAfter().contains('13:30 to 13:50')
     videoLinkIsAvailablePage.continue().click()
