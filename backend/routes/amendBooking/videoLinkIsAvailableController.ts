@@ -22,8 +22,8 @@ export = class VideoLinkIsAvailableController {
             courtHearingEndTime: bookingDetails.mainDetails.endTime,
           },
           prePostDetails: {
-            'pre-court hearing briefing': `${bookingDetails.preDetails?.startTime} to ${bookingDetails.preDetails?.endTime}`,
-            'post-court hearing briefing': `${bookingDetails.postDetails?.startTime} to ${bookingDetails.postDetails?.endTime}`,
+            'pre-court hearing briefing': bookingDetails.preDetails?.timings,
+            'post-court hearing briefing': bookingDetails.postDetails?.timings,
           },
         },
       })
