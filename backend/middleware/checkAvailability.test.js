@@ -32,7 +32,6 @@ const appointmentDetails = {
   recurring: 'No',
   comment: 'Test',
   locationDescription: 'Room 3',
-  appointmentTypeDescription: 'VideoLink',
   locationTypes: [
     { value: 1, text: 'Room 3' },
     { value: 2, text: 'Room 2' },

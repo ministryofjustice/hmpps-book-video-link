@@ -3,8 +3,8 @@ import BookingService from './bookingService'
 import ViewBookingsService from './viewBookingsService'
 import NotificationService from './notificationService'
 import existingEventsServiceFactory from './existingEventsService'
-import availableSlotsServiceFactory from './availableSlotsService'
 import ReferenceDataService from './referenceDataService'
+import AvailableSlotService from './availableSlotsService'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi } = apis
 
@@ -14,7 +14,7 @@ const referenceDataService = new ReferenceDataService(prisonApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
 
 const existingEventsService = existingEventsServiceFactory(prisonApi, referenceDataService)
-const availableSlotsService = availableSlotsServiceFactory({ existingEventsService, referenceDataService })
+const availableSlotsService = new AvailableSlotService(referenceDataService, existingEventsService)
 
 export const services = {
   bookingService,

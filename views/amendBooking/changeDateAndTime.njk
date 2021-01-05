@@ -1,64 +1,51 @@
-{% extends "../partials/layout.njk" %} 
-{% from "govuk/components/button/macro.njk" import govukButton %} 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
-{% from "govuk/components/radios/macro.njk" import govukRadios %} 
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% set title = "Change video link date and time" %}
+{% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
 
+{% set title = "Change video link date and time" %}
 {% block content %}
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-l">{{ title }}</h1>
-  </div>
-</div>
+    <div class="govuk-grid-row govuk-!-padding-left-6">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">{{ title }}</h1>
+            
+            {{
+                govukSummaryList({
+                classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
+                rows: prisoner | toSummaryViewModel | removePaddingBottom
+                })
+            }}
 
-<form method="POST" novalidate="novalidate">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-    <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+            {{
+                govukSummaryList({
+                classes: 'govuk-summary-list--no-border',
+                rows: locations | toSummaryViewModel | removePaddingBottom
+                })
+            }}
 
-        {{govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
-            'Date': { 
-                text: 'Change date',
-                href: '/change-date/' + bookingDetails.videoBookingId,
-                attributes: { "data-qa": "change-date" }
-            }, 
-            'Court hearing start time': { 
-                text: 'Change time',
-                href: '/change-time/' + bookingDetails.videoBookingId,
-                attributes: { "data-qa": "change-time" }
-            }
-            })
-        })
-        }}
-    </div>
-    </div>
 
-    <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{
-        govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
-        })
-        }}
-    </div>
-    </div>
+            <form method="POST" novalidate="novalidate" >
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
-    <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{
-        govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.courtDetails | toSummaryViewModel | removePaddingBottom
-        })
-        }}
-    </div>
-    </div>
+                {{dateTimeAndCourtBriefingPicker(formValues)}}
+            
 
-    {{ govukButton({ text: "Continue", type: "submit" }) }}
-</form>
+                {{ govukButton({ 
+                    text: "Continue",
+                    type: "submit",
+                    classes: "govuk-!-margin-top-6",
+                    attributes: {'data-qa': 'continue'}
+                    }) 
+                }}
+
+            </form>
+            
+            <p class="govuk-body">
+                <a href="/bookings" class="govuk-link" data-qa="cancel">Cancel</a>
+            </p>
+        </div>
+    </div>
 {% endblock %}

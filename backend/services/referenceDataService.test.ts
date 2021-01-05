@@ -8,18 +8,18 @@ jest.mock('./notificationService')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 
-const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`) =>
+const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`, locationType) =>
   ({
     description,
     locationId: i,
+    locationType,
     userDescription,
   } as Location)
 
 describe('Reference service', () => {
   const context = {}
   const agency = 'LEI'
-  const appointmentTypes = [{ code: 'ACTI', description: 'Activities', activeFlag: 'Y' as const, domain: '' }]
-  const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj'), room(27188, 'RES-MCASU-MCASU', null)]
+  const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj', 'VIDE'), room(27188, 'RES-MCASU-MCASU', null, 'VIDE')]
 
   let service: ReferenceDataService
 
@@ -31,33 +31,24 @@ describe('Reference service', () => {
     jest.resetAllMocks()
   })
 
-  describe('Get appointment options', () => {
-    it('Should make a request for appointment locations and types', async () => {
-      await service.getAppointmentOptions(context, agency)
+  describe('Get rooms', () => {
+    it('Should handle no rooms', async () => {
+      prisonApi.getLocationsForAppointments.mockResolvedValue([])
 
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, agency)
-      expect(prisonApi.getAppointmentTypes).toHaveBeenCalledWith(context)
+      const response = await service.getRooms(context, agency)
+
+      expect(response).toEqual([])
     })
 
-    it('Should handle empty responses from appointment types and locations', async () => {
-      const response = await service.getAppointmentOptions(context, agency)
-
-      expect(response).toEqual({})
-    })
-
-    it('Should map appointment types and locations correctly', async () => {
+    it('Should map rooms correctly', async () => {
       prisonApi.getLocationsForAppointments.mockResolvedValue(locations)
-      prisonApi.getAppointmentTypes.mockResolvedValue(appointmentTypes)
 
-      const response = await service.getAppointmentOptions(context, agency)
+      const response = await service.getRooms(context, agency)
 
-      expect(response).toEqual({
-        appointmentTypes: [{ value: 'ACTI', text: 'Activities' }],
-        locationTypes: [
-          { value: 27187, text: 'Adj' },
-          { value: 27188, text: 'RES-MCASU-MCASU' },
-        ],
-      })
+      expect(response).toEqual([
+        { value: 27187, text: 'Adj' },
+        { value: 27188, text: 'RES-MCASU-MCASU' },
+      ])
     })
   })
 })

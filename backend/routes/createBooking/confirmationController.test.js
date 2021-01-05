@@ -25,19 +25,13 @@ describe('Confirm appointments', () => {
 
   beforeEach(() => {
     prisonApi.getPrisonerDetails = jest.fn()
-    referenceDataService.getAppointmentOptions = jest.fn()
+    referenceDataService.getRooms = jest.fn()
 
-    referenceDataService.getAppointmentOptions.mockReturnValue({
-      appointmentTypes: [
-        { value: 'VLB', text: 'Videolink' },
-        { value: 'appointment1', text: 'Appointment 1' },
-      ],
-      locationTypes: [
-        { value: 1, text: 'Room 3' },
-        { value: 2, text: 'Room 1' },
-        { value: 3, text: 'Room 2' },
-      ],
-    })
+    referenceDataService.getRooms.mockReturnValue([
+      { value: 1, text: 'Room 3' },
+      { value: 2, text: 'Room 1' },
+      { value: 3, text: 'Room 2' },
+    ])
 
     prisonApi.getPrisonerDetails.mockReturnValue({
       offenderNo: 'A12345',

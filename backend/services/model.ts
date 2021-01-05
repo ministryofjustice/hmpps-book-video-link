@@ -2,6 +2,11 @@ import { NewAppointment } from 'whereaboutsApi'
 
 export type Context = unknown
 
+export type Room = {
+  value: number
+  text: string
+}
+
 export type AppointmentDetail = {
   startTime: string
   endTime: string

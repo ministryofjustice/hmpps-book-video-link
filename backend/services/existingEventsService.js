@@ -64,7 +64,7 @@ module.exports = (prisonApi, referenceDataService) => {
     context,
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
   ) => {
-    const locations = await referenceDataService.getVideoLinkLocations(context, agencyId)
+    const locations = await referenceDataService.getRooms(context, agencyId)
 
     const eventsAtLocations = await getAppointmentsAtLocations(context, {
       agency: agencyId,
