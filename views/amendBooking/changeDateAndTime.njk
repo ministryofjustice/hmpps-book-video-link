@@ -31,6 +31,15 @@
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
                 {{dateTimeAndCourtBriefingPicker(formValues)}}
+            
+
+                {{ govukButton({ 
+                    text: "Continue",
+                    type: "submit",
+                    classes: "govuk-!-margin-top-6",
+                    attributes: {'data-qa': 'continue'}
+                    }) 
+                }}
 
             </form>
             
