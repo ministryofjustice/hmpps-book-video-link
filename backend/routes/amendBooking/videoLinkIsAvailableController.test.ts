@@ -46,8 +46,8 @@ describe('video link is available controller', () => {
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
-      startTime: '17:40',
-      endTime: '18:00',
+      startTime: '19:00',
+      endTime: '19:20',
       description: 'vcc room 3 - 19:00 to 19:20',
     },
   }
@@ -65,26 +65,22 @@ describe('video link is available controller', () => {
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/videoLinkIsAvailable.njk',
         expect.objectContaining({
-          prisonerName: 'John Doe',
           bookingDetails: {
-            courtDetails: {
-              courtLocation: 'City of London',
-            },
+            videoBookingId: 123,
             details: {
+              name: 'John Doe',
               prison: 'some prison',
-              prisonRoom: 'vcc room 1',
+              court: 'City of London',
             },
             hearingDetails: {
-              comments: 'some comment',
+              date: '20 November 2020',
               courtHearingEndTime: '19:00',
               courtHearingStartTime: '18:00',
-              date: '20 November 2020',
             },
             prePostDetails: {
-              'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
-              'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
+              'pre-court hearing briefing': '17:40 to 18:00',
+              'post-court hearing briefing': '19:00 to 19:20',
             },
-            videoBookingId: 123,
           },
         })
       )

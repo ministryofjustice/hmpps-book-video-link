@@ -46,8 +46,8 @@ describe('video link is available controller', () => {
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
-      startTime: '17:40',
-      endTime: '18:00',
+      startTime: '19:00',
+      endTime: '19:20',
       description: 'vcc room 3 - 19:00 to 19:20',
     },
   }
@@ -70,7 +70,7 @@ describe('video link is available controller', () => {
               courtLocation: 'City of London',
             },
             details: {
-              prisonerName: 'John Doe',
+              name: 'John Doe',
               prison: 'some prison',
               prisonRoom: 'vcc room 1',
             },

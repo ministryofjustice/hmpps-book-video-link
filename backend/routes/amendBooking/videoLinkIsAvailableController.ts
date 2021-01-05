@@ -9,25 +9,21 @@ export = class VideoLinkIsAvailableController {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('amendBooking/videoLinkIsAvailable.njk', {
-        prisonerName: bookingDetails.prisonerName,
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
+            name: bookingDetails.prisonerName,
             prison: bookingDetails.prisonName,
-            prisonRoom: bookingDetails.mainDetails.prisonRoom,
+            court: bookingDetails.courtLocation,
           },
           hearingDetails: {
             date: bookingDetails.date,
             courtHearingStartTime: bookingDetails.mainDetails.startTime,
             courtHearingEndTime: bookingDetails.mainDetails.endTime,
-            comments: bookingDetails.comments,
           },
           prePostDetails: {
-            'pre-court hearing briefing': bookingDetails.preDetails?.description,
-            'post-court hearing briefing': bookingDetails.postDetails?.description,
-          },
-          courtDetails: {
-            courtLocation: bookingDetails.courtLocation,
+            'pre-court hearing briefing': `${bookingDetails.preDetails?.startTime} to ${bookingDetails.preDetails?.endTime}`,
+            'post-court hearing briefing': `${bookingDetails.postDetails?.startTime} to ${bookingDetails.postDetails?.endTime}`,
           },
         },
       })
