@@ -57,7 +57,7 @@ describe('change date and time controller', () => {
   })
 
   describe('view', () => {
-    it('should display booking details', async () => {
+    it('should display prisoner, prison and court only for GET ', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
       await controller.view()(req, res, null)
@@ -65,27 +65,8 @@ describe('change date and time controller', () => {
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/changeDateAndTime.njk',
         expect.objectContaining({
-          prisonerName: 'John Doe',
-          bookingDetails: {
-            courtDetails: {
-              courtLocation: 'City of London',
-            },
-            details: {
-              prison: 'some prison',
-              prisonRoom: 'vcc room 1',
-            },
-            hearingDetails: {
-              comments: 'some comment',
-              courtHearingEndTime: '19:00',
-              courtHearingStartTime: '18:00',
-              date: '20 November 2020',
-            },
-            prePostDetails: {
-              'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
-              'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
-            },
-            videoBookingId: 123,
-          },
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
         })
       )
     })
