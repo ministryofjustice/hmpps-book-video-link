@@ -1,4 +1,4 @@
-const existingEventsService = require('../services/existingEventsService')
+const existingEventsService = require('./existingEventsService')
 
 describe('existing events', () => {
   const prisonApi = {}
@@ -16,7 +16,7 @@ describe('existing events', () => {
       prisonApi.getEventsAtLocations = jest.fn()
       prisonApi.getVideoLinkLocations.mockReturnValue(Promise.resolve([]))
       prisonApi.getLocationsForAppointments = jest.fn()
-      referenceDataService.getVideoLinkLocations = jest.fn()
+      referenceDataService.getRooms = jest.fn()
     })
 
     it('should adjust the main appointment time by one minute in the future', async () => {
@@ -30,7 +30,7 @@ describe('existing events', () => {
         },
       ]
 
-      referenceDataService.getVideoLinkLocations.mockReturnValue(locations)
+      referenceDataService.getRooms.mockReturnValue(locations)
       prisonApi.getActivityList.mockReturnValue(Promise.resolve(eventsAtLocations))
 
       const availableLocations = await service.getAvailableLocationsForVLB(

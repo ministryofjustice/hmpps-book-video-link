@@ -1,12 +1,9 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
-{% from "components/datePicker/datePicker.njk" import datePicker %}
-{% from "components/timePicker/timePicker.njk" import timePicker %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
 
 {% set title = 'Add video link date and time' %}
 
@@ -58,88 +55,14 @@
                 <input type="hidden" name="appointmentType" value="{{ formValues.appointmentType }}">
                 <input type="hidden" name="bookingId" value="{{ bookingId }}">
 
-                {{ datePicker({
-                    id: 'date',
-                    label: 'Date',
-                    name: 'date',
-                    date: formValues.date,
-                    errorMessage: errors | findError('date'),
-                    attributes: {'data-disable-past-date':'true', 'data-add-appointment-date': 'true'}
-                }) }}
-
-                {{ timePicker({
-                    id: 'start-time',
-                    label: 'Court hearing start time',
-                    name: 'startTime',
-                    hour: formValues.startTimeHours,
-                    minute: formValues.startTimeMinutes,
-                    errorMessage: errors | findError('start-time-hours')
-                }) }}
-
-                {{ timePicker({
-                    id: 'end-time',
-                    label: 'Court hearing end time',
-                    name: 'endTime',
-                    hour: formValues.endTimeHours,
-                    minute: formValues.endTimeMinutes,
-                    errorMessage: errors | findError('end-time-hours')
-                }) }}
-
-                {{ govukRadios({
-                    classes: "govuk-radios--inline",
-                    idPrefix: "pre-appointment-required",
-                    name: "preAppointmentRequired",
-                    errorMessage: errors | findError('pre-appointment-required'),
-                    fieldset: {
-                        legend: {
-                        text: "Do you want to add a pre-court hearing briefing?",
-                        classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    items: [
-                        {
-                            value: "yes",
-                            text: "Yes",
-                            checked: formValues.preAppointmentRequired == 'yes'
-                        },
-                        {
-                            value: "no",
-                            text: "No",
-                            checked: formValues.preAppointmentRequired == 'no'
-                        }
-                    ]
-                }) }}
-
-                {{ govukRadios({
-                    classes: "govuk-radios--inline",
-                    idPrefix: "post-appointment-required",
-                    name: "postAppointmentRequired",
-                    errorMessage: errors | findError('post-appointment-required'),
-                    fieldset: {
-                        legend: {
-                        text: "Do you want to add a post-court hearing briefing?",
-                        classes: "govuk-fieldset__legend--s"
-                        }
-                    },
-                    items: [
-                        {
-                            value: "yes",
-                            text: "Yes",
-                            checked: formValues.postAppointmentRequired == 'yes'
-                        },
-                        {
-                            value: "no",
-                            text: "No",
-                            checked: formValues.postAppointmentRequired == 'no'
-                        }
-                    ]
-                }) }}
-
+                {{dateTimeAndCourtBriefingPicker(formValues)}}
+                
                 {{ govukButton({
                     text: "Continue",
                     type: "submit",
                     classes: "govuk-!-margin-right-2"
                 }) }}
+
             </form>
         </div>
     </div>
