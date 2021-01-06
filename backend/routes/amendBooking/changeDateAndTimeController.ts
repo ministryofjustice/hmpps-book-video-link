@@ -9,6 +9,7 @@ export = class ChangeDateAndTimeController {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('amendBooking/changeDateAndTime.njk', {
+        bookingId,
         prisoner: {
           name: bookingDetails.prisonerName,
         },
