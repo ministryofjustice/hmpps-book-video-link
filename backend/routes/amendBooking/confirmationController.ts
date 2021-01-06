@@ -12,7 +12,7 @@ export = class ConfirmationController {
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
-            prisonerName: bookingDetails.prisonerName,
+            name: bookingDetails.prisonerName,
             prison: bookingDetails.prisonName,
             prisonRoom: bookingDetails.mainDetails.prisonRoom,
           },

@@ -3,6 +3,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
 {% from "govuk/components/radios/macro.njk" import govukRadios %} 
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% set title = "The video link date and time is available" %}
 
 {% block content %}
@@ -16,20 +17,22 @@
 <form method="POST" novalidate="novalidate">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
     <div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+    
+    <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
         {{govukSummaryList({
             classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
-            'Date': { 
-                text: 'Change date',
-                href: '/change-date/' + bookingDetails.videoBookingId
-            }, 
-            'Court hearing start time': { 
-                text: 'Change time',
-                href: '/change-time/' + bookingDetails.videoBookingId
-            }
-            })
+            rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom 
         })
         }}
     </div>
@@ -45,17 +48,9 @@
         }}
     </div>
     </div>
-
-    <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{
-        govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.courtDetails | toSummaryViewModel | removePaddingBottom
-        })
-        }}
-    </div>
-    </div>
+    {{ govukInsetText({
+        text: "Next you need to select the video link rooms in the prison."
+    }) }}
 
     {{ govukButton({ text: "Continue", type: "submit" }) }}
 </form>

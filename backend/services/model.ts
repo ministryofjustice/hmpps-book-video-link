@@ -12,6 +12,7 @@ export type AppointmentDetail = {
   endTime: string
   prisonRoom: string
   description: string
+  timings: string
 }
 
 export type BookingDetails = {

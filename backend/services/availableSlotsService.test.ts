@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
 import AvailableSlotsService from './availableSlotsService'
+import ExistingEventsService from './existingEventsService'
 import ReferenceDataService from './referenceDataService'
 
 jest.mock('./referenceDataService')
@@ -12,7 +13,7 @@ const getTimeWithFormat = options => getTime(options).format(DATE_TIME_FORMAT_SP
 
 describe('Available slots service', () => {
   const referenceDataService = new ReferenceDataService(null) as jest.Mocked<ReferenceDataService>
-  const existingEventsService = { getAppointmentsAtLocations: jest.fn() }
+  const existingEventsService = new ExistingEventsService(null, null) as jest.Mocked<ExistingEventsService>
   const openingHours = jest.fn()
   let service: AvailableSlotsService
 
@@ -73,7 +74,7 @@ describe('Available slots service', () => {
 
   it('should return no available rooms', async () => {
     referenceDataService.getRooms.mockResolvedValue([{ value: 1, text: 'Location-1' }])
-    existingEventsService.getAppointmentsAtLocations.mockReturnValue([
+    existingEventsService.getAppointmentsAtLocations.mockResolvedValue([
       {
         locationId: 1,
         start: getTimeWithFormat({ hour: 9, minutes: 0 }),
@@ -95,7 +96,7 @@ describe('Available slots service', () => {
       { value: 1, text: 'Location-1' },
       { value: 2, text: 'Location-2' },
     ])
-    existingEventsService.getAppointmentsAtLocations.mockReturnValue([
+    existingEventsService.getAppointmentsAtLocations.mockResolvedValue([
       {
         locationId: 1,
         start: getTimeWithFormat({ hour: 9, minutes: 0 }),

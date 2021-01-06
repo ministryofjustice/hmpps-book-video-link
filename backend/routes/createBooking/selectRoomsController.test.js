@@ -51,7 +51,6 @@ describe('Select court appointment rooms', () => {
     oauthApi.userEmail = jest.fn()
     bookingService.create = jest.fn()
 
-    existingEventsService.getAppointmentsAtLocations = jest.fn()
     existingEventsService.getAvailableLocationsForVLB = jest.fn()
 
     req.flash = jest.fn()

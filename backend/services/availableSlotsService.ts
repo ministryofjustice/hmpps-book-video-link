@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
+import ExistingEventsService, { Appointment } from './existingEventsService'
 import { Room } from './model'
 import ReferenceDataService from './referenceDataService'
 
@@ -25,7 +26,7 @@ const sortByStartTime = (a, b) => a.startTime.diff(b.startTime)
 export default class AvailableSlotService {
   constructor(
     private readonly referenceDataService: ReferenceDataService,
-    private readonly existingEventsService,
+    private readonly existingEventsService: ExistingEventsService,
     private readonly openingHours = defaultOpeningHours
   ) {}
 
@@ -53,15 +54,15 @@ export default class AvailableSlotService {
       .sort(sortByStartTime)
   }
 
-  public getAvailableLocationsForSlots(timeSlots: TimeSlot[], locations: Room[], eventsAtLocations): Room[] {
+  public getAvailableLocationsForSlots(timeSlots: TimeSlot[], rooms: Room[], appointments: Appointment[]): Room[] {
     return [
       ...new Set(
         timeSlots.flatMap(timeSlot => {
           const requestedStartTime = moment(timeSlot.startTime, DATE_TIME_FORMAT_SPEC)
           const requestedEndTime = moment(timeSlot.endTime, DATE_TIME_FORMAT_SPEC)
 
-          const findOverlappingSlots = slots =>
-            slots.filter(bookedSlot => {
+          const findOverlappingAppointments = (appointmentsInRoom: Appointment[]) =>
+            appointmentsInRoom.filter(bookedSlot => {
               const bookedStartTime = moment(bookedSlot.start, DATE_TIME_FORMAT_SPEC)
               const bookedEndTime = moment(bookedSlot.end, DATE_TIME_FORMAT_SPEC)
 
@@ -71,12 +72,12 @@ export default class AvailableSlotService {
               )
             })
 
-          const fullyBookedLocations = locations.filter(location => {
-            const slots = eventsAtLocations.filter(locationEvent => locationEvent.locationId === location.value)
-            return findOverlappingSlots(slots).length > 0
+          const fullyBookedRooms = rooms.filter(room => {
+            const appointmentsInRoom = appointments.filter(appointment => appointment.locationId === room.value)
+            return findOverlappingAppointments(appointmentsInRoom).length > 0
           })
 
-          return locations.filter(location => !fullyBookedLocations.includes(location))
+          return rooms.filter(room => !fullyBookedRooms.includes(room))
         })
       ),
     ]
@@ -85,11 +86,11 @@ export default class AvailableSlotService {
   public async getAvailableRooms(context, { agencyId, startTime, endTime }) {
     const date = moment(startTime, DATE_TIME_FORMAT_SPEC)
 
-    const locations = await this.referenceDataService.getRooms(context, agencyId)
+    const rooms = await this.referenceDataService.getRooms(context, agencyId)
     const eventsAtLocations = await this.existingEventsService.getAppointmentsAtLocations(context, {
       agency: agencyId,
       date: date.format(DAY_MONTH_YEAR),
-      locations,
+      locations: rooms,
     })
 
     const minutesNeeded = getDiffInMinutes(
@@ -99,6 +100,6 @@ export default class AvailableSlotService {
 
     const timeSlots = this.breakDayIntoSlots(date.format(DATE_ONLY_FORMAT_SPEC), minutesNeeded)
 
-    return this.getAvailableLocationsForSlots(timeSlots, locations, eventsAtLocations)
+    return this.getAvailableLocationsForSlots(timeSlots, rooms, eventsAtLocations)
   }
 }

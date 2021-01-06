@@ -44,7 +44,14 @@ export = class BookingService {
       const location = locations.find(loc => loc.locationId === appointment.locationId)
       const prisonRoom = location?.userDescription || location?.description || ''
       const description = `${prisonRoom} - ${Time(appointment.startTime)} to ${Time(appointment.endTime)}`
-      return { prisonRoom, description, startTime: Time(appointment.startTime), endTime: Time(appointment.endTime) }
+      const timings = `${Time(appointment.startTime)} to ${Time(appointment.endTime)}`
+      return {
+        prisonRoom,
+        description,
+        timings,
+        startTime: Time(appointment.startTime),
+        endTime: Time(appointment.endTime),
+      }
     }
 
     return {

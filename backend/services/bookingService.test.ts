@@ -45,18 +45,21 @@ const bookingDetail: BookingDetails = {
   prisonerName: 'John Doe',
   videoBookingId: 123,
   preDetails: {
+    timings: '17:40 to 18:00',
     description: 'Vcc Room 3 - 17:40 to 18:00',
     endTime: '18:00',
     prisonRoom: 'Vcc Room 3',
     startTime: '17:40',
   },
   mainDetails: {
+    timings: '18:00 to 19:00',
     description: 'Vcc Room 1 - 18:00 to 19:00',
     endTime: '19:00',
     prisonRoom: 'Vcc Room 1',
     startTime: '18:00',
   },
   postDetails: {
+    timings: '19:00 to 19:20',
     description: 'Vcc Room 2 - 19:00 to 19:20',
     endTime: '19:20',
     prisonRoom: 'Vcc Room 2',
