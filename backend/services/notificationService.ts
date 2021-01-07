@@ -24,29 +24,34 @@ export = class NotificationService {
       offenderNo: details.offenderNo,
       prison: details.prisonName,
       date: details.date,
-      preAppointmentInfo: details.preDetails?.description,
+      preAppointmentInfo: details.preDetails?.description || 'None requested',
       mainAppointmentInfo: details.mainDetails.description,
-      postAppointmentInfo: details.postDetails?.description,
-      comments: details.comments,
+      postAppointmentInfo: details.postDetails?.description || 'None requested',
+      comments: details.comments || 'None entered',
     }
 
     const courtPersonalisation = { userName: name, ...personalisation }
     const prisonPersonalisation = { court: details.courtLocation, ...personalisation }
 
-    this.sendEmail({
-      templateId: notifications.bookingCancellationPrison,
-      email: omu,
-      personalisation: prisonPersonalisation,
-    }).catch(error => {
-      log.error('Failed to notify OMU about a booking cancellation', error)
-    })
+    if (omu) {
+      this.sendEmail({
+        templateId: notifications.bookingCancellationPrison,
+        email: omu,
+        personalisation: prisonPersonalisation,
+      }).catch(error => {
+        log.error(`Failed to notify OMU about a booking cancellation: ${error.message}`, error.response?.data?.errors)
+      })
+    }
 
     this.sendEmail({
       templateId: notifications.bookingCancellationPrison,
       email: vlb,
       personalisation: prisonPersonalisation,
     }).catch(error => {
-      log.error('Failed to notify VLB Admin about a booking cancellation', error)
+      log.error(
+        `Failed to notify VLB Admin about a booking cancellation: ${error.message}`,
+        error.response?.data?.errors
+      )
     })
 
     this.sendEmail({
@@ -54,7 +59,10 @@ export = class NotificationService {
       email,
       personalisation: courtPersonalisation,
     }).catch(error => {
-      log.error('Failed to court user about their booking cancellation', error)
+      log.error(
+        `Failed to notify court user about a booking cancellation: ${error.message}`,
+        error.response?.data?.errors
+      )
     })
   }
 }

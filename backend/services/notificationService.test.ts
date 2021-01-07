@@ -70,6 +70,38 @@ describe('Notification service', () => {
       expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
     })
 
+    it('should send personalisation with optional fields', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendCancellationEmails(context, 'A_USER', {
+        ...bookingDetail,
+        comments: null,
+        preDetails: null,
+        postDetails: null,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingCancellationPrison,
+        'omu@prison.com',
+        {
+          personalisation: {
+            comments: 'None entered',
+            court: 'City of London',
+            date: '20 November 2020',
+            mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
+            offenderNo: 'A1234AA',
+            postAppointmentInfo: 'None requested',
+            preAppointmentInfo: 'None requested',
+            prison: 'some prison',
+            prisonerName: 'John Doe',
+          },
+          reference: null,
+        }
+      )
+    })
+
     it('should send email to Offender Management Unit', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
@@ -94,6 +126,29 @@ describe('Notification service', () => {
           },
           reference: null,
         }
+      )
+    })
+
+    it('Offender Management Unit email address is optional', async () => {
+      config.notifications.emails.WWI.omu = null
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledTimes(2)
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingCancellationPrison,
+        'vlb@prison.com',
+        expect.anything()
+      )
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingCancellationCourt,
+        'user@email.com',
+        expect.anything()
       )
     })
 
