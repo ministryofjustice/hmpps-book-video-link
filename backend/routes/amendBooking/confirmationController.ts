@@ -17,7 +17,7 @@ export = class ConfirmationController {
             prisonRoom: bookingDetails.mainDetails.prisonRoom,
           },
           hearingDetails: {
-            date: bookingDetails.date,
+            date: bookingDetails.dateDescription,
             courtHearingStartTime: bookingDetails.mainDetails.startTime,
             courtHearingEndTime: bookingDetails.mainDetails.endTime,
             comments: bookingDetails.comments,

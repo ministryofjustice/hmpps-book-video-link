@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import type BookingService from '../../services/bookingService'
 import type ExistingEventsService from '../../services/existingEventsService'
 
@@ -9,7 +9,7 @@ export = class SelectAvailableRoomsController {
     private readonly existingEventsService: ExistingEventsService
   ) {}
 
-  private formatTime(date: string, time: string): string {
+  private formatTime(date: Moment, time: string): string {
     const formattedDate = moment(date, 'D MMMM YYYY').format('YYYY-MM-DD')
     return `${formattedDate}T${time}:00`
   }

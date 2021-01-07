@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { BookingDetails } from './model'
 import config from '../config'
 import NotificationService from './notificationService'
@@ -16,7 +17,8 @@ const bookingDetail: BookingDetails = {
   offenderNo: 'A1234AA',
   comments: 'some comment',
   courtLocation: 'City of London',
-  date: '20 November 2020',
+  date: moment('2020-11-20'),
+  dateDescription: '20 November 2020',
   prisonBookingId: 789,
   prisonName: 'some prison',
   prisonerName: 'John Doe',
@@ -116,7 +118,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'some comment',
             court: 'City of London',
-            date: '20 November 2020',
+            date: moment('2020-11-20'),
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
@@ -166,7 +168,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'some comment',
             court: 'City of London',
-            date: '20 November 2020',
+            date: moment('2020-11-20'),
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
@@ -190,7 +192,7 @@ describe('Notification service', () => {
         {
           personalisation: {
             comments: 'some comment',
-            date: '20 November 2020',
+            date: moment('2020-11-20'),
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',

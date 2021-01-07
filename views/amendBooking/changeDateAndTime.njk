@@ -5,13 +5,18 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
 
-{% set title = "Change video link date and time" %}
 {% block content %}
+
+    {% if changeTime == true %}
+        {% set title = "Change video link time" %}
+    {% else %}
+        {% set title = "Change video link date and time" %}
+    {% endif %}
 
     <div class="govuk-grid-row govuk-!-padding-left-6">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">{{ title }}</h1>
-            
+
             {{
                 govukSummaryList({
                 classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
@@ -26,12 +31,10 @@
                 })
             }}
 
+            <form method="POST" novalidate="novalidate">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-            <form method="POST" novalidate="novalidate" >
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                {{dateTimeAndCourtBriefingPicker(formValues)}}
-            
+                {{ dateTimeAndCourtBriefingPicker({date: date }) }}
 
                 {{ govukButton({ 
                     text: "Continue",
@@ -42,11 +45,9 @@
                 }}
 
             </form>
-            
+
             <p class="govuk-body">
-
                 <a href="/booking-details/{{bookingId}}" class="govuk-link" data-qa="cancel">Cancel</a>
-
             </p>
         </div>
     </div>

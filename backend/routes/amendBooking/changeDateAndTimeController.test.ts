@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import moment from 'moment'
 import ChangeDateAndTimeController from './changeDateAndTimeController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails } from '../../services/model'
@@ -26,7 +27,8 @@ describe('change date and time controller', () => {
     agencyId: 'WWI',
     videoBookingId: 123,
     courtLocation: 'City of London',
-    date: '20 November 2020',
+    dateDescription: '20 November 2020',
+    date: moment('2020-11-20T18:00:00', 'YYYY-MM-DDTHH:mm:ss'),
     offenderNo: 'A123AA',
     prisonerName: 'John Doe',
     prisonName: 'some prison',
@@ -63,7 +65,7 @@ describe('change date and time controller', () => {
     it('should display prisoner, prison and court only for GET ', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      await controller.view()(req, res, null)
+      await controller.view(false)(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/changeDateAndTime.njk',

@@ -17,7 +17,7 @@ export = class VideoLinkIsAvailableController {
             court: bookingDetails.courtLocation,
           },
           hearingDetails: {
-            date: bookingDetails.date,
+            date: bookingDetails.dateDescription,
             courtHearingStartTime: bookingDetails.mainDetails.startTime,
             courtHearingEndTime: bookingDetails.mainDetails.endTime,
           },

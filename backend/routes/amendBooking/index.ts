@@ -14,8 +14,9 @@ export default function createRoutes({ bookingService, existingEventsService }: 
 
   const router = express.Router({ mergeParams: true })
 
-  router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view()))
+  router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view(false)))
   router.post('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
+  router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
 
   router.get('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
   router.post('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))

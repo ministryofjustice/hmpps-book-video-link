@@ -1,9 +1,11 @@
 import type { Location, InmateDetail } from 'prisonApi'
+import moment from 'moment'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
 import { BookingDetails, NewBooking } from './model'
 import BookingService from './bookingService'
+import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -39,7 +41,8 @@ const bookingDetail: BookingDetails = {
   offenderNo: 'A1234AA',
   comments: 'some comment',
   courtLocation: 'City of London',
-  date: '20 November 2020',
+  dateDescription: '20 November 2020',
+  date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC),
   prisonBookingId: 789,
   prisonName: 'some prison',
   prisonerName: 'John Doe',

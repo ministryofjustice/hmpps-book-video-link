@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import moment from 'moment'
 import ConfirmationController from './confirmationController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails } from '../../services/model'
@@ -26,7 +27,8 @@ describe('video link is available controller', () => {
     agencyId: 'WWI',
     videoBookingId: 123,
     courtLocation: 'City of London',
-    date: '20 November 2020',
+    dateDescription: '20 November 2020',
+    date: moment('2020-11-20T18:00:00'),
     offenderNo: 'A123AA',
     prisonerName: 'John Doe',
     prisonName: 'some prison',

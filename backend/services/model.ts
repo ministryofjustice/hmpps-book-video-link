@@ -1,4 +1,5 @@
 import { NewAppointment } from 'whereaboutsApi'
+import { Moment } from 'moment'
 
 export type Context = unknown
 
@@ -23,7 +24,8 @@ export type BookingDetails = {
   prisonBookingId: number
   agencyId: string
   courtLocation: string
-  date: string
+  date: Moment
+  dateDescription: string
   comments: string
   preDetails?: AppointmentDetail
   mainDetails: AppointmentDetail
