@@ -67,28 +67,26 @@ describe('change date and time controller', () => {
 
       await controller.view(false)(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'amendBooking/changeDateAndTime.njk',
-        expect.objectContaining({
-          locations: { court: 'City of London', prison: 'some prison' },
-          prisoner: { name: 'John Doe' },
-        })
-      )
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+        bookingId: 123,
+        changeTime: false,
+        date: null,
+        locations: { court: 'City of London', prison: 'some prison' },
+        prisoner: { name: 'John Doe' },
+      })
     })
     it('should return date and changeTime=true for change-time page', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
       await controller.view(true)(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'amendBooking/changeDateAndTime.njk',
-        expect.objectContaining({
-          locations: { court: 'City of London', prison: 'some prison' },
-          prisoner: { name: 'John Doe' },
-          date: '20/11/2020',
-          changeTime: true,
-        })
-      )
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+        bookingId: 123,
+        changeTime: true,
+        date: '20/11/2020',
+        locations: { court: 'City of London', prison: 'some prison' },
+        prisoner: { name: 'John Doe' },
+      })
     })
   })
 
