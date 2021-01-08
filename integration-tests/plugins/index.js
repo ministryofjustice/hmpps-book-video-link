@@ -41,7 +41,6 @@ module.exports = on => {
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
-    stubAppointmentTypes: types => Promise.all([prisonApi.stubAppointmentTypes(types)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>

@@ -18,10 +18,6 @@ context('A user can add a video link', () => {
     cy.task('resetAndStubTokenVerification')
     const offenderNo = 'A12345'
     cy.task('stubOffenderBasicDetails', offenderBasicDetails)
-    cy.task('stubAppointmentTypes', [
-      { code: 'ACTI', description: 'Activities' },
-      { code: 'VLB', description: 'Video Link Booking' },
-    ])
     cy.task('stubCourts')
     cy.task('stubCreateVideoLinkBooking')
     cy.task('stubAgencyDetails', {

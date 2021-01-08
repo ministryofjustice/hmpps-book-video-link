@@ -2,12 +2,10 @@ import type {
   InmateDetail,
   OffenderBooking,
   PrisonerSchedule,
-  ScheduledAppointment,
   PrisonContactDetail,
   PrisonerDetail,
   Agency,
   Location,
-  ReferenceCode,
 } from 'prisonApi'
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
@@ -20,13 +18,6 @@ type ActivityListRequest = {
   agencyId: string
   locationId: number
   usage: string
-  date: string
-  timeSlot?: 'AM' | 'ED' | 'PM'
-}
-
-type AgencyAppointmentRequest = {
-  agencyId: string
-  locationId?: number
   date: string
   timeSlot?: 'AM' | 'ED' | 'PM'
 }
@@ -75,19 +66,6 @@ export = class PrisonApi {
     )
   }
 
-  public getAppointmentsForAgency = (
-    context: Context,
-    { agencyId, date, locationId, timeSlot }: AgencyAppointmentRequest
-  ): Promise<ScheduledAppointment[]> => {
-    const searchParams = mapToQueryString({
-      date,
-      locationId,
-      timeSlot,
-    })
-
-    return this.get(context, `/api/schedules/${agencyId}/appointments?${searchParams}`)
-  }
-
   public getAgencies(context: Context): Promise<PrisonContactDetail[]> {
     return this.get(context, '/api/agencies/prison')
   }
@@ -122,9 +100,5 @@ export = class PrisonApi {
 
   public getLocationsForAppointments(context: Context, agencyId: string): Promise<Location[]> {
     return this.get(context, `/api/agencies/${agencyId}/locations?eventType=APP`)
-  }
-
-  public getAppointmentTypes(context: Context): Promise<ReferenceCode[]> {
-    return this.get(context, '/api/reference-domains/scheduleReasons?eventType=APP')
   }
 }

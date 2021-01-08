@@ -6,10 +6,8 @@ declare module 'prisonApi' {
   export type InmateDetail = schemas['InmateDetail']
   export type PrisonerDetail = schemas['PrisonerDetail']
   export type PrisonerSchedule = schemas['PrisonerSchedule']
-  export type ScheduledAppointment = schemas['ScheduledAppointmentDto']
   export type PrisonContactDetail = schemas['PrisonContactDetail']
   export type Agency = schemas['Agency']
-  export type ReferenceCode = schemas['ReferenceCode']
 
   interface schemas {
     /**
