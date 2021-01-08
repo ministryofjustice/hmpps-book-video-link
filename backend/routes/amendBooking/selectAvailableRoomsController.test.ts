@@ -1,12 +1,15 @@
 import { Request, Response } from 'express'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
 import BookingService from '../../services/bookingService'
+import ExistingEventsService from '../../services/existingEventsService'
 import { BookingDetails } from '../../services/model'
 
 jest.mock('../../services/bookingService')
+jest.mock('../../services/existingEventsService')
 
 describe('Select available rooms controller', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const existingEventsService = new ExistingEventsService(null, null) as jest.Mocked<ExistingEventsService>
   let controller: SelectAvailableRoomsController
   const req = ({
     originalUrl: 'http://localhost',
@@ -55,42 +58,66 @@ describe('Select available rooms controller', () => {
     },
   }
 
+  const availableLocations = {
+    mainLocations: [{ value: 1, text: 'Room 1' }],
+    preLocations: [{ value: 2, text: 'Room 2' }],
+    postLocations: [{ value: 3, text: 'Room 3' }],
+  }
+
   beforeEach(() => {
-    controller = new SelectAvailableRoomsController(bookingService)
+    controller = new SelectAvailableRoomsController(bookingService, existingEventsService)
+    existingEventsService.getAvailableLocationsForVLB = jest.fn()
+
+    res.render = jest.fn()
   })
 
   describe('view', () => {
     it('should display booking details', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
+      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
 
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/selectAvailableRooms.njk',
         expect.objectContaining({
-          prisonerName: 'John Doe',
-          bookingDetails: {
-            courtDetails: {
-              courtLocation: 'City of London',
-            },
-            details: {
-              prison: 'some prison',
-              prisonRoom: 'vcc room 1',
-            },
-            hearingDetails: {
-              comments: 'some comment',
-              courtHearingEndTime: '19:00',
-              courtHearingStartTime: '18:00',
-              date: '20 November 2020',
-            },
-            prePostDetails: {
-              'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
-              'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
-            },
-            videoBookingId: 123,
-          },
+          preAppointmentRequired: true,
+          postAppointmentRequired: true,
+          comments: 'some comment',
         })
       )
+    })
+
+    it('should return locations', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
+
+      await controller.view()(req, res, null)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'amendBooking/selectAvailableRooms.njk',
+        expect.objectContaining({
+          mainLocations: [{ value: 1, text: 'Room 1' }],
+          preLocations: [{ value: 2, text: 'Room 2' }],
+          postLocations: [{ value: 3, text: 'Room 3' }],
+        })
+      )
+    })
+
+    it('should call the existingEventsService with correct video link booking details', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
+
+      await controller.view()(req, res, null)
+
+      expect(existingEventsService.getAvailableLocationsForVLB).toHaveBeenCalledWith(res.locals, {
+        agencyId: 'WWI',
+        startTime: '2020-11-20T18:00:00',
+        endTime: '2020-11-20T19:00:00',
+        date: '20/11/2020',
+        preAppointmentRequired: 'yes',
+        postAppointmentRequired: 'yes',
+      })
     })
   })
 

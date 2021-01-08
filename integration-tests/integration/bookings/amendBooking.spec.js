@@ -40,10 +40,17 @@ context('A user can amend a booking', () => {
     cy.task('stubAppointmentLocations', {
       agency: 'WWI',
       locations: [
-        { locationId: 100, userDescription: 'Room 1' },
-        { locationId: 110, userDescription: 'Room 2' },
-        { locationId: 120, userDescription: 'Room 3' },
+        { locationId: 100, userDescription: 'Room 1', locationType: 'VIDE' },
+        { locationId: 110, userDescription: 'Room 2', locationType: 'VIDE' },
+        { locationId: 120, userDescription: 'Room 3', locationType: 'VIDE' },
       ],
+    })
+
+    cy.task('stubAppointmentsAtAgencyLocation', {
+      agency: 'WWI',
+      location: '.*?',
+      date: '.*?',
+      appointments: [],
     })
 
     cy.task('stubGetVideoLinkBookings', {
@@ -178,6 +185,11 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
+    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
+    selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')
+    selectAvailableRoomsForm.selectMainAppointmentLocation().select('110')
+    selectAvailableRoomsForm.selectPostAppointmentLocation().select('120')
+    selectAvailableRoomsForm.comments().contains('A comment')
     selectAvailableRoomsPage.bookVideoLink().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()

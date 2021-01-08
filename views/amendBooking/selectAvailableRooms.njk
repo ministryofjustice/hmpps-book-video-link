@@ -51,7 +51,7 @@
             {{ govukTextarea({
                 name: "comment",
                 id: "comment",
-                value: formValues.comment,
+                value: comments,
                 errorMessage: errors | findError('comment'),
                 classes: 'govuk-!-width-one-half',
                 label: {

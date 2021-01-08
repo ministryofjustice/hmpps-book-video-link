@@ -193,7 +193,7 @@ module.exports = {
     return stubFor({
       request: {
         method: 'GET',
-        url: `/api/schedules/${agency}/locations/${location}/usage/${type}?date=${date}`,
+        urlPattern: `/api/schedules/${agency}/locations/${location}/usage/${type}\\?date=${date}`,
       },
       response: {
         status,
