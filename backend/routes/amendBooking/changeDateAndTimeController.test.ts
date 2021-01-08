@@ -75,6 +75,21 @@ describe('change date and time controller', () => {
         })
       )
     })
+    it('should return date and changeTime=true for change-time page', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      await controller.view(true)(req, res, null)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'amendBooking/changeDateAndTime.njk',
+        expect.objectContaining({
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
+          date: '20/11/2020',
+          changeTime: true,
+        })
+      )
+    })
   })
 
   describe('submit', () => {

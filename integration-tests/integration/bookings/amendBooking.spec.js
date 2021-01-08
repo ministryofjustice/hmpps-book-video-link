@@ -5,6 +5,7 @@ const VideoLinkIsAvailablePage = require('../../pages/amendBooking/videoLinkIsAv
 const SelectAvailableRoomsPage = require('../../pages/amendBooking/selectAvailableRoomsPage')
 const ConfirmationPage = require('../../pages/amendBooking/confirmationPage')
 const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
+const ChangeTimePage = require('../../pages/amendBooking/changeTimePage')
 
 context('A user can amend a booking', () => {
   before(() => {
@@ -206,5 +207,19 @@ context('A user can amend a booking', () => {
     confirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
+  })
+  it('A user can view date in change-time page', () => {
+    cy.task('stubLoginCourt')
+    ChangeTimePage.goTo(10)
+    const changeTimePage = ChangeTimePage.verifyOnPage()
+    changeTimePage.date().should('have.value', '02/01/2020')
+  })
+
+  it('A user will be navigated to the booking-details page', () => {
+    cy.task('stubLoginCourt')
+    ChangeTimePage.goTo(10)
+    const changeTimePage = ChangeTimePage.verifyOnPage()
+    changeTimePage.cancel().click()
+    BookingDetailsPage.verifyOnPage('John Doe’s')
   })
 })
