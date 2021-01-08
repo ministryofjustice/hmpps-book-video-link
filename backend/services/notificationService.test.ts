@@ -91,7 +91,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'None entered',
             court: 'City of London',
-            date: moment('2020-11-20'),
+            date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'None requested',
@@ -118,7 +118,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'some comment',
             court: 'City of London',
-            date: moment('2020-11-20'),
+            date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
@@ -168,7 +168,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'some comment',
             court: 'City of London',
-            date: moment('2020-11-20'),
+            date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
@@ -192,7 +192,7 @@ describe('Notification service', () => {
         {
           personalisation: {
             comments: 'some comment',
-            date: moment('2020-11-20'),
+            date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',

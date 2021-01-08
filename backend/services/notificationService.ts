@@ -23,7 +23,7 @@ export = class NotificationService {
       prisonerName: details.prisonerName,
       offenderNo: details.offenderNo,
       prison: details.prisonName,
-      date: details.date,
+      date: details.dateDescription,
       preAppointmentInfo: details.preDetails?.description || 'None requested',
       mainAppointmentInfo: details.mainDetails.description,
       postAppointmentInfo: details.postDetails?.description || 'None requested',
