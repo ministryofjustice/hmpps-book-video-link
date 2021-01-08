@@ -12,8 +12,7 @@ executors:
   builder:
     docker:
       - image: 'circleci/node:14-buster-browsers'
-    working_directory: ~/app   
-  
+    working_directory: ~/app
 
 jobs:
   build:
@@ -60,7 +59,7 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: unit tests
-          command: npm run test
+          command: npm run test:ci
       - store_test_results:
           path: test-results
       - store_artifacts:
@@ -125,7 +124,7 @@ workflows:
                 - main
       - hmpps/deploy_env:
           name: deploy_dev
-          env: "dev"
+          env: 'dev'
           context:
             - hmpps-common-vars
           requires:
@@ -144,8 +143,8 @@ workflows:
             - deploy_dev
       - hmpps/deploy_env:
           name: deploy_preprod
-          env: "preprod"
-          context: 
+          env: 'preprod'
+          context:
             - hmpps-book-video-link-preprod
             - hmpps-common-vars
           requires:
@@ -156,9 +155,9 @@ workflows:
             - deploy_preprod
       - hmpps/deploy_env:
           name: deploy_prod
-          env: "prod"
+          env: 'prod'
           slack_notification: true
-          context: 
+          context:
             - hmpps-book-video-link-prod
             - hmpps-common-vars
           requires:
@@ -167,7 +166,7 @@ workflows:
   scheduled:
     triggers:
       - schedule:
-          cron: "0 7 * * 1-5"
+          cron: '0 7 * * 1-5'
           filters:
             branches:
               only:
