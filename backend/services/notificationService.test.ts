@@ -91,7 +91,7 @@ describe('Notification service', () => {
           personalisation: {
             comments: 'None entered',
             court: 'City of London',
-            date: '20 November 2020',
+            date: moment('2020-11-20'),
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
             postAppointmentInfo: 'None requested',
