@@ -10,7 +10,7 @@ export = class SelectAvailableRoomsController {
   ) {}
 
   private formatTime(date: Moment, time: string): string {
-    const formattedDate = moment(date, 'D MMMM YYYY').format('YYYY-MM-DD')
+    const formattedDate = date.format('YYYY-MM-DD')
     return `${formattedDate}T${time}:00`
   }
 
