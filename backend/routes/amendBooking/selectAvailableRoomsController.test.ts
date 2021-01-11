@@ -128,7 +128,7 @@ describe('Select available rooms controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-amended-confirmation/12`)
+      expect(res.redirect).toHaveBeenCalledWith(`/video-link-change-confirmed/12`)
     })
   })
 })

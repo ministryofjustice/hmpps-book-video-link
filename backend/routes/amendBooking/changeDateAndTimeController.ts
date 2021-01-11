@@ -24,7 +24,7 @@ export = class ChangeDateAndTimeController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      res.redirect(`/video-link-is-available/${bookingId}`)
+      res.redirect(`/video-link-available/${bookingId}`)
     }
   }
 }

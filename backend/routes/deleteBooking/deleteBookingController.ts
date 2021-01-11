@@ -43,11 +43,11 @@ export = class DeleteBookingController {
         const errors = [
           {
             text: 'Select Yes or No',
-            href: '#confirm-deletion',
+            href: '#delete-booking',
           },
         ]
         req.flash('errors', errors)
-        return res.redirect(`/confirm-deletion/${bookingId}`)
+        return res.redirect(`/delete-booking/${bookingId}`)
       }
 
       if (req.body.confirmDeletion === 'no') {
@@ -63,7 +63,7 @@ export = class DeleteBookingController {
       req.flash('offenderName', offenderIdentifiers.offenderName)
       req.flash('offenderNo', offenderIdentifiers.offenderNo)
 
-      return res.redirect('/video-link-deleted')
+      return res.redirect('/booking-deleted')
     }
   }
 

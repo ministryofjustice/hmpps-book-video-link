@@ -8,10 +8,10 @@ export default function createRoutes({ bookingService }: Services): Router {
 
   const router = express.Router({ mergeParams: true })
 
-  router.get('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
-  router.post('/confirm-deletion/:bookingId', asyncMiddleware(deleteBooking.confirmDeletion()))
+  router.get('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.viewDelete()))
+  router.post('/delete-booking/:bookingId', asyncMiddleware(deleteBooking.confirmDeletion()))
 
-  router.get('/video-link-deleted', asyncMiddleware(deleteBooking.deleteConfirmed()))
+  router.get('/booking-deleted', asyncMiddleware(deleteBooking.deleteConfirmed()))
 
   return router
 }

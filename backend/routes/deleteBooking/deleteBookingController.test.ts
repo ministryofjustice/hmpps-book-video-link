@@ -101,11 +101,11 @@ describe('Delete Booking', () => {
   })
 
   describe('confirmDeletion', () => {
-    it('should redirect to /confirm-deletions/:bookingId when no confirmDeletion on body', async () => {
+    it('should redirect to /delete-booking/:bookingId when no confirmDeletion on body', async () => {
       await controller.confirmDeletion()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith('/confirm-deletion/123')
-      expect(req.flash).toHaveBeenCalledWith('errors', [{ href: '#confirm-deletion', text: 'Select Yes or No' }])
+      expect(res.redirect).toHaveBeenCalledWith('/delete-booking/123')
+      expect(req.flash).toHaveBeenCalledWith('errors', [{ href: '#delete-booking', text: 'Select Yes or No' }])
     })
     it('should redirect to /bookings when user selects no', async () => {
       req.body.confirmDeletion = 'no'
@@ -113,7 +113,7 @@ describe('Delete Booking', () => {
       await controller.confirmDeletion()(req, res, null)
       expect(res.redirect).toHaveBeenCalledWith('/bookings')
     })
-    it('should redirect to /video-link-deleted when user selects yes', async () => {
+    it('should redirect to /booking-deleted when user selects yes', async () => {
       req.body.confirmDeletion = 'yes'
       const offenderNameAndBookingIds = {
         offenderName: 'John Doe',
@@ -123,7 +123,7 @@ describe('Delete Booking', () => {
       bookingService.delete.mockResolvedValue(offenderNameAndBookingIds)
 
       await controller.confirmDeletion()(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith('/video-link-deleted')
+      expect(res.redirect).toHaveBeenCalledWith('/booking-deleted')
       expect(bookingService.delete).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 123)
     })
   })

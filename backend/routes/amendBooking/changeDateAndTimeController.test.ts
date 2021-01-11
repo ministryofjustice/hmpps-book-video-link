@@ -82,7 +82,7 @@ describe('change date and time controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-is-available/12`)
+      expect(res.redirect).toHaveBeenCalledWith(`/video-link-available/12`)
     })
   })
 })

@@ -17,13 +17,13 @@ export default function createRoutes({ bookingService, existingEventsService }: 
   router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view()))
   router.post('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
 
-  router.get('/video-link-is-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
-  router.post('/video-link-is-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))
+  router.get('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
+  router.post('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))
 
   router.get('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.view()))
   router.post('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.submit()))
 
-  router.get('/video-link-amended-confirmation/:bookingId', asyncMiddleware(confirmation.view()))
+  router.get('/video-link-change-confirmed/:bookingId', asyncMiddleware(confirmation.view()))
 
   return router
 }

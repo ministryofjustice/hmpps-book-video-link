@@ -44,7 +44,7 @@ export = class SelectAvailableRoomsController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      res.redirect(`/video-link-amended-confirmation/${bookingId}`)
+      res.redirect(`/video-link-change-confirmed/${bookingId}`)
     }
   }
 }
