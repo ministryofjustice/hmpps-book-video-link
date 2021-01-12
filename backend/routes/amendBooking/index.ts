@@ -1,7 +1,10 @@
 import express, { Router } from 'express'
 import { Services } from '../../services'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+import validationMiddleware from '../../middleware/validationMiddleware'
+
 import ChangeDateAndTimeController from './changeDateAndTimeController'
+import changeDateAndTimeValidation from './changeDateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
 import ConfirmationController from './confirmationController'
@@ -15,7 +18,12 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   const router = express.Router({ mergeParams: true })
 
   router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view(false)))
-  router.post('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
+  router.post(
+    '/change-date-and-time/:bookingId',
+    validationMiddleware(changeDateAndTimeValidation),
+    asyncMiddleware(changeDateAndTime.submit())
+  )
+
   router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
   router.post('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
 
