@@ -9,7 +9,7 @@ process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 const config = require('../config')
 
 const { requestBookingFactory } = require('../routes/requestBooking/requestBooking')
-const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
+const { DAY_LONG_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyApi } = require('../api/notifyApi')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
@@ -93,14 +93,14 @@ describe('Request a booking', () => {
       it('should stash the appointment details and redirect to offender details', async () => {
         jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
 
-        req.body = { ...validBody, date: moment().format(DAY_MONTH_YEAR) }
+        req.body = { ...validBody, date: moment().format(DAY_LONG_MONTH_YEAR) }
 
         await controller.checkAvailability(req, res)
 
         expect(req.flash).toHaveBeenCalledWith(
           'requestBooking',
           expect.objectContaining({
-            date: '29/03/2019',
+            date: '29 March 2019',
             prison: 'test@test',
             startTime: '2019-03-29T22:05:00',
             endTime: '2019-03-29T23:05:00',
@@ -117,7 +117,7 @@ describe('Request a booking', () => {
 
       it('should validate and check for missing required fields', async () => {
         jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-        const date = moment().format(DAY_MONTH_YEAR)
+        const date = moment().format(DAY_LONG_MONTH_YEAR)
 
         req.body = {
           date,
@@ -149,7 +149,7 @@ describe('Request a booking', () => {
       })
 
       it('should return validation messages for start times being in the past', async () => {
-        const date = moment().format(DAY_MONTH_YEAR)
+        const date = moment().format(DAY_LONG_MONTH_YEAR)
         const startTime = moment().subtract(5, 'minutes')
         const startTimeHours = startTime.hour()
         const startTimeMinutes = startTime.minute()
@@ -174,7 +174,7 @@ describe('Request a booking', () => {
 
       it('should validate that the end time comes after the start time', async () => {
         req.body = {
-          date: moment().format(DAY_MONTH_YEAR),
+          date: moment().format(DAY_LONG_MONTH_YEAR),
           startTimeHours: '23',
           startTimeMinutes: '00',
           endTimeHours: '22',
@@ -196,7 +196,7 @@ describe('Request a booking', () => {
 
     it('should validate full start and end time', async () => {
       jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-      const date = moment().format(DAY_MONTH_YEAR)
+      const date = moment().format(DAY_LONG_MONTH_YEAR)
 
       req.body = {
         prison: 'WWI',
@@ -256,7 +256,7 @@ describe('Request a booking', () => {
       })
       req.flash.mockImplementation(() => [
         {
-          date: '01/01/2019',
+          date: '01 January 2019',
           startTime: '2919-01-01T10:00:00',
           endTime: '2019-01-01T11:00:00',
           prison: 'WWI',
@@ -348,7 +348,7 @@ describe('Request a booking', () => {
         return key !== 'errors'
           ? [
               {
-                date: '01/01/3019',
+                date: '01 January 3019',
                 startTime: '3019-01-01T01:00:00',
                 endTime: '3019-01-01T02:00:00',
                 prison: 'WWI',
@@ -416,7 +416,7 @@ describe('Request a booking', () => {
 
     it('should validate missing offender details', async () => {
       const bookingDetails = {
-        date: '01/01/3019',
+        date: '01 January 3019',
         startTime: '3019-01-01T01:00:00',
         endTime: '3019-01-01T02:00:00',
         prison: 'WWI',
@@ -505,7 +505,7 @@ describe('Request a booking', () => {
     it('should submit two emails, one for the prison and another for the current user', async () => {
       req.flash.mockImplementation(() => [
         {
-          date: '01/01/2019',
+          date: '01 January 2019',
           startTime: '2919-01-01T10:00:00',
           endTime: '2019-01-01T11:00:00',
           prison: 'WWI',
@@ -566,7 +566,7 @@ describe('Request a booking', () => {
     it('should stash appointment details and redirect to the confirmation page', async () => {
       req.flash.mockImplementation(() => [
         {
-          date: '01/01/2019',
+          date: '01 January 2019',
           startTime: '2919-01-01T10:00:00',
           endTime: '2019-01-01T11:00:00',
           prison: 'WWI',

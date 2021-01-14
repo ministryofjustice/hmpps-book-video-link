@@ -212,7 +212,7 @@ context('A user can amend a booking', () => {
     cy.task('stubLoginCourt')
     ChangeTimePage.goTo(10)
     const changeTimePage = ChangeTimePage.verifyOnPage()
-    changeTimePage.date().should('have.value', '02/01/2020')
+    changeTimePage.date().should('have.value', '2 January 2020')
   })
 
   it('A user will be navigated to the booking-details page', () => {

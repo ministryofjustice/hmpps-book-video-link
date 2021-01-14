@@ -14,9 +14,9 @@
                     id: 'date',
                     label: 'Date',
                     name: 'date',
-                    date: params.date,
+                    date: params.date | formatDate('D MMMM YYYY'),
                     errorMessage: errors | findError('date'),
-                    attributes: {'data-disable-past-date':'true', 'data-add-appointment-date': 'true'}
+                    attributes: {"date-format": "d MM yy", 'data-disable-past-date':'true', 'data-add-appointment-date': 'true'}
                 }) }}
 
 

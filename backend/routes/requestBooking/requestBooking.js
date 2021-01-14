@@ -1,5 +1,5 @@
 const moment = require('moment')
-const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
+const { buildDateTime, DATE_TIME_FORMAT_SPEC, DAY_LONG_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
 const { validateComments } = require('../../shared/appointmentConstants')
 const {
   notifications: { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId, emails: emailConfig },
@@ -11,7 +11,7 @@ const isValidNumber = number => Number.isSafeInteger(Number.parseInt(number, 10)
 
 const validateStartEndTime = ({ date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes, errors }) => {
   const now = moment()
-  const isToday = date ? moment(date, DAY_MONTH_YEAR).isSame(now, 'day') : false
+  const isToday = date ? moment(date, DAY_LONG_MONTH_YEAR).isSame(now, 'day') : false
   const startTime = buildDateTime({ date, hours: startTimeHours, minutes: startTimeMinutes })
   const endTime = buildDateTime({ date, hours: endTimeHours, minutes: endTimeMinutes })
   const startTimeDuration = startTime && moment.duration(now.diff(startTime))
@@ -40,14 +40,13 @@ const validateDate = (date, errors) => {
   const now = moment()
   if (!date) errors.push({ text: 'Select the date of the video link', href: '#date' })
 
-  if (date && !moment(date, DAY_MONTH_YEAR).isValid())
+  if (date && !moment(date, DAY_LONG_MONTH_YEAR, true).isValid())
     errors.push({
-      text:
-        'Enter the date of the video link using numbers in the format of day, month and year separated using a forward slash',
+      text: 'Enter the date of the video link using numbers in the format of "day month year" e.g. 13 January 2021',
       href: '#date',
     })
 
-  if (date && moment(date, DAY_MONTH_YEAR).isBefore(now, 'day'))
+  if (date && moment(date, DAY_LONG_MONTH_YEAR, true).isBefore(now, 'day'))
     errors.push({ text: 'Select a date that is not in the past', href: '#date' })
 }
 const extractObjectFromFlash = ({ req, key }) =>
@@ -190,7 +189,7 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
         prison: matchingPrison.fromattedDescription || matchingPrison.description,
       },
       hearingDetails: {
-        date: moment(date, DAY_MONTH_YEAR).format('D MMMM YYYY'),
+        date,
         courtHearingStartTime: Time(startTime),
         courtHearingEndTime: Time(endTime),
       },
@@ -286,7 +285,7 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
       firstName,
       lastName,
       dateOfBirth: dateOfBirth.format('D MMMM YYYY'),
-      date: moment(date, DAY_MONTH_YEAR).format('dddd D MMMM YYYY'),
+      date: moment(date, DAY_LONG_MONTH_YEAR).format('dddd D MMMM YYYY'),
       startTime: Time(startTime),
       endTime: endTime && Time(endTime),
       prison: matchingPrison.formattedDescription || matchingPrison.description,

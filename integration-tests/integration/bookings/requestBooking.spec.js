@@ -25,7 +25,7 @@ context('A user can request a booking', () => {
   it('A user can request a video link booking for a prisoner who is not in prison', () => {
     const startPage = StartPage.verifyOnPage()
     const startForm = startPage.form()
-    startForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    startForm.date().type(moment().add(1, 'days').format('DD MMMM YYYY'))
     startForm.prison().select('WWI')
     startForm.startTimeHours().select('10')
     startForm.startTimeMinutes().select('00')

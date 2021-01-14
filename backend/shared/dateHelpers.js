@@ -3,6 +3,7 @@ const moment = require('moment')
 const DATE_TIME_FORMAT_SPEC = 'YYYY-MM-DDTHH:mm:ss'
 const DATE_ONLY_FORMAT_SPEC = 'YYYY-MM-DD'
 const DAY_MONTH_YEAR = 'DD/MM/YYYY'
+const DAY_LONG_MONTH_YEAR = 'D MMMM YYYY'
 const MOMENT_DAY_OF_THE_WEEK = 'dddd'
 const MOMENT_TIME = 'HH:mm'
 
@@ -29,6 +30,7 @@ module.exports = {
   DATE_TIME_FORMAT_SPEC,
   DATE_ONLY_FORMAT_SPEC,
   DAY_MONTH_YEAR,
+  DAY_LONG_MONTH_YEAR,
   MOMENT_DAY_OF_THE_WEEK,
   MOMENT_TIME,
   DayOfTheWeek,

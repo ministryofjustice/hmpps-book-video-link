@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
-import { DAY_MONTH_YEAR } from '../../shared/dateHelpers'
 
 export = class ChangeDateAndTimeController {
   public constructor(private readonly bookingService: BookingService) {}
@@ -11,7 +10,7 @@ export = class ChangeDateAndTimeController {
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('amendBooking/changeDateAndTime.njk', {
         changeTime: changeTimeView,
-        date: changeTimeView ? bookingDetails.date.format(DAY_MONTH_YEAR) : null,
+        date: changeTimeView ? bookingDetails.date : null,
         bookingId,
         prisoner: {
           name: bookingDetails.prisonerName,

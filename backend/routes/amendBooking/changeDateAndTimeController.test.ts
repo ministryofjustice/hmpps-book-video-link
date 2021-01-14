@@ -83,7 +83,7 @@ describe('change date and time controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
         bookingId: 123,
         changeTime: true,
-        date: '20/11/2020',
+        date: moment('2020-11-20T18:00:00', 'YYYY-MM-DDTHH:mm:ss'),
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
       })

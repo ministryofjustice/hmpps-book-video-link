@@ -1,5 +1,10 @@
 const moment = require('moment')
-const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC, buildDateTime } = require('../../shared/dateHelpers')
+const {
+  DAY_MONTH_YEAR,
+  DAY_LONG_MONTH_YEAR,
+  DATE_TIME_FORMAT_SPEC,
+  buildDateTime,
+} = require('../../shared/dateHelpers')
 const { formatName } = require('../../utils')
 
 module.exports = ({ prisonApi }) => {
@@ -17,17 +22,18 @@ module.exports = ({ prisonApi }) => {
     } = fields
     const errors = []
     const now = moment()
-    const isToday = date ? moment(date, DAY_MONTH_YEAR).isSame(now, 'day') : false
+    const isToday = date ? moment(date, DAY_LONG_MONTH_YEAR).isSame(now, 'day') : false
 
     const startTimeDuration = moment.duration(now.diff(startTime))
     const endTimeDuration = endTime && moment.duration(startTime.diff(endTime))
 
     if (!date) errors.push({ text: 'Select the date of the video link', href: '#date' })
 
-    if (date && !moment(date, DAY_MONTH_YEAR).isValid())
-      errors.push({ text: 'Enter a date in DD/MM/YYYY format', href: '#date' })
+    if (date && !moment(date, DAY_LONG_MONTH_YEAR, true).isValid()) {
+      errors.push({ text: 'Enter a date in D MMMM YYYY format', href: '#date' })
+    }
 
-    if (date && moment(date, DAY_MONTH_YEAR).isBefore(now, 'day'))
+    if (date && moment(date, DAY_LONG_MONTH_YEAR, true).isBefore(now, 'day'))
       errors.push({ text: 'Select a date that is not in the past', href: '#date' })
 
     if (!startTimeHours && !startTimeMinutes)

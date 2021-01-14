@@ -1,6 +1,6 @@
 const moment = require('moment')
 const checkAvailability = require('./checkAvailability')
-const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers')
+const { DAY_LONG_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers')
 
 const existingEventsService = {}
 const availableSlotsService = {}
@@ -37,7 +37,7 @@ const appointmentDetails = {
     { value: 2, text: 'Room 2' },
     { value: 3, text: 'Room 3' },
   ],
-  date: '01/01/2017',
+  date: '01 January 2017',
   preAppointmentRequired: 'yes',
   postAppointmentRequired: 'yes',
   court: 'Leeds',
@@ -86,7 +86,7 @@ describe('Room check middleware', () => {
       const tomorrow = moment().add(1, 'day')
       req.body = {
         bookingId: 1,
-        date: tomorrow.format(DAY_MONTH_YEAR),
+        date: tomorrow.format(DAY_LONG_MONTH_YEAR),
         startTimeHours: '00',
         startTimeMinutes: '01',
         endTimeHours: '00',
@@ -106,7 +106,7 @@ describe('Room check middleware', () => {
     beforeEach(() => {
       req.body = {
         bookingId,
-        date: moment().format(DAY_MONTH_YEAR),
+        date: moment().format(DAY_LONG_MONTH_YEAR),
         preAppointmentRequired: 'yes',
         postAppointmentRequired: 'yes',
       }

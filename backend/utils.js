@@ -1,7 +1,7 @@
 const moment = require('moment')
-const { DATE_TIME_FORMAT_SPEC } = require('./shared/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC, DAY_LONG_MONTH_YEAR } = require('./shared/dateHelpers')
 
-const switchDateFormat = (displayDate, fromFormat = 'DD/MM/YYYY') => {
+const switchDateFormat = (displayDate, fromFormat = DAY_LONG_MONTH_YEAR) => {
   if (displayDate) {
     return moment(displayDate, fromFormat).format('YYYY-MM-DD')
   }

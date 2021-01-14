@@ -133,7 +133,7 @@ describe('Add court appointment', () => {
       })
 
       it('should return an error when selected date is in the past', async () => {
-        req.body = { date: '28/03/2019' }
+        req.body = { date: '28 March 2019' }
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
@@ -145,7 +145,7 @@ describe('Add court appointment', () => {
       })
 
       it('should return an error when selected start time is in the past', async () => {
-        req.body = { date: '29/03/2019', startTimeHours: '10', startTimeMinutes: '0' }
+        req.body = { date: '29 March 2019', startTimeHours: '10', startTimeMinutes: '0' }
         await controller.validateInput(req, res)
 
         expect(res.render).toHaveBeenCalledWith(
@@ -161,7 +161,7 @@ describe('Add court appointment', () => {
 
     it('should return an error when the end time is before the start time', async () => {
       req.body = {
-        date: '29/03/2019',
+        date: '29 March 2019',
         startTimeHours: '10',
         startTimeMinutes: '15',
         endTimeHours: '09',

@@ -124,7 +124,7 @@ context('A user can add a video link', () => {
     cy.task('stubLoginCourt')
     const startPage = StartPage.verifyOnPage()
     const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    addAppointmentForm.date().type(moment().add(1, 'days').format('DD MMMM YYYY'))
 
     startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
@@ -257,7 +257,7 @@ context('A user can add a video link', () => {
 
     const startPage = StartPage.verifyOnPage()
     const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(tomorrow.format('DD/MM/YYYY'))
+    addAppointmentForm.date().type(tomorrow.format('DD MMMM YYYY'))
 
     startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
@@ -339,7 +339,7 @@ context('A user can add a video link', () => {
 
     const startPage = StartPage.verifyOnPage()
     const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(tomorrow.format('DD/MM/YYYY'))
+    addAppointmentForm.date().type(tomorrow.format('DD MMMM YYYY'))
 
     startPage.activeDate().click()
     addAppointmentForm.startTimeHours().select('10')
