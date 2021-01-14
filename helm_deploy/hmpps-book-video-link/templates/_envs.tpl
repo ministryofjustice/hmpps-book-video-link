@@ -68,7 +68,7 @@ env:
     valueFrom:
       secretKeyRef:
         name: {{ template "app.name" . }}
-        key: WANDSWORTH_OMU_EMAIL
+        key: HEWELL_OMU_EMAIL
 
   - name: HEWELL_VLB_EMAIL
     valueFrom:
