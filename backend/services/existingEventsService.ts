@@ -3,7 +3,7 @@ import { PrisonerSchedule } from 'prisonApi'
 import PrisonApi from '../api/prisonApi'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import { switchDateFormat, flattenCalls } from '../utils'
-import { Context, Room } from './model'
+import { Context, Room, RoomAvailability } from './model'
 import ReferenceDataService from './referenceDataService'
 
 export type Appointment = {
@@ -16,8 +16,6 @@ type TimeSlot = {
   startTime: string
   endTime: string
 }
-
-type RoomAvailability = { mainLocations: Room[]; preLocations: Room[]; postLocations: Room[] }
 
 const toAppointment: (PrisonerSchedule, locationId: number) => Appointment = (event, locationId) => ({
   locationId,

@@ -1,4 +1,11 @@
-import { CourtLocations, NewVideoLinkBooking, VideoLinkBooking } from 'whereaboutsApi'
+import {
+  CourtLocations,
+  NewVideoLinkBooking,
+  VideoLinkBooking,
+  AppointmentLocationsSpecification,
+  AvailableLocation,
+} from 'whereaboutsApi'
+
 import { Response } from 'superagent'
 import type Client from './oauthEnabledClient'
 import { mapToQueryString } from '../utils'
@@ -34,6 +41,10 @@ export = class WhereaboutsApi {
 
   public getVideoLinkBooking(context: Context, videoBookingId: number): Promise<VideoLinkBooking> {
     return this.get(context, `/court/video-link-bookings/${videoBookingId}`)
+  }
+
+  public getAvailableRooms(context: Context, request: AppointmentLocationsSpecification): Promise<AvailableLocation[]> {
+    return this.post(context, '/court/appointment-location-finder', request)
   }
 
   public getVideoLinkBookings(

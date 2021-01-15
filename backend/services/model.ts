@@ -7,6 +7,16 @@ export type Room = {
   value: number
   text: string
 }
+export type AvailabilityRequest = {
+  agencyId: string
+  date: Moment
+  startTime: Moment
+  endTime: Moment
+  preRequired: boolean
+  postRequired: boolean
+}
+
+export type RoomAvailability = { mainLocations: Room[]; preLocations: Room[]; postLocations: Room[] }
 
 export type AppointmentDetail = {
   startTime: string

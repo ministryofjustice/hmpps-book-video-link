@@ -4,6 +4,8 @@ const { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } = require('../shared/dateHelpers
 
 const existingEventsService = {}
 const availableSlotsService = {}
+const availabilityCheckService = {}
+
 const req = {
   session: {
     userDetails: {},
@@ -61,7 +63,7 @@ describe('Room check middleware', () => {
 
     req.flash.mockImplementation(() => [appointmentDetails])
 
-    middleware = checkAvailability({ existingEventsService, availableSlotsService })
+    middleware = checkAvailability({ existingEventsService, availableSlotsService, availabilityCheckService })
   })
 
   afterEach(() => {
@@ -249,7 +251,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAvailability({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService, availabilityCheckService })
       await middleware(req, res, next)
 
       expect(next).toHaveBeenCalled()
@@ -277,7 +279,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAvailability({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService, availabilityCheckService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -306,7 +308,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAvailability({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService, availabilityCheckService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
@@ -335,7 +337,7 @@ describe('Room check middleware', () => {
         comment: 'Test',
       }
 
-      middleware = checkAvailability({ existingEventsService, availableSlotsService })
+      middleware = checkAvailability({ existingEventsService, availableSlotsService, availabilityCheckService })
       await middleware(req, res, next)
 
       expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)

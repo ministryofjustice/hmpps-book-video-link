@@ -13,7 +13,11 @@ const unpackAppointmentDetails = req => {
   )
 }
 
-module.exports = ({ existingEventsService, availableSlotsService }) => async (req, res, next) => {
+module.exports = ({ existingEventsService, availableSlotsService, availabilityCheckService }) => async (
+  req,
+  res,
+  next
+) => {
   const appointmentDetails = unpackAppointmentDetails(req)
   const {
     date,
@@ -24,6 +28,8 @@ module.exports = ({ existingEventsService, availableSlotsService }) => async (re
     endTimeHours,
     endTimeMinutes,
   } = appointmentDetails
+
+  const result = await availabilityCheckService.getRooms(res.locals, appointmentDetails)
   const { selectPreAppointmentLocation, selectMainAppointmentLocation, selectPostAppointmentLocation } = req.body
   const { offenderNo, agencyId } = req.params
   const startTime = buildDateTime({ date, hours: startTimeHours, minutes: startTimeMinutes })
