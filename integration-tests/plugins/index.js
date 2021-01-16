@@ -25,7 +25,7 @@ module.exports = on => {
         tokenverification.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
-    stubLoginCourt: () => Promise.all([auth.stubLoginCourt(), tokenverification.stubVerifyToken(true)]),
+    stubLoginCourt: user => Promise.all([auth.stubLoginCourt(user), tokenverification.stubVerifyToken(true)]),
 
     stubUserEmail: username => auth.stubEmail(username),
     stubUser: (username, caseload) => auth.stubUser(username, caseload),
@@ -49,7 +49,7 @@ module.exports = on => {
     stubAppointmentsAtAgencyLocation: ({ agency, location, date, appointments }) =>
       Promise.all([prisonApi.stubSchedulesAtAgency(agency, location, 'APP', date, appointments)]),
     stubUserMeRoles: roles => auth.stubUserMeRoles(roles),
-    stubUserMe: () => auth.stubUserMe(),
+    stubUserMe: me => auth.stubUserMe(me),
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
     stubLocationGroups: locationGroups => whereabouts.stubLocationGroups(locationGroups),
     stubOffenderBookings: bookings => prisonApi.stubOffenderBookings(bookings),
