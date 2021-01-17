@@ -47,12 +47,20 @@ context('A user can amend a booking', () => {
       ],
     })
 
-    cy.task('stubAppointmentsAtAgencyLocation', {
-      agency: 'WWI',
-      location: '.*?',
-      date: '.*?',
-      appointments: [],
-    })
+    cy.task('stubRoomAvailability', [
+      {
+        appointmentInterval: { start: '12:40', end: '13:00' },
+        locations: [{ locationId: 100, userDescription: 'Room 1', locationType: 'VIDE' }],
+      },
+      {
+        appointmentInterval: { start: '13:00', end: '13:30' },
+        locations: [{ locationId: 110, userDescription: 'Room 2', locationType: 'VIDE' }],
+      },
+      {
+        appointmentInterval: { start: '13:30', end: '13:50' },
+        locations: [{ locationId: 120, userDescription: 'Room 3', locationType: 'VIDE' }],
+      },
+    ])
 
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',

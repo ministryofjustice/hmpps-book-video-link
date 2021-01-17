@@ -1,26 +1,10 @@
-import type {
-  InmateDetail,
-  OffenderBooking,
-  PrisonerSchedule,
-  PrisonContactDetail,
-  PrisonerDetail,
-  Agency,
-  Location,
-} from 'prisonApi'
+import type { InmateDetail, OffenderBooking, PrisonContactDetail, PrisonerDetail, Agency, Location } from 'prisonApi'
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
 import { mapToQueryString } from '../utils'
 import Client from './oauthEnabledClient'
 
 type Context = any
-
-type ActivityListRequest = {
-  agencyId: string
-  locationId: number
-  usage: string
-  date: string
-  timeSlot?: 'AM' | 'ED' | 'PM'
-}
 
 type GlobalSearchRequest = {
   offenderNo: string
@@ -52,18 +36,6 @@ export = class PrisonApi {
 
   public getPrisonBookings(context: Context, bookingIds: number[]): Promise<OffenderBooking[]> {
     return this.get(context, `/api/bookings?bookingId=${bookingIds}`, 1000)
-  }
-
-  public getActivityList(
-    context: Context,
-    { agencyId, locationId, usage, date, timeSlot }: ActivityListRequest
-  ): Promise<PrisonerSchedule[]> {
-    return this.get(
-      context,
-      `/api/schedules/${agencyId}/locations/${locationId}/usage/${usage}?${
-        timeSlot ? `timeSlot=${timeSlot}&` : ''
-      }date=${date}`
-    )
   }
 
   public getAgencies(context: Context): Promise<PrisonContactDetail[]> {

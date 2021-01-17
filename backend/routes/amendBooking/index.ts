@@ -6,10 +6,10 @@ import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
 import ConfirmationController from './confirmationController'
 
-export default function createRoutes({ bookingService, existingEventsService }: Services): Router {
+export default function createRoutes({ bookingService, availabilityCheckService }: Services): Router {
   const changeDateAndTime = new ChangeDateAndTimeController(bookingService)
   const videoLinkIsAvailable = new VideoLinkIsAvailableController(bookingService)
-  const selectAvailableRooms = new SelectAvailableRoomsController(bookingService, existingEventsService)
+  const selectAvailableRooms = new SelectAvailableRoomsController(bookingService, availabilityCheckService)
   const confirmation = new ConfirmationController(bookingService)
 
   const router = express.Router({ mergeParams: true })

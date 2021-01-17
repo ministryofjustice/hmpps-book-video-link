@@ -1,3 +1,4 @@
+const { AvailabilityData } = require('applicationinsights/out/Declarations/Contracts')
 const { stubFor, verifyPosts, getMatchingRequests } = require('./wiremock')
 
 module.exports = {
@@ -69,6 +70,22 @@ module.exports = {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: bookings || [],
+      },
+    })
+  },
+
+  stubRoomAvailability: response => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/whereabouts/court/appointment-location-finder`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response || {},
       },
     })
   },

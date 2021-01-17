@@ -1,12 +1,14 @@
-const moment = require('moment')
-const { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
-const {
-  notifications: { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails },
-} = require('../../config')
+import moment from 'moment'
+import { RequestHandler } from 'express'
 
-const toAppointmentDetailsSummary = require('../../services/toAppointmentDetailsSummary')
+import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } from '../../shared/dateHelpers'
+import { notifications } from '../../config'
+import toAppointmentDetailsSummary from '../../services/toAppointmentDetailsSummary'
+import { properCaseName } from '../../utils'
+import { Services } from '../../services'
+import { AvailabilityRequest } from '../../services/model'
 
-const { properCaseName } = require('../../utils')
+const { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails } = notifications
 
 const unpackAppointmentDetails = req => {
   const appointmentDetails = req.flash('appointmentDetails')
@@ -19,6 +21,17 @@ const unpackAppointmentDetails = req => {
     }),
     {}
   )
+}
+
+function parseAvailabilityRequest(agencyId: string, obj: Record<string, unknown>): AvailabilityRequest {
+  return {
+    agencyId,
+    date: moment(obj.date, DAY_MONTH_YEAR, true),
+    startTime: moment(obj.startTime, DATE_TIME_FORMAT_SPEC, true),
+    endTime: moment(obj.endTime, DATE_TIME_FORMAT_SPEC, true),
+    preRequired: obj.preAppointmentRequired === 'yes',
+    postRequired: obj.postAppointmentRequired === 'yes',
+  }
 }
 
 const packAppointmentDetails = (req, details) => {
@@ -83,13 +96,19 @@ const validate = ({
   return errors
 }
 
-module.exports = function selectCourtAppointmentRoomsFactory({
+type Handlers = {
+  index: RequestHandler
+  validateInput: RequestHandler
+  createAppointments: RequestHandler
+}
+
+export default function selectCourtAppointmentRoomsFactory({
   prisonApi,
   bookingService,
-  existingEventsService,
+  availabilityCheckService,
   oauthApi,
   notifyApi,
-}) {
+}: Services): Handlers {
   const index = async (req, res) => {
     const { offenderNo, agencyId } = req.params
 
@@ -106,23 +125,17 @@ module.exports = function selectCourtAppointmentRoomsFactory({
 
     const date = moment(startTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
 
-    const { mainLocations, preLocations, postLocations } = await existingEventsService.getAvailableLocationsForVLB(
-      res.locals,
-      {
-        agencyId,
-        startTime,
-        endTime,
-        date,
-        preAppointmentRequired,
-        postAppointmentRequired,
-      }
-    )
+    const availabilityRequest = parseAvailabilityRequest(agencyId, appointmentDetails)
+
+    const {
+      rooms: { pre, main, post },
+    } = await availabilityCheckService.getAvailability(res.locals, availabilityRequest)
 
     packAppointmentDetails(req, {
       ...appointmentDetails,
-      mainLocations,
-      preLocations,
-      postLocations,
+      mainLocations: main,
+      preLocations: pre,
+      postLocations: post,
       agencyDescription,
       firstName,
       lastName,
@@ -131,9 +144,9 @@ module.exports = function selectCourtAppointmentRoomsFactory({
     })
 
     res.render('createBooking/selectRooms.njk', {
-      mainLocations,
-      preLocations,
-      postLocations,
+      mainLocations: main,
+      preLocations: pre,
+      postLocations: post,
       date,
       details: toAppointmentDetailsSummary({
         firstName,
@@ -255,7 +268,7 @@ module.exports = function selectCourtAppointmentRoomsFactory({
       comment,
     } = req.body
 
-    const prepostAppointments = {}
+    const prepostAppointments = {} as any
 
     if (preAppointmentRequired === 'yes') {
       prepostAppointments.preAppointment = createPreAppointment({
@@ -340,9 +353,5 @@ module.exports = function selectCourtAppointmentRoomsFactory({
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
 
-  return {
-    index,
-    validateInput,
-    createAppointments,
-  }
+  return { index, validateInput, createAppointments }
 }

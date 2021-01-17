@@ -37,6 +37,7 @@ module.exports = on => {
       whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings),
     stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
     stubDeleteVideoLinkBooking: videoBookingId => whereabouts.stubDeleteVideoLinkBooking(videoBookingId),
+    stubRoomAvailability: locations => whereabouts.stubRoomAvailability(locations),
 
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,
@@ -46,8 +47,6 @@ module.exports = on => {
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),
     stubAgencies: agencies => Promise.all([prisonApi.stubAgencies(agencies)]),
-    stubAppointmentsAtAgencyLocation: ({ agency, location, date, appointments }) =>
-      Promise.all([prisonApi.stubSchedulesAtAgency(agency, location, 'APP', date, appointments)]),
     stubUserMeRoles: roles => auth.stubUserMeRoles(roles),
     stubUserMe: () => auth.stubUserMe(),
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,

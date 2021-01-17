@@ -188,20 +188,4 @@ module.exports = {
       },
     })
   },
-
-  stubSchedulesAtAgency: (agency, location, type, date, schedules, status = 200) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: `/api/schedules/${agency}/locations/${location}/usage/${type}\\?date=${date}`,
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: schedules || [],
-      },
-    })
-  },
 }

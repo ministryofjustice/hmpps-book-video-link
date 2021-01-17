@@ -1,21 +1,35 @@
-const selectRoomsController = require('./selectRoomsController')
-const { notifyApi } = require('../../api/notifyApi')
-const config = require('../../config')
+import moment from 'moment'
+import { Agency, InmateDetail } from 'prisonApi'
+
+import selectRoomsController from './selectRoomsController'
+import { notifyApi } from '../../api/notifyApi'
+import config from '../../config'
+import PrisonApi from '../../api/prisonApi'
+import BookingService from '../../services/bookingService'
+import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { Services } from '../../services'
+import { RoomAvailability } from '../../services/model'
+import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+
+jest.mock('../../api/prisonApi')
+jest.mock('../../services/bookingService')
+jest.mock('../../services/availabilityCheckService')
 
 describe('Select court appointment rooms', () => {
-  const prisonApi = {}
-  const oauthApi = {}
-  const bookingService = {}
-  const existingEventsService = {}
-  let service
+  const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
+  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+  const oauthApi = { userEmail: jest.fn() } as any
+  let controller
 
   const req = {
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345' },
     session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Court User' } },
     body: {},
+    flash: jest.fn(),
   }
-  const res = { locals: {}, redirect: jest.fn() }
+  const res = { locals: {}, redirect: jest.fn(), render: jest.fn() }
 
   const bookingId = 1
   const appointmentDetails = {
@@ -25,10 +39,10 @@ describe('Select court appointment rooms', () => {
     lastName: 'doe',
     appointmentType: 'VLB',
     locationId: 1,
-    startTime: '2017-10-10T11:00',
-    endTime: '2017-10-10T14:00',
+    startTime: '2017-11-10T11:00:00',
+    endTime: '2017-11-10T14:00:00',
     comment: 'Test',
-    date: '10/10/2019',
+    date: '10/11/2017',
     preAppointmentRequired: 'yes',
     postAppointmentRequired: 'yes',
     preLocations: [{ value: 1, text: 'Room 1' }],
@@ -36,65 +50,59 @@ describe('Select court appointment rooms', () => {
     court: 'Leeds',
   }
 
-  const availableLocations = {
-    mainLocations: [{ value: 1, text: 'Room 1' }],
-    preLocations: [{ value: 2, text: 'Room 2' }],
-    postLocations: [{ value: 3, text: 'Room 3' }],
+  const availableLocations: RoomAvailability = {
+    isAvailable: true,
+    totalInterval: { start: '09:00', end: '10:00' },
+    rooms: {
+      main: [{ value: 1, text: 'Room 1' }],
+      pre: [{ value: 2, text: 'Room 2' }],
+      post: [{ value: 3, text: 'Room 3' }],
+    },
   }
 
   beforeEach(() => {
-    prisonApi.getPrisonerDetails = jest.fn()
-    prisonApi.getAgencyDetails = jest.fn()
-    prisonApi.addSingleAppointment = jest.fn()
-    prisonApi.getLocation = jest.fn()
+    jest.resetAllMocks()
 
-    oauthApi.userEmail = jest.fn()
-    bookingService.create = jest.fn()
-
-    existingEventsService.getAvailableLocationsForVLB = jest.fn()
-
-    req.flash = jest.fn()
-    res.render = jest.fn()
-
-    existingEventsService.getAvailableLocationsForVLB.mockReturnValue(availableLocations)
-
-    prisonApi.getPrisonerDetails.mockReturnValue({
+    prisonApi.getPrisonerDetails.mockResolvedValue({
       bookingId,
       offenderNo: 'A12345',
       firstName: 'john',
       lastName: 'doe',
-      assignedLivingUnitDesc: 'Cell 1',
-    })
+    } as InmateDetail)
 
-    prisonApi.getAgencyDetails.mockReturnValue({ description: 'Moorland' })
-
-    req.flash.mockImplementation(() => [appointmentDetails])
+    prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Moorland' } as Agency)
+    availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+    req.flash.mockReturnValue([appointmentDetails])
 
     notifyApi.sendEmail = jest.fn()
 
-    service = selectRoomsController({
+    controller = selectRoomsController(({
       prisonApi,
       bookingService,
-      existingEventsService,
+      availabilityCheckService,
       oauthApi,
       notifyApi,
-    })
+    } as unknown) as Services)
   })
 
   describe('index', () => {
     it('should return locations', async () => {
-      const { index } = service
+      const { index } = controller
 
       await index(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectRooms.njk',
-        expect.objectContaining(availableLocations)
+        expect.objectContaining({
+          mainLocations: [{ text: 'Room 1', value: 1 }],
+          postLocations: [{ text: 'Room 3', value: 3 }],
+          preLocations: [{ text: 'Room 2', value: 2 }],
+        })
       )
     })
 
     it('should extract appointment details', async () => {
-      const { index } = service
+      const { index } = controller
 
       await index(req, res)
 
@@ -102,7 +110,7 @@ describe('Select court appointment rooms', () => {
         'createBooking/selectRooms.njk',
         expect.objectContaining({
           details: {
-            date: '10 October 2017',
+            date: '10 November 2017',
             endTime: '14:00',
             prisonerName: 'John Doe',
             startTime: '11:00',
@@ -113,7 +121,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { index } = service
+      const { index } = controller
 
       req.flash.mockImplementation(() => [])
 
@@ -121,19 +129,19 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should call getAvailableLocationsForVLB with the correct parameters', async () => {
-      const { index } = service
+      const { index } = controller
 
       await index(req, res)
 
-      expect(existingEventsService.getAvailableLocationsForVLB).toHaveBeenCalledWith(
+      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(
         {},
         {
           agencyId: 'MDI',
-          date: '10/10/2017',
-          endTime: '2017-10-10T14:00',
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
-          startTime: '2017-10-10T11:00',
+          date: moment('10/11/2017', DAY_MONTH_YEAR, true),
+          startTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
+          endTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
+          postRequired: true,
+          preRequired: true,
         }
       )
     })
@@ -150,7 +158,7 @@ describe('Select court appointment rooms', () => {
         comment: 'Test',
       }
 
-      const { validateInput } = service
+      const { validateInput } = controller
       await validateInput(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
@@ -171,7 +179,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should validate presence of room locations', async () => {
-      const { validateInput } = service
+      const { validateInput } = controller
 
       req.body = {
         selectPreAppointmentLocation: null,
@@ -200,7 +208,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should return selected form values on validation errors', async () => {
-      const { validateInput } = service
+      const { validateInput } = controller
       const comment = 'Some supporting comment text'
 
       req.body = { comment }
@@ -216,7 +224,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should return locations, links and summary details on validation errors', async () => {
-      const { validateInput } = service
+      const { validateInput } = controller
 
       req.flash.mockImplementation(() => [
         {
@@ -236,7 +244,7 @@ describe('Select court appointment rooms', () => {
           postLocations: [{ value: 1, text: 'Room 3' }],
           preLocations: [{ value: 1, text: 'Room 3' }],
           details: {
-            date: '10 October 2017',
+            date: '10 November 2017',
             startTime: '11:00',
             endTime: '14:00',
             prisonerName: 'John Doe',
@@ -246,14 +254,14 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { validateInput } = service
+      const { validateInput } = controller
 
       req.flash.mockImplementation(() => [])
       expect(() => validateInput(req, res)).toThrow('Appointment details are missing')
     })
 
     it('should pack appointment details back into flash before rendering', async () => {
-      const { validateInput } = service
+      const { validateInput } = controller
 
       await validateInput(req, res)
 
@@ -282,7 +290,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should redirect to confirmation page', async () => {
-      const { createAppointments } = service
+      const { createAppointments } = controller
 
       req.body = {
         selectPreAppointmentLocation: '1',
@@ -305,7 +313,7 @@ describe('Select court appointment rooms', () => {
           postAppointmentRequired: 'no',
         },
       ])
-      const { createAppointments } = service
+      const { createAppointments } = controller
 
       req.body = {
         selectMainAppointmentLocation: '2',
@@ -319,7 +327,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should call the appointment service with correct appointment details', async () => {
-      const { createAppointments } = service
+      const { createAppointments } = controller
       req.flash.mockImplementation(() => [
         {
           ...appointmentDetails,
@@ -344,9 +352,9 @@ describe('Select court appointment rooms', () => {
           bookingId: 1,
           court: 'Leeds',
           comment: 'Test',
-          pre: { endTime: '2017-10-10T11:00', locationId: 1, startTime: '2017-10-10T10:40:00' },
-          main: { endTime: '2017-10-10T14:00', locationId: 2, startTime: '2017-10-10T11:00' },
-          post: { endTime: '2017-10-10T14:20:00', locationId: 3, startTime: '2017-10-10T14:00' },
+          pre: { endTime: '2017-11-10T11:00:00', locationId: 1, startTime: '2017-11-10T10:40:00' },
+          main: { endTime: '2017-11-10T14:00:00', locationId: 2, startTime: '2017-11-10T11:00:00' },
+          post: { endTime: '2017-11-10T14:20:00', locationId: 3, startTime: '2017-11-10T14:00:00' },
         }
       )
     })
@@ -364,13 +372,7 @@ describe('Select court appointment rooms', () => {
         email: 'test@example.com',
       })
 
-      const { createAppointments } = selectRoomsController({
-        prisonApi,
-        oauthApi,
-        notifyApi,
-        bookingService,
-        existingEventsService,
-      })
+      const { createAppointments } = controller
 
       req.body = {
         selectPreAppointmentLocation: '1',
@@ -384,7 +386,7 @@ describe('Select court appointment rooms', () => {
       const personalisation = {
         startTime: '11:00',
         endTime: '14:00',
-        date: '10 October 2019',
+        date: '10 November 2017',
         comments: appointmentDetails.comment,
         court: 'Leeds',
         firstName: 'John',

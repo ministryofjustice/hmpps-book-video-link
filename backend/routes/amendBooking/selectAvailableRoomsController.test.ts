@@ -1,16 +1,18 @@
 import { Request, Response } from 'express'
 import moment from 'moment'
+
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
 import BookingService from '../../services/bookingService'
-import ExistingEventsService from '../../services/existingEventsService'
-import { BookingDetails } from '../../services/model'
+import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { BookingDetails, RoomAvailability } from '../../services/model'
+import { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 
 jest.mock('../../services/bookingService')
-jest.mock('../../services/existingEventsService')
+jest.mock('../../services/availabilityCheckService')
 
 describe('Select available rooms controller', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
-  const existingEventsService = new ExistingEventsService(null, null) as jest.Mocked<ExistingEventsService>
+  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   let controller: SelectAvailableRoomsController
   const req = ({
     originalUrl: 'http://localhost',
@@ -31,7 +33,7 @@ describe('Select available rooms controller', () => {
     videoBookingId: 123,
     courtLocation: 'City of London',
     dateDescription: '20 November 2020',
-    date: moment('2020-11-20T18:00:00'),
+    date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
     offenderNo: 'A123AA',
     prisonerName: 'John Doe',
     prisonName: 'some prison',
@@ -60,23 +62,25 @@ describe('Select available rooms controller', () => {
     },
   }
 
-  const availableLocations = {
-    mainLocations: [{ value: 1, text: 'Room 1' }],
-    preLocations: [{ value: 2, text: 'Room 2' }],
-    postLocations: [{ value: 3, text: 'Room 3' }],
+  const availableLocations: RoomAvailability = {
+    isAvailable: true,
+    totalInterval: { start: '09:00', end: '10:00' },
+    rooms: {
+      main: [{ value: 1, text: 'Room 1' }],
+      pre: [{ value: 2, text: 'Room 2' }],
+      post: [{ value: 3, text: 'Room 3' }],
+    },
   }
 
   beforeEach(() => {
-    controller = new SelectAvailableRoomsController(bookingService, existingEventsService)
-    existingEventsService.getAvailableLocationsForVLB = jest.fn()
-
-    res.render = jest.fn()
+    jest.resetAllMocks()
+    controller = new SelectAvailableRoomsController(bookingService, availabilityCheckService)
   })
 
   describe('view', () => {
     it('should display booking details', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
-      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
+      availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
 
       await controller.view()(req, res, null)
 
@@ -86,19 +90,6 @@ describe('Select available rooms controller', () => {
           preAppointmentRequired: true,
           postAppointmentRequired: true,
           comments: 'some comment',
-        })
-      )
-    })
-
-    it('should return locations', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
-
-      await controller.view()(req, res, null)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'amendBooking/selectAvailableRooms.njk',
-        expect.objectContaining({
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
@@ -108,17 +99,17 @@ describe('Select available rooms controller', () => {
 
     it('should call the existingEventsService with correct video link booking details', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
-      existingEventsService.getAvailableLocationsForVLB.mockResolvedValue(availableLocations)
+      availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
 
       await controller.view()(req, res, null)
 
-      expect(existingEventsService.getAvailableLocationsForVLB).toHaveBeenCalledWith(res.locals, {
+      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
         agencyId: 'WWI',
-        startTime: '2020-11-20T18:00:00',
-        endTime: '2020-11-20T19:00:00',
-        date: '20/11/2020',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
+        date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+        postRequired: true,
+        preRequired: true,
       })
     })
   })

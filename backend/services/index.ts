@@ -3,7 +3,6 @@ import BookingService from './bookingService'
 import ViewBookingsService from './viewBookingsService'
 import NotificationService from './notificationService'
 import ReferenceDataService from './referenceDataService'
-import ExistingEventsService from './existingEventsService'
 import AvailabilityCheckService from './availabilityCheckService'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi } = apis
@@ -12,12 +11,10 @@ const notificationService = new NotificationService(oauthApi, notifyApi)
 const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService)
 const referenceDataService = new ReferenceDataService(prisonApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
-const existingEventsService = new ExistingEventsService(prisonApi, referenceDataService)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 
 export const services = {
   bookingService,
-  existingEventsService,
   notificationService,
   referenceDataService,
   viewBookingsService,
