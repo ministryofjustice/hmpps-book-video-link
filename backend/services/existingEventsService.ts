@@ -3,7 +3,7 @@ import { PrisonerSchedule } from 'prisonApi'
 import PrisonApi from '../api/prisonApi'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import { switchDateFormat, flattenCalls } from '../utils'
-import { Context, Room, RoomAvailability } from './model'
+import { Context, Room, LegacyRoomAvailability } from './model'
 import ReferenceDataService from './referenceDataService'
 
 export type Appointment = {
@@ -76,7 +76,7 @@ export default class ExistingEventsService {
   public async getAvailableLocationsForVLB(
     context: Context,
     { agencyId, startTime, endTime, date, preAppointmentRequired, postAppointmentRequired }
-  ): Promise<RoomAvailability> {
+  ): Promise<LegacyRoomAvailability> {
     const rooms = await this.referenceDataService.getRooms(context, agencyId)
 
     const appointments = await this.getAppointmentsAtLocations(context, {

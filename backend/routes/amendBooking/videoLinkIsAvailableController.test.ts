@@ -3,6 +3,7 @@ import moment from 'moment'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails } from '../../services/model'
+import { DAY_MONTH_YEAR } from '../../shared/dateHelpers'
 
 jest.mock('../../services/bookingService')
 
@@ -28,7 +29,7 @@ describe('video link is available controller', () => {
     videoBookingId: 123,
     courtLocation: 'City of London',
     dateDescription: '20 November 2020',
-    date: moment('20 November 2020'),
+    date: moment('20/11/2020', DAY_MONTH_YEAR),
     offenderNo: 'A123AA',
     prisonerName: 'John Doe',
     prisonName: 'some prison',
