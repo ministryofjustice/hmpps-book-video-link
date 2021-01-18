@@ -1,4 +1,3 @@
-const { AvailabilityData } = require('applicationinsights/out/Declarations/Contracts')
 const { stubFor, verifyPosts, getMatchingRequests } = require('./wiremock')
 
 module.exports = {
@@ -78,17 +77,26 @@ module.exports = {
     return stubFor({
       request: {
         method: 'POST',
-        url: `/whereabouts/court/appointment-location-finder`,
+        url: `/whereabouts/court/vlb-appointment-location-finder`,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: response || {},
+        jsonBody: response || [],
       },
     })
   },
+
+  getFindBookingRequest: () =>
+    getMatchingRequests({
+      method: 'POST',
+      urlPath: '/whereabouts/court/vlb-appointment-location-finder',
+    }).then(data => {
+      const { requests } = data.body
+      return JSON.parse(requests[0].body)
+    }),
 
   stubGetVideoLinkBooking: booking => {
     return stubFor({

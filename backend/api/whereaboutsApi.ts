@@ -3,7 +3,7 @@ import {
   NewVideoLinkBooking,
   VideoLinkBooking,
   AppointmentLocationsSpecification,
-  AvailableLocation,
+  AvailableLocations,
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
@@ -43,8 +43,8 @@ export = class WhereaboutsApi {
     return this.get(context, `/court/video-link-bookings/${videoBookingId}`)
   }
 
-  public getAvailableRooms(context: Context, request: AppointmentLocationsSpecification): Promise<AvailableLocation[]> {
-    return this.post(context, '/court/appointment-location-finder', request)
+  public getAvailableRooms(context: Context, request: AppointmentLocationsSpecification): Promise<AvailableLocations> {
+    return this.post(context, '/court/vlb-appointment-location-finder', request)
   }
 
   public getVideoLinkBookings(

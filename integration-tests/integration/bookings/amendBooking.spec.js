@@ -47,20 +47,11 @@ context('A user can amend a booking', () => {
       ],
     })
 
-    cy.task('stubRoomAvailability', [
-      {
-        appointmentInterval: { start: '12:40', end: '13:00' },
-        locations: [{ locationId: 100, userDescription: 'Room 1', locationType: 'VIDE' }],
-      },
-      {
-        appointmentInterval: { start: '13:00', end: '13:30' },
-        locations: [{ locationId: 110, userDescription: 'Room 2', locationType: 'VIDE' }],
-      },
-      {
-        appointmentInterval: { start: '13:30', end: '13:50' },
-        locations: [{ locationId: 120, userDescription: 'Room 3', locationType: 'VIDE' }],
-      },
-    ])
+    cy.task('stubRoomAvailability', {
+      pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
+      main: [{ locationId: 110, description: 'Room 2', locationType: 'VIDE' }],
+      post: [{ locationId: 120, description: 'Room 3', locationType: 'VIDE' }],
+    })
 
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',
@@ -194,6 +185,18 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
+
+    cy.task('getFindBookingRequest').then(request => {
+      expect(request).to.deep.equal({
+        agencyId: 'WWI',
+        date: '2020-01-02',
+        vlbIdsToExclude: [],
+        preInterval: { start: '12:40', end: '13:00' },
+        mainInterval: { start: '13:00', end: '13:30' },
+        postInterval: { start: '13:30', end: '13:50' },
+      })
+    })
+
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
     selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')
     selectAvailableRoomsForm.selectMainAppointmentLocation().select('110')

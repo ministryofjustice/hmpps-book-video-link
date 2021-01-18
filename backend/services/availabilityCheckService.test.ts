@@ -26,8 +26,7 @@ describe('AvailabilityCheckService', () => {
 
   const location = (locationId): Location => ({
     locationId,
-    description: `ROOM-${locationId}`,
-    userDescription: `Room-${locationId}`,
+    description: `Room-${locationId}`,
   })
 
   describe('Get available rooms', () => {
@@ -36,11 +35,11 @@ describe('AvailabilityCheckService', () => {
       return availability.rooms
     }
     it('No rooms', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [] },
-        { appointmentInterval: mainInterval, locations: [] },
-        { appointmentInterval: postInterval, locations: [] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [],
+        main: [],
+        post: [],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -61,16 +60,50 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [preInterval, mainInterval, postInterval],
+        preInterval,
+        mainInterval,
+        postInterval,
+      })
+    })
+
+    it('No locations', async () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: undefined,
+        main: [],
+        post: null,
+      })
+
+      const rooms = await getAvailableRooms({
+        agencyId: 'WWI',
+        date: moment('20/11/2020', DAY_MONTH_YEAR),
+        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
+        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
+        preRequired: true,
+        postRequired: true,
+      })
+
+      expect(rooms).toStrictEqual({
+        pre: [],
+        main: [],
+        post: [],
+      })
+
+      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
+        agencyId: 'WWI',
+        date: '2020-11-20',
+        vlbIdsToExclude: [],
+        preInterval,
+        mainInterval,
+        postInterval,
       })
     })
 
     it('All 3 appointments', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [location(1), location(2), location(3)] },
-        { appointmentInterval: mainInterval, locations: [location(2), location(3)] },
-        { appointmentInterval: postInterval, locations: [location(1)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1), location(2), location(3)],
+        main: [location(2), location(3)],
+        post: [location(1)],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -91,15 +124,17 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [preInterval, mainInterval, postInterval],
+        preInterval,
+        mainInterval,
+        postInterval,
       })
     })
     it('All 3 appointments', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [location(1), location(2), location(3)] },
-        { appointmentInterval: mainInterval, locations: [location(2), location(3)] },
-        { appointmentInterval: postInterval, locations: [location(1)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1), location(2), location(3)],
+        main: [location(2), location(3)],
+        post: [location(1)],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -120,14 +155,18 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [preInterval, mainInterval, postInterval],
+        preInterval,
+        mainInterval,
+        postInterval,
       })
     })
 
     it('Just main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: mainInterval, locations: [location(2), location(3)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [],
+        main: [location(2), location(3)],
+        post: [],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -148,15 +187,18 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [mainInterval],
+        preInterval: null,
+        mainInterval,
+        postInterval: null,
       })
     })
 
     it('Pre and Main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [location(1), location(2), location(3)] },
-        { appointmentInterval: mainInterval, locations: [location(2), location(3)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1), location(2), location(3)],
+        main: [location(2), location(3)],
+        post: [],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -177,15 +219,18 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [preInterval, mainInterval],
+        preInterval,
+        mainInterval,
+        postInterval: null,
       })
     })
 
     it('Post and Main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: mainInterval, locations: [location(2), location(3)] },
-        { appointmentInterval: postInterval, locations: [location(1)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [],
+        main: [location(2), location(3)],
+        post: [location(1)],
+      })
 
       const rooms = await getAvailableRooms({
         agencyId: 'WWI',
@@ -206,7 +251,9 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [mainInterval, postInterval],
+        preInterval: null,
+        mainInterval,
+        postInterval,
       })
     })
   })
@@ -228,23 +275,27 @@ describe('AvailabilityCheckService', () => {
 
     describe('Main appointment only', () => {
       test('no room - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([{ appointmentInterval: mainInterval, locations: [] }])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({ pre: [], main: [], post: [] })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: false })).resolves.toBe(false)
       })
 
       test('one room - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: false })).resolves.toBe(true)
       })
 
       test('two rooms - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1), location(2)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: false })).resolves.toBe(true)
       })
@@ -252,64 +303,71 @@ describe('AvailabilityCheckService', () => {
 
     describe('Main and pre appointments only', () => {
       test('no rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [] },
-          { appointmentInterval: mainInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('no main rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('no pre rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [] },
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('single distinct room for each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(2)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('single same room for each - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('Same set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(1), location(2)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('Distinct set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(3), location(4)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(3), location(4)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
@@ -317,64 +375,71 @@ describe('AvailabilityCheckService', () => {
 
     describe('Main and pre appointments only', () => {
       test('no rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [] },
-          { appointmentInterval: mainInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('no main rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('no pre rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [] },
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('single distinct room for each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(2)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('single same room for each - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
       })
 
       test('Same set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(1), location(2)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('Distinct set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(3), location(4)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(3), location(4)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
@@ -382,137 +447,154 @@ describe('AvailabilityCheckService', () => {
 
     describe('Main and post appointments only', () => {
       test('no rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [] },
-          { appointmentInterval: postInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
       })
 
       test('no main rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [] },
-          { appointmentInterval: postInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [],
+          post: [location(1)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
       })
 
       test('no pre rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-          { appointmentInterval: postInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1)],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
       })
 
       test('single distinct room for each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-          { appointmentInterval: postInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(2)],
+          post: [location(1)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(true)
       })
 
       test('single same room for each - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(1)] },
-          { appointmentInterval: postInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1)],
+          post: [location(1)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
       })
 
       test('Same set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: postInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(1), location(2)],
+          post: [location(1), location(2)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(true)
       })
 
       test('Distinct set of available rooms each - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: mainInterval, locations: [location(3), location(4)] },
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [location(3), location(4)],
+          post: [location(1), location(2)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(true)
+      })
+
+      test('Distinct set of available rooms but for pre and main not post - not available', async () => {
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(3), location(4)],
+          post: [],
+        })
+
+        await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
       })
     })
 
     describe('Main, pre and post appointments only', () => {
       test('No rooms - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [] },
-          { appointmentInterval: mainInterval, locations: [] },
-          { appointmentInterval: postInterval, locations: [] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [],
+          main: [],
+          post: [],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(false)
       })
 
       test('single rooms - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-          { appointmentInterval: postInterval, locations: [location(3)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(2)],
+          post: [location(3)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(true)
       })
 
       test('Share room for pre and post - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-          { appointmentInterval: postInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(2)],
+          post: [location(1)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(true)
       })
 
       test('Share room for main and pre - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-          { appointmentInterval: postInterval, locations: [location(1)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(2)],
+          main: [location(2)],
+          post: [location(1)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(false)
       })
 
       test('Share room for main and post - not available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1)] },
-          { appointmentInterval: mainInterval, locations: [location(2)] },
-          { appointmentInterval: postInterval, locations: [location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1)],
+          main: [location(2)],
+          post: [location(2)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(false)
       })
 
       test('2 rooms available all the time - available', async () => {
-        whereaboutsApi.getAvailableRooms.mockResolvedValue([
-          { appointmentInterval: preInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: mainInterval, locations: [location(1), location(2)] },
-          { appointmentInterval: postInterval, locations: [location(1), location(2)] },
-        ])
+        whereaboutsApi.getAvailableRooms.mockResolvedValue({
+          pre: [location(1), location(2)],
+          main: [location(1), location(2)],
+          post: [location(1), location(2)],
+        })
 
         await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(true)
       })
     })
 
     test('Booking is available', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [location(1), location(2), location(3)] },
-        { appointmentInterval: mainInterval, locations: [location(1), location(2), location(3)] },
-        { appointmentInterval: postInterval, locations: [location(1), location(2), location(3)] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1), location(2), location(3)],
+        main: [location(1), location(2), location(3)],
+        post: [location(1), location(2), location(3)],
+      })
 
       const result = await service.getAvailability(context, {
         agencyId: 'WWI',
@@ -529,17 +611,19 @@ describe('AvailabilityCheckService', () => {
         agencyId: 'WWI',
         date: '2020-11-20',
         vlbIdsToExclude: [],
-        appointmentIntervals: [preInterval, mainInterval, postInterval],
+        preInterval,
+        mainInterval,
+        postInterval,
       })
     })
   })
   describe('Check total interval', () => {
     beforeEach(() => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue([
-        { appointmentInterval: preInterval, locations: [] },
-        { appointmentInterval: mainInterval, locations: [] },
-        { appointmentInterval: postInterval, locations: [] },
-      ])
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [],
+        main: [],
+        post: [],
+      })
     })
 
     const getInterval = async params => {

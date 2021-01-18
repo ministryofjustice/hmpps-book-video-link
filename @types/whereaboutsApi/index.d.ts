@@ -36,19 +36,21 @@ declare module 'whereaboutsApi' {
 
   export type AppointmentLocationsSpecification = {
     agencyId: string
-    appointmentIntervals: Interval[]
     date: string
     vlbIdsToExclude: number[]
+    preInterval?: Interval
+    mainInterval: Interval
+    postInterval?: Interval
   }
 
   export type Location = {
     locationId: number
-    userDescription?: string
     description: string
   }
 
-  export type AvailableLocation = {
-    appointmentInterval: Interval
-    locations: Location[]
+  export type AvailableLocations = {
+    pre: Location[]
+    main: Location[]
+    post: Location[]
   }
 }

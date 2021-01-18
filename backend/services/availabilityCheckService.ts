@@ -4,8 +4,6 @@ import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
 import { Context, RoomAvailability, AvailabilityRequest, Room } from './model'
 
-const none = { locations: [] }
-
 type AppointmentRooms = { pre: Room[]; main: Room[]; post: Room[] }
 
 export default class AvailabilityCheckService {
@@ -16,7 +14,7 @@ export default class AvailabilityCheckService {
   }
 
   private locationToRoom(location: Location): Room {
-    return { value: location.locationId, text: location.userDescription || location.description }
+    return { value: location.locationId, text: location.description }
   }
 
   public async getAvailability(context: Context, request: AvailabilityRequest): Promise<RoomAvailability> {
@@ -32,18 +30,16 @@ export default class AvailabilityCheckService {
       agencyId,
       date: date.format(DATE_ONLY_FORMAT_SPEC),
       vlbIdsToExclude: [],
-      appointmentIntervals: [
-        ...(preRequired ? [this.createInterval(preStart, preEnd)] : []),
-        this.createInterval(startTime, endTime),
-        ...(postRequired ? [this.createInterval(postStart, postEnd)] : []),
-      ],
+      preInterval: preRequired ? this.createInterval(preStart, preEnd) : null,
+      mainInterval: this.createInterval(startTime, endTime),
+      postInterval: postRequired ? this.createInterval(postStart, postEnd) : null,
     }
 
-    const [one, two, three] = await this.whereaboutsApi.getAvailableRooms(context, spec)
+    const { pre, main, post } = await this.whereaboutsApi.getAvailableRooms(context, spec)
     const rooms = {
-      pre: (preRequired ? one : none).locations.map(this.locationToRoom),
-      main: (preRequired ? two : one).locations.map(this.locationToRoom),
-      post: (postRequired ? three || two : none).locations.map(this.locationToRoom),
+      pre: (pre || []).map(this.locationToRoom),
+      main: main.map(this.locationToRoom),
+      post: (post || []).map(this.locationToRoom),
     }
 
     const isAvailable = await this.isAvailable(request, rooms)

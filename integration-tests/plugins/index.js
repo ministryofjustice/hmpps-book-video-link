@@ -33,6 +33,7 @@ module.exports = on => {
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),
+    getFindBookingRequest: () => whereabouts.getFindBookingRequest(),
     stubGetVideoLinkBookings: ({ agencyId, date, bookings }) =>
       whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings),
     stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
