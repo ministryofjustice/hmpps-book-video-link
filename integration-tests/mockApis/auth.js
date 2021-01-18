@@ -21,7 +21,7 @@ const getLoginUrl = () =>
     urlPath: '/auth/oauth/authorize',
   }).then(data => {
     const { requests } = data.body
-    const stateValue = requests[0].queryParams.state.values[0]
+    const stateValue = requests[requests.length - 1].queryParams.state.values[0]
     return `/login/callback?code=codexxxx&state=${stateValue}`
   })
 
@@ -117,7 +117,7 @@ const stubUser = (username, caseload) => {
   })
 }
 
-const stubUserMe = (username = 'ITAG_USER', staffId = 12345) => {
+const stubUserMe = ({ username = 'ITAG_USER', staffId = 12345, name } = {}) => {
   return stubFor({
     request: {
       method: 'GET',
@@ -129,11 +129,10 @@ const stubUserMe = (username = 'ITAG_USER', staffId = 12345) => {
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: {
-        firstName: 'JAMES',
-        lastName: 'STUART',
         username,
         activeCaseLoadId: 'MDI',
         staffId,
+        name,
       },
     },
   })
@@ -216,13 +215,13 @@ const stubClientCredentialsRequest = () =>
 module.exports = {
   stubHealth,
   getLoginUrl,
-  stubLoginCourt: () =>
+  stubLoginCourt: user =>
     Promise.all([
       favicon(),
       redirect(),
       logout(),
       token(),
-      stubUserMe(),
+      stubUserMe(user),
       stubUserMeRoles([{ roleCode: 'GLOBAL_SEARCH' }, { roleCode: 'VIDEO_LINK_COURT_USER' }]),
     ]),
   stubUserDetailsRetrieval: username => Promise.all([stubUser(username), stubEmail(username)]),
