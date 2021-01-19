@@ -8,7 +8,7 @@
 {% from "components/datePicker/datePicker.njk" import datePicker %}
 
 
-{% macro dateTimeAndCourtBriefingPicker(params) %}
+{% macro dateTimeAndCourtBriefingPicker(params, errors) %}
 
     {{ datePicker({
                     id: 'date',

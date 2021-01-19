@@ -21,11 +21,15 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   router.post(
     '/change-date-and-time/:bookingId',
     validationMiddleware(changeDateAndTimeValidation),
-    asyncMiddleware(changeDateAndTime.submit())
+    asyncMiddleware(changeDateAndTime.submit(false))
   )
 
   router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
-  router.post('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.submit()))
+  router.post(
+    '/change-time/:bookingId',
+    validationMiddleware(changeDateAndTimeValidation),
+    asyncMiddleware(changeDateAndTime.submit(true))
+  )
 
   router.get('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
   router.post('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))

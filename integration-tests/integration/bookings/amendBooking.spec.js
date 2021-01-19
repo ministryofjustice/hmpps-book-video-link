@@ -166,12 +166,21 @@ context('A user can amend a booking', () => {
 
   it('A user successfully amends a booking', () => {
     cy.task('stubLoginCourt')
+    const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
     bookingDetailsPage.changeDate().click()
 
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
-    changeDateAndTimePage.continue().click()
+    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
+    changeDateAndTimePage.activeDate().click()
+    changeDateAndTimePage.form.startTimeHours().select('10')
+    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeHours().select('11')
+    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.continue().click()
 
     const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
     videoLinkIsAvailablePage.offenderName().contains('John Doe')
@@ -224,6 +233,38 @@ context('A user can amend a booking', () => {
     ChangeTimePage.goTo(10)
     const changeTimePage = ChangeTimePage.verifyOnPage()
     changeTimePage.date().should('have.value', '02/01/2020')
+  })
+
+  it('A user will be shown a validation message when a past date is provided', () => {
+    cy.task('stubLoginCourt')
+    const yesterday = moment().subtract(1, 'days')
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeDate().click()
+
+    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
+    changeDateAndTimePage.form.date().type(yesterday.format('DD/MM/YYYY'))
+    changeDateAndTimePage.form.date().type('{esc}')
+    changeDateAndTimePage.form.startTimeHours().select('10')
+    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeHours().select('11')
+    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.continue().click()
+
+    ChangeDateAndTimePage.verifyOnPage()
+    changeDateAndTimePage.form.date().should('have.value', yesterday.format('DD/MM/YYYY'))
+    changeDateAndTimePage.form.startTimeHours().contains('10')
+    changeDateAndTimePage.form.startTimeMinutes().contains('55')
+    changeDateAndTimePage.form.endTimeHours().contains('11')
+    changeDateAndTimePage.form.endTimeMinutes().contains('55')
+    changeDateAndTimePage.form.preAppointmentRequiredYes().should('have.value', 'yes')
+    changeDateAndTimePage.form.postAppointmentRequiredYes().should('have.value', 'yes')
+
+    changeDateAndTimePage.errorSummaryTitle().contains('There is a problem')
+    changeDateAndTimePage.errorSummaryBody().contains('Select a date that is not in the past')
+    changeDateAndTimePage.form.inlineError().contains('Select a date that is not in the past')
   })
 
   it('A user will be navigated to the booking-details page', () => {

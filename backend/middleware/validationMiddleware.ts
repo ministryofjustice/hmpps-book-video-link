@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 
-type Validator = (body: Record<string, unknown>) => string[]
+export type ValidationError = { text: string; href: string }
+export type Validator = (body: Record<string, unknown>) => ValidationError[]
 
 export default (validator: Validator): RequestHandler => (req, res, next) => {
   const errors = validator(req.body)

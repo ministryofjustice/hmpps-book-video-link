@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+import type { ValidationError } from '../../middleware/validationMiddleware'
 
 export const errorTypes = {
   missingPreCourt: {
@@ -14,6 +15,7 @@ export const errorTypes = {
     missingPart: { text: 'Select a full end time of the court hearing video link', href: '#end-time-hours' },
     missing: { text: 'Select the end time of the court hearing video link', href: '#end-time-hours' },
     past: { text: 'Select an end time that is not in the past', href: '#end-time-hours' },
+    beforeStartTime: { text: 'Select an end time that is after the start time', href: '#end-time-hours' },
   },
   startTime: {
     missingPart: {
@@ -36,33 +38,41 @@ export const errorTypes = {
 
 const isValidNumber = number => Number.isSafeInteger(Number.parseInt(number, 10))
 
-const validateTime = (date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes): string[] => {
+const validateTime = (date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes): ValidationError[] => {
   const now = moment()
   const isToday = date ? moment(date, DAY_MONTH_YEAR).isSame(now, 'day') : false
   const startTime = buildDate(date, startTimeHours, startTimeMinutes)
   const endTime = buildDate(date, endTimeHours, endTimeMinutes)
-  const startTimeDuration = startTime && moment.duration(now.diff(startTime))
-  const endTimeDuration = endTime && startTime && moment.duration(startTime.diff(endTime))
 
-  const errors = []
-  if (!startTime && (isValidNumber(startTimeHours) || isValidNumber(startTimeMinutes))) {
-    errors.push(errorTypes.startTime.missingPart)
-  } else if (!startTime) {
+  const errors: ValidationError[] = []
+  if (!isValidNumber(startTimeHours) && !isValidNumber(startTimeMinutes)) {
     errors.push(errorTypes.startTime.missing)
+  } else if (!isValidNumber(startTimeHours) || !isValidNumber(startTimeMinutes)) {
+    errors.push(errorTypes.startTime.missingPart)
   }
 
-  if (!endTime && (isValidNumber(endTimeHours) || isValidNumber(endTimeMinutes))) {
-    errors.push(errorTypes.endTime.missingPart)
-  } else if (!endTime) {
+  if (!isValidNumber(endTimeHours) && !isValidNumber(endTimeMinutes)) {
     errors.push(errorTypes.endTime.missing)
+  } else if (!isValidNumber(endTimeHours) || !isValidNumber(endTimeMinutes)) {
+    errors.push(errorTypes.endTime.missingPart)
   }
 
-  if (isToday && startTimeDuration && startTimeDuration.asMinutes() > 1) errors.push(errorTypes.startTime.past)
-  if (endTimeDuration && endTimeDuration.asMinutes() > 1) errors.push(errorTypes.endTime.past)
+  const bookingDuration = endTime && startTime && moment.duration(endTime.diff(startTime)).asMinutes()
+  const minutesBetweenNowAndStart = startTime && moment.duration(now.diff(startTime)).asMinutes()
+  const minutesBetweenNowAndEnd = endTime && moment.duration(now.diff(endTime)).asMinutes()
+
+  const isStartTimePast = isToday && minutesBetweenNowAndStart !== undefined && minutesBetweenNowAndStart > 0
+  const isEndTimePast = isToday && minutesBetweenNowAndEnd !== undefined && minutesBetweenNowAndEnd > 0
+
+  if (isStartTimePast) errors.push(errorTypes.startTime.past)
+  if (isEndTimePast) errors.push(errorTypes.endTime.past)
+  if (!isStartTimePast && !isEndTimePast && bookingDuration !== undefined && bookingDuration <= 0)
+    errors.push(errorTypes.endTime.beforeStartTime)
+
   return errors
 }
 
-const validateDate = (date): string[] => {
+const validateDate = (date): ValidationError[] => {
   const errors = []
   const now = moment()
   if (!date) errors.push(errorTypes.date.missing)
@@ -71,7 +81,7 @@ const validateDate = (date): string[] => {
   return errors
 }
 
-export default function validate(form: Record<string, unknown>): string[] {
+export default function validate(form: Record<string, unknown>): ValidationError[] {
   const {
     date,
     startTimeHours,
@@ -82,7 +92,7 @@ export default function validate(form: Record<string, unknown>): string[] {
     postAppointmentRequired,
   } = form
 
-  const errors = []
+  const errors: ValidationError[] = []
 
   if (!preAppointmentRequired) errors.push(errorTypes.missingPreCourt)
   if (!postAppointmentRequired) errors.push(errorTypes.missingPostCourt)

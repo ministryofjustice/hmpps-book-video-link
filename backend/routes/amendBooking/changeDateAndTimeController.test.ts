@@ -62,8 +62,133 @@ describe('change date and time controller', () => {
   })
 
   describe('view', () => {
-    it('should display prisoner, prison and court only for GET ', async () => {
+    const mockFlashState = ({ errors, input }) =>
+      (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+
+    describe('View page with no errors', () => {
+      it('When changing date and time', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        mockFlashState({ errors: [], input: [] })
+
+        await controller.view(false)(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+          bookingId: 123,
+          changeTime: false,
+          date: null,
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
+          startTimeHours: null,
+          startTimeMinutes: null,
+          endTimeHours: null,
+          endTimeMinutes: null,
+          errors: [],
+          postAppointmentRequired: null,
+          preAppointmentRequired: null,
+        })
+      })
+
+      it('When changing time only', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        mockFlashState({ errors: [], input: [] })
+
+        await controller.view(true)(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+          bookingId: 123,
+          changeTime: true,
+          date: '20/11/2020',
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
+          startTimeHours: null,
+          startTimeMinutes: null,
+          endTimeHours: null,
+          endTimeMinutes: null,
+          errors: [],
+          postAppointmentRequired: null,
+          preAppointmentRequired: null,
+        })
+      })
+    })
+
+    describe('View page with errors present', () => {
+      it('When changing date and time', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        mockFlashState({
+          errors: [{ text: 'error message', href: 'error' }],
+          input: [
+            {
+              date: '20/11/2020',
+              startTimeHours: '11',
+              startTimeMinutes: '20',
+              endTimeHours: '11',
+              endTimeMinutes: '40',
+              postAppointmentRequired: 'yes',
+              preAppointmentRequired: 'yes',
+            },
+          ],
+        })
+
+        await controller.view(false)(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+          bookingId: 123,
+          changeTime: false,
+          date: '20/11/2020',
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
+          startTimeHours: '11',
+          startTimeMinutes: '20',
+          endTimeHours: '11',
+          endTimeMinutes: '40',
+          errors: [{ text: 'error message', href: 'error' }],
+          postAppointmentRequired: 'yes',
+          preAppointmentRequired: 'yes',
+        })
+      })
+
+      it('When changing time only', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        mockFlashState({
+          errors: [{ text: 'error message', href: 'error' }],
+          input: [
+            {
+              date: '21/11/2020',
+              startTimeHours: '11',
+              startTimeMinutes: '20',
+              endTimeHours: '11',
+              endTimeMinutes: '40',
+              postAppointmentRequired: 'yes',
+              preAppointmentRequired: 'yes',
+            },
+          ],
+        })
+
+        await controller.view(true)(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
+          bookingId: 123,
+          changeTime: true,
+          date: '21/11/2020',
+          locations: { court: 'City of London', prison: 'some prison' },
+          prisoner: { name: 'John Doe' },
+          startTimeHours: '11',
+          startTimeMinutes: '20',
+          endTimeHours: '11',
+          endTimeMinutes: '40',
+          errors: [{ text: 'error message', href: 'error' }],
+          postAppointmentRequired: 'yes',
+          preAppointmentRequired: 'yes',
+        })
+      })
+    })
+
+    it('When there is no user input and change date and time', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
+      mockFlashState({
+        errors: [{ text: 'error message', href: 'error' }],
+        input: [],
+      })
 
       await controller.view(false)(req, res, null)
 
@@ -73,10 +198,22 @@ describe('change date and time controller', () => {
         date: null,
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
+        startTimeHours: null,
+        startTimeMinutes: null,
+        endTimeHours: null,
+        endTimeMinutes: null,
+        errors: [{ text: 'error message', href: 'error' }],
+        postAppointmentRequired: null,
+        preAppointmentRequired: null,
       })
     })
-    it('should return date and changeTime=true for change-time page', async () => {
+
+    it('When there is no user input and change time only', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
+      mockFlashState({
+        errors: [{ text: 'error message', href: 'error' }],
+        input: [],
+      })
 
       await controller.view(true)(req, res, null)
 
@@ -86,18 +223,61 @@ describe('change date and time controller', () => {
         date: '20/11/2020',
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
+        startTimeHours: null,
+        startTimeMinutes: null,
+        endTimeHours: null,
+        endTimeMinutes: null,
+        errors: [{ text: 'error message', href: 'error' }],
+        postAppointmentRequired: null,
+        preAppointmentRequired: null,
       })
     })
   })
 
   describe('submit', () => {
-    it('should display booking details', async () => {
+    it('should display the available page on submit when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       req.params.bookingId = '12'
 
-      await controller.submit()(req, res, null)
+      await controller.submit(false)(req, res, null)
 
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-available/12`)
+    })
+
+    describe('when errors are present', () => {
+      beforeEach(() => {
+        req.errors = [{ text: 'error message', href: 'error' }]
+        req.params.bookingId = '12'
+      })
+
+      it('should place errors into flash', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+
+        await controller.submit(false)(req, res, null)
+        expect(req.flash).toHaveBeenCalledWith('errors', req.errors)
+      })
+
+      it('should place input into flash', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        req.body = { date: 'blah' }
+
+        await controller.submit(false)(req, res, null)
+        expect(req.flash).toHaveBeenCalledWith('input', req.body)
+      })
+    })
+
+    it('should redirect to same page when changing date and time', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      await controller.submit(false)(req, res, null)
+      expect(res.redirect).toHaveBeenCalledWith(`/change-date-and-time/12`)
+    })
+
+    it('should redirect to same page when changing time only', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      await controller.submit(true)(req, res, null)
+      expect(res.redirect).toHaveBeenCalledWith(`/change-time/12`)
     })
   })
 })

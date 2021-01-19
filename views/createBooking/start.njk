@@ -53,7 +53,7 @@
                 <input type="hidden" name="appointmentType" value="{{ formValues.appointmentType }}">
                 <input type="hidden" name="bookingId" value="{{ bookingId }}">
 
-                {{dateTimeAndCourtBriefingPicker(formValues)}}
+                {{dateTimeAndCourtBriefingPicker(formValues, errors)}}
                 
                 {{ govukButton({
                     text: "Continue",
