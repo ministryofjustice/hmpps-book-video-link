@@ -89,13 +89,13 @@ module.exports = {
     })
   },
 
-  getFindBookingRequest: () =>
+  getFindBookingRequests: () =>
     getMatchingRequests({
       method: 'POST',
       urlPath: '/whereabouts/court/vlb-appointment-location-finder',
     }).then(data => {
       const { requests } = data.body
-      return JSON.parse(requests[0].body)
+      return requests.map(request => JSON.parse(request.body))
     }),
 
   stubGetVideoLinkBooking: booking => {

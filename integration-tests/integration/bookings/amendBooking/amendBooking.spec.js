@@ -1,11 +1,11 @@
 const moment = require('moment')
-const BookingDetailsPage = require('../../pages/viewBookings/bookingDetailsPage')
-const ChangeDateAndTimePage = require('../../pages/amendBooking/changeDateAndTimePage')
-const VideoLinkIsAvailablePage = require('../../pages/amendBooking/videoLinkIsAvailablePage')
-const SelectAvailableRoomsPage = require('../../pages/amendBooking/selectAvailableRoomsPage')
-const ConfirmationPage = require('../../pages/amendBooking/confirmationPage')
-const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
-const ChangeTimePage = require('../../pages/amendBooking/changeTimePage')
+const BookingDetailsPage = require('../../../pages/viewBookings/bookingDetailsPage')
+const ChangeDateAndTimePage = require('../../../pages/amendBooking/changeDateAndTimePage')
+const VideoLinkIsAvailablePage = require('../../../pages/amendBooking/videoLinkIsAvailablePage')
+const SelectAvailableRoomsPage = require('../../../pages/amendBooking/selectAvailableRoomsPage')
+const ConfirmationPage = require('../../../pages/amendBooking/confirmationPage')
+const CourtVideoLinkBookingsPage = require('../../../pages/viewBookings/courtVideoBookingsPage')
+const ChangeTimePage = require('../../../pages/amendBooking/changeTimePage')
 
 context('A user can amend a booking', () => {
   before(() => {
@@ -195,15 +195,25 @@ context('A user can amend a booking', () => {
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
 
-    cy.task('getFindBookingRequest').then(request => {
-      expect(request).to.deep.equal({
-        agencyId: 'WWI',
-        date: '2020-01-02',
-        vlbIdsToExclude: [],
-        preInterval: { start: '12:40', end: '13:00' },
-        mainInterval: { start: '13:00', end: '13:30' },
-        postInterval: { start: '13:30', end: '13:50' },
-      })
+    cy.task('getFindBookingRequests').then(request => {
+      expect(request).to.deep.equal([
+        {
+          agencyId: 'WWI',
+          date: '2021-01-22',
+          mainInterval: { start: '10:55', end: '11:55' },
+          postInterval: { start: '11:55', end: '12:15' },
+          preInterval: { start: '10:35', end: '10:55' },
+          vlbIdsToExclude: [],
+        },
+        {
+          agencyId: 'WWI',
+          date: '2020-01-02',
+          vlbIdsToExclude: [],
+          preInterval: { start: '12:40', end: '13:00' },
+          mainInterval: { start: '13:00', end: '13:30' },
+          postInterval: { start: '13:30', end: '13:50' },
+        },
+      ])
     })
 
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
@@ -279,17 +289,6 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
-
-    cy.task('getFindBookingRequest').then(request => {
-      expect(request).to.deep.equal({
-        agencyId: 'WWI',
-        date: '2020-01-02',
-        vlbIdsToExclude: [],
-        preInterval: { start: '12:40', end: '13:00' },
-        mainInterval: { start: '13:00', end: '13:30' },
-        postInterval: { start: '13:30', end: '13:50' },
-      })
-    })
 
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
     selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')

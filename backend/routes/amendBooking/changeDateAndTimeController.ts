@@ -89,8 +89,8 @@ export = class ChangeDateAndTimeController {
         preAppointmentRequired,
         postAppointmentRequired,
         date: startTime.format('dddd D MMMM YYYY'),
-        startTime: startTime.format('HH.mm'),
-        endTime: endTime.format('HH.mm'),
+        startTime: startTime.format('HH:mm'),
+        endTime: endTime.format('HH:mm'),
         prisoner: {
           name: prisonerName,
         },
