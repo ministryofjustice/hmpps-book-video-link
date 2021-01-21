@@ -15,4 +15,8 @@ const videoLinkIsAvailablePage = () =>
 
 export default {
   verifyOnPage: videoLinkIsAvailablePage,
+  goTo: (id, prisonerName) => {
+    cy.visit(`/video-link-available/${id}`)
+    return videoLinkIsAvailablePage(prisonerName)
+  },
 }

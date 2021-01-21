@@ -264,20 +264,20 @@ describe('change date and time controller', () => {
         await controller.submit(false)(req, res, null)
         expect(req.flash).toHaveBeenCalledWith('input', req.body)
       })
-    })
 
-    it('should redirect to same page when changing date and time', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
+      it('should redirect to same page when changing date and time', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
 
-      await controller.submit(false)(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith(`/change-date-and-time/12`)
-    })
+        await controller.submit(false)(req, res, null)
+        expect(res.redirect).toHaveBeenCalledWith(`/change-date-and-time/12`)
+      })
 
-    it('should redirect to same page when changing time only', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
+      it('should redirect to same page when changing time only', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
 
-      await controller.submit(true)(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith(`/change-time/12`)
+        await controller.submit(true)(req, res, null)
+        expect(res.redirect).toHaveBeenCalledWith(`/change-time/12`)
+      })
     })
   })
 })

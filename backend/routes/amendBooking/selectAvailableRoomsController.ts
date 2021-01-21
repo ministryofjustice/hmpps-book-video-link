@@ -18,6 +18,8 @@ export = class SelectAvailableRoomsController {
   public view(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
+      const errors = req.flash('errors') || []
+      const input = req.flash('input')[0] || {}
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       const { rooms } = await this.availabilityCheckService.getAvailability(res.locals, {
         agencyId: bookingDetails.agencyId,
@@ -31,9 +33,16 @@ export = class SelectAvailableRoomsController {
         mainLocations: rooms.main,
         preLocations: rooms.pre,
         postLocations: rooms.post,
+        formValues: {
+          preAppointmentLocation: Number(input.selectPreAppointmentLocation) || null,
+          mainAppointmentLocation: Number(input.selectMainAppointmentLocation) || null,
+          postAppointmentLocation: Number(input.selectPostAppointmentLocation) || null,
+          comments: input.comment || bookingDetails.comments,
+        },
         preAppointmentRequired: !!bookingDetails.preDetails,
         postAppointmentRequired: !!bookingDetails.postDetails,
-        comments: bookingDetails.comments,
+        errors,
+        bookingId,
       })
     }
   }
@@ -41,7 +50,12 @@ export = class SelectAvailableRoomsController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      res.redirect(`/video-link-change-confirmed/${bookingId}`)
+      if (req.errors) {
+        req.flash('errors', req.errors)
+        req.flash('input', req.body)
+        return res.redirect(`/select-available-rooms/${bookingId}`)
+      }
+      return res.redirect(`/video-link-change-confirmed/${bookingId}`)
     }
   }
 }

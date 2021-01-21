@@ -7,6 +7,7 @@ import ChangeDateAndTimeController from './changeDateAndTimeController'
 import changeDateAndTimeValidation from './changeDateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
+import SelectAvailableRoomsValidation from './selectAvailableRoomsValidation'
 import ConfirmationController from './confirmationController'
 
 export default function createRoutes({ bookingService, availabilityCheckService }: Services): Router {
@@ -35,7 +36,11 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   router.post('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))
 
   router.get('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.view()))
-  router.post('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.submit()))
+  router.post(
+    '/select-available-rooms/:bookingId',
+    validationMiddleware(SelectAvailableRoomsValidation),
+    asyncMiddleware(selectAvailableRooms.submit())
+  )
 
   router.get('/video-link-change-confirmed/:bookingId', asyncMiddleware(confirmation.view()))
 

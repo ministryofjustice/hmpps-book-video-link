@@ -267,6 +267,78 @@ context('A user can amend a booking', () => {
     changeDateAndTimePage.form.inlineError().contains('Select a date that is not in the past')
   })
 
+  it('A user will be shown a validation message when selecting the same location for pre and main rooms', () => {
+    cy.task('stubLoginCourt')
+    cy.task('stubRoomAvailability', {
+      pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
+      main: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
+      post: [{ locationId: 120, description: 'Room 3', locationType: 'VIDE' }],
+    })
+
+    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.goTo(10, 'John Doe’s')
+    videoLinkIsAvailablePage.continue().click()
+
+    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
+
+    cy.task('getFindBookingRequest').then(request => {
+      expect(request).to.deep.equal({
+        agencyId: 'WWI',
+        date: '2020-01-02',
+        vlbIdsToExclude: [],
+        preInterval: { start: '12:40', end: '13:00' },
+        mainInterval: { start: '13:00', end: '13:30' },
+        postInterval: { start: '13:30', end: '13:50' },
+      })
+    })
+
+    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
+    selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')
+    selectAvailableRoomsForm.selectMainAppointmentLocation().select('100')
+    selectAvailableRoomsForm.selectPostAppointmentLocation().select('120')
+    selectAvailableRoomsPage.bookVideoLink().click()
+
+    SelectAvailableRoomsPage.verifyOnPage()
+    selectAvailableRoomsForm.selectPreAppointmentLocation().should('have.value', '100')
+    selectAvailableRoomsForm.selectMainAppointmentLocation().should('have.value', '100')
+    selectAvailableRoomsForm.selectPostAppointmentLocation().should('have.value', '120')
+    selectAvailableRoomsPage.errorSummaryTitle().contains('There is a problem')
+    selectAvailableRoomsPage
+      .errorSummaryBody()
+      .contains('Select a different room for the pre-court hearing to the room for the court hearing briefing')
+    selectAvailableRoomsForm
+      .inlineError()
+      .contains('Select a different room for the pre-court hearing to the room for the court hearing briefing')
+  })
+
+  it('Select drop downs for pre and post are not displayed when pre and post appointments are not present', () => {
+    cy.task('stubLoginCourt')
+    cy.task('stubRoomAvailability', {
+      main: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
+    })
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'Leeds',
+      videoLinkBookingId: 10,
+      main: {
+        locationId: 110,
+        startTime: '2020-01-02T13:00:00',
+        endTime: '2020-01-02T13:30:00',
+      },
+    })
+
+    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.goTo(10, 'John Doe’s')
+    videoLinkIsAvailablePage.continue().click()
+
+    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
+
+    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
+    selectAvailableRoomsForm.selectPreAppointmentLocation().should('not.exist')
+    selectAvailableRoomsForm.selectMainAppointmentLocation().select('100')
+    selectAvailableRoomsForm.selectPostAppointmentLocation().should('not.exist')
+  })
+
   it('A user will be navigated to the booking-details page', () => {
     cy.task('stubLoginCourt')
     ChangeTimePage.goTo(10)

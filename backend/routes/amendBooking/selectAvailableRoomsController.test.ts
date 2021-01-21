@@ -5,7 +5,7 @@ import SelectAvailableRoomsController from './selectAvailableRoomsController'
 import BookingService from '../../services/bookingService'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { BookingDetails, RoomAvailability } from '../../services/model'
-import { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
+import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 
 jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
@@ -78,50 +78,152 @@ describe('Select available rooms controller', () => {
   })
 
   describe('view', () => {
-    it('should display booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+    const mockFlashState = ({ errors, input }) =>
+      (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
-      await controller.view()(req, res, null)
+    describe('View page with no errors', () => {
+      it('should display booking details', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        mockFlashState({ errors: [], input: [] })
 
-      expect(res.render).toHaveBeenCalledWith(
-        'amendBooking/selectAvailableRooms.njk',
-        expect.objectContaining({
+        await controller.view()(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+          bookingId: 123,
           preAppointmentRequired: true,
           postAppointmentRequired: true,
-          comments: 'some comment',
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
+          formValues: {
+            preAppointmentLocation: null,
+            mainAppointmentLocation: null,
+            postAppointmentLocation: null,
+            comments: 'some comment',
+          },
+          errors: [],
         })
-      )
+      })
+
+      it('should call the existingEventsService with correct video link booking details', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        mockFlashState({ errors: [], input: [] })
+
+        await controller.view()(req, res, null)
+
+        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
+          agencyId: 'WWI',
+          date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+          startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+          endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+          postRequired: true,
+          preRequired: true,
+        })
+      })
     })
 
-    it('should call the existingEventsService with correct video link booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+    describe('View page with errors present', () => {
+      it('should display validation for errors', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        mockFlashState({
+          errors: [{ text: 'error message', href: 'error' }],
+          input: [
+            {
+              selectPreAppointmentLocation: 2,
+              selectMainAppointmentLocation: 1,
+              selectPostAppointmentLocation: 3,
+              comment: 'another comment',
+            },
+          ],
+        })
 
-      await controller.view()(req, res, null)
+        await controller.view()(req, res, null)
 
-      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
-        agencyId: 'WWI',
-        date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-        startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-        endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-        postRequired: true,
-        preRequired: true,
+        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+          bookingId: 123,
+          preAppointmentRequired: true,
+          postAppointmentRequired: true,
+          mainLocations: [{ value: 1, text: 'Room 1' }],
+          preLocations: [{ value: 2, text: 'Room 2' }],
+          postLocations: [{ value: 3, text: 'Room 3' }],
+          formValues: {
+            preAppointmentLocation: 2,
+            mainAppointmentLocation: 1,
+            postAppointmentLocation: 3,
+            comments: 'another comment',
+          },
+          errors: [{ text: 'error message', href: 'error' }],
+        })
+      })
+
+      it('When there is no user input', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        mockFlashState({
+          errors: [{ text: 'error message', href: 'error' }],
+          input: [],
+        })
+
+        await controller.view()(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+          bookingId: 123,
+          preAppointmentRequired: true,
+          postAppointmentRequired: true,
+          mainLocations: [{ value: 1, text: 'Room 1' }],
+          preLocations: [{ value: 2, text: 'Room 2' }],
+          postLocations: [{ value: 3, text: 'Room 3' }],
+          formValues: {
+            preAppointmentLocation: null,
+            mainAppointmentLocation: null,
+            postAppointmentLocation: null,
+            comments: 'some comment',
+          },
+          errors: [{ text: 'error message', href: 'error' }],
+        })
       })
     })
   })
 
   describe('submit', () => {
-    it('should display booking details', async () => {
+    it('should display booking details confirmation page when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       req.params.bookingId = '12'
 
       await controller.submit()(req, res, null)
 
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-change-confirmed/12`)
+    })
+
+    describe('when errors are present', () => {
+      beforeEach(() => {
+        req.errors = [{ text: 'error message', href: 'error' }]
+        req.params.bookingId = '12'
+      })
+
+      it('should place errors into flash', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+
+        await controller.submit()(req, res, null)
+        expect(req.flash).toHaveBeenCalledWith('errors', req.errors)
+      })
+
+      it('should place input into flash', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+
+        await controller.submit()(req, res, null)
+        expect(req.flash).toHaveBeenCalledWith('input', req.body)
+      })
+
+      it('should redirect to same page', async () => {
+        bookingService.get.mockResolvedValue(bookingDetails)
+
+        await controller.submit()(req, res, null)
+        expect(res.redirect).toHaveBeenCalledWith(`/select-available-rooms/12`)
+      })
     })
   })
 })
