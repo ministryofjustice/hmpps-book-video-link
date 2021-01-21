@@ -2,18 +2,30 @@ import { Request, Response } from 'express'
 import moment from 'moment'
 import ChangeDateAndTimeController from './changeDateAndTimeController'
 import BookingService from '../../services/bookingService'
-import { BookingDetails } from '../../services/model'
+import { BookingDetails, RoomAvailability } from '../../services/model'
+import AvailabilityCheckService from '../../services/availabilityCheckService'
 
 jest.mock('../../services/bookingService')
+jest.mock('../../services/availabilityCheckService')
 
 describe('change date and time controller', () => {
   const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+
   let controller: ChangeDateAndTimeController
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
     session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
+    body: {
+      date: '20/11/2020',
+      startTimeHours: '17',
+      startTimeMinutes: '40',
+      endTimeHours: '19',
+      endTimeMinutes: '20',
+      preAppointmentRequired: 'yes',
+      postAppointmentRequired: 'yes',
+    },
     flash: jest.fn(),
   } as unknown) as jest.Mocked<Request>
 
@@ -50,15 +62,15 @@ describe('change date and time controller', () => {
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
-      startTime: '17:40',
-      endTime: '18:00',
+      startTime: '19:00',
+      endTime: '19:20',
       description: 'vcc room 3 - 19:00 to 19:20',
       timings: '19:00 to 19:20',
     },
   }
 
   beforeEach(() => {
-    controller = new ChangeDateAndTimeController(bookingService)
+    controller = new ChangeDateAndTimeController(bookingService, availabilityCheckService)
   })
 
   describe('view', () => {
@@ -237,6 +249,13 @@ describe('change date and time controller', () => {
   describe('submit', () => {
     it('should display the available page on submit when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
+
+      const availability: RoomAvailability = {
+        isAvailable: true,
+        rooms: null,
+        totalInterval: null,
+      }
+      availabilityCheckService.getAvailability.mockResolvedValue(availability)
       req.params.bookingId = '12'
 
       await controller.submit(false)(req, res, null)
@@ -244,6 +263,21 @@ describe('change date and time controller', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-available/12`)
     })
 
+    it("should display the '/video-link-not-available' page on submit", async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      const availability: RoomAvailability = {
+        isAvailable: false,
+        rooms: null,
+        totalInterval: null,
+      }
+      availabilityCheckService.getAvailability.mockResolvedValue(availability)
+      req.params.bookingId = '12'
+
+      await controller.submit(false)(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith(`/video-link-not-available/12`)
+    })
     describe('when errors are present', () => {
       beforeEach(() => {
         req.errors = [{ text: 'error message', href: 'error' }]

@@ -12,7 +12,7 @@
 
             <div class="govuk-body">
                 <p>
-                    There are no bookings available on {{date}} between {{ startTime }} and {{ endTime }}.
+                    There are no bookings available on <span data-qa="date">{{input.date}} </span> between <span data-qa="start">{{ input.startTime }}</span> and <span data-qa='end'>{{ input.endTime }}</span>.
                 </p>
 
                 <p>
@@ -20,13 +20,19 @@
                 </p>
             </div>
 
+            <form method="POST" novalidate="novalidate">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-            {{ govukButton({
+                {% for name, value in input %}
+                    <input type="hidden" name="{{name}}" value="{{value}}"/>
+                {% endfor %}
+
+                {{ govukButton({
                 text: "Continue",
-                element: "a",
-                href: continueLink
+                type: 'submit'
             }) }}
 
+            </form>
 
             <p class="govuk-body">
                 <a href="/booking-details/{{bookingId}}" class="govuk-link" data-qa="cancel">Cancel changes</a>
