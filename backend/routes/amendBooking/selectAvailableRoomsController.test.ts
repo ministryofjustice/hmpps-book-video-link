@@ -189,7 +189,7 @@ describe('Select available rooms controller', () => {
   })
 
   describe('submit', () => {
-    it('should display booking details confirmation page when no errors exist', async () => {
+    it('should redirect to booking details confirmation page when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       req.params.bookingId = '12'
 
