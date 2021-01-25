@@ -62,14 +62,49 @@ describe('video link is available controller', () => {
   })
 
   describe('view', () => {
-    it('should display booking details', async () => {
+    it('should display booking details when amending date and time', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      await controller.view()(req, res, null)
+      await controller.view(false)(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
         'amendBooking/confirmation.njk',
         expect.objectContaining({
+          changeComments: false,
+          bookingDetails: {
+            courtDetails: {
+              courtLocation: 'City of London',
+            },
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              prisonRoom: 'vcc room 1',
+            },
+            hearingDetails: {
+              comments: 'some comment',
+              courtHearingEndTime: '19:00',
+              courtHearingStartTime: '18:00',
+              date: '20 November 2020',
+            },
+            prePostDetails: {
+              'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
+              'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
+            },
+            videoBookingId: 123,
+          },
+        })
+      )
+    })
+
+    it('should display booking details when amending comments only', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      await controller.view(true)(req, res, null)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'amendBooking/confirmation.njk',
+        expect.objectContaining({
+          changeComments: true,
           bookingDetails: {
             courtDetails: {
               courtLocation: 'City of London',

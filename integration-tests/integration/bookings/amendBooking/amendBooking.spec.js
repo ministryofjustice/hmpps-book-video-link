@@ -6,6 +6,8 @@ const SelectAvailableRoomsPage = require('../../../pages/amendBooking/selectAvai
 const ConfirmationPage = require('../../../pages/amendBooking/confirmationPage')
 const CourtVideoLinkBookingsPage = require('../../../pages/viewBookings/courtVideoBookingsPage')
 const ChangeTimePage = require('../../../pages/amendBooking/changeTimePage')
+const ChangeCommentsPage = require('../../../pages/amendBooking/changeCommentsPage')
+const CommentsConfirmationPage = require('../../../pages/amendBooking/commentsConfirmationPage')
 
 context('A user can amend a booking', () => {
   before(() => {
@@ -199,11 +201,11 @@ context('A user can amend a booking', () => {
       expect(request).to.deep.equal([
         {
           agencyId: 'WWI',
-          date: '2021-01-22',
+          date: tomorrow.format('YYYY-MM-DD'),
+          vlbIdsToExclude: [],
+          preInterval: { start: '10:35', end: '10:55' },
           mainInterval: { start: '10:55', end: '11:55' },
           postInterval: { start: '11:55', end: '12:15' },
-          preInterval: { start: '10:35', end: '10:55' },
-          vlbIdsToExclude: [],
         },
         {
           agencyId: 'WWI',
@@ -238,6 +240,7 @@ context('A user can amend a booking', () => {
 
     CourtVideoLinkBookingsPage.verifyOnPage()
   })
+
   it('A user can view date in change-time page', () => {
     cy.task('stubLoginCourt')
     ChangeTimePage.goTo(10)
@@ -344,5 +347,62 @@ context('A user can amend a booking', () => {
     const changeTimePage = ChangeTimePage.verifyOnPage()
     changeTimePage.cancel().click()
     BookingDetailsPage.verifyOnPage('John Doe’s')
+  })
+
+  it('A user successfully amends a booking comment', () => {
+    cy.task('stubLoginCourt')
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeComment().click()
+
+    const changeCommentsPage = ChangeCommentsPage.verifyOnPage()
+    const changeCommentsForm = changeCommentsPage.form()
+    changeCommentsForm.comments().contains('A comment')
+    changeCommentsPage.continue().click()
+
+    const commentsConfirmationPage = CommentsConfirmationPage.verifyOnPage()
+    commentsConfirmationPage.offenderName().contains('John Doe')
+    commentsConfirmationPage.prison().contains('Wandsworth')
+    commentsConfirmationPage.room().contains('Room 2')
+    commentsConfirmationPage.date().contains('2 January 2020')
+    commentsConfirmationPage.startTime().contains('13:00')
+    commentsConfirmationPage.endTime().contains('13:30')
+    commentsConfirmationPage.comments().contains('A comment')
+    commentsConfirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
+    commentsConfirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
+    commentsConfirmationPage.courtLocation().contains('Leeds')
+    commentsConfirmationPage.exitToAllBookings().click()
+
+    CourtVideoLinkBookingsPage.verifyOnPage()
+  })
+
+  it('A user will be shown a validation message when a comment exceeds 3600 characters', () => {
+    cy.task('stubLoginCourt')
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: '#'.repeat(3601),
+      court: 'Leeds',
+      videoLinkBookingId: 10,
+      main: {
+        locationId: 110,
+        startTime: '2020-01-02T13:00:00',
+        endTime: '2020-01-02T13:30:00',
+      },
+    })
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeComment().click()
+
+    const changeCommentsPage = ChangeCommentsPage.verifyOnPage()
+    const changeCommentsForm = changeCommentsPage.form()
+    changeCommentsForm.comments().contains('#'.repeat(3601))
+    changeCommentsPage.continue().click()
+
+    ChangeCommentsPage.verifyOnPage()
+    changeCommentsForm.comments().should('have.value', '#'.repeat(3601))
+    changeCommentsPage.errorSummaryTitle().contains('There is a problem')
+    changeCommentsPage.errorSummaryBody().contains('Maximum length should not exceed 3600 characters')
+    changeCommentsForm.inlineError().contains('Maximum length should not exceed 3600 characters')
   })
 })

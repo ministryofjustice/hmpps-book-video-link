@@ -4,11 +4,12 @@ import type BookingService from '../../services/bookingService'
 export = class ConfirmationController {
   public constructor(private readonly bookingService: BookingService) {}
 
-  public view(): RequestHandler {
+  public view(changeCommentsView: boolean): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('amendBooking/confirmation.njk', {
+        changeComments: changeCommentsView,
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
