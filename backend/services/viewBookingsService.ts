@@ -3,7 +3,7 @@ import moment from 'moment'
 import type { Appointment, VideoLinkBooking } from 'whereaboutsApi'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
-import { formatName, getTime, flattenCalls } from '../utils'
+import { formatName, getTime, flattenCalls, toMap } from '../utils'
 import { app } from '../config'
 import { Context, HearingType, Bookings } from './model'
 
@@ -23,13 +23,6 @@ export = class ViewBookingsService {
   private getOffenderName(offenderBookings: OffenderBooking[], booking: VideoLinkBooking) {
     const offenderBooking = offenderBookings.find(b => b.bookingId === booking.bookingId)
     return offenderBooking ? formatName(offenderBooking.firstName, offenderBooking.lastName) : ''
-  }
-
-  private toMap<T, F extends keyof T>(items: T[] = [], name: F): Map<T[F], T> {
-    return items.reduce((result, item) => {
-      result.set(item[name], item)
-      return result
-    }, new Map<T[F], T>())
   }
 
   private async toAppointment(
@@ -70,8 +63,8 @@ export = class ViewBookingsService {
 
     const [courts, prisons, locations, bookings] = await Promise.all([
       this.whereaboutsApi.getCourtLocations(context).then(r => r.courtLocations),
-      this.prisonApi.getAgencies(context).then(result => this.toMap(result, 'agencyId')),
-      flattenCalls(locationRequests).then(result => this.toMap(result, 'locationId')),
+      this.prisonApi.getAgencies(context).then(result => toMap(result, 'agencyId')),
+      flattenCalls(locationRequests).then(result => toMap(result, 'locationId')),
       flattenCalls(bookingRequests),
     ])
 

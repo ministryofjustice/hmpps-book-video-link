@@ -63,44 +63,48 @@ describe('video link is available controller', () => {
   })
 
   describe('view', () => {
+    it('should redirect when no stored state', async () => {
+      req.signedCookies = {}
+
+      await controller.view()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/booking-details/123')
+    })
+
     it('should display booking details', async () => {
+      req.signedCookies = {
+        'booking-update': {
+          date: '2020-11-20T18:00:00',
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+          preAppointmentRequired: 'true',
+          postAppointmentRequired: 'true',
+        },
+      }
+
       bookingService.get.mockResolvedValue(bookingDetails)
 
       await controller.view()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'amendBooking/videoLinkIsAvailable.njk',
-        expect.objectContaining({
-          bookingDetails: {
-            videoBookingId: 123,
-            details: {
-              name: 'John Doe',
-              prison: 'some prison',
-              court: 'City of London',
-            },
-            hearingDetails: {
-              date: '20 November 2020',
-              courtHearingEndTime: '19:00',
-              courtHearingStartTime: '18:00',
-            },
-            prePostDetails: {
-              'pre-court hearing briefing': '17:40 to 18:00',
-              'post-court hearing briefing': '19:00 to 19:20',
-            },
+      expect(res.render).toHaveBeenCalledWith('amendBooking/videoLinkIsAvailable.njk', {
+        bookingDetails: {
+          videoBookingId: 123,
+          details: {
+            name: 'John Doe',
+            prison: 'some prison',
+            court: 'City of London',
           },
-        })
-      )
-    })
-  })
-
-  describe('submit', () => {
-    it('should display booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      req.params.bookingId = '12'
-
-      await controller.submit()(req, res, null)
-
-      expect(res.redirect).toHaveBeenCalledWith(`/select-available-rooms/12`)
+          hearingDetails: {
+            date: '20 November 2020',
+            courtHearingEndTime: '19:00',
+            courtHearingStartTime: '18:00',
+          },
+          prePostDetails: {
+            'pre-court hearing briefing': '17:40 to 18:00',
+            'post-court hearing briefing': '19:00 to 19:20',
+          },
+        },
+      })
     })
   })
 })

@@ -1,14 +1,27 @@
 import { RequestHandler } from 'express'
+import type { Interval } from 'whereaboutsApi'
 import type BookingService from '../../services/bookingService'
+import { getPostAppointmentInterval, getPreAppointmentInterval } from '../../services/bookingTimes'
+import { DATE_ONLY_LONG_FORMAT_SPEC, MOMENT_TIME } from '../../shared/dateHelpers'
+import { getUpdate } from './state'
 
-export = class VideoLinkIsAvailableController {
+const toDescription = (interval: Interval) => `${interval.start} to ${interval.end}`
+
+export default class VideoLinkIsAvailableController {
   public constructor(private readonly bookingService: BookingService) {}
 
   public view(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
+
+      const update = getUpdate(req)
+      if (!update) {
+        return res.redirect(`/booking-details/${bookingId}`)
+      }
+
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      res.render('amendBooking/videoLinkIsAvailable.njk', {
+
+      return res.render('amendBooking/videoLinkIsAvailable.njk', {
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
@@ -17,23 +30,18 @@ export = class VideoLinkIsAvailableController {
             court: bookingDetails.courtLocation,
           },
           hearingDetails: {
-            date: bookingDetails.dateDescription,
-            courtHearingStartTime: bookingDetails.mainDetails.startTime,
-            courtHearingEndTime: bookingDetails.mainDetails.endTime,
+            date: update.date.format(DATE_ONLY_LONG_FORMAT_SPEC),
+            courtHearingStartTime: update.startTime.format(MOMENT_TIME),
+            courtHearingEndTime: update.endTime.format(MOMENT_TIME),
           },
           prePostDetails: {
-            'pre-court hearing briefing': bookingDetails.preDetails?.timings,
-            'post-court hearing briefing': bookingDetails.postDetails?.timings,
+            'pre-court hearing briefing':
+              update.preAppointmentRequired && toDescription(getPreAppointmentInterval(update.startTime)),
+            'post-court hearing briefing':
+              update.postAppointmentRequired && toDescription(getPostAppointmentInterval(update.endTime)),
           },
         },
       })
-    }
-  }
-
-  public submit(): RequestHandler {
-    return async (req, res) => {
-      const { bookingId } = req.params
-      res.redirect(`/select-available-rooms/${bookingId}`)
     }
   }
 }

@@ -14,44 +14,42 @@
   </div>
 </div>
 
-<form method="POST" novalidate="novalidate">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-    <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    {{
-      govukSummaryList({
-        classes: 'govuk-summary-list--no-border',
-        rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
-      })
-    }}
-  </div>
-</div>
-    
-    <div class="govuk-grid-row">
+  <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-        {{govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom 
-        })
-        }}
-    </div>
-    </div>
-
-    <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        {{
+      {{
         govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
+          classes: 'govuk-summary-list--no-border',
+          rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
         })
-        }}
+      }}
     </div>
-    </div>
-    {{ govukInsetText({
-        text: "Next you need to select the video link rooms in the prison."
-    }) }}
+  </div>
+  
+  <div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
 
-    {{ govukButton({ text: "Continue", type: "submit" }) }}
-</form>
+      {{govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom 
+      })
+      }}
+  </div>
+  </div>
+
+  <div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+      {{
+      govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
+      })
+      }}
+  </div>
+  </div>
+  {{ govukInsetText({
+      text: "Next you need to select the video link rooms in the prison."
+  }) }}
+
+  {{ govukButton({ text: "Continue", type: "submit", href: "/select-available-rooms/" + bookingDetails.videoBookingId, attributes: { 'data-qa': 'continue' } }) }}
+
 {% endblock %}

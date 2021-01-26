@@ -92,7 +92,7 @@ context('A user can add a video link', () => {
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()
-    cy.task('getFindBookingRequests').then(request => {
+    cy.task('getFindAvailabilityRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
         date: moment().add(1, 'days').format('YYYY-MM-DD'),
@@ -179,7 +179,7 @@ context('A user can add a video link', () => {
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()
-    cy.task('getFindBookingRequests').then(request => {
+    cy.task('getFindAvailabilityRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
         date: moment().add(1, 'days').format('YYYY-MM-DD'),

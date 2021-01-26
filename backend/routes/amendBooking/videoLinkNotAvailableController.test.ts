@@ -4,20 +4,6 @@ import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 
 describe('video link is not available controller', () => {
   let controller: VideoLinkNotAvailableController
-  const appointmentDetails = {
-    dateSlashSeparated: '01/01/2021',
-    startTimeHours: '03',
-    startTimeMinutes: '10',
-    endTimeHours: '07',
-    endTimeMinutes: '00',
-    preAppointmentRequired: 'yes',
-    postAppointmentRequired: 'yes',
-    date: 'Monday 01 January 2021',
-    startTime: '03.10',
-    endTime: '07.00',
-    prisoner: { name: 'some prisoner' },
-    locations: { prison: 'some prison', court: 'some court' },
-  }
 
   const req = ({
     originalUrl: 'http://localhost',
@@ -37,29 +23,30 @@ describe('video link is not available controller', () => {
   })
 
   describe('view', () => {
-    it("should render the 'amendBooking/noAvailabilityForDateTime' page", async () => {
-      const mockFlashState = ({ input }) => (req.flash as any).mockReturnValueOnce(input)
+    it('should redirect if no state', async () => {
+      req.signedCookies = {}
+      await controller.view()(req, res, null)
+      expect(res.redirect).toHaveBeenCalledWith('/booking-details/123')
+    })
 
-      mockFlashState({
-        input: [appointmentDetails],
-      })
+    it('should render the page', async () => {
+      req.signedCookies = {
+        'booking-update': {
+          date: '2020-11-20T18:00:00',
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+          preAppointmentRequired: 'true',
+          postAppointmentRequired: 'true',
+        },
+      }
 
       await controller.view()(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('amendBooking/noAvailabilityForDateTime.njk', {
+      expect(res.render).toHaveBeenCalledWith('amendBooking/videoLinkNotAvailable.njk', {
         bookingId: 123,
-        input: {
-          date: 'Monday 01 January 2021',
-          dateSlashSeparated: '01/01/2021',
-          endTime: '07.00',
-          endTimeHours: '07',
-          endTimeMinutes: '00',
-          locations: { court: 'some court', prison: 'some prison' },
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
-          prisoner: { name: 'some prisoner' },
-          startTime: '03.10',
-          startTimeHours: '03',
-          startTimeMinutes: '10',
+        data: {
+          date: 'Friday 20 November 2020',
+          endTime: '19:20',
+          startTime: '17:40',
         },
       })
     })
@@ -67,22 +54,26 @@ describe('video link is not available controller', () => {
 
   describe('submit', () => {
     it('should display booking details', async () => {
-      req.body = appointmentDetails
+      req.signedCookies = {
+        'booking-update': {
+          date: '2020-11-20T18:00:00',
+          startTime: '2020-11-20T18:00:00',
+          endTime: '2020-11-20T19:00:00',
+          preAppointmentRequired: 'true',
+          postAppointmentRequired: 'false',
+        },
+      }
 
       await controller.submit()(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith(`/change-Date-And-Time/123`)
+      expect(res.redirect).toHaveBeenCalledWith(`/change-date-and-time/123`)
       expect(req.flash).toBeCalledWith('input', {
-        date: '01/01/2021',
-        endTime: '07.00',
-        endTimeHours: '10',
+        date: '20/11/2020',
+        startTimeHours: '18',
+        startTimeMinutes: '00',
+        endTimeHours: '19',
         endTimeMinutes: '00',
-        locations: { court: 'some court', prison: 'some prison' },
-        postAppointmentRequired: 'yes',
         preAppointmentRequired: 'yes',
-        prisoner: { name: 'some prisoner' },
-        startTime: '03.10',
-        startTimeHours: '03',
-        startTimeMinutes: '10',
+        postAppointmentRequired: 'no',
       })
     })
   })

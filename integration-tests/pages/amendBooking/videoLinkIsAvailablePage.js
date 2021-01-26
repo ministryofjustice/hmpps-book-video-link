@@ -10,7 +10,7 @@ const videoLinkIsAvailablePage = () =>
     endTime: () => cy.get('.qa-courtHearingEndTime-value'),
     legalBriefingBefore: () => cy.get('.qa-preCourtHearingBriefing-value'),
     legalBriefingAfter: () => cy.get('.qa-postCourtHearingBriefing-value'),
-    continue: () => cy.get('button[type="submit"]'),
+    continue: () => cy.get('[data-qa="continue"]'),
   })
 
 export default {

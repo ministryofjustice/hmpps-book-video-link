@@ -91,17 +91,17 @@ context('A user can amend a booking', () => {
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
     changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
-    changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeMinutes().select('35')
+    changeDateAndTimePage.form.endTimeHours().select('12')
+    changeDateAndTimePage.form.endTimeMinutes().select('15')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()
 
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
     videoLinkNotAvailablePage.date().contains(tomorrow.format('dddd D MMMM YYYY'))
-    videoLinkNotAvailablePage.startTime().contains('10:55')
-    videoLinkNotAvailablePage.endTime().contains('11:55')
+    videoLinkNotAvailablePage.startTime().contains('10:15')
+    videoLinkNotAvailablePage.endTime().contains('12:35')
   })
 
   it('Should redirect user to retry with alternative appointment and previous request should already be populated', () => {

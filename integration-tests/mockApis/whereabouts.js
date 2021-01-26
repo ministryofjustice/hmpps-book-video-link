@@ -89,7 +89,7 @@ module.exports = {
     })
   },
 
-  getFindBookingRequests: () =>
+  getFindAvailabilityRequests: () =>
     getMatchingRequests({
       method: 'POST',
       urlPath: '/whereabouts/court/vlb-appointment-location-finder',

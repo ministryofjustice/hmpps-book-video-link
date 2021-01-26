@@ -12,7 +12,7 @@
 
             <div class="govuk-body">
                 <p>
-                    There are no bookings available on <span data-qa="date">{{input.date}} </span> between <span data-qa="start">{{ input.startTime }}</span> and <span data-qa='end'>{{ input.endTime }}</span>.
+                    There are no bookings available on <span data-qa="date">{{data.date}} </span> between <span data-qa="start">{{ data.startTime }}</span> and <span data-qa='end'>{{ data.endTime }}</span>.
                 </p>
 
                 <p>
@@ -23,7 +23,7 @@
             <form method="POST" novalidate="novalidate">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-                {% for name, value in input %}
+                {% for name, value in update %}
                     <input type="hidden" name="{{name}}" value="{{value}}"/>
                 {% endfor %}
 

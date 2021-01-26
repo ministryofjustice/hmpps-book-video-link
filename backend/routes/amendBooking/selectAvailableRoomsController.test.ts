@@ -26,6 +26,7 @@ describe('Select available rooms controller', () => {
     locals: {},
     render: jest.fn(),
     redirect: jest.fn(),
+    clearCookie: jest.fn(),
   } as unknown) as jest.Mocked<Response>
 
   const bookingDetails: BookingDetails = {
@@ -75,11 +76,30 @@ describe('Select available rooms controller', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     controller = new SelectAvailableRoomsController(bookingService, availabilityCheckService)
+
+    req.signedCookies = {
+      'booking-update': {
+        date: '2020-11-20T00:00:00',
+        startTime: '2020-11-20T18:00:00',
+        endTime: '2020-11-20T19:00:00',
+        preAppointmentRequired: 'true',
+        postAppointmentRequired: 'true',
+      },
+    }
   })
 
   describe('view', () => {
     const mockFlashState = ({ errors, input }) =>
       (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+
+    it('should redirect when no stored state', async () => {
+      mockFlashState({ errors: [], input: [] })
+      req.signedCookies = {}
+
+      await controller.view()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/booking-details/123')
+    })
 
     describe('View page with no errors', () => {
       it('should display booking details', async () => {
@@ -96,11 +116,8 @@ describe('Select available rooms controller', () => {
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
-          formValues: {
-            preAppointmentLocation: null,
-            mainAppointmentLocation: null,
-            postAppointmentLocation: null,
-            comments: 'some comment',
+          form: {
+            comment: 'some comment',
           },
           errors: [],
         })
@@ -132,9 +149,9 @@ describe('Select available rooms controller', () => {
           errors: [{ text: 'error message', href: 'error' }],
           input: [
             {
-              selectPreAppointmentLocation: 2,
-              selectMainAppointmentLocation: 1,
-              selectPostAppointmentLocation: 3,
+              preLocation: '2',
+              mainLocation: '1',
+              postLocation: '3',
               comment: 'another comment',
             },
           ],
@@ -149,11 +166,11 @@ describe('Select available rooms controller', () => {
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
-          formValues: {
-            preAppointmentLocation: 2,
-            mainAppointmentLocation: 1,
-            postAppointmentLocation: 3,
-            comments: 'another comment',
+          form: {
+            preLocation: 2,
+            mainLocation: 1,
+            postLocation: 3,
+            comment: 'another comment',
           },
           errors: [{ text: 'error message', href: 'error' }],
         })
@@ -176,11 +193,8 @@ describe('Select available rooms controller', () => {
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
-          formValues: {
-            preAppointmentLocation: null,
-            mainAppointmentLocation: null,
-            postAppointmentLocation: null,
-            comments: 'some comment',
+          form: {
+            comment: 'some comment',
           },
           errors: [{ text: 'error message', href: 'error' }],
         })
@@ -196,6 +210,15 @@ describe('Select available rooms controller', () => {
       await controller.submit()(req, res, null)
 
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-change-confirmed/12`)
+    })
+
+    it('should clear cookie when no errors exist', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      req.params.bookingId = '12'
+
+      await controller.submit()(req, res, null)
+
+      expect(res.clearCookie).toHaveBeenCalledWith('booking-update', expect.anything())
     })
 
     describe('when errors are present', () => {

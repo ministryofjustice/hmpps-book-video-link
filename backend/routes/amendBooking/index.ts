@@ -4,14 +4,14 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
 import ChangeDateAndTimeController from './changeDateAndTimeController'
-import ChangeDateAndTimeValidation from './changeDateAndTimeValidation'
+import changeDateAndTimeValidation from './changeDateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
-import SelectAvailableRoomsValidation from './selectAvailableRoomsValidation'
+import selectAvailableRoomsValidation from './selectAvailableRoomsValidation'
 import ConfirmationController from './confirmationController'
 import ChangeCommentsController from './changeCommentsController'
-import ChangeCommentsValidation from './changeCommentsValidation'
+import changeCommentsValidation from './changeCommentsValidation'
 
 export default function createRoutes({ bookingService, availabilityCheckService }: Services): Router {
   const changeDateAndTime = new ChangeDateAndTimeController(bookingService, availabilityCheckService)
@@ -23,17 +23,19 @@ export default function createRoutes({ bookingService, availabilityCheckService 
 
   const router = express.Router({ mergeParams: true })
 
+  router.get('/start-change-date/:bookingId', asyncMiddleware(changeDateAndTime.start()))
+
   router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view(false)))
   router.post(
     '/change-date-and-time/:bookingId',
-    validationMiddleware(ChangeDateAndTimeValidation),
+    validationMiddleware(changeDateAndTimeValidation),
     asyncMiddleware(changeDateAndTime.submit(false))
   )
 
   router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
   router.post(
     '/change-time/:bookingId',
-    validationMiddleware(ChangeDateAndTimeValidation),
+    validationMiddleware(changeDateAndTimeValidation),
     asyncMiddleware(changeDateAndTime.submit(true))
   )
 
@@ -41,12 +43,11 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   router.post('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.submit()))
 
   router.get('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
-  router.post('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.submit()))
 
   router.get('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.view()))
   router.post(
     '/select-available-rooms/:bookingId',
-    validationMiddleware(SelectAvailableRoomsValidation),
+    validationMiddleware(selectAvailableRoomsValidation),
     asyncMiddleware(selectAvailableRooms.submit())
   )
 
@@ -55,7 +56,7 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   router.get('/change-comments/:bookingId', asyncMiddleware(changeComments.view()))
   router.post(
     '/change-comments/:bookingId',
-    validationMiddleware(ChangeCommentsValidation),
+    validationMiddleware(changeCommentsValidation),
     asyncMiddleware(changeComments.submit())
   )
 
