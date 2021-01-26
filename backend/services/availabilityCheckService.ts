@@ -18,13 +18,17 @@ export default class AvailabilityCheckService {
     return { value: location.locationId, text: location.description }
   }
 
-  public async getAvailability(context: Context, request: AvailabilityRequest): Promise<RoomAvailability> {
+  public async getAvailability(
+    context: Context,
+    request: AvailabilityRequest,
+    videoBookingId?: number
+  ): Promise<RoomAvailability> {
     const { agencyId, date, startTime, endTime, preRequired, postRequired } = request
 
     const { pre, main, post } = await this.whereaboutsApi.getAvailableRooms(context, {
       agencyId,
       date: date.format(DATE_ONLY_FORMAT_SPEC),
-      vlbIdsToExclude: [],
+      vlbIdsToExclude: videoBookingId ? [videoBookingId] : [],
       preInterval: preRequired ? getPreAppointmentInterval(startTime) : null,
       mainInterval: createInterval(startTime, endTime),
       postInterval: postRequired ? getPostAppointmentInterval(endTime) : null,

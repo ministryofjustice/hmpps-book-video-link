@@ -57,14 +57,18 @@ export default class ChangeDateAndTimeController {
 
       const { agencyId } = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
 
-      const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
-        agencyId,
-        date: form.date,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        preRequired: form.preAppointmentRequired,
-        postRequired: form.postAppointmentRequired,
-      })
+      const { isAvailable } = await this.availabilityCheckService.getAvailability(
+        res.locals,
+        {
+          agencyId,
+          date: form.date,
+          startTime: form.startTime,
+          endTime: form.endTime,
+          preRequired: form.preAppointmentRequired,
+          postRequired: form.postAppointmentRequired,
+        },
+        parseInt(bookingId, 10)
+      )
 
       setUpdate(res, form)
 

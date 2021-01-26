@@ -29,9 +29,10 @@ describe('AvailabilityCheckService', () => {
     description: `Room-${locationId}`,
   })
 
+  const videoBookingId = 123
   describe('Get available rooms', () => {
     const getAvailableRooms = async params => {
-      const availability = await service.getAvailability(context, params)
+      const availability = await service.getAvailability(context, params, videoBookingId)
       return availability.rooms
     }
     it('No rooms', async () => {
@@ -59,7 +60,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval,
@@ -91,7 +92,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval,
@@ -123,7 +124,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval,
@@ -154,7 +155,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval,
@@ -186,7 +187,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval: null,
         mainInterval,
         postInterval: null,
@@ -218,7 +219,7 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval: null,
@@ -250,8 +251,69 @@ describe('AvailabilityCheckService', () => {
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval: null,
+        mainInterval,
+        postInterval,
+      })
+    })
+  })
+
+  describe('Get available rooms when making a new booking rather than amending a previous booking', () => {
+    const getAvailableRooms = async params => {
+      const availability = await service.getAvailability(context, params)
+      return availability.rooms
+    }
+    it('No rooms', async () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [],
+        main: [],
+        post: [],
+      })
+
+      const rooms = await getAvailableRooms({
+        agencyId: 'WWI',
+        date: moment('20/11/2020', DAY_MONTH_YEAR),
+        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
+        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
+        preRequired: true,
+        postRequired: true,
+      })
+
+      expect(rooms).toStrictEqual({
+        pre: [],
+        main: [],
+        post: [],
+      })
+    })
+
+    it('All 3 appointments', async () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1), location(2), location(3)],
+        main: [location(2), location(3)],
+        post: [location(1)],
+      })
+
+      const rooms = await getAvailableRooms({
+        agencyId: 'WWI',
+        date: moment('20/11/2020', DAY_MONTH_YEAR),
+        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
+        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
+        preRequired: true,
+        postRequired: true,
+      })
+
+      expect(rooms).toStrictEqual({
+        pre: [room(1), room(2), room(3)],
+        main: [room(2), room(3)],
+        post: [room(1)],
+      })
+
+      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
+        agencyId: 'WWI',
+        date: '2020-11-20',
+        vlbIdsToExclude: [],
+        preInterval,
         mainInterval,
         postInterval,
       })
@@ -269,7 +331,7 @@ describe('AvailabilityCheckService', () => {
     }
 
     const isAvailable = async params => {
-      const availability = await service.getAvailability(context, params)
+      const availability = await service.getAvailability(context, params, videoBookingId)
       return availability.isAvailable
     }
 
@@ -596,21 +658,25 @@ describe('AvailabilityCheckService', () => {
         post: [location(1), location(2), location(3)],
       })
 
-      const result = await service.getAvailability(context, {
-        agencyId: 'WWI',
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: true,
-        postRequired: true,
-      })
+      const result = await service.getAvailability(
+        context,
+        {
+          agencyId: 'WWI',
+          date: moment('20/11/2020', DAY_MONTH_YEAR),
+          startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
+          endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
+          preRequired: true,
+          postRequired: true,
+        },
+        videoBookingId
+      )
 
       expect(result.isAvailable).toBe(true)
 
       expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
         agencyId: 'WWI',
         date: '2020-11-20',
-        vlbIdsToExclude: [],
+        vlbIdsToExclude: [videoBookingId],
         preInterval,
         mainInterval,
         postInterval,
@@ -627,7 +693,7 @@ describe('AvailabilityCheckService', () => {
     })
 
     const getInterval = async params => {
-      const availability = await service.getAvailability(context, params)
+      const availability = await service.getAvailability(context, params, videoBookingId)
       return availability.totalInterval
     }
 

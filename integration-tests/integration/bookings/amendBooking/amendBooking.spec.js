@@ -195,7 +195,7 @@ context('A user can amend a booking', () => {
         {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [],
+          vlbIdsToExclude: [10],
           preInterval: { start: '10:35', end: '10:55' },
           mainInterval: { start: '10:55', end: '11:55' },
           postInterval: { start: '11:55', end: '12:15' },
@@ -203,7 +203,7 @@ context('A user can amend a booking', () => {
         {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [],
+          vlbIdsToExclude: [10],
           preInterval: { start: '10:35', end: '10:55' },
           mainInterval: { start: '10:55', end: '11:55' },
           postInterval: { start: '11:55', end: '12:15' },

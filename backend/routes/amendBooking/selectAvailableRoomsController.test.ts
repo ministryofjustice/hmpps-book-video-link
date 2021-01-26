@@ -16,7 +16,7 @@ describe('Select available rooms controller', () => {
   let controller: SelectAvailableRoomsController
   const req = ({
     originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
+    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: '123' },
     session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
     body: {},
     flash: jest.fn(),
@@ -110,7 +110,7 @@ describe('Select available rooms controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
-          bookingId: 123,
+          bookingId: '123',
           preAppointmentRequired: true,
           postAppointmentRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
@@ -130,14 +130,18 @@ describe('Select available rooms controller', () => {
 
         await controller.view()(req, res, null)
 
-        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
-          agencyId: 'WWI',
-          date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-          startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-          endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-          postRequired: true,
-          preRequired: true,
-        })
+        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(
+          res.locals,
+          {
+            agencyId: 'WWI',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+            postRequired: true,
+            preRequired: true,
+          },
+          123
+        )
       })
     })
 
@@ -160,7 +164,7 @@ describe('Select available rooms controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
-          bookingId: 123,
+          bookingId: '123',
           preAppointmentRequired: true,
           postAppointmentRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
@@ -187,7 +191,7 @@ describe('Select available rooms controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
-          bookingId: 123,
+          bookingId: '123',
           preAppointmentRequired: true,
           postAppointmentRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
