@@ -27,6 +27,10 @@ export = class WhereaboutsApi {
     return this.client.post(context, url, data).then(this.processResponse)
   }
 
+  private put(context: Context, url: string, data) {
+    return this.client.put(context, url, data).then(this.processResponse)
+  }
+
   private delete(context: Context, url: string) {
     return this.client.delete(context, url).then(this.processResponse)
   }
@@ -61,6 +65,10 @@ export = class WhereaboutsApi {
       context,
       `/court/video-link-bookings/prison/${agencyId}/date/${date.format('YYYY-MM-DD')}?${searchParams}`
     )
+  }
+
+  public updateVideoLinkBookingComment(context: Context, videoBookingId: number, comment: string): Promise<void> {
+    return this.put(context, `/court/video-link-bookings/${videoBookingId}/comment`, comment)
   }
 
   public deleteVideoLinkBooking(context: Context, videoBookingId: number): Promise<void> {

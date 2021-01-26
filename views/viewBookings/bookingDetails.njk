@@ -3,7 +3,6 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
 {% from "govuk/components/radios/macro.njk" import govukRadios %} 
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% set title = "Video link details" %}
 
 {% block content %}
 
@@ -14,7 +13,7 @@
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-three-quarters">
     {{ govukButton({
       text: "Delete video link",
       href: '/delete-booking/' + bookingDetails.videoBookingId,
@@ -30,7 +29,12 @@
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-three-quarters">
+   {% if commentExists %}
+      {% set actionText = "Change comments" %}
+    {% else %}
+      {% set actionText = "Add comments" %}
+    {% endif %}
     {{
       govukSummaryList({
         classes: 'govuk-summary-list--no-border',
@@ -46,7 +50,7 @@
             attributes: { "data-qa": "change-time" }
           },
           'Comments': { 
-            text: 'Change comments',
+            text: actionText,
             href: '/change-comments/' + bookingDetails.videoBookingId,
             attributes: { "data-qa": "change-comments" }
           }
@@ -57,7 +61,7 @@
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-three-quarters">
     {{
       govukSummaryList({
         classes: 'govuk-summary-list--no-border',
@@ -68,7 +72,7 @@
 </div>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-three-quarters">
     {{
       govukSummaryList({
         classes: 'govuk-summary-list--no-border',
