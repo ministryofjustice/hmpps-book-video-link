@@ -78,9 +78,7 @@ module.exports = ({ prisonApi }) => {
     }
 
     return res.render('createBooking/start.njk', {
-      formValues: {
-        appointmentType: 'VLB',
-      },
+      formValues: {},
       ...data,
       offenderNo,
       offenderNameWithNumber,
@@ -128,7 +126,6 @@ module.exports = ({ prisonApi }) => {
     }
 
     req.flash('appointmentDetails', {
-      appointmentType: 'VLB',
       bookingId,
       date,
       startTime: startTime.format(DATE_TIME_FORMAT_SPEC),

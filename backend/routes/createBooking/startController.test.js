@@ -55,9 +55,7 @@ describe('Add court appointment', () => {
     expect(res.render).toHaveBeenCalledWith(
       'createBooking/start.njk',
       expect.objectContaining({
-        formValues: {
-          appointmentType: 'VLB',
-        },
+        formValues: {},
         offenderNo: 'A12345',
         offenderNameWithNumber: 'Firstname Lastname (A12345)',
         agencyDescription: 'Moorland',
