@@ -188,16 +188,16 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.offenderName().contains('John Doe')
     videoLinkIsAvailablePage.prison().contains('Wandsworth')
     videoLinkIsAvailablePage.courtLocation().contains('Leeds')
-    videoLinkIsAvailablePage.date().contains('2 January 2020')
-    videoLinkIsAvailablePage.startTime().contains('13:00')
-    videoLinkIsAvailablePage.endTime().contains('13:30')
-    videoLinkIsAvailablePage.legalBriefingBefore().contains('12:40 to 13:00')
-    videoLinkIsAvailablePage.legalBriefingAfter().contains('13:30 to 13:50')
+    videoLinkIsAvailablePage.date().contains(tomorrow.format('D MMMM YYYY'))
+    videoLinkIsAvailablePage.startTime().contains('10:55')
+    videoLinkIsAvailablePage.endTime().contains('11:55')
+    videoLinkIsAvailablePage.legalBriefingBefore().contains('10:35 to 10:55')
+    videoLinkIsAvailablePage.legalBriefingAfter().contains('11:55 to 12:15')
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
 
-    cy.task('getFindBookingRequests').then(request => {
+    cy.task('getFindAvailabilityRequests').then(request => {
       expect(request).to.deep.equal([
         {
           agencyId: 'WWI',
@@ -209,19 +209,19 @@ context('A user can amend a booking', () => {
         },
         {
           agencyId: 'WWI',
-          date: '2020-01-02',
+          date: tomorrow.format('YYYY-MM-DD'),
           vlbIdsToExclude: [],
-          preInterval: { start: '12:40', end: '13:00' },
-          mainInterval: { start: '13:00', end: '13:30' },
-          postInterval: { start: '13:30', end: '13:50' },
+          preInterval: { start: '10:35', end: '10:55' },
+          mainInterval: { start: '10:55', end: '11:55' },
+          postInterval: { start: '11:55', end: '12:15' },
         },
       ])
     })
 
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')
-    selectAvailableRoomsForm.selectMainAppointmentLocation().select('110')
-    selectAvailableRoomsForm.selectPostAppointmentLocation().select('120')
+    selectAvailableRoomsForm.preLocation().select('100')
+    selectAvailableRoomsForm.mainLocation().select('110')
+    selectAvailableRoomsForm.postLocation().select('120')
     selectAvailableRoomsForm.comments().contains('A comment')
     selectAvailableRoomsPage.bookVideoLink().click()
 
@@ -284,25 +284,43 @@ context('A user can amend a booking', () => {
     cy.task('stubLoginCourt')
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
-      main: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
+      main: [
+        { locationId: 100, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 110, description: 'Room 2', locationType: 'VIDE' },
+      ],
       post: [{ locationId: 120, description: 'Room 3', locationType: 'VIDE' }],
     })
+    const tomorrow = moment().add(1, 'days')
 
-    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.goTo(10, 'John Doe’s')
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeDate().click()
+
+    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
+    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
+    changeDateAndTimePage.activeDate().click()
+    changeDateAndTimePage.form.startTimeHours().select('10')
+    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeHours().select('11')
+    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
+    changeDateAndTimePage.form.continue().click()
+
+    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
 
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.selectPreAppointmentLocation().select('100')
-    selectAvailableRoomsForm.selectMainAppointmentLocation().select('100')
-    selectAvailableRoomsForm.selectPostAppointmentLocation().select('120')
+    selectAvailableRoomsForm.preLocation().select('100')
+    selectAvailableRoomsForm.mainLocation().select('100')
+    selectAvailableRoomsForm.postLocation().select('120')
     selectAvailableRoomsPage.bookVideoLink().click()
 
     SelectAvailableRoomsPage.verifyOnPage()
-    selectAvailableRoomsForm.selectPreAppointmentLocation().should('have.value', '100')
-    selectAvailableRoomsForm.selectMainAppointmentLocation().should('have.value', '100')
-    selectAvailableRoomsForm.selectPostAppointmentLocation().should('have.value', '120')
+    selectAvailableRoomsForm.preLocation().should('have.value', '100')
+    selectAvailableRoomsForm.mainLocation().should('have.value', '100')
+    selectAvailableRoomsForm.postLocation().should('have.value', '120')
     selectAvailableRoomsPage.errorSummaryTitle().contains('There is a problem')
     selectAvailableRoomsPage
       .errorSummaryBody()
@@ -313,6 +331,7 @@ context('A user can amend a booking', () => {
   })
 
   it('Select drop downs for pre and post are not displayed when pre and post appointments are not present', () => {
+    const tomorrow = moment().add(1, 'days')
     cy.task('stubLoginCourt')
     cy.task('stubRoomAvailability', {
       main: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
@@ -330,15 +349,29 @@ context('A user can amend a booking', () => {
       },
     })
 
-    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.goTo(10, 'John Doe’s')
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeDate().click()
+
+    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
+    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
+    changeDateAndTimePage.activeDate().click()
+    changeDateAndTimePage.form.startTimeHours().select('10')
+    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeHours().select('11')
+    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.preAppointmentRequiredNo().click()
+    changeDateAndTimePage.form.postAppointmentRequiredNo().click()
+    changeDateAndTimePage.form.continue().click()
+
+    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
 
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.selectPreAppointmentLocation().should('not.exist')
-    selectAvailableRoomsForm.selectMainAppointmentLocation().select('100')
-    selectAvailableRoomsForm.selectPostAppointmentLocation().should('not.exist')
+    selectAvailableRoomsForm.preLocation().should('not.exist')
+    selectAvailableRoomsForm.mainLocation().select('100')
+    selectAvailableRoomsForm.postLocation().should('not.exist')
   })
 
   it('A user will be navigated to the booking-details page', () => {

@@ -17,6 +17,7 @@ describe('change date and time controller', () => {
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
     session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
+    query: {},
     body: {
       date: '20/11/2020',
       startTimeHours: '17',
@@ -33,6 +34,8 @@ describe('change date and time controller', () => {
     locals: {},
     render: jest.fn(),
     redirect: jest.fn(),
+    clearCookie: jest.fn(),
+    cookie: jest.fn(),
   } as unknown) as jest.Mocked<Response>
 
   const bookingDetails: BookingDetails = {
@@ -73,6 +76,28 @@ describe('change date and time controller', () => {
     controller = new ChangeDateAndTimeController(bookingService, availabilityCheckService)
   })
 
+  describe('start', () => {
+    it('Clear cookie and redirects when changing date and time', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      await controller.start()(req, res, null)
+
+      expect(res.clearCookie).toHaveBeenCalledWith('booking-update', expect.anything())
+
+      expect(res.redirect).toHaveBeenCalledWith('/change-date-and-time/123')
+    })
+
+    it('Clears cookie and redirects when changing time only', async () => {
+      req.query.changeTime = 'true'
+
+      await controller.start()(req, res, null)
+
+      expect(res.clearCookie).toHaveBeenCalledWith('booking-update', expect.anything())
+
+      expect(res.redirect).toHaveBeenCalledWith('/change-time/123')
+    })
+  })
+
   describe('view', () => {
     const mockFlashState = ({ errors, input }) =>
       (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
@@ -87,16 +112,12 @@ describe('change date and time controller', () => {
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
           changeTime: false,
-          date: null,
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
-          startTimeHours: null,
-          startTimeMinutes: null,
-          endTimeHours: null,
-          endTimeMinutes: null,
           errors: [],
-          postAppointmentRequired: null,
-          preAppointmentRequired: null,
+          form: {
+            date: null,
+          },
         })
       })
 
@@ -109,16 +130,12 @@ describe('change date and time controller', () => {
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
           changeTime: true,
-          date: '20/11/2020',
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
-          startTimeHours: null,
-          startTimeMinutes: null,
-          endTimeHours: null,
-          endTimeMinutes: null,
           errors: [],
-          postAppointmentRequired: null,
-          preAppointmentRequired: null,
+          form: {
+            date: '20/11/2020',
+          },
         })
       })
     })
@@ -130,7 +147,7 @@ describe('change date and time controller', () => {
           errors: [{ text: 'error message', href: 'error' }],
           input: [
             {
-              date: '20/11/2020',
+              date: '21/11/2020',
               startTimeHours: '11',
               startTimeMinutes: '20',
               endTimeHours: '11',
@@ -146,16 +163,18 @@ describe('change date and time controller', () => {
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
           changeTime: false,
-          date: '20/11/2020',
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
-          startTimeHours: '11',
-          startTimeMinutes: '20',
-          endTimeHours: '11',
-          endTimeMinutes: '40',
           errors: [{ text: 'error message', href: 'error' }],
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
+          form: {
+            date: '21/11/2020',
+            startTimeHours: '11',
+            startTimeMinutes: '20',
+            endTimeHours: '11',
+            endTimeMinutes: '40',
+            postAppointmentRequired: 'yes',
+            preAppointmentRequired: 'yes',
+          },
         })
       })
 
@@ -181,16 +200,18 @@ describe('change date and time controller', () => {
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
           changeTime: true,
-          date: '21/11/2020',
+          errors: [{ text: 'error message', href: 'error' }],
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
-          startTimeHours: '11',
-          startTimeMinutes: '20',
-          endTimeHours: '11',
-          endTimeMinutes: '40',
-          errors: [{ text: 'error message', href: 'error' }],
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
+          form: {
+            date: '21/11/2020',
+            startTimeHours: '11',
+            startTimeMinutes: '20',
+            endTimeHours: '11',
+            endTimeMinutes: '40',
+            postAppointmentRequired: 'yes',
+            preAppointmentRequired: 'yes',
+          },
         })
       })
     })
@@ -207,16 +228,12 @@ describe('change date and time controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
         bookingId: 123,
         changeTime: false,
-        date: null,
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
-        startTimeHours: null,
-        startTimeMinutes: null,
-        endTimeHours: null,
-        endTimeMinutes: null,
         errors: [{ text: 'error message', href: 'error' }],
-        postAppointmentRequired: null,
-        preAppointmentRequired: null,
+        form: {
+          date: null,
+        },
       })
     })
 
@@ -232,22 +249,18 @@ describe('change date and time controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
         bookingId: 123,
         changeTime: true,
-        date: '20/11/2020',
+        errors: [{ text: 'error message', href: 'error' }],
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
-        startTimeHours: null,
-        startTimeMinutes: null,
-        endTimeHours: null,
-        endTimeMinutes: null,
-        errors: [{ text: 'error message', href: 'error' }],
-        postAppointmentRequired: null,
-        preAppointmentRequired: null,
+        form: {
+          date: '20/11/2020',
+        },
       })
     })
   })
 
   describe('submit', () => {
-    it('should display the available page on submit when no errors exist', async () => {
+    it('should redirect to the available page on submit when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
       const availability: RoomAvailability = {
@@ -263,7 +276,7 @@ describe('change date and time controller', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-available/12`)
     })
 
-    it("should display the '/video-link-not-available' page on submit", async () => {
+    it("should redirect to '/video-link-not-available' when no availability for selected date/time", async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
       const availability: RoomAvailability = {
@@ -277,6 +290,32 @@ describe('change date and time controller', () => {
       await controller.submit(false)(req, res, null)
 
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-not-available/12`)
+    })
+
+    it('should set state in cookie', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+
+      const availability: RoomAvailability = {
+        isAvailable: false,
+        rooms: null,
+        totalInterval: null,
+      }
+      availabilityCheckService.getAvailability.mockResolvedValue(availability)
+      req.params.bookingId = '12'
+
+      await controller.submit(false)(req, res, null)
+
+      expect(res.cookie).toHaveBeenCalledWith(
+        'booking-update',
+        {
+          date: '2020-11-20T00:00:00',
+          endTime: '2020-11-20T19:20:00',
+          postAppointmentRequired: 'true',
+          preAppointmentRequired: 'true',
+          startTime: '2020-11-20T17:40:00',
+        },
+        expect.anything()
+      )
     })
     describe('when errors are present', () => {
       beforeEach(() => {
@@ -296,7 +335,7 @@ describe('change date and time controller', () => {
         req.body = { date: 'blah' }
 
         await controller.submit(false)(req, res, null)
-        expect(req.flash).toHaveBeenCalledWith('input', req.body)
+        expect(req.flash).toHaveBeenCalledWith('input', [req.body])
       })
 
       it('should redirect to same page when changing date and time', async () => {

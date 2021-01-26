@@ -2,6 +2,8 @@ import moment, { Moment } from 'moment'
 
 export const DATE_ONLY_FORMAT_SPEC = 'YYYY-MM-DD'
 export const DATE_TIME_FORMAT_SPEC = 'YYYY-MM-DDTHH:mm:ss'
+export const DATE_ONLY_LONG_FORMAT_SPEC = 'D MMMM YYYY'
+export const DATE_ONLY_EXTRA_LONG_FORMAT_SPEC = 'dddd D MMMM YYYY'
 export const DAY_MONTH_YEAR = 'DD/MM/YYYY'
 export const MOMENT_DAY_OF_THE_WEEK = 'dddd'
 export const MOMENT_TIME = 'HH:mm'

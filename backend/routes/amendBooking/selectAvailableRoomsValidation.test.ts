@@ -4,34 +4,34 @@ describe('SelectAvailableRoomsValidation', () => {
   const form = {
     preAppointmentRequired: 'true',
     postAppointmentRequired: 'true',
-    selectPreAppointmentLocation: '2',
-    selectMainAppointmentLocation: '1',
-    selectPostAppointmentLocation: '3',
+    preLocation: '2',
+    mainLocation: '1',
+    postLocation: '3',
     comment: 'Some comment',
   } as Record<string, string>
 
   describe('checking for missing form values', () => {
     it('should return an error when no pre location is selected', () => {
-      expect(validator({ ...form, selectPreAppointmentLocation: '' })).toStrictEqual([errorTypes.preLocation.missing])
+      expect(validator({ ...form, preLocation: '' })).toStrictEqual([errorTypes.preLocation.missing])
     })
 
     it('should return an error when no main location is selected', () => {
-      expect(validator({ ...form, selectMainAppointmentLocation: '' })).toStrictEqual([errorTypes.missingMainLocation])
+      expect(validator({ ...form, mainLocation: '' })).toStrictEqual([errorTypes.missingMainLocation])
     })
 
     it('should return an error when no post location is selected', () => {
-      expect(validator({ ...form, selectPostAppointmentLocation: '' })).toStrictEqual([errorTypes.postLocation.missing])
+      expect(validator({ ...form, postLocation: '' })).toStrictEqual([errorTypes.postLocation.missing])
     })
 
     it('should return multiply errors when many form values are missing', () => {
       expect(
         validator({
           ...form,
-          selectPreAppointmentLocation: '',
-          selectMainAppointmentLocation: '',
-          selectPostAppointmentLocation: '',
+          preLocation: '',
+          mainLocation: '',
+          postLocation: '',
         })
-      ).toStrictEqual([errorTypes.missingMainLocation, errorTypes.preLocation.missing, errorTypes.postLocation.missing])
+      ).toStrictEqual([errorTypes.preLocation.missing, errorTypes.missingMainLocation, errorTypes.postLocation.missing])
     })
   })
 
@@ -40,8 +40,8 @@ describe('SelectAvailableRoomsValidation', () => {
       expect(
         validator({
           ...form,
-          selectPreAppointmentLocation: '1',
-          selectMainAppointmentLocation: '1',
+          preLocation: '1',
+          mainLocation: '1',
         })
       ).toStrictEqual([errorTypes.preLocation.different])
     })
@@ -50,8 +50,8 @@ describe('SelectAvailableRoomsValidation', () => {
       expect(
         validator({
           ...form,
-          selectMainAppointmentLocation: '1',
-          selectPostAppointmentLocation: '1',
+          mainLocation: '1',
+          postLocation: '1',
         })
       ).toStrictEqual([errorTypes.postLocation.different])
     })
@@ -60,9 +60,9 @@ describe('SelectAvailableRoomsValidation', () => {
       expect(
         validator({
           ...form,
-          selectPreAppointmentLocation: '2',
-          selectMainAppointmentLocation: '1',
-          selectPostAppointmentLocation: '3',
+          preLocation: '2',
+          mainLocation: '1',
+          postLocation: '3',
         })
       ).toStrictEqual([])
     })
@@ -71,9 +71,9 @@ describe('SelectAvailableRoomsValidation', () => {
       expect(
         validator({
           ...form,
-          selectPreAppointmentLocation: '2',
-          selectMainAppointmentLocation: '1',
-          selectPostAppointmentLocation: '2',
+          preLocation: '2',
+          mainLocation: '1',
+          postLocation: '2',
         })
       ).toStrictEqual([])
     })

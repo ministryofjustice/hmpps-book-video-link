@@ -37,12 +37,12 @@
         rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
           'Date': { 
             text: 'Change date',
-            href: '/change-date-and-time/' + bookingDetails.videoBookingId,
+            href: '/start-change-date/' + bookingDetails.videoBookingId,
             attributes: { "data-qa": "change-date" }
           }, 
           'Court hearing start time': { 
             text: 'Change time',
-            href: '/change-time/' + bookingDetails.videoBookingId,
+            href: '/start-change-date/' + bookingDetails.videoBookingId + '?changeTime=true',
             attributes: { "data-qa": "change-time" }
           },
           'Comments': { 

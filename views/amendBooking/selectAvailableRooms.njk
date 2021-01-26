@@ -13,13 +13,13 @@
 {% macro appointment(params, errors) %}
 
     {{ govukSelect({
-        name: params.name + "Location",
-        id: params.name + "Location",
+        name: params.name,
+        id: params.name,
         label: {
             text: params.description
         },
         items: params.locations | addDefaultSelectedVale('Select') | setSelected(params.location),
-        errorMessage: errors | findError(params.name + "Location")
+        errorMessage: errors | findError(params.name)
     }) }}
 {% endmacro %}
 
@@ -43,29 +43,27 @@
             {% if preAppointmentRequired %}
                 {{ appointment({
                     description: "Prison room for pre-court hearing briefing", 
-                    name:"selectPreAppointment",
-                    locations: preLocations, 
-                    location: formValues.preAppointmentLocation
+                    name: "preLocation",
+                    location: form.preLocation,
+                    locations: preLocations
                     }, 
                     errors) }}
             {% endif %}
 
             {{ appointment({
                 description: "Prison room for court hearing", 
-                name:"selectMainAppointment",
-                locations: mainLocations, 
-                location: formValues.mainAppointmentLocation, 
-                duration: formValues.mainAppointmentDuration
+                name: "mainLocation",
+                location: form.mainLocation, 
+                locations: mainLocations
                 }, 
                 errors) }}
 
             {% if postAppointmentRequired %}
                 {{ appointment({
                     description: "Prison room for post-court hearing briefing", 
-                    name:"selectPostAppointment",
-                    locations: postLocations, 
-                    location: formValues.postAppointmentLocation,
-                    duration: formValues.postAppointmentDuration
+                    name: "postLocation",
+                    location: form.postLocation,
+                    locations: postLocations
                     }, 
                     errors) }}
             {% endif %}
@@ -73,7 +71,7 @@
             {{ govukTextarea({
                 name: "comment",
                 id: "comment",
-                value: formValues.comments,
+                value: form.comment,
                 errorMessage: errors | findError('comment'),
                 classes: 'govuk-!-width-one-half',
                 label: {

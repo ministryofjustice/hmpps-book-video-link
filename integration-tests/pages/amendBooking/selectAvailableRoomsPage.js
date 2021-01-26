@@ -4,9 +4,9 @@ const selectAvailableRoomsPage = () =>
   page('Select an available room in the prison', {
     form: () => ({
       inlineError: () => cy.get('.govuk-error-message'),
-      selectPreAppointmentLocation: () => cy.get('#selectPreAppointmentLocation'),
-      selectMainAppointmentLocation: () => cy.get('#selectMainAppointmentLocation'),
-      selectPostAppointmentLocation: () => cy.get('#selectPostAppointmentLocation'),
+      preLocation: () => cy.get('#preLocation'),
+      mainLocation: () => cy.get('#mainLocation'),
+      postLocation: () => cy.get('#postLocation'),
       comments: () => cy.get('#comment'),
     }),
     errorSummaryTitle: () => cy.get('#error-summary-title'),

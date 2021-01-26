@@ -1,28 +1,29 @@
 import type { ValidationError } from '../../middleware/validationMiddleware'
+import { assertHasOptionalStringValues } from '../../utils'
 
 export const errorTypes = {
   missingMainLocation: {
     text: 'Select a prison room for the court hearing video link',
-    href: '#selectMainAppointmentLocation',
+    href: '#mainLocation',
   },
   preLocation: {
     missing: {
       text: 'Select a prison room for the pre-court hearing briefing',
-      href: '#selectPreAppointmentLocation',
+      href: '#preLocation',
     },
     different: {
       text: 'Select a different room for the pre-court hearing to the room for the court hearing briefing',
-      href: '#selectPreAppointmentLocation',
+      href: '#preLocation',
     },
   },
   postLocation: {
     missing: {
       text: 'Select a prison room for the post-court hearing briefing',
-      href: '#selectPostAppointmentLocation',
+      href: '#postLocation',
     },
     different: {
       text: 'Select a different room for the post-court hearing to the room for the court hearing briefing',
-      href: '#selectPostAppointmentLocation',
+      href: '#postLocation',
     },
   },
   commentLength: {
@@ -31,38 +32,30 @@ export const errorTypes = {
   },
 }
 
-export default function validate(form: Record<string, string>): ValidationError[] {
-  const {
-    preAppointmentRequired,
-    postAppointmentRequired,
-    selectPreAppointmentLocation,
-    selectPostAppointmentLocation,
-    selectMainAppointmentLocation,
-    comment,
-  } = form
+export default function validate(form: Record<string, unknown>): ValidationError[] {
+  assertHasOptionalStringValues(form, [
+    'preAppointmentRequired',
+    'postAppointmentRequired',
+    'preLocation',
+    'postLocation',
+    'mainLocation',
+    'comment',
+  ])
+
+  const { preAppointmentRequired, postAppointmentRequired, preLocation, postLocation, mainLocation, comment } = form
 
   const errors: ValidationError[] = []
 
-  if (!selectMainAppointmentLocation) errors.push(errorTypes.missingMainLocation)
-  if (preAppointmentRequired === 'true' && !selectPreAppointmentLocation) errors.push(errorTypes.preLocation.missing)
-  if (postAppointmentRequired === 'true' && !selectPostAppointmentLocation) errors.push(errorTypes.postLocation.missing)
+  if (preAppointmentRequired === 'true' && !preLocation) errors.push(errorTypes.preLocation.missing)
+  if (!mainLocation) errors.push(errorTypes.missingMainLocation)
+  if (postAppointmentRequired === 'true' && !postLocation) errors.push(errorTypes.postLocation.missing)
   if (comment && comment.length > 3600) errors.push(errorTypes.commentLength)
 
-  if (
-    preAppointmentRequired === 'true' &&
-    selectPreAppointmentLocation &&
-    selectMainAppointmentLocation &&
-    selectPreAppointmentLocation === selectMainAppointmentLocation
-  ) {
+  if (preAppointmentRequired === 'true' && preLocation && mainLocation && preLocation === mainLocation) {
     errors.push(errorTypes.preLocation.different)
   }
 
-  if (
-    postAppointmentRequired === 'true' &&
-    selectMainAppointmentLocation &&
-    selectPostAppointmentLocation &&
-    selectPostAppointmentLocation === selectMainAppointmentLocation
-  ) {
+  if (postAppointmentRequired === 'true' && mainLocation && postLocation && postLocation === mainLocation) {
     errors.push(errorTypes.postLocation.different)
   }
 

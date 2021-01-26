@@ -1,6 +1,7 @@
 import moment from 'moment'
 import type { Appointment, NewAppointment } from 'whereaboutsApi'
-import { DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
+import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
+
 import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
@@ -62,7 +63,7 @@ export = class BookingService {
       prisonName: agencyDetails.description,
       agencyId: agencyDetails.agencyId,
       courtLocation: bookingDetails.court,
-      dateDescription: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format('D MMMM YYYY'),
+      dateDescription: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format(DATE_ONLY_LONG_FORMAT_SPEC),
       date: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC),
       comments: bookingDetails.comment,
       ...(bookingDetails.pre ? { preDetails: toAppointmentDetails(bookingDetails.pre) } : {}),
