@@ -10,6 +10,7 @@ export = class BookingDetailsController {
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       res.render('viewBookings/bookingDetails.njk', {
         prisonerName: bookingDetails.prisonerName,
+        commentExists: !!bookingDetails.comments,
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {
@@ -20,7 +21,7 @@ export = class BookingDetailsController {
             date: bookingDetails.dateDescription,
             courtHearingStartTime: bookingDetails.mainDetails.startTime,
             courtHearingEndTime: bookingDetails.mainDetails.endTime,
-            comments: bookingDetails.comments,
+            comments: bookingDetails.comments ? bookingDetails.comments : 'None provided',
           },
           prePostDetails: {
             'pre-court hearing briefing': bookingDetails.preDetails?.description,

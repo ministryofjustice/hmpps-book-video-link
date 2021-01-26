@@ -230,6 +230,14 @@ describe('Booking service', () => {
     })
   })
 
+  describe('Update comment', () => {
+    it('Should call whereaboutsApi correctly when updating a comment', async () => {
+      await service.updateComments(context, 1234, 'another comment')
+
+      expect(whereaboutsApi.updateVideoLinkBookingComment).toHaveBeenCalledWith(context, 1234, 'another comment')
+    })
+  })
+
   describe('Delete Booking', () => {
     const videoLinkBooking = {
       agencyId: 'WWI',

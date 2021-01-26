@@ -71,6 +71,10 @@ export = class BookingService {
     }
   }
 
+  public async updateComments(context: Context, videoBookingId: number, comment: string): Promise<void> {
+    await this.whereaboutsApi.updateVideoLinkBookingComment(context, videoBookingId, comment)
+  }
+
   public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {
     const details = await this.get(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)

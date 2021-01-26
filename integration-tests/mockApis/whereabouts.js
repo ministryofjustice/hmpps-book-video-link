@@ -114,6 +114,30 @@ module.exports = {
     })
   },
 
+  stubUpdateVideoLinkBookingComment: videoLinkBookingId => {
+    return stubFor({
+      request: {
+        method: 'PUT',
+        url: `/whereabouts/court/video-link-bookings/${videoLinkBookingId}/comment`,
+      },
+      response: {
+        status: 204,
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      },
+    })
+  },
+
+  getUpdateCommentRequest: () =>
+    getMatchingRequests({
+      method: 'PUT',
+      urlPattern: '/whereabouts/court/video-link-bookings/.*?/comment',
+    }).then(data => {
+      const { requests } = data.body
+      return requests[0].body
+    }),
+
   stubDeleteVideoLinkBooking: videoBookingId => {
     return stubFor({
       request: {
