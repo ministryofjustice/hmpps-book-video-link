@@ -7,7 +7,11 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
-{% set title = "Change comments on this booking" %}
+{% if formValues.comments %}
+        {% set actionWord = "Change" %}
+    {% else %}
+        {% set actionWord = "Add" %}
+{% endif %}
 {% set mainClasses = "govuk-main-wrapper--l" %}
 
 {% block content %}
@@ -20,7 +24,7 @@
             }) }}
         {% endif %}
 
-        <h1 class="govuk-heading-l">{{title}}</h1>
+        <h1 class="govuk-heading-l">{{actionWord}} comments on this booking</h1>
 
         <form method="post">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />

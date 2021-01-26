@@ -138,6 +138,16 @@ describe('Change comments controller', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/comments-change-confirmed/12`)
     })
 
+    it('should successfully update a comment when an update is made', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      req.params.bookingId = '12'
+      req.body.comment = 'another comment'
+
+      await controller.submit()(req, res, null)
+
+      expect(bookingService.updateComments).toHaveBeenCalledWith(res.locals, 12, 'another comment')
+    })
+
     describe('when errors are present', () => {
       beforeEach(() => {
         req.errors = [{ text: 'error message', href: 'error' }]

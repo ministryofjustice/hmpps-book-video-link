@@ -62,37 +62,66 @@ describe('Booking details', () => {
   })
 
   describe('viewDetails', () => {
-    it('should return booking details', async () => {
+    it('should return booking details with no comment', async () => {
+      bookingService.get.mockResolvedValue({ ...bookingDetails, comments: null })
+
+      await controller.viewDetails()(req, res, null)
+
+      expect(res.render).toHaveBeenCalledWith('viewBookings/bookingDetails.njk', {
+        prisonerName: 'John Doe',
+        commentExists: false,
+        bookingDetails: {
+          courtDetails: {
+            courtLocation: 'City of London',
+          },
+          details: {
+            prison: 'some prison',
+            prisonRoom: 'vcc room 1',
+          },
+          hearingDetails: {
+            comments: 'None provided',
+            courtHearingEndTime: '19:00',
+            courtHearingStartTime: '18:00',
+            date: '20 November 2020',
+          },
+          prePostDetails: {
+            'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
+            'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
+          },
+          videoBookingId: 123,
+        },
+      })
+    })
+
+    it('should return booking details with a comment', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
       await controller.viewDetails()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'viewBookings/bookingDetails.njk',
-        expect.objectContaining({
-          prisonerName: 'John Doe',
-          bookingDetails: {
-            courtDetails: {
-              courtLocation: 'City of London',
-            },
-            details: {
-              prison: 'some prison',
-              prisonRoom: 'vcc room 1',
-            },
-            hearingDetails: {
-              comments: 'some comment',
-              courtHearingEndTime: '19:00',
-              courtHearingStartTime: '18:00',
-              date: '20 November 2020',
-            },
-            prePostDetails: {
-              'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
-              'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
-            },
-            videoBookingId: 123,
+      expect(res.render).toHaveBeenCalledWith('viewBookings/bookingDetails.njk', {
+        prisonerName: 'John Doe',
+        commentExists: true,
+        bookingDetails: {
+          courtDetails: {
+            courtLocation: 'City of London',
           },
-        })
-      )
+          details: {
+            prison: 'some prison',
+            prisonRoom: 'vcc room 1',
+          },
+          hearingDetails: {
+            comments: 'some comment',
+            courtHearingEndTime: '19:00',
+            courtHearingStartTime: '18:00',
+            date: '20 November 2020',
+          },
+          prePostDetails: {
+            'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
+            'pre-court hearing briefing': 'vcc room 2 - 17:40 to 18:00',
+          },
+          videoBookingId: 123,
+        },
+      })
     })
   })
 })

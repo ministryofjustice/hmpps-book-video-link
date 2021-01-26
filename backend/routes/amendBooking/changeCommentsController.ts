@@ -23,11 +23,13 @@ export = class SelectAvailableRoomsController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
+      const updatedComment = req.body.comment
       if (req.errors) {
         req.flash('errors', req.errors)
         req.flash('input', req.body)
         return res.redirect(`/change-comments/${bookingId}`)
       }
+      await this.bookingService.updateComments(res.locals, parseInt(bookingId, 10), updatedComment)
       return res.redirect(`/comments-change-confirmed/${bookingId}`)
     }
   }

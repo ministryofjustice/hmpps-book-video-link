@@ -1,7 +1,7 @@
 const page = require('../page')
 
-const changeCommentsPage = () =>
-  page('Change comments on this booking', {
+const changeCommentsPage = ({ commentExists }) =>
+  page(commentExists ? 'Change comments on this booking' : 'Add comments on this booking', {
     form: () => ({
       inlineError: () => cy.get('.govuk-error-message'),
       comments: () => cy.get('#comment'),
