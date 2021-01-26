@@ -14,7 +14,6 @@ describe('Confirm appointments', () => {
     offenderNo: 'A12345',
     firstName: 'john',
     lastName: 'doe',
-    appointmentType: 'appointment1',
     locationId: 1,
     startTime: '2017-10-10T11:00',
     endTime: '2017-10-10T14:00',
@@ -67,7 +66,6 @@ describe('Confirm appointments', () => {
           startTime: '2017-10-10T10:45:00',
           duration: 30,
         },
-        appointmentType: 'VLB',
       },
     ])
 

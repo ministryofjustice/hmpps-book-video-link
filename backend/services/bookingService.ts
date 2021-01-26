@@ -1,11 +1,12 @@
 import moment from 'moment'
-import { Appointment, NewAppointment } from 'whereaboutsApi'
+import type { Appointment, NewAppointment } from 'whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
+
 import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
-import { BookingDetails, OffenderIdentifiers, Context, NewBooking } from './model'
-import NotificationService from './notificationService'
+import type { BookingDetails, OffenderIdentifiers, Context, NewBooking } from './model'
+import type NotificationService from './notificationService'
 
 export = class BookingService {
   constructor(

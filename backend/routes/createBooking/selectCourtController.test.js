@@ -16,7 +16,6 @@ describe('Select court appoinment court', () => {
     offenderNo: 'A12345',
     firstName: 'john',
     lastName: 'doe',
-    appointmentType: 'VLB',
     locationId: 1,
     startTime: '2017-10-10T11:00',
     endTime: '2017-10-10T14:00',

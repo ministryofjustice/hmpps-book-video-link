@@ -14,8 +14,4 @@ $(document).ready(function () {
       minDate: minDate,
     })
   })
-  $('.js-prisoner-search-clear-alerts').click(function (e) {
-    e.preventDefault()
-    $('.js-prisoner-search-alerts input[type=checkbox]').prop('checked', false)
-  })
 })
