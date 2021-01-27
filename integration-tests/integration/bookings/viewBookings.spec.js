@@ -1,7 +1,7 @@
 const moment = require('moment')
 const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
 
-context('A user can view the video link home page..', () => {
+context('A user can view the video link home page', () => {
   before(() => {
     cy.clearCookies()
     cy.task('resetAndStubTokenVerification')
