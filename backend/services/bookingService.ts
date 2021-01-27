@@ -1,12 +1,13 @@
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import type { Appointment, NewAppointment } from 'whereaboutsApi'
-import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
-
-import { formatName } from '../utils'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
-import type { BookingDetails, OffenderIdentifiers, Context, NewBooking } from './model'
+import type { BookingDetails, OffenderIdentifiers, Context, NewBooking, BookingUpdate } from './model'
 import type NotificationService from './notificationService'
+
+import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
+import { formatName } from '../utils'
+import { postAppointmentTime, preAppointmentTimes } from './bookingTimes'
 
 export = class BookingService {
   constructor(
@@ -70,6 +71,25 @@ export = class BookingService {
       mainDetails: toAppointmentDetails(bookingDetails.main),
       ...(bookingDetails.post ? { postDetails: toAppointmentDetails(bookingDetails.post) } : {}),
     }
+  }
+
+  private toAppointment = (locationId: number, [start, end]: [Moment, Moment]): Appointment => ({
+    locationId,
+    startTime: start.format(DATE_TIME_FORMAT_SPEC),
+    endTime: end.format(DATE_TIME_FORMAT_SPEC),
+  })
+
+  public async update(context: Context, videoBookingId: number, update: BookingUpdate): Promise<void> {
+    await this.whereaboutsApi.updateVideoLinkBooking(context, videoBookingId, {
+      comment: update.comment,
+      ...(update.preLocation
+        ? { pre: this.toAppointment(update.preLocation, preAppointmentTimes(update.startTime)) }
+        : {}),
+      main: this.toAppointment(update.mainLocation, [update.startTime, update.endTime]),
+      ...(update.postLocation
+        ? { post: this.toAppointment(update.postLocation, postAppointmentTime(update.endTime)) }
+        : {}),
+    })
   }
 
   public async updateComments(context: Context, videoBookingId: number, comment: string): Promise<void> {

@@ -39,6 +39,8 @@ module.exports = on => {
     stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
     getUpdateCommentRequest: () => whereabouts.getUpdateCommentRequest(),
     stubUpdateVideoLinkBookingComment: videoBookingId => whereabouts.stubUpdateVideoLinkBookingComment(videoBookingId),
+    getUpdateBookingRequest: () => whereabouts.getUpdateBookingRequest(),
+    stubUpdateVideoLinkBooking: videoBookingId => whereabouts.stubUpdateVideoLinkBooking(videoBookingId),
     stubDeleteVideoLinkBooking: videoBookingId => whereabouts.stubDeleteVideoLinkBooking(videoBookingId),
     stubRoomAvailability: locations => whereabouts.stubRoomAvailability(locations),
 

@@ -228,6 +228,30 @@ describe('Test clients built by oauthEnabledClient', () => {
       expect(response.request.header.authorization).toEqual('Bearer a')
     })
 
+    it('Default content type header', async () => {
+      const context = {}
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
+      nock(hostname, { reqheaders: { 'Content-Type': 'application/json' } })
+        .put('/api/users/me')
+        .reply(200)
+
+      const response = await client.put(context, '/api/users/me', { user: true })
+
+      expect(response.status).toEqual(200)
+    })
+
+    it('Override content type header', async () => {
+      const context = {}
+      contextProperties.setTokens({ access_token: 'a', refresh_token: 'b', authSource: null }, context)
+      nock(hostname, { reqheaders: { 'Content-Type': 'text/plain' } })
+        .put('/api/users/me')
+        .reply(200)
+
+      const response = await client.put(context, '/api/users/me', 'some value', 'text/plain')
+
+      expect(response.status).toEqual(200)
+    })
+
     it('Should log 404 correctly', async () => {
       nock(hostname).put('/api/users/me').reply(404)
 

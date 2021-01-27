@@ -161,6 +161,8 @@ context('A user can amend a booking', () => {
 
   it('A user successfully amends a booking', () => {
     cy.task('stubLoginCourt')
+    cy.task('stubUpdateVideoLinkBooking', 10)
+
     const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
@@ -232,6 +234,16 @@ context('A user can amend a booking', () => {
     confirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+    cy.task('getUpdateBookingRequest').then(request =>
+      expect(request).to.deep.equal({
+        comment: 'A comment',
+        pre: { locationId: 100, startTime: `${tomorrowDate}T10:35:00`, endTime: `${tomorrowDate}T10:55:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T10:55:00`, endTime: `${tomorrowDate}T11:55:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T11:55:00`, endTime: `${tomorrowDate}T12:15:00` },
+      })
+    )
   })
 
   it('A user can view date in change-time page', () => {

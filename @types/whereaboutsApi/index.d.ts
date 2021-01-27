@@ -53,4 +53,11 @@ declare module 'whereaboutsApi' {
     main: Location[]
     post: Location[]
   }
+
+  export type UpdateVideoLinkBooking = {
+    comment: string
+    pre?: Appointment
+    main: Appointment
+    post?: Appointment
+  }
 }

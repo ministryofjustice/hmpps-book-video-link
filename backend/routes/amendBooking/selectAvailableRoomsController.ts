@@ -60,6 +60,26 @@ export default class SelectAvailableRoomsController {
         return res.redirect(`/select-available-rooms/${bookingId}`)
       }
 
+      const update = getUpdate(req)
+
+      const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
+
+      const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
+        agencyId: bookingDetails.agencyId,
+        date: update.date,
+        startTime: update.startTime,
+        endTime: update.endTime,
+        preRequired: update.preAppointmentRequired,
+        postRequired: update.postAppointmentRequired,
+      })
+
+      if (!isAvailable) {
+        // Belt and braces whilst awaiting new content
+        throw Error('Appointment is no longer available')
+      }
+
+      await this.bookingService.update(res.locals, parseInt(bookingId, 10), { ...update, ...RoomAndComment(req.body) })
+
       clearUpdate(res)
       return res.redirect(`/video-link-change-confirmed/${bookingId}`)
     }

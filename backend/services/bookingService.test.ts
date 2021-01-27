@@ -238,6 +238,42 @@ describe('Booking service', () => {
     })
   })
 
+  describe('Update', () => {
+    it('Should call whereaboutsApi correctly when updating all appointments', async () => {
+      await service.update(context, 1234, {
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        preLocation: 1,
+        mainLocation: 2,
+        postLocation: 3,
+      })
+
+      expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
+        comment: 'A comment',
+        pre: { locationId: 1, startTime: '2020-11-20T08:40:00', endTime: '2020-11-20T09:00:00' },
+        main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
+        post: { locationId: 3, startTime: '2020-11-20T10:00:00', endTime: '2020-11-20T10:20:00' },
+      })
+    })
+
+    it('Should call whereaboutsApi correctly when updating mandatory appointment', async () => {
+      await service.update(context, 1234, {
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        mainLocation: 2,
+      })
+
+      expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
+        comment: 'A comment',
+        main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
+      })
+    })
+  })
+
   describe('Delete Booking', () => {
     const videoLinkBooking = {
       agencyId: 'WWI',

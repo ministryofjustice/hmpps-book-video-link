@@ -4,6 +4,7 @@ import {
   VideoLinkBooking,
   AppointmentLocationsSpecification,
   AvailableLocations,
+  UpdateVideoLinkBooking,
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
@@ -27,8 +28,8 @@ export = class WhereaboutsApi {
     return this.client.post(context, url, data).then(this.processResponse)
   }
 
-  private put(context: Context, url: string, data) {
-    return this.client.put(context, url, data).then(this.processResponse)
+  private put(context: Context, url: string, data, contentType?: string) {
+    return this.client.put(context, url, data, contentType).then(this.processResponse)
   }
 
   private delete(context: Context, url: string) {
@@ -68,7 +69,15 @@ export = class WhereaboutsApi {
   }
 
   public updateVideoLinkBookingComment(context: Context, videoBookingId: number, comment: string): Promise<void> {
-    return this.put(context, `/court/video-link-bookings/${videoBookingId}/comment`, comment)
+    return this.put(context, `/court/video-link-bookings/${videoBookingId}/comment`, comment, 'text/plain')
+  }
+
+  public updateVideoLinkBooking(
+    context: Context,
+    videoBookingId: number,
+    update: UpdateVideoLinkBooking
+  ): Promise<void> {
+    return this.put(context, `/court/video-link-bookings/${videoBookingId}`, update)
   }
 
   public deleteVideoLinkBooking(context: Context, videoBookingId: number): Promise<void> {

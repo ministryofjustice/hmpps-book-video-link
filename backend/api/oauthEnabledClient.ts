@@ -115,13 +115,13 @@ export = class Client {
     })
   }
 
-  public put(context: any, path: string, body: any): Promise<superagent.Response> {
+  public put(context: any, path: string, body: any, contentType = 'application/json'): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .put(this.remoteUrl + path)
         .send(body)
         .set(getHeaders(context))
-        .set('Content-Type', 'text/plain')
+        .set('Content-Type', contentType)
         .end((error, response) => {
           if (error) reject(errorLogger(error))
           else if (response) resolve(resultLogger(response))

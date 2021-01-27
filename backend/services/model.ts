@@ -79,3 +79,13 @@ export type NewBooking = {
   pre: NewAppointment | undefined
   post: NewAppointment | undefined
 }
+
+export type BookingUpdate = {
+  date: Moment
+  comment: string
+  startTime: Moment
+  endTime: Moment
+  preLocation?: number
+  mainLocation: number
+  postLocation?: number
+}

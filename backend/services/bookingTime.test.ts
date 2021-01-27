@@ -12,7 +12,7 @@ describe('bookingTimes', () => {
   const endTime = moment('2020-11-20T11:00:00', DATE_TIME_FORMAT_SPEC, true)
 
   test('createInterval', () => {
-    expect(createInterval(startTime, endTime)).toStrictEqual({ start: '10:30', end: '11:00' })
+    expect(createInterval([startTime, endTime])).toStrictEqual({ start: '10:30', end: '11:00' })
   })
 
   test('getPreAppointmentInterval', () => {

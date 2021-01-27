@@ -30,7 +30,7 @@ export default class AvailabilityCheckService {
       date: date.format(DATE_ONLY_FORMAT_SPEC),
       vlbIdsToExclude: videoBookingId ? [videoBookingId] : [],
       preInterval: preRequired ? getPreAppointmentInterval(startTime) : null,
-      mainInterval: createInterval(startTime, endTime),
+      mainInterval: createInterval([startTime, endTime]),
       postInterval: postRequired ? getPostAppointmentInterval(endTime) : null,
     })
 

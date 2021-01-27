@@ -138,6 +138,30 @@ module.exports = {
       return requests[0].body
     }),
 
+  stubUpdateVideoLinkBooking: videoLinkBookingId => {
+    return stubFor({
+      request: {
+        method: 'PUT',
+        url: `/whereabouts/court/video-link-bookings/${videoLinkBookingId}`,
+      },
+      response: {
+        status: 204,
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      },
+    })
+  },
+
+  getUpdateBookingRequest: () =>
+    getMatchingRequests({
+      method: 'PUT',
+      urlPattern: '/whereabouts/court/video-link-bookings/.*?',
+    }).then(data => {
+      const { requests } = data.body
+      return JSON.parse(requests[0].body)
+    }),
+
   stubDeleteVideoLinkBooking: videoBookingId => {
     return stubFor({
       request: {
