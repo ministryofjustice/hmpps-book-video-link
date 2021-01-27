@@ -9,10 +9,10 @@
 
     {% if changeComments == true %}
         {% set title = "Your comments have been updated" %}
-        {% set emailContent = "with your updated comments" %}
+        {% set emailMessage = "We have sent you an email with your updated comments" %}
     {% else %}
         {% set title = "The video link has been booked" %}
-         {% set emailContent = "confirming deletion" %}
+        {% set emailMessage = "We have sent you an email with the video link details" %}
     {% endif %}
 
 <div class="govuk-grid-row">
@@ -21,7 +21,7 @@
                 titleText: title,
                 classes: "govuk-!-margin-bottom-6"
             }) }}
-      <p class="govuk-body">We have sent you an email {{ emailContent }}. An email has also been sent to the prison.</p>
+      <p class="govuk-body">{{ emailMessage }}. An email has also been sent to the prison.</p>
     <h3 class="govuk-heading-m">Video link details</h3>
   </div>
 </div>
