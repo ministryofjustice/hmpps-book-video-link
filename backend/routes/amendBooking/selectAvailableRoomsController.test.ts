@@ -130,18 +130,15 @@ describe('Select available rooms controller', () => {
 
         await controller.view()(req, res, null)
 
-        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(
-          res.locals,
-          {
-            agencyId: 'WWI',
-            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-            postRequired: true,
-            preRequired: true,
-          },
-          123
-        )
+        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
+          agencyId: 'WWI',
+          videoBookingId: 123,
+          date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+          startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+          endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+          postRequired: true,
+          preRequired: true,
+        })
       })
     })
 
@@ -229,6 +226,25 @@ describe('Select available rooms controller', () => {
       req.params.bookingId = '12'
 
       return expect(() => controller.submit()(req, res, null)).rejects.toThrow('Appointment is no longer available')
+    })
+
+    it('should make final availability check before performing update', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+
+      req.params.bookingId = '12'
+
+      await controller.submit()(req, res, null)
+
+      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
+        agencyId: 'WWI',
+        videoBookingId: 12,
+        date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+        postRequired: true,
+        preRequired: true,
+      })
     })
 
     it('should submit perform an update', async () => {

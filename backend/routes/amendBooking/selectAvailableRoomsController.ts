@@ -25,18 +25,15 @@ export default class SelectAvailableRoomsController {
 
       const form = input ? RoomAndComment(input) : { comment: bookingDetails.comments }
 
-      const { rooms } = await this.availabilityCheckService.getAvailability(
-        res.locals,
-        {
-          agencyId: bookingDetails.agencyId,
-          date: update.date,
-          startTime: update.startTime,
-          endTime: update.endTime,
-          preRequired: update.preAppointmentRequired,
-          postRequired: update.postAppointmentRequired,
-        },
-        parseInt(bookingId, 10)
-      )
+      const { rooms } = await this.availabilityCheckService.getAvailability(res.locals, {
+        agencyId: bookingDetails.agencyId,
+        videoBookingId: parseInt(bookingId, 10),
+        date: update.date,
+        startTime: update.startTime,
+        endTime: update.endTime,
+        preRequired: update.preAppointmentRequired,
+        postRequired: update.postAppointmentRequired,
+      })
 
       return res.render('amendBooking/selectAvailableRooms.njk', {
         errors,
@@ -66,6 +63,7 @@ export default class SelectAvailableRoomsController {
 
       const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
         agencyId: bookingDetails.agencyId,
+        videoBookingId: parseInt(bookingId, 10),
         date: update.date,
         startTime: update.startTime,
         endTime: update.endTime,

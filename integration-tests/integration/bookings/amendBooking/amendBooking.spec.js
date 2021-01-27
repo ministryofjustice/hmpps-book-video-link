@@ -192,27 +192,6 @@ context('A user can amend a booking', () => {
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
 
-    cy.task('getFindAvailabilityRequests').then(request => {
-      expect(request).to.deep.equal([
-        {
-          agencyId: 'WWI',
-          date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [10],
-          preInterval: { start: '10:35', end: '10:55' },
-          mainInterval: { start: '10:55', end: '11:55' },
-          postInterval: { start: '11:55', end: '12:15' },
-        },
-        {
-          agencyId: 'WWI',
-          date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [10],
-          preInterval: { start: '10:35', end: '10:55' },
-          mainInterval: { start: '10:55', end: '11:55' },
-          postInterval: { start: '11:55', end: '12:15' },
-        },
-      ])
-    })
-
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
     selectAvailableRoomsForm.preLocation().select('100')
     selectAvailableRoomsForm.mainLocation().select('110')
@@ -234,6 +213,38 @@ context('A user can amend a booking', () => {
     confirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
+
+    cy.task('getFindAvailabilityRequests').then(request => {
+      expect(request).to.deep.equal([
+        // Initial availability check
+        {
+          agencyId: 'WWI',
+          date: tomorrow.format('YYYY-MM-DD'),
+          vlbIdsToExclude: [10],
+          preInterval: { start: '10:35', end: '10:55' },
+          mainInterval: { start: '10:55', end: '11:55' },
+          postInterval: { start: '11:55', end: '12:15' },
+        },
+        // To retrieve available rooms
+        {
+          agencyId: 'WWI',
+          date: tomorrow.format('YYYY-MM-DD'),
+          vlbIdsToExclude: [10],
+          preInterval: { start: '10:35', end: '10:55' },
+          mainInterval: { start: '10:55', end: '11:55' },
+          postInterval: { start: '11:55', end: '12:15' },
+        },
+        // Final check, just before submitting
+        {
+          agencyId: 'WWI',
+          date: tomorrow.format('YYYY-MM-DD'),
+          vlbIdsToExclude: [10],
+          preInterval: { start: '10:35', end: '10:55' },
+          mainInterval: { start: '10:55', end: '11:55' },
+          postInterval: { start: '11:55', end: '12:15' },
+        },
+      ])
+    })
 
     const tomorrowDate = tomorrow.format('YYYY-MM-DD')
     cy.task('getUpdateBookingRequest').then(request =>

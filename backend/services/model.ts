@@ -9,6 +9,7 @@ export type Room = {
 }
 export type AvailabilityRequest = {
   agencyId: string
+  videoBookingId?: number
   date: Moment
   startTime: Moment
   endTime: Moment
