@@ -12,6 +12,54 @@ export = class NotificationService {
     })
   }
 
+  public async sendBookingUpdateEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
+    const [{ email }, { name }] = await Promise.all([
+      this.oauthApi.userEmail(context, username),
+      this.oauthApi.userDetails(context, username),
+    ])
+    const { omu, vlb } = notifications.emails[details.agencyId]
+
+    const personalisation = {
+      prisonerName: details.prisonerName,
+      offenderNo: details.offenderNo,
+      prison: details.prisonName,
+      date: details.dateDescription,
+      preAppointmentInfo: details.preDetails?.description || 'None requested',
+      mainAppointmentInfo: details.mainDetails.description,
+      postAppointmentInfo: details.postDetails?.description || 'None requested',
+      comments: details.comments || 'None entered',
+    }
+
+    const courtPersonalisation = { userName: name, ...personalisation }
+    const prisonPersonalisation = { court: details.courtLocation, ...personalisation }
+
+    if (omu) {
+      this.sendEmail({
+        templateId: notifications.bookingUpdateConfirmationPrison,
+        email: omu,
+        personalisation: prisonPersonalisation,
+      }).catch(error => {
+        log.error(`Failed to notify OMU about a booking update: ${error.message}`, error.response?.data?.errors)
+      })
+    }
+
+    this.sendEmail({
+      templateId: notifications.bookingUpdateConfirmationPrison,
+      email: vlb,
+      personalisation: prisonPersonalisation,
+    }).catch(error => {
+      log.error(`Failed to notify VLB Admin about a booking update: ${error.message}`, error.response?.data?.errors)
+    })
+
+    this.sendEmail({
+      templateId: notifications.bookingUpdateConfirmationCourt,
+      email,
+      personalisation: courtPersonalisation,
+    }).catch(error => {
+      log.error(`Failed to notify court user about a booking update: ${error.message}`, error.response?.data?.errors)
+    })
+  }
+
   public async sendCancellationEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
     const [{ email }, { name }] = await Promise.all([
       this.oauthApi.userEmail(context, username),

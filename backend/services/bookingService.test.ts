@@ -46,7 +46,7 @@ const bookingDetail: BookingDetails = {
   prisonBookingId: 789,
   prisonName: 'some prison',
   prisonerName: 'John Doe',
-  videoBookingId: 123,
+  videoBookingId: 1234,
   preDetails: {
     timings: '17:40 to 18:00',
     description: 'Vcc Room 3 - 17:40 to 18:00',
@@ -219,9 +219,9 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      const result = await service.get(context, 123)
+      const result = await service.get(context, 1234)
 
-      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledTimes(1)
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
@@ -231,10 +231,30 @@ describe('Booking service', () => {
   })
 
   describe('Update comment', () => {
+    const videoLinkBooking = {
+      agencyId: 'WWI',
+      bookingId: 789,
+      comment: 'some comment',
+      court: 'City of London',
+      main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      videoLinkBookingId: 1234,
+    }
+
     it('Should call whereaboutsApi correctly when updating a comment', async () => {
-      await service.updateComments(context, 1234, 'another comment')
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.updateComments(context, 'A_USER', 1234, 'another comment')
 
       expect(whereaboutsApi.updateVideoLinkBookingComment).toHaveBeenCalledWith(context, 1234, 'another comment')
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+      expect(whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      )
     })
   })
 
@@ -292,11 +312,11 @@ describe('Booking service', () => {
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      await service.delete(context, 'A_USER', 123)
+      await service.delete(context, 'A_USER', 1234)
 
-      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
-      expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 123)
+      expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
     })
 
@@ -306,7 +326,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
-      return expect(service.delete(context, 'A_USER', 123)).resolves.toStrictEqual({
+      return expect(service.delete(context, 'A_USER', 1234)).resolves.toStrictEqual({
         offenderNo: 'A1234AA',
         offenderName: 'John Doe',
       })

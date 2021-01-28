@@ -29,7 +29,12 @@ export = class SelectAvailableRoomsController {
         req.flash('input', req.body)
         return res.redirect(`/change-comments/${bookingId}`)
       }
-      await this.bookingService.updateComments(res.locals, parseInt(bookingId, 10), updatedComment)
+      await this.bookingService.updateComments(
+        res.locals,
+        req.session.userDetails.username,
+        parseInt(bookingId, 10),
+        updatedComment
+      )
       return res.redirect(`/comments-change-confirmed/${bookingId}`)
     }
   }

@@ -92,8 +92,15 @@ export = class BookingService {
     })
   }
 
-  public async updateComments(context: Context, videoBookingId: number, comment: string): Promise<void> {
+  public async updateComments(
+    context: Context,
+    currentUsername: string,
+    videoBookingId: number,
+    comment: string
+  ): Promise<void> {
     await this.whereaboutsApi.updateVideoLinkBookingComment(context, videoBookingId, comment)
+    const details = await this.get(context, videoBookingId)
+    await this.notificationService.sendBookingUpdateEmails(context, currentUsername, details)
   }
 
   public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {

@@ -145,7 +145,7 @@ describe('Change comments controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.updateComments).toHaveBeenCalledWith(res.locals, 12, 'another comment')
+      expect(bookingService.updateComments).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, 'another comment')
     })
 
     describe('when errors are present', () => {
