@@ -76,7 +76,10 @@ export default class SelectAvailableRoomsController {
         throw Error('Appointment is no longer available')
       }
 
-      await this.bookingService.update(res.locals, parseInt(bookingId, 10), { ...update, ...RoomAndComment(req.body) })
+      await this.bookingService.update(res.locals, req.session.userDetails.username, parseInt(bookingId, 10), {
+        ...update,
+        ...RoomAndComment(req.body),
+      })
 
       clearUpdate(res)
       return res.redirect(`/video-link-change-confirmed/${bookingId}`)

@@ -230,7 +230,7 @@ describe('Booking service', () => {
     })
   })
 
-  describe('Update comment', () => {
+  describe('Update', () => {
     const videoLinkBooking = {
       agencyId: 'WWI',
       bookingId: 789,
@@ -256,11 +256,13 @@ describe('Booking service', () => {
         whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
-  })
-
-  describe('Update', () => {
     it('Should call whereaboutsApi correctly when updating all appointments', async () => {
-      await service.update(context, 1234, {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.update(context, 'A_USER', 1234, {
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -279,7 +281,12 @@ describe('Booking service', () => {
     })
 
     it('Should call whereaboutsApi correctly when updating mandatory appointment', async () => {
-      await service.update(context, 1234, {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.update(context, 'A_USER', 1234, {
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),

@@ -79,7 +79,12 @@ export = class BookingService {
     endTime: end.format(DATE_TIME_FORMAT_SPEC),
   })
 
-  public async update(context: Context, videoBookingId: number, update: BookingUpdate): Promise<void> {
+  public async update(
+    context: Context,
+    currentUsername: string,
+    videoBookingId: number,
+    update: BookingUpdate
+  ): Promise<void> {
     await this.whereaboutsApi.updateVideoLinkBooking(context, videoBookingId, {
       comment: update.comment,
       ...(update.preLocation
@@ -90,6 +95,8 @@ export = class BookingService {
         ? { post: this.toAppointment(update.postLocation, postAppointmentTime(update.endTime)) }
         : {}),
     })
+    const details = await this.get(context, videoBookingId)
+    await this.notificationService.sendBookingUpdateEmails(context, currentUsername, details)
   }
 
   public async updateComments(

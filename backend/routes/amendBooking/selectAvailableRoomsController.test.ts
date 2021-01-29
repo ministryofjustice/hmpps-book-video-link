@@ -256,7 +256,7 @@ describe('Select available rooms controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 12, {
+      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
         comment: 'A comment',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -287,7 +287,7 @@ describe('Select available rooms controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 12, {
+      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
         comment: undefined,
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
