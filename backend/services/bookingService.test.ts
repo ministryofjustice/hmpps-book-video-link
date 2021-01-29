@@ -278,6 +278,10 @@ describe('Booking service', () => {
         main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
         post: { locationId: 3, startTime: '2020-11-20T10:00:00', endTime: '2020-11-20T10:20:00' },
       })
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+      expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      )
     })
 
     it('Should call whereaboutsApi correctly when updating mandatory appointment', async () => {
@@ -298,6 +302,10 @@ describe('Booking service', () => {
         comment: 'A comment',
         main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
       })
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+      expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      )
     })
   })
 
