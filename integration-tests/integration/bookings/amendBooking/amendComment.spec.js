@@ -52,6 +52,9 @@ context('A user can update a booking comment', () => {
       locations: [],
     })
 
+    cy.task('stubUserEmail', 'ITAG_USER')
+    cy.task('stubUser', 'ITAG_USER', 'WWI')
+
     cy.task('stubAppointmentLocations', {
       agency: 'WWI',
       locations: [
