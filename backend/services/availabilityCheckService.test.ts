@@ -68,7 +68,7 @@ describe('AvailabilityCheckService', () => {
       })
     })
 
-    it('No locations', async () => {
+    it('Missing rooms', async () => {
       whereaboutsApi.getAvailableRooms.mockResolvedValue({
         pre: undefined,
         main: [],
@@ -96,170 +96,6 @@ describe('AvailabilityCheckService', () => {
         date: '2020-11-20',
         vlbIdsToExclude: [videoBookingId],
         preInterval,
-        mainInterval,
-        postInterval,
-      })
-    })
-
-    it('All 3 appointments', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue({
-        pre: [location(1), location(2), location(3)],
-        main: [location(2), location(3)],
-        post: [location(1)],
-      })
-
-      const rooms = await getAvailableRooms({
-        agencyId: 'WWI',
-        videoBookingId,
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: true,
-        postRequired: true,
-      })
-
-      expect(rooms).toStrictEqual({
-        pre: [room(1), room(2), room(3)],
-        main: [room(2), room(3)],
-        post: [room(1)],
-      })
-
-      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
-        agencyId: 'WWI',
-        date: '2020-11-20',
-        vlbIdsToExclude: [videoBookingId],
-        preInterval,
-        mainInterval,
-        postInterval,
-      })
-    })
-    it('All 3 appointments', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue({
-        pre: [location(1), location(2), location(3)],
-        main: [location(2), location(3)],
-        post: [location(1)],
-      })
-
-      const rooms = await getAvailableRooms({
-        agencyId: 'WWI',
-        videoBookingId,
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: true,
-        postRequired: true,
-      })
-
-      expect(rooms).toStrictEqual({
-        pre: [room(1), room(2), room(3)],
-        main: [room(2), room(3)],
-        post: [room(1)],
-      })
-
-      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
-        agencyId: 'WWI',
-        date: '2020-11-20',
-        vlbIdsToExclude: [videoBookingId],
-        preInterval,
-        mainInterval,
-        postInterval,
-      })
-    })
-
-    it('Just main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue({
-        pre: [],
-        main: [location(2), location(3)],
-        post: [],
-      })
-
-      const rooms = await getAvailableRooms({
-        agencyId: 'WWI',
-        videoBookingId,
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: false,
-        postRequired: false,
-      })
-
-      expect(rooms).toStrictEqual({
-        pre: [],
-        main: [room(2), room(3)],
-        post: [],
-      })
-
-      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
-        agencyId: 'WWI',
-        date: '2020-11-20',
-        vlbIdsToExclude: [videoBookingId],
-        preInterval: null,
-        mainInterval,
-        postInterval: null,
-      })
-    })
-
-    it('Pre and Main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue({
-        pre: [location(1), location(2), location(3)],
-        main: [location(2), location(3)],
-        post: [],
-      })
-
-      const rooms = await getAvailableRooms({
-        agencyId: 'WWI',
-        videoBookingId,
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: true,
-        postRequired: false,
-      })
-
-      expect(rooms).toStrictEqual({
-        pre: [room(1), room(2), room(3)],
-        main: [room(2), room(3)],
-        post: [],
-      })
-
-      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
-        agencyId: 'WWI',
-        date: '2020-11-20',
-        vlbIdsToExclude: [videoBookingId],
-        preInterval,
-        mainInterval,
-        postInterval: null,
-      })
-    })
-
-    it('Post and Main appointment', async () => {
-      whereaboutsApi.getAvailableRooms.mockResolvedValue({
-        pre: [],
-        main: [location(2), location(3)],
-        post: [location(1)],
-      })
-
-      const rooms = await getAvailableRooms({
-        agencyId: 'WWI',
-        videoBookingId,
-        date: moment('20/11/2020', DAY_MONTH_YEAR),
-        startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
-        endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
-        preRequired: false,
-        postRequired: true,
-      })
-
-      expect(rooms).toStrictEqual({
-        pre: [],
-        main: [room(2), room(3)],
-        post: [room(1)],
-      })
-
-      expect(whereaboutsApi.getAvailableRooms).toHaveBeenCalledWith(context, {
-        agencyId: 'WWI',
-        date: '2020-11-20',
-        vlbIdsToExclude: [videoBookingId],
-        preInterval: null,
         mainInterval,
         postInterval,
       })
@@ -752,6 +588,80 @@ describe('AvailabilityCheckService', () => {
           postRequired: true,
         })
       ).resolves.toStrictEqual({ start: '13:40', end: '14:50' })
+    })
+  })
+
+  describe('check is still available', () => {
+    it('is still available when all still available', async () => {
+      expect(
+        service.isStillAvailable({ pre: 1, main: 2, post: 3 }, { pre: [room(1)], main: [room(2)], post: [room(3)] })
+      ).toBe(true)
+    })
+
+    it('is no longer available when pre is no longer available', async () => {
+      expect(
+        service.isStillAvailable({ pre: 1, main: 2, post: 3 }, { pre: [room(10)], main: [room(2)], post: [room(3)] })
+      ).toBe(false)
+    })
+
+    it('is no longer available when main is no longer available', async () => {
+      expect(
+        service.isStillAvailable({ pre: 1, main: 2, post: 3 }, { pre: [room(1)], main: [room(20)], post: [room(3)] })
+      ).toBe(false)
+    })
+
+    it('should render no rooms are available page when no post are available', async () => {
+      expect(
+        service.isStillAvailable({ pre: 1, main: 2, post: 3 }, { pre: [room(1)], main: [room(2)], post: [room(30)] })
+      ).toBe(false)
+    })
+  })
+
+  describe('check get status', () => {
+    const request = {
+      agencyId: 'WWI',
+      videoBookingId,
+      date: moment('20/11/2020', DAY_MONTH_YEAR),
+      startTime: moment('2020-11-20T14:00:00', DATE_TIME_FORMAT_SPEC),
+      endTime: moment('2020-11-20T14:30:00', DATE_TIME_FORMAT_SPEC),
+      preRequired: true,
+      postRequired: true,
+    }
+
+    it('AVAILABLE', () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1)],
+        main: [location(2)],
+        post: [location(3)],
+      })
+
+      return expect(service.getAvailabilityStatus({}, request, { pre: 1, main: 2, post: 3 })).resolves.toEqual(
+        'AVAILABLE'
+      )
+    })
+
+    it('NO_LONGER_AVAILABLE', () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1)],
+        main: [location(4)],
+        post: [location(3)],
+      })
+
+      return expect(service.getAvailabilityStatus({}, request, { pre: 1, main: 2, post: 3 })).resolves.toEqual(
+        'NO_LONGER_AVAILABLE'
+      )
+    })
+
+    it('NOT_AVAILABLE', () => {
+      whereaboutsApi.getAvailableRooms.mockResolvedValue({
+        pre: [location(1)],
+        main: [location(2)],
+        post: [],
+      })
+
+      return expect(service.getAvailabilityStatus({}, request, { pre: 1, main: 2, post: 3 })).resolves.toEqual(
+        'NOT_AVAILABLE'
+      )
     })
   })
 })

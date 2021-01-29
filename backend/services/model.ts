@@ -17,11 +17,17 @@ export type AvailabilityRequest = {
   postRequired: boolean
 }
 
+export type AvailabilityStatus = 'AVAILABLE' | 'NOT_AVAILABLE' | 'NO_LONGER_AVAILABLE'
+
 export type LegacyRoomAvailability = { mainLocations: Room[]; preLocations: Room[]; postLocations: Room[] }
+
+export type SelectedRooms = { pre?: number; main: number; post?: number }
+
+export type Rooms = { main: Room[]; pre: Room[]; post: Room[] }
 
 export type RoomAvailability = {
   isAvailable: boolean
-  rooms: { main: Room[]; pre: Room[]; post: Room[] }
+  rooms: Rooms
   totalInterval: Interval
 }
 

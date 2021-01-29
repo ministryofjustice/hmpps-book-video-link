@@ -34,15 +34,10 @@ context('A user can update a booking comment', () => {
     cy.task('reset')
     cy.task('stubLoginCourt')
     cy.login()
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
 
     // Stub booking list
     cy.task('stubCourts')
-    cy.task('stubOffenderBookings', [
-      { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
-      { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
-    ])
+    cy.task('stubOffenderBookings', [{ bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' }])
 
     cy.task('stubGetVideoLinkBookings', {
       agencyId: '.*?',

@@ -77,4 +77,11 @@ describe('video link is not available controller', () => {
       })
     })
   })
+
+  describe('roomNoLongerAvailable', () => {
+    it('should render the page', async () => {
+      await controller.roomNoLongerAvailable()(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('amendBooking/roomNoLongerAvailable.njk', { bookingId: 123 })
+    })
+  })
 })

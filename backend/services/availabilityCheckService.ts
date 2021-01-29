@@ -7,9 +7,15 @@ import {
   getPreAppointmentInterval,
   getTotalAppointmentInterval,
 } from './bookingTimes'
-import { Context, RoomAvailability, AvailabilityRequest, Room } from './model'
-
-type AppointmentRooms = { pre: Room[]; main: Room[]; post: Room[] }
+import type {
+  Context,
+  RoomAvailability,
+  AvailabilityRequest,
+  Room,
+  SelectedRooms,
+  Rooms,
+  AvailabilityStatus,
+} from './model'
 
 export default class AvailabilityCheckService {
   constructor(private readonly whereaboutsApi: WhereaboutsApi) {}
@@ -45,7 +51,7 @@ export default class AvailabilityCheckService {
     }
   }
 
-  private async isAvailable(request: AvailabilityRequest, { pre, main, post }: AppointmentRooms): Promise<boolean> {
+  private async isAvailable(request: AvailabilityRequest, { pre, main, post }: Rooms): Promise<boolean> {
     return main
       .map(l => l.value)
       .some(mainRoom => {
@@ -53,5 +59,29 @@ export default class AvailabilityCheckService {
         const postSatisfied = !request.postRequired || post.some(postRoom => postRoom.value !== mainRoom)
         return preSatisfied && postSatisfied
       })
+  }
+
+  private selectedRoomExists(selectedRoom: number, possibleRooms: Room[]): boolean {
+    return selectedRoom ? possibleRooms.some(room => room.value === selectedRoom) : true
+  }
+
+  public isStillAvailable(selectedRooms: SelectedRooms, rooms: Rooms): boolean {
+    return (
+      this.selectedRoomExists(selectedRooms.pre, rooms.pre) &&
+      this.selectedRoomExists(selectedRooms.main, rooms.main) &&
+      this.selectedRoomExists(selectedRooms.post, rooms.post)
+    )
+  }
+
+  public async getAvailabilityStatus(
+    context: Context,
+    request: AvailabilityRequest,
+    selectedRooms: SelectedRooms
+  ): Promise<AvailabilityStatus> {
+    const { rooms, isAvailable } = await this.getAvailability(context, request)
+    if (!isAvailable) {
+      return 'NOT_AVAILABLE'
+    }
+    return this.isStillAvailable(selectedRooms, rooms) ? 'AVAILABLE' : 'NO_LONGER_AVAILABLE'
   }
 }

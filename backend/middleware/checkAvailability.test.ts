@@ -61,6 +61,7 @@ describe('check availability middleware', () => {
         rooms: { main: [], pre: [room(2), room(22)], post: [room(3), room(33)] },
       })
 
+      availabilityCheckService.isStillAvailable.mockReturnValue(true)
       req.body = {}
       req.flash.mockReturnValue([appointmentDetails])
 
@@ -83,6 +84,7 @@ describe('check availability middleware', () => {
         rooms: { main: [], pre: [room(2), room(22)], post: [room(3), room(33)] },
       })
 
+      availabilityCheckService.isStillAvailable.mockReturnValue(true)
       req.body = {}
       req.flash.mockReturnValue([appointmentDetails])
 
@@ -126,79 +128,12 @@ describe('check availability middleware', () => {
         rooms: { main: [room(1)], pre: [room(2), room(22)], post: [room(3), room(33)] },
       })
 
+      availabilityCheckService.isStillAvailable.mockReturnValue(false)
+
       req.body = {
         selectPreAppointmentLocation: '45',
         selectMainAppointmentLocation: '72',
         selectPostAppointmentLocation: '93',
-      }
-
-      req.flash.mockReturnValue([appointmentDetails])
-
-      await middleware(req, res, next)
-
-      expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
-        continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
-      })
-    })
-
-    it('should render no rooms are available page when no pre are available', async () => {
-      availabilityCheckService.getAvailability.mockResolvedValue({
-        isAvailable: true,
-        totalInterval: { start: '13:30', end: '14:00' },
-        rooms: { main: [room(1)], pre: [room(2), room(22)], post: [room(3), room(33)] },
-      })
-
-      req.body = {
-        selectPreAppointmentLocation: '10',
-        selectMainAppointmentLocation: '1',
-        selectPostAppointmentLocation: '3',
-      }
-
-      req.flash.mockReturnValue([appointmentDetails])
-
-      await middleware(req, res, next)
-
-      expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
-        continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
-      })
-    })
-
-    it('should render no rooms are available page when no main are available', async () => {
-      availabilityCheckService.getAvailability.mockResolvedValue({
-        isAvailable: true,
-        totalInterval: { start: '13:30', end: '14:00' },
-        rooms: { main: [room(1)], pre: [room(2), room(22)], post: [room(3), room(33)] },
-      })
-
-      req.body = {
-        selectPreAppointmentLocation: '2',
-        selectMainAppointmentLocation: '100',
-        selectPostAppointmentLocation: '3',
-      }
-
-      req.flash.mockReturnValue([appointmentDetails])
-
-      await middleware(req, res, next)
-
-      expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-      expect(res.render).toHaveBeenCalledWith('createBooking/roomNoLongerAvailable.njk', {
-        continueLink: '/MDI/offenders/A12345/add-court-appointment/select-rooms',
-      })
-    })
-
-    it('should render no rooms are available page when no post are available', async () => {
-      availabilityCheckService.getAvailability.mockResolvedValue({
-        isAvailable: true,
-        totalInterval: { start: '13:30', end: '14:00' },
-        rooms: { main: [room(1)], pre: [room(2), room(22)], post: [room(3), room(33)] },
-      })
-
-      req.body = {
-        selectPreAppointmentLocation: '2',
-        selectMainAppointmentLocation: '1',
-        selectPostAppointmentLocation: '300',
       }
 
       req.flash.mockReturnValue([appointmentDetails])

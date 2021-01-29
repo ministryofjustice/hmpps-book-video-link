@@ -58,31 +58,38 @@ export default class SelectAvailableRoomsController {
       }
 
       const update = getUpdate(req)
-
+      const roomAndComment = RoomAndComment(req.body)
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
 
-      const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
-        agencyId: bookingDetails.agencyId,
-        videoBookingId: parseInt(bookingId, 10),
-        date: update.date,
-        startTime: update.startTime,
-        endTime: update.endTime,
-        preRequired: update.preAppointmentRequired,
-        postRequired: update.postAppointmentRequired,
-      })
+      const status = await this.availabilityCheckService.getAvailabilityStatus(
+        res.locals,
+        {
+          agencyId: bookingDetails.agencyId,
+          videoBookingId: parseInt(bookingId, 10),
+          date: update.date,
+          startTime: update.startTime,
+          endTime: update.endTime,
+          preRequired: update.preAppointmentRequired,
+          postRequired: update.postAppointmentRequired,
+        },
+        { pre: roomAndComment.preLocation, main: roomAndComment.mainLocation, post: roomAndComment.postLocation }
+      )
 
-      if (!isAvailable) {
-        // Belt and braces whilst awaiting new content
-        throw Error('Appointment is no longer available')
+      switch (status) {
+        case 'AVAILABLE': {
+          await this.bookingService.update(res.locals, req.session.userDetails.username, parseInt(bookingId, 10), { ...update, ...roomAndComment })
+          clearUpdate(res)
+          return res.redirect(`/video-link-change-confirmed/${bookingId}`)
+        }
+        case 'NOT_AVAILABLE': {
+          return res.redirect(`/video-link-not-available/${bookingId}`)
+        }
+        case 'NO_LONGER_AVAILABLE': {
+          return res.redirect(`/room-no-longer-available/${bookingId}`)
+        }
+        default:
+          throw Error(`Unrecognised status: ${status}`)
       }
-
-      await this.bookingService.update(res.locals, req.session.userDetails.username, parseInt(bookingId, 10), {
-        ...update,
-        ...RoomAndComment(req.body),
-      })
-
-      clearUpdate(res)
-      return res.redirect(`/video-link-change-confirmed/${bookingId}`)
     }
   }
 }

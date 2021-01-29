@@ -52,4 +52,11 @@ export default class VideoLinkNotAvailableController {
       return res.redirect(`/change-date-and-time/${bookingId}`)
     }
   }
+
+  public roomNoLongerAvailable(): RequestHandler {
+    return async (req, res) => {
+      const { bookingId } = req.params
+      return res.render('amendBooking/roomNoLongerAvailable.njk', { bookingId })
+    }
+  }
 }
