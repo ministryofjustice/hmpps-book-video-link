@@ -8,10 +8,10 @@ import AvailabilityCheckService from './availabilityCheckService'
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi } = apis
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
-const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService)
+const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
+const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
 const referenceDataService = new ReferenceDataService(prisonApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
-const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 
 export const services = {
   bookingService,

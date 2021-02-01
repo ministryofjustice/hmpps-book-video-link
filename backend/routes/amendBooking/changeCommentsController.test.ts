@@ -9,7 +9,7 @@ import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 jest.mock('../../services/bookingService')
 
 describe('Change comments controller', () => {
-  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   let controller: ChangeCommentsController
   const req = ({
     originalUrl: 'http://localhost',

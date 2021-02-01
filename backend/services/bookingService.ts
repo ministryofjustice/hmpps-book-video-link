@@ -2,18 +2,27 @@ import moment, { Moment } from 'moment'
 import type { Appointment, NewAppointment } from 'whereaboutsApi'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
-import type { BookingDetails, OffenderIdentifiers, Context, NewBooking, BookingUpdate } from './model'
+import type {
+  BookingDetails,
+  OffenderIdentifiers,
+  Context,
+  NewBooking,
+  BookingUpdate,
+  AvailabilityStatus,
+} from './model'
 import type NotificationService from './notificationService'
 
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
 import { postAppointmentTime, preAppointmentTimes } from './bookingTimes'
+import AvailabilityCheckService from './availabilityCheckService'
 
 export = class BookingService {
   constructor(
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly availabilityCheckService: AvailabilityCheckService
   ) {}
 
   /** filter object keys to only include fields relevant to type. */
@@ -84,19 +93,38 @@ export = class BookingService {
     currentUsername: string,
     videoBookingId: number,
     update: BookingUpdate
-  ): Promise<void> {
-    await this.whereaboutsApi.updateVideoLinkBooking(context, videoBookingId, {
-      comment: update.comment,
-      ...(update.preLocation
-        ? { pre: this.toAppointment(update.preLocation, preAppointmentTimes(update.startTime)) }
-        : {}),
-      main: this.toAppointment(update.mainLocation, [update.startTime, update.endTime]),
-      ...(update.postLocation
-        ? { post: this.toAppointment(update.postLocation, postAppointmentTime(update.endTime)) }
-        : {}),
-    })
-    const details = await this.get(context, videoBookingId)
-    await this.notificationService.sendBookingUpdateEmails(context, currentUsername, details)
+  ): Promise<AvailabilityStatus> {
+    const bookingDetails = await this.get(context, videoBookingId)
+
+    const status = await this.availabilityCheckService.getAvailabilityStatus(
+      context,
+      {
+        videoBookingId,
+        agencyId: bookingDetails.agencyId,
+        date: update.date,
+        startTime: update.startTime,
+        endTime: update.endTime,
+        preRequired: !!update.preLocation,
+        postRequired: !!update.postLocation,
+      },
+      { pre: update.preLocation, main: update.mainLocation, post: update.postLocation }
+    )
+
+    if (status === 'AVAILABLE') {
+      await this.whereaboutsApi.updateVideoLinkBooking(context, videoBookingId, {
+        comment: update.comment,
+        ...(update.preLocation
+          ? { pre: this.toAppointment(update.preLocation, preAppointmentTimes(update.startTime)) }
+          : {}),
+        main: this.toAppointment(update.mainLocation, [update.startTime, update.endTime]),
+        ...(update.postLocation
+          ? { post: this.toAppointment(update.postLocation, postAppointmentTime(update.endTime)) }
+          : {}),
+      })
+      const details = await this.get(context, videoBookingId)
+      await this.notificationService.sendBookingUpdateEmails(context, currentUsername, details)
+    }
+    return status
   }
 
   public async updateComments(

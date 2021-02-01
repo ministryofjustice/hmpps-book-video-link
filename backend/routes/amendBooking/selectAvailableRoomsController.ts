@@ -59,25 +59,16 @@ export default class SelectAvailableRoomsController {
 
       const update = getUpdate(req)
       const roomAndComment = RoomAndComment(req.body)
-      const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
 
-      const status = await this.availabilityCheckService.getAvailabilityStatus(
+      const status = await this.bookingService.update(
         res.locals,
-        {
-          agencyId: bookingDetails.agencyId,
-          videoBookingId: parseInt(bookingId, 10),
-          date: update.date,
-          startTime: update.startTime,
-          endTime: update.endTime,
-          preRequired: update.preAppointmentRequired,
-          postRequired: update.postAppointmentRequired,
-        },
-        { pre: roomAndComment.preLocation, main: roomAndComment.mainLocation, post: roomAndComment.postLocation }
+        req.session.userDetails.username,
+        parseInt(bookingId, 10),
+        { ...update, ...roomAndComment }
       )
 
       switch (status) {
         case 'AVAILABLE': {
-          await this.bookingService.update(res.locals, req.session.userDetails.username, parseInt(bookingId, 10), { ...update, ...roomAndComment })
           clearUpdate(res)
           return res.redirect(`/video-link-change-confirmed/${bookingId}`)
         }

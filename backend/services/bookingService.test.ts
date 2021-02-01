@@ -6,14 +6,17 @@ import NotificationService from './notificationService'
 import { BookingDetails, NewBooking } from './model'
 import BookingService from './bookingService'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
+import AvailabilityCheckService from './availabilityCheckService'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
 jest.mock('./notificationService')
+jest.mock('./availabilityCheckService')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
+const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
 const offenderDetails = {
   bookingId: 789,
@@ -75,7 +78,7 @@ describe('Booking service', () => {
   let service: BookingService
 
   beforeEach(() => {
-    service = new BookingService(prisonApi, whereaboutsApi, notificationService)
+    service = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
   })
 
   afterEach(() => {
@@ -256,7 +259,9 @@ describe('Booking service', () => {
         whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
+
     it('Should call whereaboutsApi correctly when updating all appointments', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
@@ -280,11 +285,12 @@ describe('Booking service', () => {
       })
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
       expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[1]
       )
     })
 
     it('Should call whereaboutsApi correctly when updating mandatory appointment', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
@@ -304,8 +310,44 @@ describe('Booking service', () => {
       })
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
       expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[1]
       )
+    })
+
+    it('does not perform update when no availability', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('NOT_AVAILABLE')
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.update(context, 'A_USER', 1234, {
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        mainLocation: 2,
+      })
+
+      expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()
+    })
+
+    it('does not perform update when no long available availability', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('NO_LONGER_AVAILABLE')
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.update(context, 'A_USER', 1234, {
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        mainLocation: 2,
+      })
+
+      expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()
     })
   })
 

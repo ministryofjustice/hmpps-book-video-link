@@ -9,7 +9,7 @@ jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
 
 describe('change date and time controller', () => {
-  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
   let controller: ChangeDateAndTimeController

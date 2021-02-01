@@ -7,7 +7,7 @@ import { BookingDetails } from '../../services/model'
 jest.mock('../../services/bookingService')
 
 describe('video link is available controller', () => {
-  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   let controller: ConfirmationController
   const req = ({
     originalUrl: 'http://localhost',

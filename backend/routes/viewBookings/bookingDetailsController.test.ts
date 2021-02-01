@@ -7,7 +7,7 @@ import { BookingDetails } from '../../services/model'
 jest.mock('../../services/bookingService')
 
 describe('Booking details', () => {
-  const bookingService = new BookingService(null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   let controller: BookingDetailsController
   const req = ({
     originalUrl: 'http://localhost',
