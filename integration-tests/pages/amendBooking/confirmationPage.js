@@ -1,7 +1,7 @@
 const page = require('../page')
 
 const confirmationPage = () =>
-  page(`The video link has been booked`, {
+  page(`Your booking has been updated`, {
     offenderName: () => cy.get('.qa-name-value'),
     prison: () => cy.get('.qa-prison-value'),
     room: () => cy.get('.qa-prisonRoom-value'),

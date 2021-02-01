@@ -298,14 +298,14 @@ export default function selectCourtAppointmentRoomsFactory({
         ? `${preLocations.find(l => l.value === Number(selectPreAppointmentLocation)).text}, ${Time(
             prepostAppointments.preAppointment.startTime
           )} to ${Time(startTime)}`
-        : 'None requested'
+        : 'Not required'
 
     const postAppointmentInfo =
       postAppointmentRequired === 'yes'
         ? `${postLocations.find(l => l.value === Number(selectPostAppointmentLocation)).text}, ${Time(
             endTime
           )} to ${Time(prepostAppointments.postAppointment.endTime)}`
-        : 'None requested'
+        : 'Not required'
 
     if (userEmailData && userEmailData.email) {
       const personalisation = {

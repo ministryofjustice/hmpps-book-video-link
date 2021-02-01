@@ -24,9 +24,9 @@ export = class NotificationService {
       offenderNo: details.offenderNo,
       prison: details.prisonName,
       date: details.dateDescription,
-      preAppointmentInfo: details.preDetails?.description || 'None requested',
+      preAppointmentInfo: details.preDetails?.description || 'Not required',
       mainAppointmentInfo: details.mainDetails.description,
-      postAppointmentInfo: details.postDetails?.description || 'None requested',
+      postAppointmentInfo: details.postDetails?.description || 'Not required',
       comments: details.comments || 'None entered',
     }
 
@@ -72,9 +72,9 @@ export = class NotificationService {
       offenderNo: details.offenderNo,
       prison: details.prisonName,
       date: details.dateDescription,
-      preAppointmentInfo: details.preDetails?.description || 'None requested',
+      preAppointmentInfo: details.preDetails?.description || 'Not required',
       mainAppointmentInfo: details.mainDetails.description,
-      postAppointmentInfo: details.postDetails?.description || 'None requested',
+      postAppointmentInfo: details.postDetails?.description || 'Not required',
       comments: details.comments || 'None entered',
     }
 
