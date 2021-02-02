@@ -19,11 +19,12 @@ describe('state', () => {
       const req = ({
         signedCookies: {
           'booking-update': {
+            agencyId: 'MDI',
             date: '2020-11-20T18:00:00',
             startTime: '2020-11-20T18:00:00',
             endTime: '2020-11-20T19:00:00',
-            preAppointmentRequired: 'true',
-            postAppointmentRequired: 'true',
+            preRequired: 'true',
+            postRequired: 'true',
           },
         },
       } as unknown) as Request
@@ -31,10 +32,11 @@ describe('state', () => {
       const result = getUpdate(req)
 
       expect(result).toStrictEqual({
+        agencyId: 'MDI',
         date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-        postAppointmentRequired: true,
-        preAppointmentRequired: true,
+        postRequired: true,
+        preRequired: true,
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       })
     })
@@ -53,15 +55,16 @@ describe('state', () => {
       const req = ({
         signedCookies: {
           'booking-update': {
+            agencyId: 'MDI',
             date: '2020-11-20T18:00:00',
             startTime: '2020-11-20T18:00:00',
-            preAppointmentRequired: 'true',
-            postAppointmentRequired: true,
+            preRequired: 'true',
+            postRequired: true,
           },
         },
       } as unknown) as Request
 
-      expect(() => getUpdate(req)).toThrowError('Missing or invalid keys: endTime,postAppointmentRequired')
+      expect(() => getUpdate(req)).toThrowError('Missing or invalid keys: endTime,postRequired')
     })
   })
 
@@ -70,20 +73,22 @@ describe('state', () => {
       const res = ({ cookie: jest.fn() } as unknown) as Response<unknown>
 
       setUpdate(res, {
+        agencyId: 'MDI',
         date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-        postAppointmentRequired: true,
-        preAppointmentRequired: true,
+        postRequired: true,
+        preRequired: true,
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       })
 
       expect(res.cookie).toHaveBeenCalledWith(
         'booking-update',
         {
+          agencyId: 'MDI',
           date: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
-          postAppointmentRequired: 'true',
-          preAppointmentRequired: 'true',
+          postRequired: 'true',
+          preRequired: 'true',
           startTime: '2020-11-20T18:00:00',
         },
         cookieOptions

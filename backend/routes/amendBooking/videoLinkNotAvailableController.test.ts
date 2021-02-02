@@ -32,11 +32,12 @@ describe('video link is not available controller', () => {
     it('should render the page', async () => {
       req.signedCookies = {
         'booking-update': {
+          agencyId: 'WWI',
           date: '2020-11-20T18:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
-          preAppointmentRequired: 'true',
-          postAppointmentRequired: 'true',
+          preRequired: 'true',
+          postRequired: 'true',
         },
       }
 
@@ -56,11 +57,12 @@ describe('video link is not available controller', () => {
     it('should display booking details', async () => {
       req.signedCookies = {
         'booking-update': {
+          agencyId: 'WWI',
           date: '2020-11-20T18:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
-          preAppointmentRequired: 'true',
-          postAppointmentRequired: 'false',
+          preRequired: 'true',
+          postRequired: 'false',
         },
       }
 

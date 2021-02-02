@@ -36,9 +36,9 @@ export default class VideoLinkIsAvailableController {
           },
           prePostDetails: {
             'pre-court hearing briefing':
-              update.preAppointmentRequired && toDescription(getPreAppointmentInterval(update.startTime)),
+              update.preRequired && toDescription(getPreAppointmentInterval(update.startTime)),
             'post-court hearing briefing':
-              update.postAppointmentRequired && toDescription(getPostAppointmentInterval(update.endTime)),
+              update.postRequired && toDescription(getPostAppointmentInterval(update.endTime)),
           },
         },
       })

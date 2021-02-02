@@ -32,6 +32,7 @@ export default class ChangeDateAndTimeController {
         changeTime: changeTimeView,
         errors,
         bookingId,
+        agencyId: bookingDetails.agencyId,
         prisoner: {
           name: bookingDetails.prisonerName,
         },
@@ -55,16 +56,9 @@ export default class ChangeDateAndTimeController {
 
       const form = ChangeDateAndTime(req.body)
 
-      const { agencyId } = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-
       const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
-        agencyId,
         videoBookingId: parseInt(bookingId, 10),
-        date: form.date,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        preRequired: form.preAppointmentRequired,
-        postRequired: form.postAppointmentRequired,
+        ...form,
       })
 
       setUpdate(res, form)

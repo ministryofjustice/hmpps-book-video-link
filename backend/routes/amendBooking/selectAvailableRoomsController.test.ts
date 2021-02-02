@@ -79,11 +79,12 @@ describe('Select available rooms controller', () => {
 
     req.signedCookies = {
       'booking-update': {
+        agencyId: 'WWI',
         date: '2020-11-20T00:00:00',
         startTime: '2020-11-20T18:00:00',
         endTime: '2020-11-20T19:00:00',
-        preAppointmentRequired: 'true',
-        postAppointmentRequired: 'true',
+        preRequired: 'true',
+        postRequired: 'true',
       },
     }
   })
@@ -241,14 +242,15 @@ describe('Select available rooms controller', () => {
 
       expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
         comment: 'A comment',
+        agencyId: 'WWI',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
         preLocation: 9,
         mainLocation: 10,
         postLocation: 11,
-        preAppointmentRequired: true,
-        postAppointmentRequired: true,
+        preRequired: true,
+        postRequired: true,
       })
     })
 
@@ -258,11 +260,12 @@ describe('Select available rooms controller', () => {
 
       req.signedCookies = {
         'booking-update': {
+          agencyId: 'WWI',
           date: '2020-11-20T00:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
-          preAppointmentRequired: 'false',
-          postAppointmentRequired: 'false',
+          preRequired: 'false',
+          postRequired: 'false',
         },
       }
       req.body = { mainLocation: '10' }
@@ -271,14 +274,15 @@ describe('Select available rooms controller', () => {
 
       expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
         comment: undefined,
+        agencyId: 'WWI',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
         preLocation: null,
         mainLocation: 10,
         postLocation: null,
-        preAppointmentRequired: false,
-        postAppointmentRequired: false,
+        preRequired: false,
+        postRequired: false,
       })
     })
 

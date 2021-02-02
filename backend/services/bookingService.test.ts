@@ -268,6 +268,7 @@ describe('Booking service', () => {
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -275,6 +276,8 @@ describe('Booking service', () => {
         preLocation: 1,
         mainLocation: 2,
         postLocation: 3,
+        preRequired: true,
+        postRequired: true,
       })
 
       expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
@@ -285,7 +288,7 @@ describe('Booking service', () => {
       })
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
       expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[1]
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
 
@@ -297,11 +300,14 @@ describe('Booking service', () => {
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
         mainLocation: 2,
+        preRequired: false,
+        postRequired: false,
       })
 
       expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
@@ -310,7 +316,7 @@ describe('Booking service', () => {
       })
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
       expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[1]
+        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
 
@@ -322,11 +328,14 @@ describe('Booking service', () => {
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
         mainLocation: 2,
+        preRequired: false,
+        postRequired: false,
       })
 
       expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()
@@ -340,10 +349,13 @@ describe('Booking service', () => {
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
         comment: 'A comment',
         date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        preRequired: false,
+        postRequired: false,
         mainLocation: 2,
       })
 

@@ -15,10 +15,11 @@ describe('change date and time controller', () => {
   let controller: ChangeDateAndTimeController
   const req = ({
     originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
+    params: { agencyId: 'WWI', offenderNo: 'A12345', bookingId: 123 },
     session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
     query: {},
     body: {
+      agencyId: 'WWI',
       date: '20/11/2020',
       startTimeHours: '17',
       startTimeMinutes: '40',
@@ -73,6 +74,7 @@ describe('change date and time controller', () => {
   }
 
   beforeEach(() => {
+    jest.resetAllMocks()
     controller = new ChangeDateAndTimeController(bookingService, availabilityCheckService)
   })
 
@@ -111,6 +113,7 @@ describe('change date and time controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
+          agencyId: 'WWI',
           changeTime: false,
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
@@ -129,6 +132,7 @@ describe('change date and time controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
+          agencyId: 'WWI',
           changeTime: true,
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
@@ -162,6 +166,7 @@ describe('change date and time controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
+          agencyId: 'WWI',
           changeTime: false,
           locations: { court: 'City of London', prison: 'some prison' },
           prisoner: { name: 'John Doe' },
@@ -199,6 +204,7 @@ describe('change date and time controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
           bookingId: 123,
+          agencyId: 'WWI',
           changeTime: true,
           errors: [{ text: 'error message', href: 'error' }],
           locations: { court: 'City of London', prison: 'some prison' },
@@ -227,6 +233,7 @@ describe('change date and time controller', () => {
 
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
         bookingId: 123,
+        agencyId: 'WWI',
         changeTime: false,
         locations: { court: 'City of London', prison: 'some prison' },
         prisoner: { name: 'John Doe' },
@@ -248,6 +255,7 @@ describe('change date and time controller', () => {
 
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
         bookingId: 123,
+        agencyId: 'WWI',
         changeTime: true,
         errors: [{ text: 'error message', href: 'error' }],
         locations: { court: 'City of London', prison: 'some prison' },
@@ -308,10 +316,11 @@ describe('change date and time controller', () => {
       expect(res.cookie).toHaveBeenCalledWith(
         'booking-update',
         {
+          agencyId: 'WWI',
           date: '2020-11-20T00:00:00',
           endTime: '2020-11-20T19:20:00',
-          postAppointmentRequired: 'true',
-          preAppointmentRequired: 'true',
+          postRequired: 'true',
+          preRequired: 'true',
           startTime: '2020-11-20T17:40:00',
         },
         expect.anything()

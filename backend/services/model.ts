@@ -89,10 +89,13 @@ export type NewBooking = {
 
 export type BookingUpdate = {
   date: Moment
+  agencyId: string
   comment: string
   startTime: Moment
   endTime: Moment
   preLocation?: number
   mainLocation: number
   postLocation?: number
+  preRequired: boolean
+  postRequired: boolean
 }

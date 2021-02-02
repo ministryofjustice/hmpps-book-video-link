@@ -21,18 +21,13 @@ export default class SelectAvailableRoomsController {
         return res.redirect(`/booking-details/${bookingId}`)
       }
 
-      const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
+      const { comments } = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
 
-      const form = input ? RoomAndComment(input) : { comment: bookingDetails.comments }
+      const form = input ? RoomAndComment(input) : { comment: comments }
 
       const { rooms } = await this.availabilityCheckService.getAvailability(res.locals, {
-        agencyId: bookingDetails.agencyId,
         videoBookingId: parseInt(bookingId, 10),
-        date: update.date,
-        startTime: update.startTime,
-        endTime: update.endTime,
-        preRequired: update.preAppointmentRequired,
-        postRequired: update.postAppointmentRequired,
+        ...update,
       })
 
       return res.render('amendBooking/selectAvailableRooms.njk', {
@@ -42,8 +37,8 @@ export default class SelectAvailableRoomsController {
         mainLocations: rooms.main,
         preLocations: rooms.pre,
         postLocations: rooms.post,
-        preAppointmentRequired: update.preAppointmentRequired,
-        postAppointmentRequired: update.postAppointmentRequired,
+        preAppointmentRequired: update.preRequired,
+        postAppointmentRequired: update.postRequired,
       })
     }
   }

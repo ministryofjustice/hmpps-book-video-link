@@ -94,19 +94,9 @@ export = class BookingService {
     videoBookingId: number,
     update: BookingUpdate
   ): Promise<AvailabilityStatus> {
-    const bookingDetails = await this.get(context, videoBookingId)
-
     const status = await this.availabilityCheckService.getAvailabilityStatus(
       context,
-      {
-        videoBookingId,
-        agencyId: bookingDetails.agencyId,
-        date: update.date,
-        startTime: update.startTime,
-        endTime: update.endTime,
-        preRequired: !!update.preLocation,
-        postRequired: !!update.postLocation,
-      },
+      { videoBookingId, ...update },
       { pre: update.preLocation, main: update.mainLocation, post: update.postLocation }
     )
 

@@ -5,6 +5,7 @@ import { ChangeDateAndTime, ChangeDateAndTimeCodec, RoomAndComment } from './dto
 describe('ChangeDateAndTime', () => {
   test('check parse', () => {
     const result = ChangeDateAndTime({
+      agencyId: 'WWI',
       date: '22/01/2020',
       startTimeHours: '10',
       startTimeMinutes: '30',
@@ -15,17 +16,19 @@ describe('ChangeDateAndTime', () => {
     })
 
     expect(result).toStrictEqual({
+      agencyId: 'WWI',
       date: moment('22/01/2020', DAY_MONTH_YEAR),
       startTime: buildDate('22/01/2020', '10', '30'),
       endTime: buildDate('22/01/2020', '11', '00'),
-      preAppointmentRequired: true,
-      postAppointmentRequired: false,
+      preRequired: true,
+      postRequired: false,
     })
   })
 
   test('fails on missing field', () => {
     expect(() =>
       ChangeDateAndTime({
+        agencyId: 'WWI',
         date: '22/01/2020',
         startTimeHours: '10',
         startTimeMinutes: '30',
@@ -39,6 +42,7 @@ describe('ChangeDateAndTime', () => {
   test('fails on incorrect data type', () => {
     expect(() =>
       ChangeDateAndTime({
+        agencyId: 'WWI',
         date: '22/01/2020',
         startTimeHours: ['10'],
         startTimeMinutes: '30',
@@ -54,37 +58,41 @@ describe('ChangeDateAndTime', () => {
 describe('ChangeDateAndTimeCodec', () => {
   test('read', () => {
     const result = ChangeDateAndTimeCodec.read({
+      agencyId: 'WWI',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',
       endTime: '2020-11-20T19:00:00',
-      preAppointmentRequired: 'true',
-      postAppointmentRequired: 'true',
+      preRequired: 'true',
+      postRequired: 'true',
     })
 
     expect(result).toStrictEqual({
+      agencyId: 'WWI',
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-      postAppointmentRequired: true,
-      preAppointmentRequired: true,
+      postRequired: true,
+      preRequired: true,
       startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
     })
   })
 
   test('write', () => {
     const result = ChangeDateAndTimeCodec.write({
+      agencyId: 'WWI',
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-      postAppointmentRequired: true,
-      preAppointmentRequired: true,
+      postRequired: true,
+      preRequired: true,
       startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
     })
 
     expect(result).toStrictEqual({
+      agencyId: 'WWI',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',
       endTime: '2020-11-20T19:00:00',
-      preAppointmentRequired: 'true',
-      postAppointmentRequired: 'true',
+      preRequired: 'true',
+      postRequired: 'true',
     })
   })
 })

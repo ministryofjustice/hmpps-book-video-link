@@ -15,8 +15,8 @@ export default class VideoLinkNotAvailableController {
       const totalInterval = getTotalAppointmentInterval(
         update.startTime,
         update.endTime,
-        update.preAppointmentRequired,
-        update.postAppointmentRequired
+        update.preRequired,
+        update.postRequired
       )
 
       return res.render('amendBooking/videoLinkNotAvailable.njk', {
@@ -45,8 +45,8 @@ export default class VideoLinkNotAvailableController {
         startTimeMinutes: update.startTime.format('mm'),
         endTimeHours: update.endTime.format('HH'),
         endTimeMinutes: update.endTime.format('mm'),
-        preAppointmentRequired: update.preAppointmentRequired ? 'yes' : 'no',
-        postAppointmentRequired: update.postAppointmentRequired ? 'yes' : 'no',
+        preAppointmentRequired: update.preRequired ? 'yes' : 'no',
+        postAppointmentRequired: update.postRequired ? 'yes' : 'no',
       })
 
       return res.redirect(`/change-date-and-time/${bookingId}`)
