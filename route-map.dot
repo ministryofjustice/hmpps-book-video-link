@@ -1,7 +1,7 @@
 digraph G {
-  start [shape=Mdiamond];
-  start -> a1;
-  start -> viewBookings;
+  start [shape=Mdiamond]
+  start -> a1
+  start -> viewBookings
 
   subgraph cluster_1 {
     label = "Book a video link"
@@ -35,7 +35,7 @@ digraph G {
         
       b5 -> {b1, b2, b3} [style=dashed, color=grey]
         
-      label = "Request booking for found prisoner";
+      label = "Request booking for found prisoner"
     }
       
     subgraph cluster_3 {
@@ -47,13 +47,58 @@ digraph G {
       c5 [label="create-booking-request"]
       c6 [label="confirmation"]
     
-      node [style=filled];
-      c0 -> c1 -> c2 -> c3 -> c4 -> c5 -> c6 -> c0;
-      label = "Request booking when not in prison";
+      node [style=filled]
+      c0 -> c1 -> c2 -> c3 -> c4 -> c5 -> c6 -> c0
+      label = "Request booking when not in prison"
     }
   }
+  
   subgraph cluster_4 {
+    label = "View all video link bookings"
     viewBookings [label="View bookings"]
-    label = "View all video link bookings";
+    
+    viewBookings -> viewBookingDetails;
+    
+    subgraph cluster_5 {
+        label = "Change booking"
+        viewBookingDetails [label="view-booking-details"]
+        
+        viewBookingDetails -> { d0, e0, f0, g0 }
+        
+        d0 [label="change-date-and-time"]
+        d1 [label="date-and-time-available"]
+        d2 [label="time-not-available", style=filled]
+        d4 [label="select-rooms-and-optional-comments"]
+        d5 [label="room-no-longer-available", style=filled]
+        d6 [label="confirm-update"]
+    
+        node [style=filled];
+        d0 -> d1;
+        d0 -> { d2 } [style=dashed, color=grey]
+        d2 -> { d0, e0 } [style=dashed, color=grey]
+        d4 -> { d2, d5 } [style=dashed, color=grey]
+        d5 -> d4 [style=dashed, color=grey]
+        
+        e0 [label="change-time-only"]
+    
+        node [style=filled]
+        e0 -> d1 -> d4 -> d6 -> viewBookings
+        e0 -> d2 [style=dashed, color=grey]
+        
+        f0 [label="add/change-comments"]
+    
+        node [style=filled]
+        f0 -> d6
+    }
+    
+    subgraph cluster_6 {
+        label = "Delete booking"
+        
+        g0 [label="delete-check"]
+        g1 [label="confirm-delete"]
+        
+        node [style=filled]
+        g0 -> g1 -> viewBookings
+    }
   }
 }
