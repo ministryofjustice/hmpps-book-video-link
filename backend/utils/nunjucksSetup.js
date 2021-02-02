@@ -1,7 +1,15 @@
 const moment = require('moment')
 const nunjucks = require('nunjucks')
 const config = require('../config')
-const { getDate, getTime, pascalToString, capitalize, hyphenatedStringToCamel, possessive } = require('../utils')
+const {
+  getDate,
+  getTime,
+  pascalToString,
+  capitalize,
+  hyphenatedStringToCamel,
+  possessive,
+  escapeHtml,
+} = require('../utils')
 
 module.exports = (app, path) => {
   const njkEnv = nunjucks.configure(
@@ -95,7 +103,10 @@ module.exports = (app, path) => {
       .filter(key => model[key])
       .map(key => ({
         key: { text: capitalize(pascalToString(key)) },
-        value: { text: model[key], classes: `qa-${hyphenatedStringToCamel(key)}-value` },
+        value: {
+          html: `<span class='${key}'>${escapeHtml(model[key])}</span>`,
+          classes: `qa-${hyphenatedStringToCamel(key)}-value`,
+        },
       }))
   )
 

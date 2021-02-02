@@ -147,3 +147,9 @@ pre {
   white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
   word-wrap: break-word; /* Internet Explorer 5.5+ */
 }
+
+.comments{
+  white-space: pre-line; /* css-3 and IE 8*/
+  white-space: -moz-pre-line; /* Mozilla, since 1999 */
+  word-wrap: break-word; /* IE 5.5-7 */
+}
