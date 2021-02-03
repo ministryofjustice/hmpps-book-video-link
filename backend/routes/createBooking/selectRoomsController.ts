@@ -329,8 +329,14 @@ export default function selectCourtAppointmentRoomsFactory({
         reference: null,
       })
 
-      if (emails[agencyId] && emails[agencyId].omu) {
-        notifyApi.sendEmail(prisonCourtBookingTemplateId, emails[agencyId].omu, {
+      if (emails[agencyId]) {
+        if (emails[agencyId].omu) {
+          notifyApi.sendEmail(prisonCourtBookingTemplateId, emails[agencyId].omu, {
+            personalisation,
+            reference: null,
+          })
+        }
+        notifyApi.sendEmail(prisonCourtBookingTemplateId, emails[agencyId].vlb, {
           personalisation,
           reference: null,
         })
