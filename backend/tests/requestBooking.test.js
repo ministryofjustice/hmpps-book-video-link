@@ -273,7 +273,7 @@ describe('Request a booking', () => {
       expect(req.flash).toHaveBeenCalledWith(
         'requestBooking',
         expect.objectContaining({
-          comment: 'test',
+          comments: 'test',
           date: 'Tuesday 1 January 2019',
           dateOfBirth: '10 December 2019',
           endTime: '11:00',
@@ -304,7 +304,7 @@ describe('Request a booking', () => {
       expect(req.flash).toHaveBeenCalledWith(
         'requestBooking',
         expect.objectContaining({
-          comment: 'None entered',
+          comments: 'None entered',
         })
       )
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/confirmation')
@@ -537,7 +537,7 @@ describe('Request a booking', () => {
         firstName: 'John',
         hearingLocation: 'London',
         lastName: 'Doe',
-        comment: 'test',
+        comments: 'test',
         prison: 'HMP Wandsworth',
       }
 
@@ -599,7 +599,7 @@ describe('Request a booking', () => {
           hearingLocation: 'London',
           firstName: 'John',
           lastName: 'Doe',
-          comment: 'test',
+          comments: 'test',
         })
       )
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/confirmation')
@@ -609,7 +609,7 @@ describe('Request a booking', () => {
   describe('confirm', () => {
     it('should submit an email and render the confirmation template', () => {
       const details = {
-        comment: 'test',
+        comments: 'test',
         date: 'Tuesday 1 January 2019',
         dateOfBirth: '14/05/1920',
         endTime: '11:00',
@@ -642,7 +642,7 @@ describe('Request a booking', () => {
           date: 'Tuesday 1 January 2019',
           courtHearingStartTime: '10:00',
           courtHearingEndTime: '11:00',
-          comment: 'test',
+          comments: 'test',
         },
         prePostDetails: {
           'post-court hearing briefing': '09:35 to 11:00',
