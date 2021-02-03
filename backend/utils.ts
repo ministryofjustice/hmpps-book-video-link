@@ -1,4 +1,5 @@
 import moment from 'moment'
+import escapeHtml from 'escape-html'
 import { DATE_TIME_FORMAT_SPEC } from './shared/dateHelpers'
 
 export const switchDateFormat = (displayDate: string, fromFormat = 'DD/MM/YYYY'): string => {
@@ -124,4 +125,8 @@ export function assertHasOptionalStringValues<K extends string>(
   if (invalidKeys.length) {
     throw Error(`Non string keys: ${invalidKeys}`)
   }
+}
+
+export function escapeHtml(input: string): string {
+  return escapeHtml(input)
 }
