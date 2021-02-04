@@ -4,9 +4,6 @@ const querystring = require('querystring')
 const logger = require('../log')
 const errorStatusCode = require('../error-status-code')
 
-const AuthClientErrorName = 'AuthClientError'
-const AuthClientError = message => ({ name: AuthClientErrorName, message, stack: new Error().stack })
-
 const apiClientCredentials = (clientId, clientSecret) => Buffer.from(`${clientId}:${clientSecret}`).toString('base64')
 
 /**
@@ -26,8 +23,7 @@ const oauthApiFactory = (client, { clientId, clientSecret, url }) => {
   const userDetails = (context, username) => get(context, `/api/user/${username}`)
 
   const oauthAxios = axios.create({
-    baseURL: url,
-    url: 'oauth/token',
+    baseURL: `${url}oauth/token`,
     method: 'post',
     timeout: 30000,
     headers: {
@@ -41,18 +37,6 @@ const oauthApiFactory = (client, { clientId, clientSecret, url }) => {
     access_token,
     refresh_token,
   })
-
-  const translateAuthClientError = error => {
-    logger.info(`login error description = ${error}`)
-
-    if (error.includes('has expired')) return 'Your password has expired.'
-    if (error.includes('is locked')) return 'Your user account is locked.'
-    if (error.includes('No credentials')) return 'Missing credentials.'
-    if (error.includes('to caseload NWEB'))
-      return 'You are not enabled for this service, please contact admin to request access.'
-
-    return 'The username or password you have entered is invalid.'
-  }
 
   const makeTokenRequest = (data, msg) =>
     oauthAxios({ data })
@@ -69,7 +53,7 @@ const oauthApiFactory = (client, { clientId, clientSecret, url }) => {
         if (parseInt(status, 10) < 500 && errorDesc !== null) {
           logger.info(`${msg} ${error.config.method} ${error.config.url} ${status} ${errorDesc}`)
 
-          throw AuthClientError(translateAuthClientError(errorDesc))
+          throw Error('Authentication error')
         }
 
         logger.error(`${msg} ${error.config.method} ${error.config.url} ${status} ${error.message}`)
@@ -89,10 +73,7 @@ const oauthApiFactory = (client, { clientId, clientSecret, url }) => {
     userEmail,
     userDetails,
     refresh,
-    makeTokenRequest,
-    // Expose the internals so they can be Monkey Patched for testing. Oo oo oo.
-    oauthAxios,
   }
 }
 
-module.exports = { oauthApiFactory, AuthClientError, AuthClientErrorName, apiClientCredentials }
+module.exports = { oauthApiFactory, apiClientCredentials }
