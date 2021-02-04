@@ -30,8 +30,8 @@ context('A user can view the video link home page', () => {
   it('A user can view the video link home page', () => {
     const homePage = HomePage.goTo()
 
-    homePage.bookingTitle().contains('Book a video link for a single person')
+    homePage.bookingTitle().contains('Book a new video link')
 
-    homePage.appointmentsListTitle().contains('View all video link bookings')
+    homePage.appointmentsListTitle().contains('View and change video links')
   })
 })
