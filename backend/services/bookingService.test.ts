@@ -254,9 +254,15 @@ describe('Booking service', () => {
       await service.updateComments(context, 'A_USER', 1234, 'another comment')
 
       expect(whereaboutsApi.updateVideoLinkBookingComment).toHaveBeenCalledWith(context, 1234, 'another comment')
-      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
-      expect(whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        ...bookingDetail,
+        comments: 'another comment',
+        preDetailsDescription: 'Vcc Room 3 - 17:40 to 18:00',
+        mainDetailsDescription: 'Vcc Room 1 - 18:00 to 19:00',
+        postDetailsDescription: 'Vcc Room 2 - 19:00 to 19:20',
+      })
+      expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]
       )
     })
 
@@ -286,9 +292,20 @@ describe('Booking service', () => {
         main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
         post: { locationId: 3, startTime: '2020-11-20T10:00:00', endTime: '2020-11-20T10:20:00' },
       })
-      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
-      expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        agencyId: 'WWI',
+        courtLocation: 'City of London',
+        dateDescription: '20 November 2020',
+        offenderNo: 'A1234AA',
+        comments: 'A comment',
+        prisonName: 'some prison',
+        prisonerName: 'John Doe',
+        preDetailsDescription: 'Vcc Room 1 - 08:40 to 09:00',
+        mainDetailsDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDetailsDescription: 'Vcc Room 3 - 10:00 to 10:20',
+      })
+      expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
 
@@ -314,9 +331,21 @@ describe('Booking service', () => {
         comment: 'A comment',
         main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
       })
-      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
-      expect(whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
-        whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        agencyId: 'WWI',
+        courtLocation: 'City of London',
+        dateDescription: '20 November 2020',
+        offenderNo: 'A1234AA',
+        comments: 'A comment',
+        prisonName: 'some prison',
+        prisonerName: 'John Doe',
+        preDetailsDescription: undefined,
+        mainDetailsDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDetailsDescription: undefined,
+      })
+
+      expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]
       )
     })
 

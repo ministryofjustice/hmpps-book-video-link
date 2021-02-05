@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { BookingDetails } from './model'
+import { BookingDetails, UpdateEmail } from './model'
 import config from '../config'
 import NotificationService from './notificationService'
 
@@ -46,6 +46,19 @@ const bookingDetail: BookingDetails = {
   },
 }
 
+const updateEmail: UpdateEmail = {
+  agencyId: 'WWI',
+  offenderNo: 'A1234AA',
+  comments: 'some comment',
+  courtLocation: 'City of London',
+  dateDescription: '20 November 2020',
+  prisonName: 'some prison',
+  prisonerName: 'John Doe',
+  preDetailsDescription: 'Vcc Room 3 - 17:40 to 18:00',
+  mainDetailsDescription: 'Vcc Room 1 - 18:00 to 19:00',
+  postDetailsDescription: 'Vcc Room 2 - 19:00 to 19:20',
+}
+
 describe('Notification service', () => {
   const context = {}
   let notificationService: NotificationService
@@ -66,7 +79,7 @@ describe('Notification service', () => {
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
-      await notificationService.sendBookingUpdateEmails(context, 'A_USER', bookingDetail)
+      await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
       expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
@@ -78,10 +91,10 @@ describe('Notification service', () => {
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', {
-        ...bookingDetail,
+        ...updateEmail,
         comments: null,
-        preDetails: null,
-        postDetails: null,
+        preDetailsDescription: null,
+        postDetailsDescription: null,
       })
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
@@ -109,7 +122,7 @@ describe('Notification service', () => {
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
-      await notificationService.sendBookingUpdateEmails(context, 'A_USER', bookingDetail)
+      await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingUpdateConfirmationPrison,
@@ -137,7 +150,7 @@ describe('Notification service', () => {
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
-      await notificationService.sendBookingUpdateEmails(context, 'A_USER', bookingDetail)
+      await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledTimes(2)
 
@@ -159,7 +172,7 @@ describe('Notification service', () => {
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
-      await notificationService.sendBookingUpdateEmails(context, 'A_USER', bookingDetail)
+      await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingUpdateConfirmationPrison,
@@ -185,7 +198,7 @@ describe('Notification service', () => {
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
-      await notificationService.sendBookingUpdateEmails(context, 'USER', bookingDetail)
+      await notificationService.sendBookingUpdateEmails(context, 'USER', updateEmail)
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingUpdateConfirmationCourt,
         'user@email.com',

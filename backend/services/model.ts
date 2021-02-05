@@ -99,3 +99,16 @@ export type BookingUpdate = {
   preRequired: boolean
   postRequired: boolean
 }
+
+export type UpdateEmail = {
+  offenderNo: string
+  agencyId: string
+  prisonName: string
+  prisonerName: string
+  dateDescription: string
+  comments: string
+  courtLocation: string
+  preDetailsDescription?: string
+  mainDetailsDescription: string
+  postDetailsDescription?: string
+}

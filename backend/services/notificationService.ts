@@ -1,6 +1,6 @@
 import { notifications } from '../config'
 import log from '../log'
-import { Context, BookingDetails } from './model'
+import { Context, BookingDetails, UpdateEmail } from './model'
 
 export = class NotificationService {
   constructor(private readonly oauthApi: any, private readonly notifyApi: any) {}
@@ -12,7 +12,7 @@ export = class NotificationService {
     })
   }
 
-  public async sendBookingUpdateEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
+  public async sendBookingUpdateEmails(context: Context, username: string, details: UpdateEmail): Promise<void> {
     const [{ email }, { name }] = await Promise.all([
       this.oauthApi.userEmail(context, username),
       this.oauthApi.userDetails(context, username),
@@ -24,9 +24,9 @@ export = class NotificationService {
       offenderNo: details.offenderNo,
       prison: details.prisonName,
       date: details.dateDescription,
-      preAppointmentInfo: details.preDetails?.description || 'Not required',
-      mainAppointmentInfo: details.mainDetails.description,
-      postAppointmentInfo: details.postDetails?.description || 'Not required',
+      preAppointmentInfo: details.preDetailsDescription || 'Not required',
+      mainAppointmentInfo: details.mainDetailsDescription,
+      postAppointmentInfo: details.postDetailsDescription || 'Not required',
       comments: details.comments || 'None entered',
     }
 
