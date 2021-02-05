@@ -106,7 +106,7 @@ context('A user can view the video link home page', () => {
       location().contains('in: HMP Wandsworth')
       court().contains('Leeds')
       type().contains('Court hearing')
-      action().contains('Delete')
+      action().contains('Change')
     }
     {
       const { time, prisoner, location, court, type, action } = courtVideoBookingsPage.getRow(2)
@@ -136,7 +136,7 @@ context('A user can view the video link home page', () => {
       location().contains('in: HMP Wandsworth')
       court().contains('Other court')
       type().contains('Court hearing')
-      action().contains('Delete')
+      action().contains('Change')
     }
   })
 
@@ -164,7 +164,7 @@ context('A user can view the video link home page', () => {
       location().contains('Room 2')
       court().contains('Other court')
       type().contains('Court hearing')
-      action().contains('Delete')
+      action().contains('Change')
     }
   })
 

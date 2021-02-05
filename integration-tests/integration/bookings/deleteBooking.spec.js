@@ -3,6 +3,7 @@ const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoB
 const ConfirmDeletionPage = require('../../pages/deleteBooking/confirmDeletionPage')
 const VideoLinkDeletedPage = require('../../pages/deleteBooking/videoLinkDeletedPage')
 const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage')
+const BookingDetailsPage = require('../../pages/viewBookings/bookingDetailsPage')
 
 context('A user can delete a booking', () => {
   before(() => {
@@ -162,6 +163,9 @@ context('A user can delete a booking', () => {
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
 
+    const bookingDetailsPage = BookingDetailsPage.verifyOnPage('John Doe’s')
+    bookingDetailsPage.deleteButton().click()
+
     const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
     confirmDeletionPage.confirmButton().click()
     confirmDeletionPage.errorSummaryTitle().contains('There is a problem')
@@ -174,6 +178,9 @@ context('A user can delete a booking', () => {
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
+
+    const bookingDetailsPage = BookingDetailsPage.verifyOnPage('John Doe’s')
+    bookingDetailsPage.deleteButton().click()
 
     const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
     confirmDeletionPage.selectNo()
@@ -188,6 +195,9 @@ context('A user can delete a booking', () => {
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
+
+    const bookingDetailsPage = BookingDetailsPage.verifyOnPage('John Doe’s')
+    bookingDetailsPage.deleteButton().click()
 
     const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
     confirmDeletionPage.selectYes()
@@ -205,6 +215,9 @@ context('A user can delete a booking', () => {
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.getRow(1).action().click()
+
+    const bookingDetailsPage = BookingDetailsPage.verifyOnPage('John Doe’s')
+    bookingDetailsPage.deleteButton().click()
 
     const confirmDeletionPage = ConfirmDeletionPage.verifyOnPage()
     confirmDeletionPage.selectYes()

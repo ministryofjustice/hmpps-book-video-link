@@ -17,7 +17,8 @@
     {{ govukButton({
       text: "Delete video link",
       href: '/delete-booking/' + bookingDetails.videoBookingId,
-      classes: "govuk-button--warning"
+      classes: "govuk-button--warning", 
+      attributes: {'data-qa': 'delete-button'}
     }) }}
     {{
       govukSummaryList({
