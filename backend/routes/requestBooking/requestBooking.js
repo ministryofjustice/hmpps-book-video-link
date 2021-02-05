@@ -187,7 +187,7 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
 
     return res.render('requestBooking/selectCourt.njk', {
       prisonDetails: {
-        prison: matchingPrison.formattedDescription || matchingPrison.description,
+        prison: matchingPrison.fromattedDescription || matchingPrison.description,
       },
       hearingDetails: {
         date: moment(date, DAY_MONTH_YEAR).format('D MMMM YYYY'),

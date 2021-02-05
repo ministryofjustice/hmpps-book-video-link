@@ -50,9 +50,7 @@ describe('Request a booking', () => {
     oauthApi.userDetails = jest.fn()
     prisonApi.getAgencies = jest.fn()
 
-    prisonApi.getAgencies.mockReturnValue([
-      { agencyId: 'WWI', description: 'HMP WANDSWORTH', formattedDescription: 'HMP Wandsworth' },
-    ])
+    prisonApi.getAgencies.mockReturnValue([{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
 
     oauthApi.userEmail.mockReturnValue({ email: 'test@test' })
     oauthApi.userDetails.mockReturnValue({ name: 'Staff member' })
