@@ -1,27 +1,24 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@2.1.0
+  hmpps: ministryofjustice/hmpps@2.3.0
 
 executors:
   integration-tests:
     docker:
-      - image: circleci/node:14-buster-browsers
-      - image: circleci/redis:buster
-    working_directory: ~/app
-  builder:
-    docker:
-      - image: 'circleci/node:14-buster-browsers'
+      - image: cimg/node:14.15.3-browsers
+      - image: bitnami/redis:5.0
+        environment:
+          ALLOW_EMPTY_PASSWORD=yes
     working_directory: ~/app
 
 jobs:
   build:
-    executor: builder
+    executor:
+      name: hmpps/node
+      tag: 14.15.3-browsers
     steps:
       - checkout
-      - run:
-          name: Update npm
-          command: 'sudo npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
@@ -52,7 +49,9 @@ jobs:
             - .cache/Cypress
 
   unit_test:
-    executor: builder
+    executor:
+      name: hmpps/node
+      tag: 14.15.3-browsers
     steps:
       - checkout
       - restore_cache:
