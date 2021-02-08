@@ -24,7 +24,7 @@
           { html: (item.prisonLocation | escape)+ '<br/>in: ' + (item.prison | escape) },
           { text: item.court },
           { text: hearingDescriptions[item.hearingType] },
-          { html: '<a class="govuk-link" href="/delete-booking/' + item.videoLinkBookingId + '">Delete</a>' if item.hearingType == 'MAIN' else ''}
+          { html: '<a class="govuk-link" href="/booking-details/' + item.videoLinkBookingId + '">Change</a>' if item.hearingType == 'MAIN' else ''}
         ]
       ), rows) %}
   {% endfor %}
