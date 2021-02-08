@@ -24,9 +24,9 @@ export = class NotificationService {
       offenderNo: details.offenderNo,
       prison: details.prisonName,
       date: details.dateDescription,
-      preAppointmentInfo: details.preDetailsDescription || 'Not required',
-      mainAppointmentInfo: details.mainDetailsDescription,
-      postAppointmentInfo: details.postDetailsDescription || 'Not required',
+      preAppointmentInfo: details.preDescription || 'Not required',
+      mainAppointmentInfo: details.mainDescription,
+      postAppointmentInfo: details.postDescription || 'Not required',
       comments: details.comments || 'None entered',
     }
 

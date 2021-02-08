@@ -24,21 +24,18 @@ const bookingDetail: BookingDetails = {
   prisonerName: 'John Doe',
   videoBookingId: 123,
   preDetails: {
-    timings: '17:40 to 18:00',
     description: 'Vcc Room 3 - 17:40 to 18:00',
     endTime: '18:00',
     prisonRoom: 'Vcc Room 3',
     startTime: '17:40',
   },
   mainDetails: {
-    timings: '18:00 to 19:00',
     description: 'Vcc Room 1 - 18:00 to 19:00',
     endTime: '19:00',
     prisonRoom: 'Vcc Room 1',
     startTime: '18:00',
   },
   postDetails: {
-    timings: '19:00 to 19:20',
     description: 'Vcc Room 2 - 19:00 to 19:20',
     endTime: '19:20',
     prisonRoom: 'Vcc Room 2',
@@ -54,9 +51,9 @@ const updateEmail: UpdateEmail = {
   dateDescription: '20 November 2020',
   prisonName: 'some prison',
   prisonerName: 'John Doe',
-  preDetailsDescription: 'Vcc Room 3 - 17:40 to 18:00',
-  mainDetailsDescription: 'Vcc Room 1 - 18:00 to 19:00',
-  postDetailsDescription: 'Vcc Room 2 - 19:00 to 19:20',
+  preDescription: 'Vcc Room 3 - 17:40 to 18:00',
+  mainDescription: 'Vcc Room 1 - 18:00 to 19:00',
+  postDescription: 'Vcc Room 2 - 19:00 to 19:20',
 }
 
 describe('Notification service', () => {
@@ -93,8 +90,8 @@ describe('Notification service', () => {
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', {
         ...updateEmail,
         comments: null,
-        preDetailsDescription: null,
-        postDetailsDescription: null,
+        preDescription: null,
+        postDescription: null,
       })
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(

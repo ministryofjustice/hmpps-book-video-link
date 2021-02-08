@@ -51,21 +51,18 @@ const bookingDetail: BookingDetails = {
   prisonerName: 'John Doe',
   videoBookingId: 1234,
   preDetails: {
-    timings: '17:40 to 18:00',
     description: 'Vcc Room 3 - 17:40 to 18:00',
     endTime: '18:00',
     prisonRoom: 'Vcc Room 3',
     startTime: '17:40',
   },
   mainDetails: {
-    timings: '18:00 to 19:00',
     description: 'Vcc Room 1 - 18:00 to 19:00',
     endTime: '19:00',
     prisonRoom: 'Vcc Room 1',
     startTime: '18:00',
   },
   postDetails: {
-    timings: '19:00 to 19:20',
     description: 'Vcc Room 2 - 19:00 to 19:20',
     endTime: '19:20',
     prisonRoom: 'Vcc Room 2',
@@ -257,9 +254,9 @@ describe('Booking service', () => {
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
         ...bookingDetail,
         comments: 'another comment',
-        preDetailsDescription: 'Vcc Room 3 - 17:40 to 18:00',
-        mainDetailsDescription: 'Vcc Room 1 - 18:00 to 19:00',
-        postDetailsDescription: 'Vcc Room 2 - 19:00 to 19:20',
+        preDescription: 'Vcc Room 3 - 17:40 to 18:00',
+        mainDescription: 'Vcc Room 1 - 18:00 to 19:00',
+        postDescription: 'Vcc Room 2 - 19:00 to 19:20',
       })
       expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
         whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]
@@ -300,9 +297,9 @@ describe('Booking service', () => {
         comments: 'A comment',
         prisonName: 'some prison',
         prisonerName: 'John Doe',
-        preDetailsDescription: 'Vcc Room 1 - 08:40 to 09:00',
-        mainDetailsDescription: 'Vcc Room 2 - 09:00 to 10:00',
-        postDetailsDescription: 'Vcc Room 3 - 10:00 to 10:20',
+        preDescription: 'Vcc Room 1 - 08:40 to 09:00',
+        mainDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDescription: 'Vcc Room 3 - 10:00 to 10:20',
       })
       expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
         whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]
@@ -339,9 +336,9 @@ describe('Booking service', () => {
         comments: 'A comment',
         prisonName: 'some prison',
         prisonerName: 'John Doe',
-        preDetailsDescription: undefined,
-        mainDetailsDescription: 'Vcc Room 2 - 09:00 to 10:00',
-        postDetailsDescription: undefined,
+        preDescription: undefined,
+        mainDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDescription: undefined,
       })
 
       expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(

@@ -36,7 +36,6 @@ export type AppointmentDetail = {
   endTime: string
   prisonRoom: string
   description: string
-  timings: string
 }
 
 export type BookingDetails = {
@@ -108,7 +107,7 @@ export type UpdateEmail = {
   dateDescription: string
   comments: string
   courtLocation: string
-  preDetailsDescription?: string
-  mainDetailsDescription: string
-  postDetailsDescription?: string
+  preDescription?: string
+  mainDescription: string
+  postDescription?: string
 }
