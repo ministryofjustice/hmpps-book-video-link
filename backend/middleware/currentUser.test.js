@@ -16,7 +16,8 @@ describe('Current user', () => {
 
     oauthApi.userRoles.mockReturnValue([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
 
-    req = { session: {} }
+    req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get: jest.fn() }
+
     res = { locals: {} }
   })
 
@@ -47,7 +48,9 @@ describe('Current user', () => {
     await controller(req, res, () => {})
 
     expect(res.locals.user).toEqual({
+      clientID: 'book-video-link-client',
       displayName: 'B. Smith',
+      returnUrl: 'http://undefined/somethingelse',
       username: 'USER_BOB',
     })
   })
