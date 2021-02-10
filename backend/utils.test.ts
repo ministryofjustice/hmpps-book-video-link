@@ -9,6 +9,7 @@ import {
   flattenCalls,
   assertHasStringValues,
   assertHasOptionalStringValues,
+  forenameToInitial,
 } from './utils'
 
 describe('capitalize()', () => {
@@ -285,5 +286,17 @@ describe('assertHasOptionalStringValues', () => {
 
     expect(record.name).toBe(undefined)
     expect(record.role).toBe('true')
+  })
+})
+
+describe('Forename to initial', () => {
+  it('should return null', () => {
+    expect(forenameToInitial('')).toEqual(null)
+  })
+  it('should change forename to initial', () => {
+    expect(forenameToInitial('Robert Smith')).toEqual('R. Smith')
+  })
+  it('should change forename to initial hypenated last name', () => {
+    expect(forenameToInitial('Robert Smith-Jones')).toEqual('R. Smith-Jones')
   })
 })

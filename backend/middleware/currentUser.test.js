@@ -42,15 +42,26 @@ describe('Current user', () => {
     expect(req.session.userRoles).toEqual([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
   })
 
+  it('should call get', async () => {
+    const controller = currentUser({ oauthApi })
+    const get = jest.fn().mockReturnValue('someHost')
+    req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get }
+
+    await controller(req, res, () => {})
+
+    expect(get).toHaveBeenCalledWith('host')
+  })
   it('should stash user data into res.locals', async () => {
     const controller = currentUser({ oauthApi })
+    const get = jest.fn().mockReturnValue('someHost')
+    req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get }
 
     await controller(req, res, () => {})
 
     expect(res.locals.user).toEqual({
       clientID: 'book-video-link-client',
       displayName: 'B. Smith',
-      returnUrl: 'http://undefined/somethingelse',
+      returnUrl: 'http://someHost/somethingelse',
       username: 'USER_BOB',
     })
   })
