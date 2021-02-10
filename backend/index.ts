@@ -42,6 +42,7 @@ app.use(csrf())
 app.use(setupCurrentUserAndRequestLogging(services))
 app.use(setupAuthorisation())
 app.use(routes(services))
+app.locals.authUrl = config.apis.oauth2.url
 
 app.use(errorHandler(config.app.production))
 

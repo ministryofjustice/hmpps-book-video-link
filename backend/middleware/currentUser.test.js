@@ -47,7 +47,7 @@ describe('Current user', () => {
     await controller(req, res, () => {})
 
     expect(res.locals.user).toEqual({
-      displayName: 'Bob Smith',
+      displayName: 'B. Smith',
       username: 'USER_BOB',
     })
   })

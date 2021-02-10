@@ -130,3 +130,8 @@ export function assertHasOptionalStringValues<K extends string>(
 export function escapeHtml(input: string): string {
   return escapeHtml(input)
 }
+
+export function forenameToInitial(name: string): string {
+  if (!name) return null
+  return `${name.charAt(0)}. ${name.split(' ').pop()}`
+}

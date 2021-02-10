@@ -1,31 +1,27 @@
- <header class="page-header govuk-!-display-none-print">
-    <div class="header-content clickable">
-        <div class="left-content">
-            <a title="Home link" class="link" href="/">
-                <div class="logo"><img src="/images/Crest@2x.png" alt="" width="42" height="35"></div>
-            </a>
-            <a title="Home link" class="unstyled-link" href="/">
-                <span class="logo-text">HMPPS</span>
-                <span class="title">Book a video link with a prison</span>
-            </a>
-        </div>
+<header class="header" role="banner">
+  <div class="header__container">
+    <div class="header__title">
+      <a class="header__link header__title__organisation-name" href="/">
+         <div class="header__logo"><img src="/images/crest.svg" alt="crest"></div>
+        HMPPS
+      </a>
 
-       {% if user %}
-            <div class="right-content">
-                <div class="right-menu no-select">
-                    <label class="right-menu-content clickable" for="menuToggle">
-                        <input id="menuToggle" type=checkbox>
-                        <div id="info-wrapper" class="info-wrapper right-menu-info-wrap" role="menu" tabindex="0">
-                            <strong class="user-name right-menu-content-primary" data-qa="logged-in-name">{{ user.displayName }}</strong>
-                        </div>
-                        <div class="right-menu-dropdown-menu" id="menuItems">
-                            <div>
-                            <a class="right-menu-dropdown-menu-option" href="/auth/logout">Sign out</a>
-                            </div>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        {% endif %}
+      <a class="header__link header__title__service-name" href="/">Book a video link with a prison</a>
     </div>
+
+    <nav aria-label="Account navigation">
+      <ul class="header__navigation">
+        <li class="header__navigation__item">
+          <a class="header__link" href="{{ authUrl + 'account-details' }}" data-test="manage-account-link">
+            <span data-qa="logged-in-name">{{ user.displayName }}</span>
+            <span class="header__link__sub-text">Manage your details</span>
+          </a>
+        </li>
+
+        <li class="header__navigation__item">
+          <a class="header__link" href="/auth/logout">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </header>

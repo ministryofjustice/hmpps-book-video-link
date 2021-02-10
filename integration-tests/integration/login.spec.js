@@ -52,7 +52,7 @@ context('Login functionality', () => {
     cy.task('stubLoginCourt', { name: 'James Stuart' })
     cy.login()
     const homePage = HomePage.verifyOnPage()
-    homePage.loggedInName().contains('James Stuart')
+    homePage.loggedInName().contains('J. Stuart')
     cy.task('stubVerifyToken', false)
     cy.request('/').its('body').should('contain', 'Sign in')
 
@@ -61,6 +61,6 @@ context('Login functionality', () => {
     cy.task('stubLoginCourt', { name: 'Bobby Brown' })
     cy.login()
 
-    homePage.loggedInName().contains('Bobby Brown')
+    homePage.loggedInName().contains('B. Brown')
   })
 })

@@ -1,3 +1,5 @@
+const { forenameToInitial } = require('../utils')
+
 module.exports = ({ oauthApi }) => async (req, res, next) => {
   if (!req.xhr) {
     if (!req.session.userDetails) {
@@ -15,7 +17,7 @@ module.exports = ({ oauthApi }) => async (req, res, next) => {
 
     res.locals.user = {
       ...res.locals.user,
-      displayName: name,
+      displayName: forenameToInitial(name),
       username,
     }
 
