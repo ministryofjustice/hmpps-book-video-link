@@ -12,7 +12,8 @@
     <nav aria-label="Account navigation">
       <ul class="header__navigation">
         <li class="header__navigation__item">
-          <a class="header__link" href="{{ authUrl + 'account-details' }}" data-test="manage-account-link">
+              <a class="header__link" href="{{ authUrl + 'account-details' }}?redirect_uri={{ user.returnUrl | urlencode }}&client_id={{ user.clientID }}" 
+              data-qa="manage-account-link">
             <span data-qa="logged-in-name">{{ user.displayName }}</span>
             <span class="header__link__sub-text">Manage your details</span>
           </a>
