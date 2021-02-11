@@ -32,6 +32,17 @@ export = class BookingService {
     this.roomFinderFactory = roomFinderFactory(this.prisonApi)
   }
 
+  public async find(context: Context, videoBookingId: number): Promise<BookingDetails | undefined> {
+    try {
+      return await this.get(context, videoBookingId)
+    } catch (error) {
+      if (error.status === 404) {
+        return undefined
+      }
+      throw error
+    }
+  }
+
   /** filter object keys to only include fields relevant to type. */
   private pick(appointment: NewAppointment): NewAppointment {
     return { locationId: appointment.locationId, startTime: appointment.startTime, endTime: appointment.endTime }
@@ -51,7 +62,6 @@ export = class BookingService {
 
   public async get(context: Context, videoBookingId: number): Promise<BookingDetails> {
     const bookingDetails = await this.whereaboutsApi.getVideoLinkBooking(context, videoBookingId)
-
     const [prisonBooking, agencyDetails, roomFinder] = await Promise.all([
       this.prisonApi.getPrisonBooking(context, bookingDetails.bookingId),
       this.prisonApi.getAgencyDetails(context, bookingDetails.agencyId),

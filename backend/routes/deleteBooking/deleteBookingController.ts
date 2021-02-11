@@ -7,8 +7,11 @@ export = class DeleteBookingController {
   public viewDelete(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
-      const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      res.render('deleteBooking/confirmDeletion.njk', {
+      const bookingDetails = await this.bookingService.find(res.locals, parseInt(bookingId, 10))
+      if (!bookingDetails) {
+        return res.redirect('/bookings')
+      }
+      return res.render('deleteBooking/confirmDeletion.njk', {
         bookingDetails: {
           videoBookingId: bookingDetails.videoBookingId,
           details: {

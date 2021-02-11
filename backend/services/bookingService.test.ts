@@ -1,5 +1,6 @@
 import type { Location, InmateDetail } from 'prisonApi'
 import moment from 'moment'
+import createError from 'http-errors'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
@@ -82,6 +83,54 @@ describe('Booking service', () => {
   afterEach(() => {
     jest.resetAllMocks()
   })
+
+  describe('Find', () => {
+    const videoLinkBooking = {
+      agencyId: 'WWI',
+      bookingId: 789,
+      comment: 'some comment',
+      court: 'City of London',
+      main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      videoLinkBookingId: 1234,
+    }
+
+    it('Should find booking details successfully when a booking exists', async () => {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+
+      const result = await service.find(context, 1234)
+
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
+      expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
+      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledTimes(1)
+      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
+
+      expect(result).toStrictEqual(bookingDetail)
+    })
+
+    it('Should return undefined when a booking does not exists and error status is 404', async () => {
+      const error = createError(404, 'This booking does not exist')
+      whereaboutsApi.getVideoLinkBooking.mockRejectedValue(error)
+
+      const result = await service.find(context, 1)
+
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1)
+
+      expect(result).toStrictEqual(undefined)
+    })
+
+    it('Should return throw an error when error status something other than 404', async () => {
+      const error = createError(500, 'Internal server error')
+      whereaboutsApi.getVideoLinkBooking.mockRejectedValue(error)
+
+      await expect(service.find(context, 1)).rejects.toThrowError(error)
+    })
+  })
+
   describe('Create', () => {
     it('Creating a booking with mandatory fields', async () => {
       await service.create(context, {

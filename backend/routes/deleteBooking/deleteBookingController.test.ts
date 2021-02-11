@@ -84,7 +84,7 @@ describe('Delete Booking', () => {
     const errors = [{ href: '/error', text: 'An error has occurred' }] as any
 
     it('should return booking details', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
+      bookingService.find.mockResolvedValue(bookingDetails)
       req.flash.mockReturnValue(errors)
 
       await controller.viewDelete()(req, res, null)
@@ -96,6 +96,15 @@ describe('Delete Booking', () => {
           errors,
         })
       )
+    })
+
+    it('should handle redirect when user navigates back after deletion has occured', async () => {
+      bookingService.find.mockResolvedValue(undefined)
+      req.flash.mockReturnValue(errors)
+
+      await controller.viewDelete()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/bookings')
     })
   })
 
