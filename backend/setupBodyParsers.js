@@ -12,7 +12,7 @@ module.exports = () => {
       autoClean: true,
     })
   )
-  router.use(bodyParser.urlencoded({ extended: false, limit: '5mb', parameterLimit: 1000000 }))
+  router.use(bodyParser.urlencoded({ extended: true, limit: '5mb', parameterLimit: 1000000 }))
   router.use(bodyParser.json({ limit: '1mb' }))
 
   return router

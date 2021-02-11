@@ -30,6 +30,7 @@ const agencyDetail = {
   agencyId: 'WWI',
   agencyType: '',
   description: 'some prison',
+  longDescription: 'some prison',
 }
 
 const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`) =>

@@ -368,6 +368,10 @@ declare module 'prisonApi' {
        * Agency description.
        */
       description: string
+      /**
+       * Agency  long description.
+       */
+      longDescription: string
     }
     /**
      * Agency Establishment Type
