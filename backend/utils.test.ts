@@ -2,6 +2,7 @@ import {
   capitalize,
   properCaseName,
   mapToQueryString,
+  groupBy,
   formatName,
   isToday,
   getDate,
@@ -74,6 +75,22 @@ describe('mapToQueryParams', () => {
 
   it('should handle encode values', () => {
     expect(mapToQueryString({ key1: "Hi, I'm here" })).toEqual("key1=Hi%2C%20I'm%20here")
+  })
+})
+
+describe('groupBy', () => {
+  it('should handle empty lists', () => {
+    expect(groupBy([], i => (i % 2 === 0 ? 'even' : 'odd'))).toEqual(new Map())
+  })
+
+  it('should handle null keys', () => {
+    expect(groupBy([1, 2], i => null)).toEqual(new Map([[null, [1, 2]]]))
+  })
+
+  it('should handle lists with content', () => {
+    expect(groupBy([1, 2, 3, 4, 5], i => (i % 2 === 0 ? 'even' : 'odd'))).toEqual(
+      new Map(Object.entries({ odd: [1, 3, 5], even: [2, 4] }))
+    )
   })
 })
 

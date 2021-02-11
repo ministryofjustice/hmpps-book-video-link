@@ -52,6 +52,22 @@ module.exports = {
     })
   },
 
+  stubAllCourts: agencies => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: '/api/agencies/type/CRT\\?jurisdictionCode=IMM&jurisdictionCode=CC&jurisdictionCode=MC',
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: agencies || [],
+      },
+    })
+  },
+
   stubAgencies: agencies => {
     return stubFor({
       request: {

@@ -42,6 +42,10 @@ export = class PrisonApi {
     return this.get(context, '/api/agencies/prison')
   }
 
+  public getCourts(context: Context): Promise<Agency[]> {
+    return this.get(context, '/api/agencies/type/CRT?jurisdictionCode=IMM&jurisdictionCode=CC&jurisdictionCode=MC')
+  }
+
   public getAgencyDetails(context: Context, agencyId: string): Promise<Agency> {
     return this.get(context, `/api/agencies/${agencyId}?activeOnly=false`)
   }

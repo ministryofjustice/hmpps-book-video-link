@@ -2,6 +2,7 @@ import express, { Router } from 'express'
 
 import type { Services } from '../services'
 
+import manageCourtsRoutes from './manageCourts'
 import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
 import deleteBookingRoutes from './deleteBooking'
@@ -13,6 +14,7 @@ const router = express.Router()
 export = function createRoutes(services: Services): Router {
   router.get('/', (req, res) => res.render('home.njk'))
 
+  router.use(manageCourtsRoutes(services))
   router.use(createBookingRoutes(services))
   router.use(deleteBookingRoutes(services))
   router.use(requestBookingRoutes(services))

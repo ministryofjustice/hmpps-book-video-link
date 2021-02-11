@@ -50,6 +50,16 @@ export const toMap = <T, F extends keyof T>(items: T[] = [], name: F): Map<T[F],
   }, new Map<T[F], T>())
 }
 
+export const groupBy = <T, K>(items: T[] = [], groupingFunction: (T) => K): Map<K, T[]> => {
+  return items.reduce((result, item) => {
+    const key = groupingFunction(item)
+    const currentValues = result.get(key) || []
+    currentValues.push(item)
+    result.set(key, currentValues)
+    return result
+  }, new Map<K, T[]>())
+}
+
 export const pascalToString = (value: string): string =>
   value &&
   value.substring(0, 1) +

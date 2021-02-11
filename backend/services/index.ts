@@ -4,6 +4,7 @@ import ViewBookingsService from './viewBookingsService'
 import NotificationService from './notificationService'
 import ReferenceDataService from './referenceDataService'
 import AvailabilityCheckService from './availabilityCheckService'
+import ManageCourtsService from './manageCourtsService'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi } = apis
 
@@ -12,6 +13,7 @@ const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
 const referenceDataService = new ReferenceDataService(prisonApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
+const manageCourtsService = new ManageCourtsService(prisonApi)
 
 export const services = {
   bookingService,
@@ -19,6 +21,7 @@ export const services = {
   referenceDataService,
   viewBookingsService,
   availabilityCheckService,
+  manageCourtsService,
 
   // Have to expose these as lots of routes require these directly
   ...apis,

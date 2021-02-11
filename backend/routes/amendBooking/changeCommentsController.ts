@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
 
-export = class SelectAvailableRoomsController {
+export = class ChangeCommentsController {
   public constructor(private readonly bookingService: BookingService) {}
 
   public view(): RequestHandler {

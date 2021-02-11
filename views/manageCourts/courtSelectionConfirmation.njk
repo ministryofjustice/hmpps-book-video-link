@@ -1,0 +1,27 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({
+                titleText: "Your court list has been updated",
+                classes: "govuk-!-margin-bottom-6"
+            }) }}
+            <p class="govuk-body">You can now create video link bookings and view existing bookings for the following courts:</p>
+        </div>
+    </div>
+
+    {{ govukButton({
+                text: "Continue",
+                type: 'submit',
+                attributes: {
+                'data-qa': 'confirm'
+                } 
+            }) }}
+{% endblock %}
