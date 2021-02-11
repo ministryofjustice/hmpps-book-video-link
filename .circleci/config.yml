@@ -1,12 +1,12 @@
 version: 2.1
 
 orbs:
-  hmpps: ministryofjustice/hmpps@2.3.0
+  hmpps: ministryofjustice/hmpps@2.3
 
 executors:
   integration-tests:
     docker:
-      - image: cimg/node:14.15.3-browsers
+      - image: cimg/node:14.15-browsers
       - image: bitnami/redis:5.0
         environment:
           ALLOW_EMPTY_PASSWORD=yes
@@ -16,7 +16,7 @@ jobs:
   build:
     executor:
       name: hmpps/node
-      tag: 14.15.3-browsers
+      tag: 14.15-browsers
     steps:
       - checkout
       - restore_cache:
@@ -51,7 +51,7 @@ jobs:
   unit_test:
     executor:
       name: hmpps/node
-      tag: 14.15.3-browsers
+      tag: 14.15-browsers
     steps:
       - checkout
       - restore_cache:
