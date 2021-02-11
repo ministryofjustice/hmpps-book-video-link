@@ -1,12 +1,8 @@
 import type { Request, Response } from 'express'
 
 import CourtSelectionConfirmationController from './courtSelectionConfirmationController'
-import ManageCourtsService from '../../services/manageCourtsService'
-
-jest.mock('../../services/manageCourtsService')
 
 describe('video link is available controller', () => {
-  const manageCourtsService = new ManageCourtsService(null) as jest.Mocked<ManageCourtsService>
   let controller: CourtSelectionConfirmationController
   const req = ({
     originalUrl: 'http://localhost',
@@ -23,7 +19,7 @@ describe('video link is available controller', () => {
   } as unknown) as jest.Mocked<Response>
 
   beforeEach(() => {
-    controller = new CourtSelectionConfirmationController(manageCourtsService)
+    controller = new CourtSelectionConfirmationController()
   })
 
   describe('view', () => {

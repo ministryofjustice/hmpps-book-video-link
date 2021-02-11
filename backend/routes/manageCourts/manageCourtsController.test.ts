@@ -65,31 +65,7 @@ describe('Manage courts controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('manageCourts/manageCourts.njk', {
-          courts: {
-            A: [
-              {
-                active: true,
-                agencyId: 'ABDRCT',
-                agencyType: 'CRT',
-                description: 'Aberdare County Court',
-                longdescription: 'Aberdare County Court',
-              },
-              {
-                active: true,
-                agencyId: 'ABDRMC',
-                agencyType: 'CRT',
-                description: 'Aberdare Mc',
-                longdescription: 'Aberdare Mc',
-              },
-              {
-                active: true,
-                agencyId: 'ABDRYC',
-                agencyType: 'CRT',
-                description: 'Aberdare Youth Court',
-                longdescription: 'Aberdare Youth Court',
-              },
-            ],
-          },
+          courts: courtList,
           errors: [],
         })
       })
@@ -105,31 +81,7 @@ describe('Manage courts controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('manageCourts/manageCourts.njk', {
-          courts: {
-            A: [
-              {
-                active: true,
-                agencyId: 'ABDRCT',
-                agencyType: 'CRT',
-                description: 'Aberdare County Court',
-                longdescription: 'Aberdare County Court',
-              },
-              {
-                active: true,
-                agencyId: 'ABDRMC',
-                agencyType: 'CRT',
-                description: 'Aberdare Mc',
-                longdescription: 'Aberdare Mc',
-              },
-              {
-                active: true,
-                agencyId: 'ABDRYC',
-                agencyType: 'CRT',
-                description: 'Aberdare Youth Court',
-                longdescription: 'Aberdare Youth Court',
-              },
-            ],
-          },
+          courts: courtList,
           errors: [{ text: 'error message', href: 'error' }],
         })
       })
