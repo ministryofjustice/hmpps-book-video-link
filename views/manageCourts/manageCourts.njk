@@ -5,6 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/accordion/macro.njk" import govukAccordion %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% set title = "Manage your list of courts" %}
 
 {% block content %}
 
@@ -22,7 +23,7 @@
         }}
       {% endif %}
 
-      <h1 class="govuk-heading-l">Manage your list of courts</h1>
+      <h1 class="govuk-heading-l">{{title}}</h1>
 
       <p class="govuk-body">If you select one court, this court will be used for all future bookings you make. If you select more than one court, you can select from these courts each time you make a booking.</p>
       <p class="govuk-body">You can change your list of courts in the 'Manage your list of courts' section.</p>

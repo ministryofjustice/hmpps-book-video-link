@@ -4,16 +4,15 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
 {% from "govuk/components/radios/macro.njk" import govukRadios %} 
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-
-{% block content %}
-
-    {% if changeComments == true %}
+{% if changeComments == true %}
         {% set title = "Your comments have been updated" %}
         {% set emailMessage = "We have sent you an email with your updated comments" %}
     {% else %}
         {% set title = "Your booking has been updated" %}
         {% set emailMessage = "We have sent you an email with the video link details" %}
     {% endif %}
+
+{% block content %}
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
