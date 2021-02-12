@@ -5,13 +5,13 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
 
-{% block content %}
+{% if changeTime == true %}
+    {% set title = "Change video link time" %}
+{% else %}
+    {% set title = "Change video link date and time" %}
+{% endif %}
 
-    {% if changeTime == true %}
-        {% set title = "Change video link time" %}
-    {% else %}
-        {% set title = "Change video link date and time" %}
-    {% endif %}
+{% block content %}
 
     <div class="govuk-grid-row govuk-!-padding-left-6">
         <div class="govuk-grid-column-two-thirds">

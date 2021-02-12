@@ -100,7 +100,6 @@ describe('Delete Booking', () => {
 
     it('should handle redirect when user navigates back after deletion has occured', async () => {
       bookingService.find.mockResolvedValue(undefined)
-      req.flash.mockReturnValue(errors)
 
       await controller.viewDelete()(req, res, null)
 
