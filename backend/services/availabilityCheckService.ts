@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { Location } from 'whereaboutsApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
@@ -29,7 +30,7 @@ export default class AvailabilityCheckService {
 
     const { pre, main, post } = await this.whereaboutsApi.getAvailableRooms(context, {
       agencyId,
-      date: date.format(DATE_ONLY_FORMAT_SPEC),
+      date: moment(date).format(DATE_ONLY_FORMAT_SPEC),
       vlbIdsToExclude: videoBookingId ? [videoBookingId] : [],
       preInterval: preRequired ? getPreAppointmentInterval(startTime) : null,
       mainInterval: createInterval([startTime, endTime]),
