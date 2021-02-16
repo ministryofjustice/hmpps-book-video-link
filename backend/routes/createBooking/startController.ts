@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { RequestHandler, Request, Response } from 'express'
-import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, buildDateTime } from '../../shared/dateHelpers'
+import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, buildDate } from '../../shared/dateHelpers'
 import { formatName } from '../../utils'
 import type PrisonApi from '../../api/prisonApi'
 import type AvailabilityCheckService from '../../services/availabilityCheckService'
@@ -58,8 +58,8 @@ export default class StartController {
         postAppointmentRequired,
       } = req.body
 
-      const startTime = buildDateTime({ date, hours: startTimeHours, minutes: startTimeMinutes })
-      const endTime = buildDateTime({ date, hours: endTimeHours, minutes: endTimeMinutes })
+      const startTime = buildDate(date, startTimeHours, startTimeMinutes)
+      const endTime = buildDate(date, endTimeHours, endTimeMinutes)
 
       const request = {
         agencyId,
