@@ -1,7 +1,7 @@
 import moment from 'moment'
-import validator, { errorTypes } from './startValidation'
+import validator, { errorTypes } from './dateAndTimeValidation'
 
-describe('startValidation', () => {
+describe('DateAndTimeValidation', () => {
   const now = moment('2021-01-14T11:20:00.000Z')
 
   const form = {
@@ -146,6 +146,18 @@ describe('startValidation', () => {
     it('should return an error when an invalid date is entered', () => {
       expect(validator({ ...form, date: '31/02/2020' })).toStrictEqual([errorTypes.date.invalid])
       expect(validator({ ...form, date: 'bob' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
+    it('should return an error when an invalid day of month is entered', () => {
+      expect(validator({ ...form, date: '1/02/2020' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
+    it('should return an error when an invalid month is entered', () => {
+      expect(validator({ ...form, date: '31/2/2020' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
+    it('should return an error when an invalid year is entered', () => {
+      expect(validator({ ...form, date: '31/02/20' })).toStrictEqual([errorTypes.date.invalid])
     })
 
     it('should return an error when no start time is entered', () => {

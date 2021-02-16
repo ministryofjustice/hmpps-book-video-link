@@ -5,7 +5,7 @@ import StartController from './startController'
 import selectCourt from './selectCourtController'
 import selectRooms from './selectRoomsController'
 import prisonerSearch from './prisonerSearchController'
-import startValidation from './startValidation'
+import dateAndTimeValidation from '../shared/dateAndTimeValidation'
 
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
@@ -25,7 +25,7 @@ export default function createRoutes(services: Services): Router {
     const startController = new StartController(services.prisonApi, services.availabilityCheckService)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
     router.get(path, withRetryLink('/prisoner-search'), asyncMiddleware(startController.view()))
-    router.post(path, validationMiddleware(startValidation), startController.submit())
+    router.post(path, validationMiddleware(dateAndTimeValidation), startController.submit())
   }
 
   {

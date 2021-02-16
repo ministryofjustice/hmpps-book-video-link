@@ -4,7 +4,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
 import ChangeDateAndTimeController from './changeDateAndTimeController'
-import changeDateAndTimeValidation from './changeDateAndTimeValidation'
+import dateAndTimeValidation from '../shared/dateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
@@ -28,14 +28,14 @@ export default function createRoutes({ bookingService, availabilityCheckService 
   router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view(false)))
   router.post(
     '/change-date-and-time/:bookingId',
-    validationMiddleware(changeDateAndTimeValidation),
+    validationMiddleware(dateAndTimeValidation),
     asyncMiddleware(changeDateAndTime.submit(false))
   )
 
   router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
   router.post(
     '/change-time/:bookingId',
-    validationMiddleware(changeDateAndTimeValidation),
+    validationMiddleware(dateAndTimeValidation),
     asyncMiddleware(changeDateAndTime.submit(true))
   )
 
