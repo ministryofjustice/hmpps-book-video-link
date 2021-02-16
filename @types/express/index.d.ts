@@ -9,10 +9,6 @@ declare module 'express-session' {
       name: string
       username: string
       activeCaseLoadId?: string
-      active?: boolean
-      authSource?: string
-      staffId?: number
-      userId?: string
     }
   }
 }
