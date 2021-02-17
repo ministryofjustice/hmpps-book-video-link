@@ -6,7 +6,7 @@ describe('Select court appoinment court', () => {
   const req = {
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345' },
-    session: { userDetails: { activeCaseLoadId: 'LEI' } },
+    session: { userDetails: {} },
     body: {},
   }
   const res = { locals: {} }

@@ -17,7 +17,7 @@ describe('Select available rooms controller', () => {
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: '12' },
-    session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
+    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
     body: {},
     flash: jest.fn(),
   } as unknown) as jest.Mocked<Request>

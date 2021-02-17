@@ -12,7 +12,7 @@ describe('video link is available controller', () => {
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
+    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
     body: {},
     flash: jest.fn(),
   } as unknown) as jest.Mocked<Request>

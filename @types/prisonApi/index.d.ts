@@ -6615,10 +6615,6 @@ declare module 'prisonApi' {
        */
       active: boolean
       /**
-       * Current Active Caseload
-       */
-      activeCaseLoadId?: string
-      /**
        * Indicates the user account has expired
        */
       expiredFlag?: boolean

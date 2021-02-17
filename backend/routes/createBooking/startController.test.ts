@@ -80,7 +80,6 @@ describe('Add court appointment', () => {
 
       expect(req.session.userDetails).toEqual({
         ...req.session.userDetails,
-        activeCaseLoadId: 'MDI',
       })
     })
 
@@ -160,6 +159,7 @@ describe('Add court appointment', () => {
         startTimeMinutes: '00',
         endTime: '2021-01-01T02:00:00',
         startTime: '2021-01-01T01:00:00',
+        agencyId: 'MDI',
       })
     })
 

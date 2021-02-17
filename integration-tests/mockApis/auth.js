@@ -93,7 +93,6 @@ const token = () =>
 
 const stubUser = (username, caseload) => {
   const user = username || 'ITAG_USER'
-  const activeCaseLoadId = caseload || 'MDI'
   return stubFor({
     request: {
       method: 'GET',
@@ -111,7 +110,6 @@ const stubUser = (username, caseload) => {
         active: true,
         name: `${user} name`,
         authSource: 'nomis',
-        activeCaseLoadId,
       },
     },
   })
@@ -130,7 +128,6 @@ const stubUserMe = ({ username = 'ITAG_USER', staffId = 12345, name } = {}) => {
       },
       jsonBody: {
         username,
-        activeCaseLoadId: 'MDI',
         staffId,
         name,
       },
