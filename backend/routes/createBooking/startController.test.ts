@@ -75,14 +75,6 @@ describe('Add court appointment', () => {
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith({ context: {} }, 'MDI')
     })
 
-    it('should pack agencyId into user details', async () => {
-      await controller.view()(req, res)
-
-      expect(req.session.userDetails).toEqual({
-        ...req.session.userDetails,
-      })
-    })
-
     it('should render template with default data', async () => {
       await controller.view()(req, res)
 
