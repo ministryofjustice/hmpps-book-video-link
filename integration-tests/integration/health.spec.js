@@ -4,6 +4,7 @@ context('Health page reports health correctly', () => {
     cy.task('stubHealthAllHealthy')
     cy.task('stubAuthHealth', 500)
     cy.task('stubPrisonApiHealth', 500)
+
     cy.request({ url: '/health', method: 'GET', failOnStatusCode: false }).then(response => {
       expect(response.body.name).to.equal('book-video-link')
       // eslint-disable-next-line no-unused-expressions
@@ -13,6 +14,7 @@ context('Health page reports health correctly', () => {
         prison: { timeout: 1000, code: 'ECONNABORTED', errno: 'ETIMEDOUT', retries: 2 },
         tokenverification: 'UP',
         whereabouts: 'UP',
+        prisonerOffenderSearch: 'UP',
       })
     })
   })
@@ -30,6 +32,7 @@ context('Health page reports health correctly', () => {
         prison: 'UP',
         tokenverification: 'UP',
         whereabouts: 'UP',
+        prisonerOffenderSearch: 'UP',
       })
     })
   })

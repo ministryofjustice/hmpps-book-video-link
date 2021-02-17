@@ -2,9 +2,7 @@ import type { InmateDetail, OffenderBooking, PrisonContactDetail, PrisonerDetail
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
 import { mapToQueryString } from '../utils'
-import Client from './oauthEnabledClient'
-
-type Context = any
+import Client, { Context } from './oauthEnabledClient'
 
 type GlobalSearchRequest = {
   offenderNo: string
@@ -16,7 +14,7 @@ type GlobalSearchRequest = {
   includeAliases: boolean
 }
 
-export = class PrisonApi {
+export default class PrisonApi {
   constructor(private readonly client: Client) {}
 
   private processResponse<T>(context: Context): (Response) => T {
@@ -32,10 +30,6 @@ export = class PrisonApi {
 
   public getPrisonBooking(context: Context, bookingId: number): Promise<InmateDetail> {
     return this.get(context, `/api/bookings/${bookingId}`)
-  }
-
-  public getPrisonBookings(context: Context, bookingIds: number[]): Promise<OffenderBooking[]> {
-    return this.get(context, `/api/bookings?bookingId=${bookingIds}`, 1000)
   }
 
   public getAgencies(context: Context): Promise<PrisonContactDetail[]> {

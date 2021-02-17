@@ -8,10 +8,8 @@ import {
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
-import type Client from './oauthEnabledClient'
+import Client, { Context } from './oauthEnabledClient'
 import { mapToQueryString } from '../utils'
-
-type Context = any
 
 export = class WhereaboutsApi {
   constructor(private readonly client: Client) {}

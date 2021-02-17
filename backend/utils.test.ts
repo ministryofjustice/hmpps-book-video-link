@@ -84,7 +84,7 @@ describe('groupBy', () => {
   })
 
   it('should handle null keys', () => {
-    expect(groupBy([1, 2], i => null)).toEqual(new Map([[null, [1, 2]]]))
+    expect(groupBy([1, 2], _ => null)).toEqual(new Map([[null, [1, 2]]]))
   })
 
   it('should handle lists with content', () => {

@@ -2,6 +2,7 @@ const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
 const whereabouts = require('../mockApis/whereabouts')
 const tokenverification = require('../mockApis/tokenverification')
+const prisonerOffenderSearch = require('../mockApis/prisonerOffenderSearch')
 
 const { resetStubs } = require('../mockApis/wiremock')
 
@@ -23,6 +24,7 @@ module.exports = on => {
         prisonApi.stubHealth(),
         whereabouts.stubHealth(),
         tokenverification.stubHealth(),
+        prisonerOffenderSearch.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
     stubLoginCourt: user => Promise.all([auth.stubLoginCourt(user), tokenverification.stubVerifyToken(true)]),
@@ -57,8 +59,9 @@ module.exports = on => {
     stubUserMe: me => auth.stubUserMe(me),
     stubPrisonApiGlobalSearch: prisonApi.stubPrisonApiGlobalSearch,
     stubLocationGroups: locationGroups => whereabouts.stubLocationGroups(locationGroups),
-    stubOffenderBookings: bookings => prisonApi.stubOffenderBookings(bookings),
     stubOffenderBooking: ({ bookingId, response }) => prisonApi.stubOffenderBooking(bookingId, response),
     stubLocation: ({ locationId, response }) => prisonApi.stubLocation(locationId, response),
+
+    stubFindPrisonersByBookingIds: prisonerOffenderSearch.stubFindPrisonersByBookingIds,
   })
 }

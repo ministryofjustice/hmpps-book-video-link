@@ -1,4 +1,5 @@
-import type { OffenderBooking, Location, Prison } from 'prisonApi'
+import type { Location, Prison } from 'prisonApi'
+import type { Prisoner } from 'prisonerOffenderSearchApi'
 import moment from 'moment'
 import type { Appointment, VideoLinkBooking } from 'whereaboutsApi'
 import PrisonApi from '../api/prisonApi'
@@ -6,9 +7,14 @@ import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls, toMap } from '../utils'
 import { app } from '../config'
 import { Context, HearingType, Bookings } from './model'
+import PrisonerOffenderSearchApi from '../api/prisonerOffenderSearchApi'
 
 export = class ViewBookingsService {
-  constructor(private readonly prisonApi: PrisonApi, private readonly whereaboutsApi: WhereaboutsApi) {}
+  constructor(
+    private readonly prisonApi: PrisonApi,
+    private readonly whereaboutsApi: WhereaboutsApi,
+    private readonly prisonerOffenderSearch: PrisonerOffenderSearchApi
+  ) {}
 
   private filterByCourt(option: string, courts: string[], booking: VideoLinkBooking) {
     if (!option) {
@@ -20,20 +26,20 @@ export = class ViewBookingsService {
     return option === booking.court
   }
 
-  private getOffenderName(offenderBookings: OffenderBooking[], booking: VideoLinkBooking) {
-    const offenderBooking = offenderBookings.find(b => b.bookingId === booking.bookingId)
+  private getOffenderName(offenderBookings: Prisoner[], booking: VideoLinkBooking) {
+    const offenderBooking = offenderBookings.find(b => Number(b.bookingId) === booking.bookingId)
     return offenderBooking ? formatName(offenderBooking.firstName, offenderBooking.lastName) : ''
   }
 
-  private async toAppointment(
+  private async appointmentBuilder(
     context: Context,
     prisons: Map<string, Prison>,
     locations: Map<number, Location>,
     bookings: VideoLinkBooking[]
   ) {
-    const offenderBookings = await this.prisonApi.getPrisonBookings(context, [
-      ...new Set(bookings.map(b => b.bookingId)),
-    ])
+    const prisoners = !bookings.length
+      ? []
+      : await this.prisonerOffenderSearch.getPrisoners(context, [...new Set(bookings.map(b => b.bookingId))])
 
     return (booking: VideoLinkBooking, slot: Appointment, hearingType: HearingType) => {
       const location = locations.get(slot.locationId)
@@ -41,7 +47,7 @@ export = class ViewBookingsService {
       return {
         locationId: slot.locationId,
         court: booking.court,
-        offenderName: this.getOffenderName(offenderBookings, booking),
+        offenderName: this.getOffenderName(prisoners, booking),
         prison: prison?.formattedDescription || '',
         prisonLocation: location?.userDescription || '',
         videoLinkBookingId: booking.videoLinkBookingId,
@@ -72,7 +78,7 @@ export = class ViewBookingsService {
       .flatMap(array => array)
       .filter(booking => this.filterByCourt(courtFilter, courts, booking))
 
-    const toAppointment = await this.toAppointment(context, prisons, locations, relevantBookings)
+    const toAppointment = await this.appointmentBuilder(context, prisons, locations, relevantBookings)
 
     const appointments = relevantBookings
       .flatMap(booking => [

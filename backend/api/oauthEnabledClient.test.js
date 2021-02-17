@@ -1,5 +1,5 @@
 const nock = require('nock')
-const Client = require('./oauthEnabledClient')
+const Client = require('./oauthEnabledClient').default
 const contextProperties = require('../contextProperties')
 const logger = require('../log')
 

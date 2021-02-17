@@ -17,7 +17,7 @@ context('A user can amend a booking', () => {
 
     // Stub booking list
     cy.task('stubCourts')
-    cy.task('stubOffenderBookings', [
+    cy.task('stubFindPrisonersByBookingIds', [
       { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])

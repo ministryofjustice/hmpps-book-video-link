@@ -1,6 +1,6 @@
 import moment from 'moment'
-import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import type { ValidationError } from '../../middleware/validationMiddleware'
+import { buildDate, DAY_MONTH_YEAR } from './dateHelpers'
+import type { ValidationError } from '../middleware/validationMiddleware'
 
 export const errorTypes = {
   missingPreCourt: {

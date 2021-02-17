@@ -20,9 +20,9 @@ context('A user can delete a booking', () => {
 
     // Stub booking list
     cy.task('stubCourts')
-    cy.task('stubOffenderBookings', [
-      { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
-      { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
+    cy.task('stubFindPrisonersByBookingIds', [
+      { bookingId: '1', firstName: 'OFFENDER', lastName: 'ONE' },
+      { bookingId: '2', firstName: 'OFFENDER', lastName: 'TWO' },
     ])
 
     cy.task('stubGetVideoLinkBookings', {

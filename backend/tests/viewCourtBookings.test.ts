@@ -5,7 +5,7 @@ import ViewBookingsService from '../services/viewBookingsService'
 jest.mock('../services/viewBookingsService')
 
 describe('View court bookings', () => {
-  const viewBookingsService = new ViewBookingsService(null, null) as jest.Mocked<ViewBookingsService>
+  const viewBookingsService = new ViewBookingsService(null, null, null) as jest.Mocked<ViewBookingsService>
 
   let req
   let res

@@ -4,7 +4,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
 import ChangeDateAndTimeController from './changeDateAndTimeController'
-import dateAndTimeValidation from '../shared/dateAndTimeValidation'
+import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 import SelectAvailableRoomsController from './selectAvailableRoomsController'

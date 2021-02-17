@@ -13,7 +13,7 @@ context('A user can view the video link home page', () => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('stubCourts')
     cy.task('stubAgencies', [{ agencyId: 'WWI', formattedDescription: 'HMP Wandsworth' }])
-    cy.task('stubOffenderBookings', [
+    cy.task('stubFindPrisonersByBookingIds', [
       { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])

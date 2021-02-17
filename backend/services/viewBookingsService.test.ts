@@ -1,17 +1,21 @@
 import moment from 'moment'
-import type { OffenderBooking, Location, Prison } from 'prisonApi'
-import { VideoLinkBooking } from 'whereaboutsApi'
+import type { Location, Prison } from 'prisonApi'
+import type { VideoLinkBooking } from 'whereaboutsApi'
+import type { Prisoner } from 'prisonerOffenderSearchApi'
 
 import config from '../config'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import ViewBookingsService from './viewBookingsService'
+import PrisonerOffenderSearchApi from '../api/prisonerOffenderSearchApi'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
+jest.mock('../api/prisonerOffenderSearchApi')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
+const prisonerOffenderSearchApi = new PrisonerOffenderSearchApi(null) as jest.Mocked<PrisonerOffenderSearchApi>
 
 describe('Add court appointment', () => {
   let viewBookingsService: ViewBookingsService
@@ -43,10 +47,11 @@ describe('Add court appointment', () => {
   })
 
   beforeEach(() => {
+    jest.resetAllMocks()
     whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
     prisonApi.getAgencies.mockResolvedValue([])
     prisonApi.getLocationsForAppointments.mockResolvedValue([])
-    viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi)
+    viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi)
     config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
 
@@ -98,8 +103,8 @@ describe('Add court appointment', () => {
     }
 
     beforeEach(() => {
-      prisonApi.getPrisonBookings.mockResolvedValue([
-        { bookingId: 1, firstName: 'BOB', lastName: 'SMITH' } as OffenderBooking,
+      prisonerOffenderSearchApi.getPrisoners.mockResolvedValue([
+        { bookingId: '1', firstName: 'BOB', lastName: 'SMITH' } as Prisoner,
       ])
       prisonApi.getLocationsForAppointments.mockResolvedValue([
         { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
@@ -135,7 +140,18 @@ describe('Add court appointment', () => {
       await viewBookingsService.getList(context, now, null)
 
       expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
-      expect(prisonApi.getPrisonBookings).toHaveBeenCalledWith(context, [1, 2])
+      expect(prisonerOffenderSearchApi.getPrisoners).toHaveBeenCalledWith(context, [1, 2])
+      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
+      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
+    })
+
+    it('Check APIs are called correctly when no bookings', async () => {
+      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
+
+      await viewBookingsService.getList(context, now, null)
+
+      expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
+      expect(prisonerOffenderSearchApi.getPrisoners).not.toHaveBeenCalled()
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
     })

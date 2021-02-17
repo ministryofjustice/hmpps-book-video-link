@@ -43,6 +43,10 @@ module.exports = {
       url: process.env.API_WHEREABOUTS_ENDPOINT_URL || 'http://localhost:8082/',
       timeoutSeconds: toInt(process.env.API_WHEREABOUTS_ENDPOINT_TIMEOUT_SECONDS, 30),
     },
+    prisonerOffenderSearch: {
+      url: process.env.API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL || 'http://localhost:8083/',
+      timeoutSeconds: toInt(process.env.API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL, 30),
+    },
     tokenverification: {
       url: process.env.TOKENVERIFICATION_API_URL || 'http://localhost:8100',
       timeoutSeconds: toInt(process.env.TOKENVERIFICATION_API_TIMEOUT_SECONDS, 10),

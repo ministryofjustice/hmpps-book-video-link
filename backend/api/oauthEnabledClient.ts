@@ -36,6 +36,10 @@ interface ClientOptions {
   timeout: number
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Request = string | object
+export type Context = unknown
+
 /**
  * Build a client for the supplied configuration. The client wraps axios get, post, put etc while ensuring that
  * the remote calls carry valid oauth headers.
@@ -48,7 +52,7 @@ interface ClientOptions {
  *     post: (context: any, path: string, body: any) => Promise<any>
  * }}
  */
-export = class Client {
+export default class Client {
   constructor(private readonly options: ClientOptions) {}
 
   private baseUrl = this.options.baseUrl
@@ -77,7 +81,7 @@ export = class Client {
    *        The header isn't set if resultLimit is falsy.
    * @returns {Promise<any>} A Promise which settles to the superagent result object if the promise is resolved, otherwise to the 'error' object.
    */
-  public get(context: any, path: string, resultLimit?: number): Promise<superagent.Response> {
+  public get(context: Context, path: string, resultLimit?: number): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .get(this.remoteUrl + path)
@@ -102,7 +106,7 @@ export = class Client {
    * @param {any} body
    * @returns {any} A Promise which resolves to the superagent result object, or the superagent error object if it is rejected
    */
-  public post(context: any, path: string, body: any): Promise<superagent.Response> {
+  public post(context: Context, path: string, body: Request): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .post(this.remoteUrl + path)
@@ -115,7 +119,12 @@ export = class Client {
     })
   }
 
-  public put(context: any, path: string, body: any, contentType = 'application/json'): Promise<superagent.Response> {
+  public put(
+    context: Context,
+    path: string,
+    body: Request = {},
+    contentType = 'application/json'
+  ): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .put(this.remoteUrl + path)
@@ -129,7 +138,7 @@ export = class Client {
     })
   }
 
-  public delete(context: any, path: string): Promise<superagent.Response> {
+  public delete(context: Context, path: string): Promise<superagent.Response> {
     return new Promise((resolve, reject) => {
       superagent
         .delete(this.remoteUrl + path)

@@ -5,7 +5,7 @@ import StartController from './startController'
 import selectCourt from './selectCourtController'
 import selectRooms from './selectRoomsController'
 import prisonerSearch from './prisonerSearchController'
-import dateAndTimeValidation from '../shared/dateAndTimeValidation'
+import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
 
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
