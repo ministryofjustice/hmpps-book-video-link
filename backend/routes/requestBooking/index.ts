@@ -1,9 +1,14 @@
 import express, { Router } from 'express'
 import { requestBookingFactory } from './requestBooking'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
+import validationMiddleware from '../../middleware/validationMiddleware'
 import withRetryLink from '../../middleware/withRetryLink'
 import logError from '../../logError'
 import { Services } from '../../services'
+
+import RequestBookingValidation from './requestBookingValidation'
+import SelectCourtValidation from './selectCourtValidation'
+import OffenderDetailsValidation from './offenderDetailsValidation'
 
 export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, prisonApi }: Services): Router {
   const routes = express.Router({ mergeParams: true })
@@ -25,9 +30,19 @@ export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, pris
   })
 
   routes.get('/', withRetryLink('/request-booking'), asyncMiddleware(startOfJourney))
-  routes.post('/check-availability', withRetryLink('/request-booking'), asyncMiddleware(checkAvailability))
+  routes.post(
+    '/check-availability',
+    withRetryLink('/request-booking'),
+    validationMiddleware(RequestBookingValidation),
+    asyncMiddleware(checkAvailability)
+  )
   routes.get('/select-court', withRetryLink('/request-booking/select-court'), asyncMiddleware(selectCourt))
-  routes.post('/validate-court', withRetryLink('/request-booking/select-court'), asyncMiddleware(validateCourt))
+  routes.post(
+    '/validate-court',
+    withRetryLink('/request-booking/select-court'),
+    validationMiddleware(SelectCourtValidation),
+    asyncMiddleware(validateCourt)
+  )
   routes.get(
     '/enter-offender-details',
     withRetryLink('/request-booking/enter-offender-details'),
@@ -36,6 +51,7 @@ export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, pris
   routes.post(
     '/create-booking-request',
     withRetryLink('/request-booking/enter-offender-details'),
+    validationMiddleware(OffenderDetailsValidation),
     asyncMiddleware(createBookingRequest)
   )
   routes.get('/confirmation', withRetryLink('/request-booking/confirmation'), asyncMiddleware(confirm))
