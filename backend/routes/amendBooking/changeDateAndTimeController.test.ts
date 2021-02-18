@@ -16,7 +16,7 @@ describe('change date and time controller', () => {
   const req = ({
     originalUrl: 'http://localhost',
     params: { agencyId: 'WWI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Bob Smith', username: 'BOB_SMITH' } },
+    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
     query: {},
     body: {
       agencyId: 'WWI',

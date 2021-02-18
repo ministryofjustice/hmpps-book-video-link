@@ -21,10 +21,6 @@ export default class StartController {
       const { firstName, lastName, bookingId } = offenderDetails
       const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
       const agencyDescription = agencyDetails.description
-      req.session.userDetails = {
-        ...req.session.userDetails,
-        activeCaseLoadId: agencyId,
-      }
 
       return res.render('createBooking/start.njk', {
         offenderNo,
@@ -92,6 +88,7 @@ export default class StartController {
         endTimeMinutes,
         preAppointmentRequired,
         postAppointmentRequired,
+        agencyId,
       })
       return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/select-court`)
     }

@@ -8,7 +8,6 @@ declare module 'express-session' {
     userDetails: {
       name: string
       username: string
-      activeCaseLoadId?: string
     }
   }
 }

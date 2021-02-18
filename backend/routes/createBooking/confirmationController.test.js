@@ -20,6 +20,7 @@ describe('Confirm appointments', () => {
     recurring: 'No',
     comment: 'Test',
     court: 'London',
+    agencyId: 'MDI',
   }
 
   beforeEach(() => {
@@ -109,5 +110,15 @@ describe('Confirm appointments', () => {
     req.session.userDetails.authSource = 'auth'
 
     await expect(index(req, res)).rejects.toThrow('Appointment details are missing')
+  })
+  it('Should call referenceDataService with agencyId', async () => {
+    const index = controller({
+      prisonApi,
+      referenceDataService,
+    })
+    res.locals = {}
+    await index(req, res)
+
+    expect(referenceDataService.getRooms).toBeCalledWith({}, 'MDI')
   })
 })

@@ -31,7 +31,6 @@ module.exports = {
         jsonBody: {
           firstName: 'JAMES',
           lastName: 'STUART',
-          activeCaseLoadId: 'MDI',
         },
       },
     })

@@ -75,15 +75,6 @@ describe('Add court appointment', () => {
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith({ context: {} }, 'MDI')
     })
 
-    it('should pack agencyId into user details', async () => {
-      await controller.view()(req, res)
-
-      expect(req.session.userDetails).toEqual({
-        ...req.session.userDetails,
-        activeCaseLoadId: 'MDI',
-      })
-    })
-
     it('should render template with default data', async () => {
       await controller.view()(req, res)
 
@@ -160,6 +151,7 @@ describe('Add court appointment', () => {
         startTimeMinutes: '00',
         endTime: '2021-01-01T02:00:00',
         startTime: '2021-01-01T01:00:00',
+        agencyId: 'MDI',
       })
     })
 

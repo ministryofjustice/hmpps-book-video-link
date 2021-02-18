@@ -9,9 +9,6 @@ const { formatName } = require('../../utils')
 
 module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
   const { offenderNo } = req.params
-  const { activeCaseLoadId } = req.session.userDetails
-
-  const locationTypes = await referenceDataService.getRooms(res.locals, activeCaseLoadId)
 
   const appointmentDetails = req.flash('appointmentDetails')
   if (!appointmentDetails || !appointmentDetails.length) throw new Error('Appointment details are missing')
@@ -25,6 +22,7 @@ module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
     postAppointment,
     agencyDescription,
     court,
+    agencyId,
   } = appointmentDetails.reduce(
     (acc, current) => ({
       ...acc,
@@ -33,6 +31,7 @@ module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
     {}
   )
 
+  const locationTypes = await referenceDataService.getRooms(res.locals, agencyId)
   const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
   const { firstName, lastName } = await prisonApi.getPrisonerDetails(res.locals, offenderNo)
 

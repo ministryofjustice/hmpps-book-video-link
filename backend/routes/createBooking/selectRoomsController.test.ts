@@ -25,7 +25,7 @@ describe('Select court appointment rooms', () => {
   const req = {
     originalUrl: 'http://localhost',
     params: { agencyId: 'WWI', offenderNo: 'A12345' },
-    session: { userDetails: { activeCaseLoadId: 'LEI', name: 'Court User' } },
+    session: { userDetails: { name: 'Court User' } },
     body: {},
     flash: jest.fn(),
   }
