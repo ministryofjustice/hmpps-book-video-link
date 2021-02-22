@@ -1,8 +1,7 @@
 const moment = require('moment')
-const { buildDate, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
+const { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
 const {
   notifications: { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId, emails: emailConfig },
-  app: { videoLinkEnabledFor },
 } = require('../../config')
 const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
@@ -17,84 +16,12 @@ const extractObjectFromFlash = ({ req, key }) =>
 
 const getBookingDetails = req => extractObjectFromFlash({ req, key: 'requestBooking' })
 const packBookingDetails = (req, data) => req.flash('requestBooking', data)
-const findBookingDetails = req => {
-  try {
-    return getBookingDetails(req)
-  } catch (error) {
-    if (error.status === 500) {
-      return undefined
-    }
-    throw error
-  }
-}
-
 const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi }) => {
   const sendEmail = ({ templateId, email, personalisation }) =>
     notifyApi.sendEmail(templateId, email, {
       personalisation,
       reference: null,
     })
-
-  const getVideoLinkEnabledPrisons = async locals => {
-    const prisons = await prisonApi.getAgencies(locals)
-
-    return prisons
-      .filter(prison => videoLinkEnabledFor.includes(prison.agencyId))
-      .map(vlp => ({
-        agencyId: vlp.agencyId,
-        description: vlp.formattedDescription || vlp.description,
-      }))
-  }
-
-  const startOfJourney = async (req, res) => {
-    const prisonDropdownValues = (await getVideoLinkEnabledPrisons(res.locals)).map(prison => ({
-      text: prison.description,
-      value: prison.agencyId,
-    }))
-    return res.render('requestBooking/requestBooking.njk', {
-      prisons: prisonDropdownValues,
-    })
-  }
-
-  const checkAvailability = async (req, res) => {
-    const {
-      prison,
-      date,
-      startTimeHours,
-      startTimeMinutes,
-      endTimeHours,
-      endTimeMinutes,
-      preAppointmentRequired,
-      postAppointmentRequired,
-    } = req.body
-
-    const startTime = buildDate(date, startTimeHours, startTimeMinutes)
-    const endTime = buildDate(date, endTimeHours, endTimeMinutes)
-
-    if (req.errors) {
-      packBookingDetails(req)
-      const prisonDropdownValues = (await getVideoLinkEnabledPrisons(res.locals)).map(p => ({
-        text: p.description,
-        value: p.agencyId,
-      }))
-      return res.render('requestBooking/requestBooking.njk', {
-        errors: req.errors,
-        prisons: prisonDropdownValues,
-        formValues: req.body,
-      })
-    }
-
-    packBookingDetails(req, {
-      prison,
-      date,
-      startTime: moment(startTime).format(DATE_TIME_FORMAT_SPEC),
-      endTime: endTime && moment(endTime).format(DATE_TIME_FORMAT_SPEC),
-      preAppointmentRequired,
-      postAppointmentRequired,
-    })
-
-    return res.redirect('/request-booking/select-court')
-  }
 
   const enterOffenderDetails = async (req, res) =>
     res.render('requestBooking/offenderDetails.njk', {
@@ -104,10 +31,7 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
 
   const selectCourt = async (req, res) => {
     const { courtLocations } = await whereaboutsApi.getCourtLocations(res.locals)
-    const details = findBookingDetails(req)
-    if (!details.prison) {
-      return res.redirect('/request-booking')
-    }
+    const details = getBookingDetails(req)
     const { date, startTime, endTime, prison, preAppointmentRequired, postAppointmentRequired } = details
 
     const getPreHearingStartAndEndTime = () => {
@@ -153,14 +77,14 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
         value: location,
         text: location,
       })),
-      errors: req.flash('errors') || [],
+      errors: req.errors,
     })
   }
 
   const validateCourt = async (req, res) => {
     const { hearingLocation } = req.body
     const bookingDetails = getBookingDetails(req)
-    if (req.errors && req.errors.length > 0) {
+    if (req.errors) {
       packBookingDetails(req, bookingDetails)
       req.flash('errors', req.errors)
       return res.redirect('/request-booking/select-court')
@@ -176,12 +100,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
     const { firstName, lastName, dobDay, dobMonth, dobYear, comments } = req.body
 
     const bookingDetails = getBookingDetails(req)
-
-    const dateOfBirth = moment({
-      day: dobDay,
-      month: Number.isNaN(dobMonth) ? dobMonth : dobMonth - 1,
-      year: dobYear,
-    })
 
     if (req.errors) {
       packBookingDetails(req, bookingDetails)
@@ -199,6 +117,12 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
       postHearingStartAndEndTime,
       hearingLocation,
     } = bookingDetails
+
+    const dateOfBirth = moment({
+      day: dobDay,
+      month: Number.isNaN(dobMonth) ? dobMonth : dobMonth - 1,
+      year: dobYear,
+    })
 
     const prisons = await prisonApi.getAgencies(res.locals)
     const matchingPrison = prisons.find(p => p.agencyId === prison)
@@ -293,8 +217,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
     })
   }
   return {
-    startOfJourney,
-    checkAvailability,
     selectCourt,
     validateCourt,
     createBookingRequest,

@@ -6,22 +6,23 @@ import withRetryLink from '../../middleware/withRetryLink'
 import logError from '../../logError'
 import { Services } from '../../services'
 
-import RequestBookingValidation from './requestBookingValidation'
-import SelectCourtValidation from './selectCourtValidation'
-import OffenderDetailsValidation from './offenderDetailsValidation'
+import StartController from './startController'
+import requestBookingValidation from './requestBookingValidation'
+import selectCourtValidation from './selectCourtValidation'
+import offenderDetailsValidation from './offenderDetailsValidation'
 
-export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, prisonApi }: Services): Router {
+export default function createRoutes({
+  locationService,
+  notifyApi,
+  whereaboutsApi,
+  oauthApi,
+  prisonApi,
+}: Services): Router {
+  const startController = new StartController(locationService)
+
   const routes = express.Router({ mergeParams: true })
 
-  const {
-    startOfJourney,
-    checkAvailability,
-    selectCourt,
-    validateCourt,
-    enterOffenderDetails,
-    createBookingRequest,
-    confirm,
-  } = requestBookingFactory({
+  const { selectCourt, validateCourt, enterOffenderDetails, createBookingRequest, confirm } = requestBookingFactory({
     logError,
     notifyApi,
     whereaboutsApi,
@@ -29,18 +30,18 @@ export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, pris
     prisonApi,
   })
 
-  routes.get('/', withRetryLink('/request-booking'), asyncMiddleware(startOfJourney))
+  routes.get('/', withRetryLink('/request-booking'), asyncMiddleware(startController.view()))
   routes.post(
     '/check-availability',
     withRetryLink('/request-booking'),
-    validationMiddleware(RequestBookingValidation),
-    asyncMiddleware(checkAvailability)
+    validationMiddleware(requestBookingValidation),
+    asyncMiddleware(startController.submit())
   )
   routes.get('/select-court', withRetryLink('/request-booking/select-court'), asyncMiddleware(selectCourt))
   routes.post(
     '/validate-court',
     withRetryLink('/request-booking/select-court'),
-    validationMiddleware(SelectCourtValidation),
+    validationMiddleware(selectCourtValidation),
     asyncMiddleware(validateCourt)
   )
   routes.get(
@@ -51,7 +52,7 @@ export default function createRoutes({ notifyApi, whereaboutsApi, oauthApi, pris
   routes.post(
     '/create-booking-request',
     withRetryLink('/request-booking/enter-offender-details'),
-    validationMiddleware(OffenderDetailsValidation),
+    validationMiddleware(offenderDetailsValidation),
     asyncMiddleware(createBookingRequest)
   )
   routes.get('/confirmation', withRetryLink('/request-booking/confirmation'), asyncMiddleware(confirm))

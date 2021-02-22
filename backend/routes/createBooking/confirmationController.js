@@ -7,7 +7,7 @@ const { prepostDurations } = require('../../shared/appointmentConstants')
 
 const { formatName } = require('../../utils')
 
-module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
+module.exports = ({ prisonApi, locationService }) => async (req, res) => {
   const { offenderNo } = req.params
 
   const appointmentDetails = req.flash('appointmentDetails')
@@ -31,7 +31,7 @@ module.exports = ({ prisonApi, referenceDataService }) => async (req, res) => {
     {}
   )
 
-  const locationTypes = await referenceDataService.getRooms(res.locals, agencyId)
+  const locationTypes = await locationService.getRooms(res.locals, agencyId)
   const { text: locationDescription } = locationTypes.find(loc => loc.value === Number(locationId))
   const { firstName, lastName } = await prisonApi.getPrisonerDetails(res.locals, offenderNo)
 

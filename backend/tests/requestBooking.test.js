@@ -2,14 +2,11 @@ jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
 
-const moment = require('moment')
-
 process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
 process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 const config = require('../config')
 
 const { requestBookingFactory } = require('../routes/requestBooking/requestBooking')
-const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyApi } = require('../api/notifyApi')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
@@ -61,62 +58,6 @@ describe('Request a booking', () => {
 
     // @ts-ignore
     raiseAnalyticsEvent.mockRestore()
-  })
-
-  describe('Start of journey', () => {
-    it('should make the correct calls for information and render the correct template', async () => {
-      await controller.startOfJourney(req, res)
-      expect(res.render).toHaveBeenCalledWith('requestBooking/requestBooking.njk', {
-        prisons: [
-          {
-            text: 'HMP Wandsworth',
-            value: 'WWI',
-          },
-        ],
-      })
-    })
-
-    describe('Check availability', () => {
-      const validBody = {
-        prison: 'test@test',
-        startTimeHours: '22',
-        startTimeMinutes: '05',
-        endTimeHours: '23',
-        endTimeMinutes: '05',
-        comments: 'Test comment',
-        preAppointmentRequired: 'no',
-        postAppointmentRequired: 'no',
-      }
-
-      afterEach(() => {
-        jest.restoreAllMocks()
-      })
-
-      it('should stash the appointment details and redirect to offender details', async () => {
-        jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-
-        req.body = { ...validBody, date: moment().format(DAY_MONTH_YEAR) }
-
-        await controller.checkAvailability(req, res)
-
-        expect(req.flash).toHaveBeenCalledWith(
-          'requestBooking',
-          expect.objectContaining({
-            date: '29/03/2019',
-            prison: 'test@test',
-            startTime: '2019-03-29T22:05:00',
-            endTime: '2019-03-29T23:05:00',
-            preAppointmentRequired: 'no',
-            postAppointmentRequired: 'no',
-          })
-        )
-
-        expect(res.redirect).toHaveBeenCalledWith('/request-booking/select-court')
-
-        // @ts-ignore
-        Date.now.mockRestore()
-      })
-    })
   })
 
   describe('Enter offender details', () => {
