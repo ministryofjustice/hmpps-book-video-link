@@ -1,0 +1,36 @@
+{% extends "./partials/layout.njk" %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+
+{% set title = "Help using Book a video link with a prison" %}
+
+{% block main %}
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds govuk-body">
+                    <h1 class="govuk-heading-l">{{ title }}</h1>
+                    <p class="">This service is for someone working in a court and booking a video link hearing wth a prison.</p>
+
+                    <h2 class="govuk-heading-m">Creating a video link</h2>
+                    <p>
+                        To create a video link, you’ll need the name of the person you want to book the video link for and the prison they are in. If the person is not currently in prison, 
+                        you’ll need their name, date of birth and the prison they are being sent to. A request will be sent to the prison to complete the booking.
+                    </p>
+
+                    <h2 class="govuk-heading-m">Feedback and support</h2>
+                    <p>
+                        Contact
+                        <a href="mailto:bookavideolink@digital.justice.gov.uk">bookavideolink@digital.justice.gov.uk</a>
+                        if you have any problems with this service.
+                    </p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</main>
+{% endblock %}
+
+{% block footer %}
+{{  govukFooter({}) }}
+{% endblock %}

@@ -21,6 +21,7 @@ export = function createRoutes(services: Services): Router {
   router.use(viewBookingsRoutes(services))
   router.use(amendBookingsRoutes(services))
 
+  router.get('/feedback-and-support', (req, res) => res.render('feedbackAndSupport.njk'))
   router.use((req, res, next) => res.status(404).render('notFoundPage.njk'))
 
   return router
