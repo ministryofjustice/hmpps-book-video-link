@@ -164,7 +164,6 @@ module.exports = (app, path) => {
   njkEnv.addFilter('truthy', data => Boolean(data))
   njkEnv.addFilter('possessive', possessive)
   njkEnv.addGlobal('googleAnalyticsId', config.analytics.googleAnalyticsId)
-  njkEnv.addGlobal('supportUrl', config.app.supportUrl)
   njkEnv.addGlobal('authUrl', config.apis.oauth2.url)
   return njkEnv
 }
