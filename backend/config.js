@@ -9,6 +9,9 @@ module.exports = {
     maximumFileUploadSizeInMb: toInt(process.env.MAXIMUM_FILE_UPLOAD_SIZE_IN_MB, 200),
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
   },
+
+  supportEmail: 'bookavideolink@digital.justice.gov.uk',
+
   analytics: {
     googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID,
   },

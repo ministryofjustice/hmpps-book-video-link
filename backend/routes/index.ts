@@ -9,6 +9,8 @@ import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
 import amendBookingsRoutes from './amendBooking'
 
+import { supportEmail } from '../config'
+
 const router = express.Router()
 
 export = function createRoutes(services: Services): Router {
@@ -21,8 +23,10 @@ export = function createRoutes(services: Services): Router {
   router.use(viewBookingsRoutes(services))
   router.use(amendBookingsRoutes(services))
 
-  router.get('/feedback-and-support', (req, res) => res.render('feedbackAndSupport.njk'))
-  router.use((req, res, next) => res.status(404).render('notFoundPage.njk'))
+  router.get('/feedback-and-support', (req, res) => {
+    res.render('feedbackAndSupport.njk', { supportEmail })
+  })
+  router.use((req, res) => res.status(404).render('notFoundPage.njk'))
 
   return router
 }
