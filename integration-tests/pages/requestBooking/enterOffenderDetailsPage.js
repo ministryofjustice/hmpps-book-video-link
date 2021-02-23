@@ -8,7 +8,7 @@ const requestCourtBookingEnterOffenderDetailsPage = () =>
       dobDay: () => cy.get('#dobDay'),
       dobMonth: () => cy.get('#dobMonth'),
       dobYear: () => cy.get('#dobYear'),
-      comments: () => cy.get('#comments'),
+      comments: () => cy.get('#comment'),
       submitButton: () => cy.get('button[type="submit"]'),
     }),
   })

@@ -1,6 +1,7 @@
-import type { Location } from 'prisonApi'
-import ReferenceDataService from './referenceDataService'
+import type { Location, PrisonContactDetail } from 'prisonApi'
+import ReferenceDataService from './locationService'
 import PrisonApi from '../api/prisonApi'
+import { app } from '../config'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -49,6 +50,21 @@ describe('Reference service', () => {
         { value: 27187, text: 'Adj' },
         { value: 27188, text: 'RES-MCASU-MCASU' },
       ])
+    })
+
+    it('Should map video link enabled prisons correctly', async () => {
+      app.videoLinkEnabledFor = ['WWI']
+
+      const prisons = [
+        { agencyId: 'WWI', description: 'HMP WANDSWORTH', formattedDescription: 'HMP Wandsworth' },
+        { agencyId: 'MDI', description: 'HMP MOORLAND', formattedDescription: 'HMP Moorland' },
+      ] as PrisonContactDetail[]
+
+      prisonApi.getAgencies.mockResolvedValue(prisons)
+
+      const response = await service.getVideoLinkEnabledPrisons(context)
+
+      expect(response).toEqual([{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
     })
   })
 })

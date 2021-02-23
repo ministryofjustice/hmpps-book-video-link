@@ -2,14 +2,11 @@ jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
 }))
 
-const moment = require('moment')
-
 process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
 process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 const config = require('../config')
 
 const { requestBookingFactory } = require('../routes/requestBooking/requestBooking')
-const { DAY_MONTH_YEAR } = require('../shared/dateHelpers')
 const { notifyApi } = require('../api/notifyApi')
 const { raiseAnalyticsEvent } = require('../raiseAnalyticsEvent')
 
@@ -61,175 +58,6 @@ describe('Request a booking', () => {
 
     // @ts-ignore
     raiseAnalyticsEvent.mockRestore()
-  })
-
-  describe('Start of journey', () => {
-    it('should make the correct calls for information and render the correct template', async () => {
-      await controller.startOfJourney(req, res)
-      expect(res.render).toHaveBeenCalledWith('requestBooking/requestBooking.njk', {
-        prisons: [
-          {
-            text: 'HMP Wandsworth',
-            value: 'WWI',
-          },
-        ],
-      })
-    })
-
-    describe('Check availability', () => {
-      const validBody = {
-        prison: 'test@test',
-        startTimeHours: '22',
-        startTimeMinutes: '05',
-        endTimeHours: '23',
-        endTimeMinutes: '05',
-        comments: 'Test comment',
-        preAppointmentRequired: 'no',
-        postAppointmentRequired: 'no',
-      }
-
-      afterEach(() => {
-        jest.restoreAllMocks()
-      })
-
-      it('should stash the appointment details and redirect to offender details', async () => {
-        jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-
-        req.body = { ...validBody, date: moment().format(DAY_MONTH_YEAR) }
-
-        await controller.checkAvailability(req, res)
-
-        expect(req.flash).toHaveBeenCalledWith(
-          'requestBooking',
-          expect.objectContaining({
-            date: '29/03/2019',
-            prison: 'test@test',
-            startTime: '2019-03-29T22:05:00',
-            endTime: '2019-03-29T23:05:00',
-            preAppointmentRequired: 'no',
-            postAppointmentRequired: 'no',
-          })
-        )
-
-        expect(res.redirect).toHaveBeenCalledWith('/request-booking/select-court')
-
-        // @ts-ignore
-        Date.now.mockRestore()
-      })
-
-      it('should validate and check for missing required fields', async () => {
-        jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-        const date = moment().format(DAY_MONTH_YEAR)
-
-        req.body = {
-          date,
-        }
-
-        await controller.checkAvailability(req, res)
-
-        expect(res.render).toHaveBeenCalledWith(
-          'requestBooking/requestBooking.njk',
-          expect.objectContaining({
-            formValues: {
-              date,
-            },
-            errors: [
-              { href: '#pre-appointment-required', text: 'Select yes if you want to add a pre-court hearing briefing' },
-              {
-                href: '#post-appointment-required',
-                text: 'Select yes if you want to add a post-court hearing briefing',
-              },
-              { href: '#prison', text: 'Select which prison you want a video link with' },
-              { href: '#start-time-hours', text: 'Select the start time of the court hearing video link' },
-              { href: '#end-time-hours', text: 'Select the end time of the court hearing video link' },
-            ],
-          })
-        )
-
-        // @ts-ignore
-        Date.now.mockRestore()
-      })
-
-      it('should return validation messages for start times being in the past', async () => {
-        const date = moment().format(DAY_MONTH_YEAR)
-        const startTime = moment().subtract(5, 'minutes')
-        const startTimeHours = startTime.hour()
-        const startTimeMinutes = startTime.minute()
-
-        req.body = {
-          date,
-          startTimeHours,
-          startTimeMinutes,
-        }
-
-        await controller.checkAvailability(req, res)
-
-        expect(res.render).toHaveBeenCalledWith(
-          'requestBooking/requestBooking.njk',
-          expect.objectContaining({
-            errors: expect.arrayContaining([
-              { text: 'Select a start time that is not in the past', href: '#start-time-hours' },
-            ]),
-          })
-        )
-      })
-
-      it('should validate that the end time comes after the start time', async () => {
-        req.body = {
-          date: moment().format(DAY_MONTH_YEAR),
-          startTimeHours: '23',
-          startTimeMinutes: '00',
-          endTimeHours: '22',
-          endTimeMinutes: '00',
-        }
-
-        await controller.checkAvailability(req, res)
-
-        expect(res.render).toHaveBeenCalledWith(
-          'requestBooking/requestBooking.njk',
-          expect.objectContaining({
-            errors: expect.arrayContaining([
-              { text: 'Select an end time that is not in the past', href: '#end-time-hours' },
-            ]),
-          })
-        )
-      })
-    })
-
-    it('should validate full start and end time', async () => {
-      jest.spyOn(Date, 'now').mockImplementation(() => 1553860800000) // Friday 2019-03-29T12:00:00.000Z
-      const date = moment().format(DAY_MONTH_YEAR)
-
-      req.body = {
-        prison: 'WWI',
-        date,
-        startTimeHours: '23',
-        endTimeHours: '22',
-        preAppointmentRequired: 'no',
-        postAppointmentRequired: 'no',
-      }
-
-      await controller.checkAvailability(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'requestBooking/requestBooking.njk',
-        expect.objectContaining({
-          errors: [
-            {
-              text: 'Select a full start time of the court hearing video link',
-              href: '#start-time-hours',
-            },
-            {
-              text: 'Select a full end time of the court hearing video link',
-              href: '#end-time-hours',
-            },
-          ],
-        })
-      )
-
-      // @ts-ignore
-      Date.now.mockRestore()
-    })
   })
 
   describe('Enter offender details', () => {
@@ -404,8 +232,13 @@ describe('Request a booking', () => {
   })
 
   describe('Create booking', () => {
-    it('should stash error and redirect to select courts', async () => {
+    it('should redirect to current page when errors are present', async () => {
       req.body = {}
+      req.errors = [
+        { text: 'Enter a first name', href: '#first-name' },
+        { text: 'Enter a last name', href: '#last-name' },
+        { text: 'Enter a date of birth', href: '#dobDay' },
+      ]
       await controller.createBookingRequest(req, res)
 
       expect(req.flash).toHaveBeenCalledWith('errors', [
@@ -414,94 +247,6 @@ describe('Request a booking', () => {
         { text: 'Enter a date of birth', href: '#dobDay' },
       ])
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/enter-offender-details')
-    })
-
-    it('should validate missing offender details', async () => {
-      const bookingDetails = {
-        date: '01/01/3019',
-        startTime: '3019-01-01T01:00:00',
-        endTime: '3019-01-01T02:00:00',
-        prison: 'WWI',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
-      }
-      req.flash.mockImplementation(() => [bookingDetails])
-      req.body = { stuff: 'stuffOne' }
-
-      await controller.createBookingRequest(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith('formValues', { stuff: 'stuffOne' })
-      expect(req.flash).toHaveBeenCalledWith('requestBooking', bookingDetails)
-      expect(req.flash).toHaveBeenCalledWith(
-        'errors',
-        expect.objectContaining([
-          { href: '#first-name', text: 'Enter a first name' },
-          { href: '#last-name', text: 'Enter a last name' },
-          { href: '#dobDay', text: 'Enter a date of birth' },
-        ])
-      )
-
-      expect(req.flash).toHaveBeenCalledWith('formValues', req.body)
-
-      expect(res.redirect('/request-booking/enter-offender-details'))
-    })
-
-    it('should trigger date of birth in the past validation message', async () => {
-      req.body = {
-        dobDay: 1,
-        dobMonth: 1,
-        dobYear: 8000,
-        firstName: 'John',
-        lastName: 'Doe',
-      }
-
-      await controller.createBookingRequest(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith(
-        'errors',
-        expect.objectContaining([
-          { href: '#dobDay', text: 'Enter a date of birth which is in the past' },
-          { href: '#dobError' },
-        ])
-      )
-    })
-
-    it('should trigger date of birth not real validation message', async () => {
-      req.body = {
-        dobDay: 200,
-        dobMonth: 200,
-        dobYear: 8000,
-        firstName: 'John',
-        lastName: 'Doe',
-      }
-
-      await controller.createBookingRequest(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith(
-        'errors',
-        expect.objectContaining([
-          { href: '#dobDay', text: 'Enter a date of birth which is a real date' },
-          { href: '#dobError' },
-        ])
-      )
-    })
-
-    it('should validate maximum length of comments', async () => {
-      req.body = {
-        firstName: 'John',
-        lastName: 'Doe',
-        dobYear: 2019,
-        dobMonth: 12,
-        dobDay: 10,
-        comments: [...Array(3601).keys()].map(_ => 'A').join(''),
-      }
-
-      await controller.createBookingRequest(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith(
-        'errors',
-        expect.objectContaining([{ href: '#comments', text: 'Maximum length should not exceed 3600 characters' }])
-      )
     })
 
     it('should submit two emails, one for the prison and another for the current user', async () => {

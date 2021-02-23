@@ -1,6 +1,6 @@
 import validator, { errorTypes } from './changeCommentsValidation'
 
-describe('SelectAvailableRoomsValidation', () => {
+describe('ChangeCommentsValidation', () => {
   const form = {
     comment: 'Some comment',
   } as Record<string, string>

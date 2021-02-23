@@ -7,7 +7,7 @@ const { raiseAnalyticsEvent } = require('../../raiseAnalyticsEvent')
 
 describe('Confirm appointments', () => {
   const prisonApi = {}
-  const referenceDataService = {}
+  const locationService = {}
   const req = {}
   const res = {}
   const appointmentDetails = {
@@ -25,9 +25,9 @@ describe('Confirm appointments', () => {
 
   beforeEach(() => {
     prisonApi.getPrisonerDetails = jest.fn()
-    referenceDataService.getRooms = jest.fn()
+    locationService.getRooms = jest.fn()
 
-    referenceDataService.getRooms.mockReturnValue([
+    locationService.getRooms.mockReturnValue([
       { value: 1, text: 'Room 3' },
       { value: 2, text: 'Room 1' },
       { value: 3, text: 'Room 2' },
@@ -53,7 +53,7 @@ describe('Confirm appointments', () => {
   it('should load court confirmation page when user is not prison staff', async () => {
     const index = controller({
       prisonApi,
-      referenceDataService,
+      locationService,
     })
 
     req.session = { userDetails: { authSource: '' } }
@@ -104,21 +104,21 @@ describe('Confirm appointments', () => {
   it('should throw and log a court service error for a court user when appointment details are missing from flash', async () => {
     const index = controller({
       prisonApi,
-      referenceDataService,
+      locationService,
     })
     req.flash.mockImplementation(() => [])
     req.session.userDetails.authSource = 'auth'
 
     await expect(index(req, res)).rejects.toThrow('Appointment details are missing')
   })
-  it('Should call referenceDataService with agencyId', async () => {
+  it('Should call locationService with agencyId', async () => {
     const index = controller({
       prisonApi,
-      referenceDataService,
+      locationService,
     })
     res.locals = {}
     await index(req, res)
 
-    expect(referenceDataService.getRooms).toBeCalledWith({}, 'MDI')
+    expect(locationService.getRooms).toBeCalledWith({}, 'MDI')
   })
 })
