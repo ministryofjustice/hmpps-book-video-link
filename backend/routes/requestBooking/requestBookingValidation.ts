@@ -33,7 +33,7 @@ export const errorTypes = {
     missing: { text: 'Select the date of the video link', href: '#date' },
     invalid: {
       text:
-        'Enter the date of the video link using numbers in the format of day, month and year separated using a forward slash',
+        'Enter the date of the video link using numbers in the format of day, month and year separated using a forward slash. For example, 02/08/2020',
       href: '#date',
     },
     past: { text: 'Select a date that is not in the past', href: '#date' },
@@ -80,8 +80,8 @@ const validateDate = (date): ValidationError[] => {
   const errors = []
   const now = moment()
   if (!date) errors.push(errorTypes.date.missing)
-  if (date && !moment(date, DAY_MONTH_YEAR).isValid()) errors.push(errorTypes.date.invalid)
-  if (date && moment(date, DAY_MONTH_YEAR).isBefore(now, 'day')) errors.push(errorTypes.date.past)
+  if (date && !moment(date, DAY_MONTH_YEAR, true).isValid()) errors.push(errorTypes.date.invalid)
+  if (date && moment(date, DAY_MONTH_YEAR, true).isBefore(now, 'day')) errors.push(errorTypes.date.past)
   return errors
 }
 
