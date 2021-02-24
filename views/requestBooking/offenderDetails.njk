@@ -90,10 +90,10 @@
                 }) }}
 
                 {{ govukTextarea({
-                    name: "comment",
-                    id: "comment",
+                    name: "comments",
+                    id: "comments",
                     value: formValues.comment,
-                    errorMessage: errors | findError('comment'),
+                    errorMessage: errors | findError('comments'),
                     classes: 'govuk-!-width-one-half',
                     label: {
                         text: "Comments (optional)"

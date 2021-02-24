@@ -25,7 +25,7 @@ context('A user can search for an offender', () => {
       },
       {
         description: 'WANDSWORTH (HMP)',
-        formattedFescription: 'Wandsworth (HMP)',
+        formattedDescription: 'Wandsworth (HMP)',
         agencyId: 'WWI',
         agencyType: 'INST',
       },

@@ -1,4 +1,4 @@
-import type { InmateDetail, OffenderBooking, PrisonContactDetail, PrisonerDetail, Agency, Location } from 'prisonApi'
+import type { InmateDetail, PrisonContactDetail, PrisonerDetail, Agency, Location } from 'prisonApi'
 import { Response } from 'superagent'
 import contextProperties from '../contextProperties'
 import { mapToQueryString } from '../utils'
