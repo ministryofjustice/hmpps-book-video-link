@@ -7,25 +7,20 @@ import logError from '../../logError'
 import { Services } from '../../services'
 
 import StartController from './startController'
+import SelectCourtController from './selectCourtController'
 import requestBookingValidation from './requestBookingValidation'
 import selectCourtValidation from './selectCourtValidation'
 import offenderDetailsValidation from './offenderDetailsValidation'
 
-export default function createRoutes({
-  locationService,
-  notifyApi,
-  whereaboutsApi,
-  oauthApi,
-  prisonApi,
-}: Services): Router {
+export default function createRoutes({ locationService, notifyApi, oauthApi, prisonApi }: Services): Router {
   const startController = new StartController(locationService)
+  const selectCourtController = new SelectCourtController(locationService)
 
   const routes = express.Router({ mergeParams: true })
 
-  const { selectCourt, validateCourt, enterOffenderDetails, createBookingRequest, confirm } = requestBookingFactory({
+  const { enterOffenderDetails, createBookingRequest, confirm } = requestBookingFactory({
     logError,
     notifyApi,
-    whereaboutsApi,
     oauthApi,
     prisonApi,
   })
@@ -37,12 +32,16 @@ export default function createRoutes({
     validationMiddleware(requestBookingValidation),
     asyncMiddleware(startController.submit())
   )
-  routes.get('/select-court', withRetryLink('/request-booking/select-court'), asyncMiddleware(selectCourt))
+  routes.get(
+    '/select-court',
+    withRetryLink('/request-booking/select-court'),
+    asyncMiddleware(selectCourtController.view())
+  )
   routes.post(
     '/validate-court',
     withRetryLink('/request-booking/select-court'),
     validationMiddleware(selectCourtValidation),
-    asyncMiddleware(validateCourt)
+    asyncMiddleware(selectCourtController.submit())
   )
   routes.get(
     '/enter-offender-details',

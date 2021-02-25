@@ -1,5 +1,5 @@
 const moment = require('moment')
-const { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
+const { DAY_MONTH_YEAR, Time } = require('../../shared/dateHelpers')
 const {
   notifications: { requestBookingCourtTemplateVLBAdminId, requestBookingCourtTemplateRequesterId, emails: emailConfig },
 } = require('../../config')
@@ -16,7 +16,7 @@ const extractObjectFromFlash = ({ req, key }) =>
 
 const getBookingDetails = req => extractObjectFromFlash({ req, key: 'requestBooking' })
 const packBookingDetails = (req, data) => req.flash('requestBooking', data)
-const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi }) => {
+const requestBookingFactory = ({ logError, notifyApi, oauthApi, prisonApi }) => {
   const sendEmail = ({ templateId, email, personalisation }) =>
     notifyApi.sendEmail(templateId, email, {
       personalisation,
@@ -28,73 +28,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
       errors: req.flash('errors'),
       formValues: extractObjectFromFlash({ req, key: 'formValues' }),
     })
-
-  const selectCourt = async (req, res) => {
-    const { courtLocations } = await whereaboutsApi.getCourtLocations(res.locals)
-    const details = getBookingDetails(req)
-    const { date, startTime, endTime, prison, preAppointmentRequired, postAppointmentRequired } = details
-
-    const getPreHearingStartAndEndTime = () => {
-      if (preAppointmentRequired !== 'yes') return 'Not required'
-      const preCourtHearingStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minute')
-      const preCourtHearingEndTime = moment(startTime, DATE_TIME_FORMAT_SPEC)
-      return `${Time(preCourtHearingStartTime)} to ${Time(preCourtHearingEndTime)}`
-    }
-
-    const getPostCourtHearingStartAndEndTime = () => {
-      if (postAppointmentRequired !== 'yes') return 'Not required'
-      const postCourtHearingStartTime = moment(endTime, DATE_TIME_FORMAT_SPEC)
-      const postCourtHearingEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minute')
-      return `${Time(postCourtHearingStartTime)} to ${Time(postCourtHearingEndTime)}`
-    }
-
-    const preHearingStartAndEndTime = getPreHearingStartAndEndTime()
-    const postHearingStartAndEndTime = getPostCourtHearingStartAndEndTime()
-
-    packBookingDetails(req, {
-      ...details,
-      preHearingStartAndEndTime,
-      postHearingStartAndEndTime,
-    })
-
-    const prisons = await prisonApi.getAgencies(res.locals)
-    const matchingPrison = prisons.find(p => p.agencyId === prison)
-
-    return res.render('requestBooking/selectCourt.njk', {
-      prisonDetails: {
-        prison: matchingPrison.formattedDescription || matchingPrison.description,
-      },
-      hearingDetails: {
-        date: moment(date, DAY_MONTH_YEAR).format('D MMMM YYYY'),
-        courtHearingStartTime: Time(startTime),
-        courtHearingEndTime: Time(endTime),
-      },
-      prePostDetails: {
-        'pre-court hearing briefing': preHearingStartAndEndTime,
-        'post-court hearing briefing': postHearingStartAndEndTime,
-      },
-      hearingLocations: courtLocations.map(location => ({
-        value: location,
-        text: location,
-      })),
-      errors: req.errors,
-    })
-  }
-
-  const validateCourt = async (req, res) => {
-    const { hearingLocation } = req.body
-    const bookingDetails = getBookingDetails(req)
-    if (req.errors) {
-      packBookingDetails(req, bookingDetails)
-      req.flash('errors', req.errors)
-      return res.redirect('/request-booking/select-court')
-    }
-    packBookingDetails(req, {
-      ...bookingDetails,
-      hearingLocation,
-    })
-    return res.redirect('/request-booking/enter-offender-details')
-  }
 
   const createBookingRequest = async (req, res) => {
     const { firstName, lastName, dobDay, dobMonth, dobYear, comments } = req.body
@@ -217,8 +150,6 @@ const requestBookingFactory = ({ logError, notifyApi, whereaboutsApi, oauthApi, 
     })
   }
   return {
-    selectCourt,
-    validateCourt,
     createBookingRequest,
     enterOffenderDetails,
     confirm,
