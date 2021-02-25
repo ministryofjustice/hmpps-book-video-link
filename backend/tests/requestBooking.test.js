@@ -54,7 +54,7 @@ describe('Request a booking', () => {
     oauthApi.userEmail.mockReturnValue({ email: 'test@test' })
     oauthApi.userDetails.mockReturnValue({ name: 'Staff member' })
 
-    controller = requestBookingFactory({ logError, notifyApi, whereaboutsApi, oauthApi, prisonApi })
+    controller = requestBookingFactory({ logError, notifyApi, oauthApi, prisonApi })
 
     // @ts-ignore
     raiseAnalyticsEvent.mockRestore()
@@ -138,96 +138,6 @@ describe('Request a booking', () => {
         })
       )
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/confirmation')
-    })
-  })
-
-  describe('Select court', () => {
-    it('should stash correct values into flash', async () => {
-      whereaboutsApi.getCourtLocations.mockReturnValue({ courtLocations: ['London', 'York'] })
-      req.flash.mockImplementation(key => {
-        return key !== 'errors'
-          ? [
-              {
-                date: '01/01/3019',
-                startTime: '3019-01-01T01:00:00',
-                endTime: '3019-01-01T02:00:00',
-                prison: 'WWI',
-                preAppointmentRequired: 'no',
-                postAppointmentRequired: 'yes',
-              },
-            ]
-          : []
-      })
-
-      await controller.selectCourt(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith('requestBooking', {
-        date: '01/01/3019',
-        endTime: '3019-01-01T02:00:00',
-        postAppointmentRequired: 'yes',
-        postHearingStartAndEndTime: '02:00 to 02:20',
-        preAppointmentRequired: 'no',
-        preHearingStartAndEndTime: 'Not required',
-        prison: 'WWI',
-        startTime: '3019-01-01T01:00:00',
-      })
-    })
-    it('should render the correct template with the correct view model', async () => {
-      whereaboutsApi.getCourtLocations.mockReturnValue({ courtLocations: ['London', 'York'] })
-      req.flash.mockImplementation(key => {
-        return key !== 'errors'
-          ? [
-              {
-                date: '01/01/3019',
-                startTime: '3019-01-01T01:00:00',
-                endTime: '3019-01-01T02:00:00',
-                prison: 'WWI',
-                preAppointmentRequired: 'yes',
-                postAppointmentRequired: 'yes',
-              },
-            ]
-          : []
-      })
-
-      await controller.selectCourt(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'requestBooking/selectCourt.njk',
-        expect.objectContaining({
-          prisonDetails: {
-            prison: 'HMP Wandsworth',
-          },
-          hearingDetails: {
-            courtHearingEndTime: '02:00',
-            courtHearingStartTime: '01:00',
-            date: '1 January 3019',
-          },
-          prePostDetails: {
-            'post-court hearing briefing': '02:00 to 02:20',
-            'pre-court hearing briefing': '00:40 to 01:00',
-          },
-          hearingLocations: [
-            {
-              text: 'London',
-              value: 'London',
-            },
-            {
-              text: 'York',
-              value: 'York',
-            },
-          ],
-        })
-      )
-    })
-
-    it('should stash hearing location into flash and redirect to enter offender details', async () => {
-      req.body = { hearingLocation: 'London' }
-      await controller.validateCourt(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith('requestBooking', {
-        hearingLocation: 'London',
-      })
-      expect(res.redirect('/request-booking/enter-offender-details'))
     })
   })
 

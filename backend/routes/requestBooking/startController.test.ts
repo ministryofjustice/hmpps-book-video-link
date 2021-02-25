@@ -1,6 +1,4 @@
 import { Request, Response } from 'express'
-import moment from 'moment'
-import { DAY_MONTH_YEAR } from '../../shared/dateHelpers'
 
 import StartController from './startController'
 import LocationService from '../../services/locationService'
@@ -11,7 +9,7 @@ process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
 process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
 
 describe('Request path Start controller', () => {
-  const locationService = new LocationService(null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 
   let controller: StartController
 
