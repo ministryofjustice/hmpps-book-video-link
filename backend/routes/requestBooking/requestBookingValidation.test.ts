@@ -154,6 +154,18 @@ describe('RequestBookingValidation', () => {
       expect(validator({ ...form, date: 'bob' })).toStrictEqual([errorTypes.date.invalid])
     })
 
+    it('should return an error when an invalid day of month is entered', () => {
+      expect(validator({ ...form, date: '1/02/2020' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
+    it('should return an error when an invalid month is entered', () => {
+      expect(validator({ ...form, date: '31/2/2020' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
+    it('should return an error when an invalid year is entered', () => {
+      expect(validator({ ...form, date: '31/02/20' })).toStrictEqual([errorTypes.date.invalid])
+    })
+
     it('should return an error when no start time is entered', () => {
       expect(validator({ ...form, startTimeHours: '', startTimeMinutes: '' })).toStrictEqual([
         errorTypes.startTime.missing,
