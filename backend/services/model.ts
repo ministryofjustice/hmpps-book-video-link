@@ -13,6 +13,11 @@ export type Room = {
   text: string
 }
 
+export type Court = {
+  value: string
+  text: string
+}
+
 export type AvailabilityRequest = {
   agencyId: string
   videoBookingId?: number

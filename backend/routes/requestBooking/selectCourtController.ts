@@ -1,6 +1,7 @@
 import { RequestHandler, Request } from 'express'
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR, Time } from '../../shared/dateHelpers'
+import { getPostAppointmentInterval, getPreAppointmentInterval } from '../../services/bookingTimes'
 import type LocationService from '../../services/locationService'
 
 export default class SelectCourtController {
@@ -27,22 +28,20 @@ export default class SelectCourtController {
   public view(): RequestHandler {
     return async (req, res) => {
       const errors = req.flash('errors')
-      const courtLocations = await this.locationService.getVideoLinkCourtLocations(res.locals)
+      const courtLocations = await this.locationService.getVideoLinkEnabledCourts(res.locals)
       const details = this.getBookingDetails(req)
       const { date, startTime, endTime, prison, preAppointmentRequired, postAppointmentRequired } = details
 
       const getPreHearingStartAndEndTime = () => {
         if (preAppointmentRequired !== 'yes') return 'Not required'
-        const preCourtHearingStartTime = moment(startTime, DATE_TIME_FORMAT_SPEC).subtract(20, 'minute')
-        const preCourtHearingEndTime = moment(startTime, DATE_TIME_FORMAT_SPEC)
-        return `${Time(preCourtHearingStartTime)} to ${Time(preCourtHearingEndTime)}`
+        const { start: preStart, end: preEnd } = getPreAppointmentInterval(moment(startTime, DATE_TIME_FORMAT_SPEC))
+        return `${preStart} to ${preEnd}`
       }
 
       const getPostCourtHearingStartAndEndTime = () => {
         if (postAppointmentRequired !== 'yes') return 'Not required'
-        const postCourtHearingStartTime = moment(endTime, DATE_TIME_FORMAT_SPEC)
-        const postCourtHearingEndTime = moment(endTime, DATE_TIME_FORMAT_SPEC).add(20, 'minute')
-        return `${Time(postCourtHearingStartTime)} to ${Time(postCourtHearingEndTime)}`
+        const { start: postStart, end: postEnd } = getPostAppointmentInterval(moment(endTime, DATE_TIME_FORMAT_SPEC))
+        return `${postStart} to ${postEnd}`
       }
 
       const preHearingStartAndEndTime = getPreHearingStartAndEndTime()

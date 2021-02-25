@@ -12,13 +12,7 @@ import requestBookingValidation from './requestBookingValidation'
 import selectCourtValidation from './selectCourtValidation'
 import offenderDetailsValidation from './offenderDetailsValidation'
 
-export default function createRoutes({
-  locationService,
-  notifyApi,
-  whereaboutsApi,
-  oauthApi,
-  prisonApi,
-}: Services): Router {
+export default function createRoutes({ locationService, notifyApi, oauthApi, prisonApi }: Services): Router {
   const startController = new StartController(locationService)
   const selectCourtController = new SelectCourtController(locationService)
 

@@ -86,7 +86,7 @@ describe('Location service', () => {
     it('Should map video link court locations correctly', async () => {
       const courtLocations = { courtLocations: ['London', 'York'] }
       whereaboutsApi.getCourtLocations.mockResolvedValue(courtLocations)
-      const response = await service.getVideoLinkCourtLocations(context)
+      const response = await service.getVideoLinkEnabledCourts(context)
       expect(response).toEqual([
         { value: 'London', text: 'London' },
         { value: 'York', text: 'York' },

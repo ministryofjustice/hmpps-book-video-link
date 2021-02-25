@@ -1,7 +1,6 @@
-import type { Court } from 'whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 import type WhereaboutsApi from '../api/whereaboutsApi'
-import { Context, Room, Prison } from './model'
+import { Context, Room, Prison, Court } from './model'
 import { app } from '../config'
 
 export = class LocationService {
@@ -31,7 +30,7 @@ export = class LocationService {
     return prisons.filter(prison => app.videoLinkEnabledFor.includes(prison.agencyId)).map(this.transformPrison)
   }
 
-  public async getVideoLinkCourtLocations(context: Context): Promise<Court[]> {
+  public async getVideoLinkEnabledCourts(context: Context): Promise<Court[]> {
     const { courtLocations } = await this.whereaboutsApi.getCourtLocations(context)
     return courtLocations.map(location => ({
       value: location,

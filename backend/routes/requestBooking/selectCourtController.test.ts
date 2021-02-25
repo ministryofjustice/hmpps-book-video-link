@@ -44,7 +44,7 @@ describe('Select court controller', () => {
       description: 'HMP Wandsworth',
     })
 
-    locationService.getVideoLinkCourtLocations.mockResolvedValue([
+    locationService.getVideoLinkEnabledCourts.mockResolvedValue([
       { value: 'London', text: 'London' },
       { value: 'York', text: 'York' },
     ])
@@ -70,19 +70,16 @@ describe('Select court controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(req.flash).toHaveBeenCalledWith(
-        'requestBooking',
-        expect.objectContaining({
-          date: '01/01/3019',
-          endTime: '3019-01-01T02:00:00',
-          postAppointmentRequired: 'yes',
-          postHearingStartAndEndTime: '02:00 to 02:20',
-          preAppointmentRequired: 'no',
-          preHearingStartAndEndTime: 'Not required',
-          prison: 'WWI',
-          startTime: '3019-01-01T01:00:00',
-        })
-      )
+      expect(req.flash).toHaveBeenCalledWith('requestBooking', {
+        date: '01/01/3019',
+        endTime: '3019-01-01T02:00:00',
+        postAppointmentRequired: 'yes',
+        postHearingStartAndEndTime: '02:00 to 02:20',
+        preAppointmentRequired: 'no',
+        preHearingStartAndEndTime: 'Not required',
+        prison: 'WWI',
+        startTime: '3019-01-01T01:00:00',
+      })
     })
 
     it('should render the correct template with the correct view model', async () => {
@@ -102,33 +99,31 @@ describe('Select court controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'requestBooking/selectCourt.njk',
-        expect.objectContaining({
-          prisonDetails: {
-            prison: 'HMP Wandsworth',
+      expect(res.render).toHaveBeenCalledWith('requestBooking/selectCourt.njk', {
+        prisonDetails: {
+          prison: 'HMP Wandsworth',
+        },
+        hearingDetails: {
+          courtHearingEndTime: '02:00',
+          courtHearingStartTime: '01:00',
+          date: '1 January 3019',
+        },
+        prePostDetails: {
+          'post-court hearing briefing': '02:00 to 02:20',
+          'pre-court hearing briefing': '00:40 to 01:00',
+        },
+        hearingLocations: [
+          {
+            text: 'London',
+            value: 'London',
           },
-          hearingDetails: {
-            courtHearingEndTime: '02:00',
-            courtHearingStartTime: '01:00',
-            date: '1 January 3019',
+          {
+            text: 'York',
+            value: 'York',
           },
-          prePostDetails: {
-            'post-court hearing briefing': '02:00 to 02:20',
-            'pre-court hearing briefing': '00:40 to 01:00',
-          },
-          hearingLocations: [
-            {
-              text: 'London',
-              value: 'London',
-            },
-            {
-              text: 'York',
-              value: 'York',
-            },
-          ],
-        })
-      )
+        ],
+        errors: [],
+      })
     })
 
     it('should call the location service with correct details', async () => {
@@ -149,7 +144,7 @@ describe('Select court controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(locationService.getVideoLinkCourtLocations).toHaveBeenCalledWith(res.locals)
+      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(res.locals)
       expect(locationService.getMatchingPrison).toHaveBeenCalledWith(res.locals, prison)
     })
   })
@@ -172,12 +167,9 @@ describe('Select court controller', () => {
       })
       await controller.submit()(req, res, null)
 
-      expect(req.flash).toHaveBeenCalledWith(
-        'requestBooking',
-        expect.objectContaining({
-          hearingLocation: 'London',
-        })
-      )
+      expect(req.flash).toHaveBeenCalledWith('requestBooking', {
+        hearingLocation: 'London',
+      })
       expect(res.redirect('/request-booking/enter-offender-details'))
     })
 

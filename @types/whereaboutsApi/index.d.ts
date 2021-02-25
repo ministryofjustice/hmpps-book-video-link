@@ -1,11 +1,6 @@
 declare module 'whereaboutsApi' {
   export type CourtLocations = { courtLocations: string[] }
 
-  export type Court = {
-    value: string
-    text: string
-  }
-
   export type NewAppointment = { endTime: string; locationId: number; startTime: string }
 
   export type NewVideoLinkBooking = {
