@@ -99,7 +99,7 @@ declare module 'prisonApi' {
       /**
        * The type of transaction
        */
-      type: components['schemas']['CodeDescription']
+      type: schemas['CodeDescription']
     }
     /**
      * Account Transactions
@@ -108,7 +108,7 @@ declare module 'prisonApi' {
       /**
        * List of account transactions
        */
-      transactions?: components['schemas']['AccountTransaction'][]
+      transactions?: schemas['AccountTransaction'][]
     }
     /**
      * Active Offender
@@ -121,7 +121,7 @@ declare module 'prisonApi' {
       /**
        * offender
        */
-      offender?: components['schemas']['OffenderId']
+      offender?: schemas['OffenderId']
     }
     /**
      * An Offender's Address
@@ -134,7 +134,7 @@ declare module 'prisonApi' {
       /**
        * The address usages/types
        */
-      addressUsages?: components['schemas']['AddressUsageDto'][]
+      addressUsages?: schemas['AddressUsageDto'][]
       /**
        * Comment
        */
@@ -166,7 +166,7 @@ declare module 'prisonApi' {
       /**
        * The phone number associated with the address
        */
-      phones?: components['schemas']['Telephone'][]
+      phones?: schemas['Telephone'][]
       /**
        * Postal Code
        */
@@ -208,7 +208,7 @@ declare module 'prisonApi' {
       /**
        * Charges made as part of the adjudication
        */
-      adjudicationCharges?: components['schemas']['AdjudicationCharge'][]
+      adjudicationCharges?: schemas['AdjudicationCharge'][]
       /**
        * Adjudication Number
        */
@@ -266,7 +266,7 @@ declare module 'prisonApi' {
       /**
        * Hearings
        */
-      hearings?: components['schemas']['Hearing'][]
+      hearings?: schemas['Hearing'][]
       /**
        * Incident Details
        */
@@ -321,15 +321,15 @@ declare module 'prisonApi' {
       /**
        * Complete list of agencies where this offender has had adjudications
        */
-      agencies?: components['schemas']['Agency'][]
+      agencies?: schemas['Agency'][]
       /**
        * A complete list of the type of offences that this offender has had adjudications for
        */
-      offences?: components['schemas']['AdjudicationOffence'][]
+      offences?: schemas['AdjudicationOffence'][]
       /**
        * Search results
        */
-      results?: components['schemas']['Adjudication'][]
+      results?: schemas['Adjudication'][]
     }
     /**
      * Adjudication Summary for offender
@@ -342,7 +342,7 @@ declare module 'prisonApi' {
       /**
        * List of awards / sanctions
        */
-      awards: components['schemas']['Award'][]
+      awards: schemas['Award'][]
       /**
        * Offender Booking Id
        */
@@ -397,7 +397,7 @@ declare module 'prisonApi' {
       /**
        * The establishment types for the agency.
        */
-      establishmentTypes?: components['schemas']['AgencyEstablishmentType'][]
+      establishmentTypes?: schemas['AgencyEstablishmentType'][]
     }
     /**
      * Alert
@@ -493,11 +493,11 @@ declare module 'prisonApi' {
       /**
        * Code and description identifying the sub type of alert
        */
-      alert_sub_type: components['schemas']['CodeDescription']
+      alert_sub_type: schemas['CodeDescription']
       /**
        * Code and description identifying the type of alert
        */
-      alert_type: components['schemas']['CodeDescription']
+      alert_type: schemas['CodeDescription']
       /**
        * Free Text Comment
        */
@@ -518,7 +518,7 @@ declare module 'prisonApi' {
       /**
        * Alerts
        */
-      alerts?: components['schemas']['AlertV1'][]
+      alerts?: schemas['AlertV1'][]
     }
     /**
      * Alias
@@ -614,15 +614,15 @@ declare module 'prisonApi' {
       /**
        * The default values to be applied to each new appointment. An individual appointment may change the startTime, add or change the endTime and provide text for that appointment's comment.
        */
-      appointmentDefaults: components['schemas']['AppointmentDefaults']
+      appointmentDefaults: schemas['AppointmentDefaults']
       /**
        * The details for creating each appointment.  A Missing value falls back to the default value if present. Mandatory, but an empty list is accepted.
        */
-      appointments: components['schemas']['AppointmentDetails'][]
+      appointments: schemas['AppointmentDetails'][]
       /**
        * If present specifies the number of times to repeat the appointments and the period of the repeat
        */
-      repeat?: components['schemas']['Repeat']
+      repeat?: schemas['Repeat']
     }
     /**
      * HDC Approval Status
@@ -946,11 +946,11 @@ declare module 'prisonApi' {
       /**
        * Legal Cases
        */
-      legal_cases?: components['schemas']['LegalCase'][]
+      legal_cases?: schemas['LegalCase'][]
       /**
        * Location of Offender
        */
-      location?: components['schemas']['Location']
+      location?: schemas['Location']
       /**
        * Release Date
        */
@@ -964,7 +964,7 @@ declare module 'prisonApi' {
       /**
        * Bookings
        */
-      bookings?: components['schemas']['Booking'][]
+      bookings?: schemas['Booking'][]
     }
     /**
      * Case Load
@@ -1002,7 +1002,7 @@ declare module 'prisonApi' {
       /**
        * Ordered list of amendments to the case note (oldest first)
        */
-      amendments: components['schemas']['CaseNoteAmendment'][]
+      amendments: schemas['CaseNoteAmendment'][]
       /**
        * Name of staff member who created case note (lastname, firstname)
        */
@@ -1428,7 +1428,7 @@ declare module 'prisonApi' {
       /**
        * Band
        */
-      band?: components['schemas']['CodeDescription']
+      band?: schemas['CodeDescription']
       /**
        * Charge Active
        */
@@ -1440,11 +1440,11 @@ declare module 'prisonApi' {
       /**
        * Disposition
        */
-      disposition?: components['schemas']['CodeDescription']
+      disposition?: schemas['CodeDescription']
       /**
        * Imprisonment Status
        */
-      imprisonment_status?: components['schemas']['CodeDescription']
+      imprisonment_status?: schemas['CodeDescription']
       /**
        * Most Serious Offence
        */
@@ -1452,11 +1452,11 @@ declare module 'prisonApi' {
       /**
        * Offence
        */
-      offence?: components['schemas']['CodeDescription']
+      offence?: schemas['CodeDescription']
       /**
        * Result
        */
-      result?: components['schemas']['CodeDescription']
+      result?: schemas['CodeDescription']
       /**
        * Severity Ranking
        */
@@ -1464,7 +1464,7 @@ declare module 'prisonApi' {
       /**
        * Statute
        */
-      statute?: components['schemas']['CodeDescription']
+      statute?: schemas['CodeDescription']
     }
     /**
      * Code Description
@@ -1569,8 +1569,8 @@ declare module 'prisonApi' {
      */
     ContactDetail: {
       bookingId: number
-      nextOfKin: components['schemas']['Contact'][]
-      otherContacts: components['schemas']['Contact'][]
+      nextOfKin: schemas['Contact'][]
+      otherContacts: schemas['Contact'][]
     }
     /**
      * Contact List
@@ -1579,7 +1579,7 @@ declare module 'prisonApi' {
       /**
        * Available Dates
        */
-      contacts?: components['schemas']['ContactPerson'][]
+      contacts?: schemas['ContactPerson'][]
     }
     /**
      * Contact Person
@@ -1596,7 +1596,7 @@ declare module 'prisonApi' {
       /**
        * Contact Type
        */
-      contact_type?: components['schemas']['CodeDescription']
+      contact_type?: schemas['CodeDescription']
       /**
        * Date of Birth
        */
@@ -1604,7 +1604,7 @@ declare module 'prisonApi' {
       /**
        * Gender
        */
-      gender?: components['schemas']['CodeDescription']
+      gender?: schemas['CodeDescription']
       /**
        * Given Name
        */
@@ -1620,11 +1620,11 @@ declare module 'prisonApi' {
       /**
        * Relationship Type
        */
-      relationship_type?: components['schemas']['CodeDescription']
+      relationship_type?: schemas['CodeDescription']
       /**
        * Restrictions
        */
-      restrictions?: components['schemas']['VisitRestriction'][]
+      restrictions?: schemas['VisitRestriction'][]
       /**
        * Last Name
        */
@@ -1637,7 +1637,7 @@ declare module 'prisonApi' {
       /**
        * Agency details
        */
-      agency?: components['schemas']['Agency']
+      agency?: schemas['Agency']
       /**
        * The begin date
        */
@@ -1665,7 +1665,7 @@ declare module 'prisonApi' {
       /**
        * Court hearings associated with the court case
        */
-      courtHearings?: components['schemas']['CourtHearing'][]
+      courtHearings?: schemas['CourtHearing'][]
       /**
        * The case identifier
        */
@@ -1800,7 +1800,7 @@ declare module 'prisonApi' {
       /**
        * The location of the court for the hearing.
        */
-      location?: components['schemas']['Agency']
+      location?: schemas['Agency']
     }
     /**
      * Supports amending a scheduled court hearing date and time for an offender.
@@ -1814,7 +1814,7 @@ declare module 'prisonApi' {
     /**
      * Represents court hearings for an offender booking.
      */
-    CourtHearings: { hearings?: components['schemas']['CourtHearing'][] }
+    CourtHearings: { hearings?: schemas['CourtHearing'][] }
     /**
      * Create new alert
      */
@@ -1928,7 +1928,7 @@ declare module 'prisonApi' {
       /**
        * Events
        */
-      events?: components['schemas']['Event'][]
+      events?: schemas['Event'][]
     }
     /**
      * HDC Curfew Check
@@ -1986,7 +1986,7 @@ declare module 'prisonApi' {
       /**
        * Hearing Results
        */
-      results?: components['schemas']['HearingResult'][]
+      results?: schemas['HearingResult'][]
     }
     /**
      * A result from a hearing
@@ -2012,7 +2012,7 @@ declare module 'prisonApi' {
        * Plea
        */
       plea?: string
-      sanctions?: components['schemas']['Sanction'][]
+      sanctions?: schemas['Sanction'][]
     }
     /**
      * Hold Response
@@ -2209,7 +2209,7 @@ declare module 'prisonApi' {
       /**
        * Parties Involved in case
        */
-      parties?: components['schemas']['IncidentParty'][]
+      parties?: schemas['IncidentParty'][]
       /**
        * Date when incident reported
        */
@@ -2229,7 +2229,7 @@ declare module 'prisonApi' {
       /**
        * Question And Answer Responses
        */
-      responses?: components['schemas']['IncidentResponse'][]
+      responses?: schemas['IncidentResponse'][]
     }
     /**
      * Incident Party
@@ -2342,7 +2342,7 @@ declare module 'prisonApi' {
       /**
        * List of alert details
        */
-      alerts?: components['schemas']['Alert'][]
+      alerts?: schemas['Alert'][]
       /**
        * List of Alerts
        */
@@ -2350,15 +2350,15 @@ declare module 'prisonApi' {
       /**
        * Aliases
        */
-      aliases?: components['schemas']['Alias'][]
+      aliases?: schemas['Alias'][]
       /**
        * List of assessments
        */
-      assessments?: components['schemas']['Assessment'][]
+      assessments?: schemas['Assessment'][]
       /**
        * Where the offender is staying
        */
-      assignedLivingUnit?: components['schemas']['AssignedLivingUnit']
+      assignedLivingUnit?: schemas['AssignedLivingUnit']
       /**
        * Identifier of living unit (e.g. cell) that offender is assigned to.
        */
@@ -2406,7 +2406,7 @@ declare module 'prisonApi' {
       /**
        * Identifiers
        */
-      identifiers?: components['schemas']['OffenderIdentifier'][]
+      identifiers?: schemas['OffenderIdentifier'][]
       /**
        * The prisoner's imprisonment status.
        */
@@ -2456,7 +2456,7 @@ declare module 'prisonApi' {
       /**
        * Offence History
        */
-      offenceHistory?: components['schemas']['OffenceHistoryDetail'][]
+      offenceHistory?: schemas['OffenceHistoryDetail'][]
       /**
        * Internal Offender ID
        */
@@ -2468,27 +2468,27 @@ declare module 'prisonApi' {
       /**
        * Personal Care Needs
        */
-      personalCareNeeds?: components['schemas']['PersonalCareNeed'][]
+      personalCareNeeds?: schemas['PersonalCareNeed'][]
       /**
        * A set of physical attributes
        */
-      physicalAttributes?: components['schemas']['PhysicalAttributes']
+      physicalAttributes?: schemas['PhysicalAttributes']
       /**
        * List of physical characteristics
        */
-      physicalCharacteristics?: components['schemas']['PhysicalCharacteristic'][]
+      physicalCharacteristics?: schemas['PhysicalCharacteristic'][]
       /**
        * List of physical marks
        */
-      physicalMarks?: components['schemas']['PhysicalMark'][]
+      physicalMarks?: schemas['PhysicalMark'][]
       /**
        * The prisoner's IEP Status
        */
-      privilegeSummary?: components['schemas']['PrivilegeSummary']
+      privilegeSummary?: schemas['PrivilegeSummary']
       /**
        * List of profile information
        */
-      profileInformation?: components['schemas']['ProfileInformation'][]
+      profileInformation?: schemas['ProfileInformation'][]
       /**
        * Recall
        */
@@ -2508,11 +2508,11 @@ declare module 'prisonApi' {
       /**
        * Sentence Detail
        */
-      sentenceDetail?: components['schemas']['SentenceDetail']
+      sentenceDetail?: schemas['SentenceDetail']
       /**
        * Current Sentence Terms
        */
-      sentenceTerms?: components['schemas']['OffenderSentenceTerms'][]
+      sentenceTerms?: schemas['OffenderSentenceTerms'][]
       /**
        * Status of prisoner
        */
@@ -2533,7 +2533,7 @@ declare module 'prisonApi' {
       /**
        * Levels
        */
-      levels?: components['schemas']['TypeValue'][]
+      levels?: schemas['TypeValue'][]
     }
     /**
      * Key worker allocation details
@@ -2616,7 +2616,7 @@ declare module 'prisonApi' {
       /**
        * Spoken language
        */
-      preferred_spoken?: components['schemas']['CodeDescription']
+      preferred_spoken?: schemas['CodeDescription']
     }
     /**
      * Legal Case
@@ -2637,15 +2637,15 @@ declare module 'prisonApi' {
       /**
        * Charges
        */
-      charges?: components['schemas']['Charge'][]
+      charges?: schemas['Charge'][]
       /**
        * Court
        */
-      court?: components['schemas']['CodeDescription']
+      court?: schemas['CodeDescription']
       /**
        * Legal Case Type
        */
-      legal_case_type?: components['schemas']['CodeDescription']
+      legal_case_type?: schemas['CodeDescription']
     }
     /**
      * Live Roll
@@ -2715,7 +2715,7 @@ declare module 'prisonApi' {
       /**
        * The child groups of this group
        */
-      children: components['schemas']['LocationGroup'][]
+      children: schemas['LocationGroup'][]
       /**
        * A key for the group
        */
@@ -2809,7 +2809,7 @@ declare module 'prisonApi' {
       /**
        * Military Records
        */
-      militaryRecords?: components['schemas']['MilitaryRecord'][]
+      militaryRecords?: schemas['MilitaryRecord'][]
     }
     /**
      * Prisoner Custody Status
@@ -2850,7 +2850,7 @@ declare module 'prisonApi' {
       /**
        * Movement time
        */
-      movementTime: components['schemas']['LocalTime']
+      movementTime: schemas['LocalTime']
       /**
        * ADM (admission), CRT (court), REL (release), TAP (temporary absence) or TRN (transfer)
        */
@@ -3301,7 +3301,7 @@ declare module 'prisonApi' {
       /**
        * List of offender’s aliases
        */
-      aliases?: components['schemas']['OffenderAlias'][]
+      aliases?: schemas['OffenderAlias'][]
       /**
        * indicates whether the offender has been convicted or is on remand
        */
@@ -3313,7 +3313,7 @@ declare module 'prisonApi' {
       /**
        * Cell Sharing Risk Assessment
        */
-      csra?: components['schemas']['CodeDescription']
+      csra?: schemas['CodeDescription']
       /**
        * Date of Birth
        */
@@ -3321,15 +3321,15 @@ declare module 'prisonApi' {
       /**
        * Diet
        */
-      diet?: components['schemas']['CodeDescription']
+      diet?: schemas['CodeDescription']
       /**
        * Ethnicity
        */
-      ethnicity?: components['schemas']['CodeDescription']
+      ethnicity?: schemas['CodeDescription']
       /**
        * Gender
        */
-      gender?: components['schemas']['CodeDescription']
+      gender?: schemas['CodeDescription']
       /**
        * Given Name
        */
@@ -3337,15 +3337,15 @@ declare module 'prisonApi' {
       /**
        * IEP Level
        */
-      iep_level?: components['schemas']['CodeDescription']
+      iep_level?: schemas['CodeDescription']
       /**
        * Imprisonment Status
        */
-      imprisonment_status?: components['schemas']['CodeDescription']
+      imprisonment_status?: schemas['CodeDescription']
       /**
        * Language
        */
-      language?: components['schemas']['Language']
+      language?: schemas['Language']
       /**
        * Middle Names
        */
@@ -3361,11 +3361,11 @@ declare module 'prisonApi' {
       /**
        * Religion
        */
-      religion?: components['schemas']['CodeDescription']
+      religion?: schemas['CodeDescription']
       /**
        * Security Categorisation
        */
-      security_category?: components['schemas']['CodeDescription']
+      security_category?: schemas['CodeDescription']
       /**
        * Suffix
        */
@@ -3572,7 +3572,7 @@ declare module 'prisonApi' {
       /**
        * List of attributes
        */
-      attributes?: components['schemas']['OffenderCellAttribute'][]
+      attributes?: schemas['OffenderCellAttribute'][]
       /**
        * Capacity
        */
@@ -3663,7 +3663,7 @@ declare module 'prisonApi' {
       /**
        * List of offender damage obligations
        */
-      damageObligations?: components['schemas']['OffenderDamageObligationModel'][]
+      damageObligations?: schemas['OffenderDamageObligationModel'][]
     }
     /**
      * Offender Event
@@ -3852,7 +3852,7 @@ declare module 'prisonApi' {
       /**
        * Movement time
        */
-      movementTime: components['schemas']['LocalTime']
+      movementTime: schemas['LocalTime']
       /**
        * Display Prisoner Number
        */
@@ -3971,7 +3971,7 @@ declare module 'prisonApi' {
       /**
        * Movement time
        */
-      movementTime: components['schemas']['LocalTime']
+      movementTime: schemas['LocalTime']
       /**
        * ADM (admission), CRT (court), REL (release), TAP (temporary absence) or TRN (transfer)
        */
@@ -4053,7 +4053,7 @@ declare module 'prisonApi' {
       /**
        * The offender with whom not to associate.
        */
-      offenderNonAssociation: components['schemas']['OffenderNonAssociation']
+      offenderNonAssociation: schemas['OffenderNonAssociation']
       /**
        * The non-association reason code
        */
@@ -4098,7 +4098,7 @@ declare module 'prisonApi' {
       /**
        * Offender non-association details
        */
-      nonAssociations?: components['schemas']['OffenderNonAssociationDetail'][]
+      nonAssociations?: schemas['OffenderNonAssociationDetail'][]
       /**
        * The offenders number
        */
@@ -4145,7 +4145,7 @@ declare module 'prisonApi' {
        * Reason for out movement
        */
       reasonDescription?: string
-      timeOut: components['schemas']['LocalTime']
+      timeOut: schemas['LocalTime']
     }
     /**
      * Offender Relationship
@@ -4199,7 +4199,7 @@ declare module 'prisonApi' {
       /**
        * Offender Sentence Detail Information
        */
-      sentenceDetail?: components['schemas']['BaseSentenceDetail']
+      sentenceDetail?: schemas['BaseSentenceDetail']
     }
     /**
      * Offender Sentence Detail
@@ -4244,7 +4244,7 @@ declare module 'prisonApi' {
       /**
        * Offender Sentence Detail Information
        */
-      sentenceDetail?: components['schemas']['SentenceDetail']
+      sentenceDetail?: schemas['SentenceDetail']
     }
     /**
      * Offender Sentence terms details for booking id
@@ -4419,7 +4419,7 @@ declare module 'prisonApi' {
       /**
        * List of related transaction details
        */
-      relatedOffenderTransactions?: components['schemas']['RelatedTransactionDetails'][]
+      relatedOffenderTransactions?: schemas['RelatedTransactionDetails'][]
       /**
        * Transaction Sequence
        */
@@ -4434,54 +4434,54 @@ declare module 'prisonApi' {
       transactionType?: string
     }
     PageOfBedAssignment: {
-      content?: components['schemas']['BedAssignment'][]
+      content?: schemas['BedAssignment'][]
       empty?: boolean
       first?: boolean
       last?: boolean
       number?: number
       numberOfElements?: number
-      pageable?: components['schemas']['Pageable']
+      pageable?: schemas['Pageable']
       size?: number
-      sort?: components['schemas']['Sort']
+      sort?: schemas['Sort']
       totalElements?: number
       totalPages?: number
     }
     PageOfOffenderNumber: {
-      content?: components['schemas']['OffenderNumber'][]
+      content?: schemas['OffenderNumber'][]
       empty?: boolean
       first?: boolean
       last?: boolean
       number?: number
       numberOfElements?: number
-      pageable?: components['schemas']['Pageable']
+      pageable?: schemas['Pageable']
       size?: number
-      sort?: components['schemas']['Sort']
+      sort?: schemas['Sort']
       totalElements?: number
       totalPages?: number
     }
     PageOfPrisonerInformation: {
-      content?: components['schemas']['PrisonerInformation'][]
+      content?: schemas['PrisonerInformation'][]
       empty?: boolean
       first?: boolean
       last?: boolean
       number?: number
       numberOfElements?: number
-      pageable?: components['schemas']['Pageable']
+      pageable?: schemas['Pageable']
       size?: number
-      sort?: components['schemas']['Sort']
+      sort?: schemas['Sort']
       totalElements?: number
       totalPages?: number
     }
     PageOfVisitWithVisitorsOfVisitDetails: {
-      content?: components['schemas']['VisitWithVisitorsOfVisitDetails'][]
+      content?: schemas['VisitWithVisitorsOfVisitDetails'][]
       empty?: boolean
       first?: boolean
       last?: boolean
       number?: number
       numberOfElements?: number
-      pageable?: components['schemas']['Pageable']
+      pageable?: schemas['Pageable']
       size?: number
-      sort?: components['schemas']['Sort']
+      sort?: schemas['Sort']
       totalElements?: number
       totalPages?: number
     }
@@ -4490,7 +4490,7 @@ declare module 'prisonApi' {
       pageNumber?: number
       pageSize?: number
       paged?: boolean
-      sort?: components['schemas']['Sort']
+      sort?: schemas['Sort']
       unpaged?: boolean
     }
     /**
@@ -4559,7 +4559,7 @@ declare module 'prisonApi' {
       /**
        * Personal Care Needs
        */
-      personalCareNeeds?: components['schemas']['PersonalCareNeed'][]
+      personalCareNeeds?: schemas['PersonalCareNeed'][]
     }
     /**
      * Physical Attributes
@@ -4691,7 +4691,7 @@ declare module 'prisonApi' {
       /**
        * List of Telephone details
        */
-      phones: components['schemas']['Telephone'][]
+      phones: schemas['Telephone'][]
       /**
        * Address postcode.
        */
@@ -5196,7 +5196,7 @@ declare module 'prisonApi' {
       /**
        * All IEP detail entries for the offender (most recent first).
        */
-      iepDetails?: components['schemas']['PrivilegeDetail'][]
+      iepDetails?: schemas['PrivilegeDetail'][]
       /**
        * The current IEP level (e.g. Basic, Standard or Enhanced).
        */
@@ -5234,7 +5234,7 @@ declare module 'prisonApi' {
       /**
        * The location id of the property container
        */
-      location?: components['schemas']['Location']
+      location?: schemas['Location']
       /**
        * The case sequence number for the offender
        */
@@ -5255,7 +5255,7 @@ declare module 'prisonApi' {
       /**
        * List of Questions (with Answers) for this Questionnaire
        */
-      questions: components['schemas']['QuestionnaireQuestion'][]
+      questions: schemas['QuestionnaireQuestion'][]
     }
     /**
      * Questionnaire Answer
@@ -5277,7 +5277,7 @@ declare module 'prisonApi' {
      * Questionnaire Question
      */
     QuestionnaireQuestion: {
-      answers: components['schemas']['QuestionnaireAnswer'][]
+      answers: schemas['QuestionnaireAnswer'][]
       multipleAnswerFlag: boolean
       nextQuestionnaireQueId: number
       questionActiveFlag: boolean
@@ -5323,7 +5323,7 @@ declare module 'prisonApi' {
       /**
        * Reasonable Adjustments
        */
-      reasonableAdjustments?: components['schemas']['ReasonableAdjustment'][]
+      reasonableAdjustments?: schemas['ReasonableAdjustment'][]
     }
     /**
      * Recall Offender Booking
@@ -5401,7 +5401,7 @@ declare module 'prisonApi' {
       /**
        * List of subordinate reference data items associated with this reference data item.
        */
-      subCodes?: components['schemas']['ReferenceCode'][]
+      subCodes?: schemas['ReferenceCode'][]
       /**
        * System Data Flag
        */
@@ -5927,7 +5927,7 @@ declare module 'prisonApi' {
       /**
        * The location of the prison to move from.
        */
-      fromPrisonLocation?: components['schemas']['Agency']
+      fromPrisonLocation?: schemas['Agency']
       /**
        * The identifier for the scheduled prison to prison move.
        */
@@ -5939,7 +5939,7 @@ declare module 'prisonApi' {
       /**
        * The location of the prison to move to.
        */
-      toPrisonLocation?: components['schemas']['Agency']
+      toPrisonLocation?: schemas['Agency']
     }
     /**
      * Secondary language
@@ -6359,11 +6359,11 @@ declare module 'prisonApi' {
       /**
        * Current Location
        */
-      current_location?: components['schemas']['CodeDescription']
+      current_location?: schemas['CodeDescription']
       /**
        * Transaction
        */
-      transaction?: components['schemas']['Transaction']
+      transaction?: schemas['Transaction']
     }
     /**
      * A scheduled offender movement event
@@ -6469,19 +6469,19 @@ declare module 'prisonApi' {
       /**
        * List of scheduled or completed court events
        */
-      courtEvents?: components['schemas']['CourtEvent'][]
+      courtEvents?: schemas['CourtEvent'][]
       /**
        * List of confirmed movements
        */
-      movements?: components['schemas']['MovementSummary'][]
+      movements?: schemas['MovementSummary'][]
       /**
        * List of scheduled or completed release events
        */
-      releaseEvents?: components['schemas']['ReleaseEvent'][]
+      releaseEvents?: schemas['ReleaseEvent'][]
       /**
        * List of scheduled or completed offender events
        */
-      transferEvents?: components['schemas']['TransferEvent'][]
+      transferEvents?: schemas['TransferEvent'][]
     }
     /**
      * Transfer to Savings Transaction
@@ -6511,11 +6511,11 @@ declare module 'prisonApi' {
       /**
        * Credit Transaction
        */
-      creditTransaction?: components['schemas']['Transaction']
+      creditTransaction?: schemas['Transaction']
       /**
        * Debit Transaction
        */
-      debitTransaction?: components['schemas']['Transaction']
+      debitTransaction?: schemas['Transaction']
       /**
        * Transaction Id
        */
@@ -6545,7 +6545,7 @@ declare module 'prisonApi' {
       /**
        * Existing Visits
        */
-      existing_visits?: components['schemas']['Visit'][]
+      existing_visits?: schemas['Visit'][]
       /**
        * External Movement
        */
@@ -6579,7 +6579,7 @@ declare module 'prisonApi' {
       /**
        * set of booking and activity ids
        */
-      bookingActivities: components['schemas']['BookingActivity'][]
+      bookingActivities: schemas['BookingActivity'][]
       /**
        * Attendance outcome, possible values are the codes in the 'PS_PA_OC' reference domain.
        */
@@ -6786,7 +6786,7 @@ declare module 'prisonApi' {
       /**
        * Type
        */
-      type?: components['schemas']['CodeDescription']
+      type?: schemas['CodeDescription']
     }
     /**
      * Visit slots Details
@@ -6828,7 +6828,7 @@ declare module 'prisonApi' {
       /**
        * List of visit slots with capacity
        */
-      slots?: components['schemas']['VisitSlotCapacity'][]
+      slots?: schemas['VisitSlotCapacity'][]
     }
     /**
      * List of visitors for a visit
@@ -6837,11 +6837,11 @@ declare module 'prisonApi' {
       /**
        * Visit Information
        */
-      visitDetails: components['schemas']['VisitDetails']
+      visitDetails: schemas['VisitDetails']
       /**
        * List of visitors on visit
        */
-      visitors: components['schemas']['Visitor'][]
+      visitors: schemas['Visitor'][]
     }
     /**
      * Visitor

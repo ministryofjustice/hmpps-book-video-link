@@ -1,16 +1,16 @@
 const express = require('express')
 const config = require('./config')
-const healthFactory = require('./services/healthCheck')
+const healthFactory = require('./services/healthCheck').default
 
 const router = express.Router()
 
-const health = healthFactory(
-  config.apis.oauth2.url,
-  config.apis.prison.url,
-  config.apis.whereabouts.url,
-  config.apis.tokenverification.url,
-  config.apis.prisonerOffenderSearch.url
-)
+const health = healthFactory([
+  { name: 'auth', url: config.apis.oauth2.url },
+  { name: 'prison', url: config.apis.prison.url },
+  { name: 'whereabouts', url: config.apis.whereabouts.url },
+  { name: 'tokenverification', url: config.apis.tokenverification.url },
+  { name: 'prisonerOffenderSearch', url: config.apis.prisonerOffenderSearch.url },
+])
 
 module.exports = () => {
   router.get('/health', (req, res, next) => {
@@ -21,8 +21,7 @@ module.exports = () => {
       if (!(result.status === 'UP')) {
         res.status(503)
       }
-      res.json(result)
-      return result
+      return res.json(result)
     })
   })
 
