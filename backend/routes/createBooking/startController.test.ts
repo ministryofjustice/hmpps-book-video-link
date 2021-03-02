@@ -1,3 +1,5 @@
+import { Agency, InmateDetail } from 'prisonApi'
+
 import StartController from './startController'
 import PrisonApi from '../../api/prisonApi'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
@@ -61,8 +63,8 @@ describe('Add court appointment', () => {
     req.errors = []
     req.flash = jest.fn()
     req.flash.mockImplementation(() => [])
-    prisonApi.getPrisonerDetails = jest.fn().mockResolvedValue(prisoner)
-    prisonApi.getAgencyDetails = jest.fn().mockResolvedValue(agencyDetails)
+    prisonApi.getPrisonerDetails.mockResolvedValue(prisoner as InmateDetail)
+    prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
     availabilityCheckService.getAvailability = jest.fn().mockResolvedValue(bookingSlot)
     controller = new StartController(prisonApi, availabilityCheckService)
   })

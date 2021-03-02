@@ -20,7 +20,6 @@ import setupWebSecurity from './setupWebSecurity'
 import setupAuth from './setupAuth'
 import setupStaticContent from './setupStaticContent'
 import nunjucksSetup from './utils/nunjucksSetup'
-import setupRedirects from './setupRedirects'
 import setupCurrentUserAndRequestLogging from './setupCurrentUserAndRequestLogging'
 import setupAuthorisation from './setupAuthorisation'
 
@@ -34,7 +33,6 @@ nunjucksSetup(app, path)
 app.use(setupBodyParsers())
 app.use(setupHealthChecks())
 app.use(setupWebSecurity())
-app.use(setupRedirects())
 app.use(setupStaticContent())
 app.use(setupWebSession())
 app.use(setupAuth(services))

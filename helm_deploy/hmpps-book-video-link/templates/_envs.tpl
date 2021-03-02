@@ -140,9 +140,6 @@ env:
   - name: TOKENVERIFICATION_API_ENABLED
     value: {{ .Values.env.TOKENVERIFICATION_API_ENABLED | quote }}
 
-  - name: SUPPORT_URL
-    value: {{ .Values.env.SUPPORT_URL | quote }}
-
   - name: NODE_ENV
     value: production
 

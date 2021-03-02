@@ -15,7 +15,7 @@ context('A user can request a booking', () => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('resetAndStubTokenVerification')
     cy.task('stubCourts')
-    cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
+    cy.task('stubAgencies', [{ agencyId: 'WWI', formattedDescription: 'HMP Wandsworth' }])
     cy.task('stubUserEmail', 'ITAG_USER')
     cy.task('stubUser', 'ITAG_USER', 'WWI')
 

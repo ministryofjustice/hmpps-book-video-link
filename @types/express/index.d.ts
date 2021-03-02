@@ -20,7 +20,7 @@ export declare global {
         username: string
         token: string
       }
-      errors?: { text: string; href: string }[]
+      errors?: { text?: string; href: string }[]
       flash(type: string, message: any): number
       flash(message: string): any[]
       flash(): { [key: string]: any[] }

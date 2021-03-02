@@ -155,3 +155,10 @@ pre {
   white-space: -moz-pre-line; /* Mozilla, since 1999 */
   word-wrap: break-word; /* IE 5.5-7 */
 }
+
+.govuk-\!-width-one-fifth {
+  width: 100% !important;
+  @include govuk-media-query($from: tablet) {
+    width: 20% !important;
+  }
+}

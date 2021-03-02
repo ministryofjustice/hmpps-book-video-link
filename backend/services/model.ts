@@ -3,10 +3,21 @@ import { Moment } from 'moment'
 
 export type Context = unknown
 
+export type Prison = {
+  agencyId: string
+  description: string
+}
+
 export type Room = {
   value: number
   text: string
 }
+
+export type Court = {
+  value: string
+  text: string
+}
+
 export type AvailabilityRequest = {
   agencyId: string
   videoBookingId?: number

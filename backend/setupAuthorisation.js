@@ -1,8 +1,8 @@
 const express = require('express')
+const { supportEmail } = require('./config')
 
 const requiredRoles = ['VIDEO_LINK_COURT_USER', 'GLOBAL_SEARCH']
 const router = express.Router()
-const supportEmail = 'feedback@digital.justice.gov.uk'
 
 module.exports = () => {
   router.get('/no-service-access', (req, res) => {

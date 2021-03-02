@@ -35,14 +35,8 @@ const validateStartEndTime = (date, startTime, endTime, errors) => {
   }
 }
 
-const validateComments = (comments, errors) => {
-  if (comments && comments.length > 3600)
-    errors.push({ text: 'Maximum length should not exceed 3600 characters', href: '#comments' })
-}
-
 module.exports = {
   validateDate,
   validateStartEndTime,
-  validateComments,
   prepostDurations,
 }

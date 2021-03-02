@@ -25,7 +25,7 @@ export default function createRoutes(services: Services): Router {
     const startController = new StartController(services.prisonApi, services.availabilityCheckService)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
     router.get(path, withRetryLink('/prisoner-search'), asyncMiddleware(startController.view()))
-    router.post(path, validationMiddleware(dateAndTimeValidation), startController.submit())
+    router.post(path, validationMiddleware(dateAndTimeValidation), asyncMiddleware(startController.submit()))
   }
 
   {

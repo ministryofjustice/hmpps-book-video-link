@@ -33,19 +33,22 @@
                 rows: prisoner | toSummaryViewModel | removePaddingBottom
                 })
             }}
-
             {{
                 govukSummaryList({
                 classes: 'govuk-summary-list--no-border',
                 rows: locations | toSummaryViewModel | removePaddingBottom
                 })
             }}
+        </div>
+    </div>
 
+    <div class="govuk-grid-row govuk-!-padding-left-6">
+        <div class="govuk-grid-column-full">
             <form method="POST" novalidate="novalidate">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <input type="hidden" name="agencyId" value="{{ agencyId }}"/>
 
-                {{ dateTimeAndCourtBriefingPicker(form, errors ) }}
+                {{ dateTimeAndCourtBriefingPicker(form, errors) }}
 
                 {{ govukButton({ 
                     text: "Continue",
