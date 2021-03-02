@@ -102,7 +102,7 @@ type Handlers = {
   createAppointments: RequestHandler
 }
 
-export default function selectCourtAppointmentRoomsFactory({
+export default function selectRoomsFactory({
   prisonApi,
   bookingService,
   availabilityCheckService,

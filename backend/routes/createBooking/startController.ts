@@ -27,8 +27,8 @@ export default class StartController {
         offenderNameWithNumber,
         agencyDescription,
         bookingId,
-        errors: req.flash('errors') || [],
-        formValues: req.flash('formValues')[0] || {},
+        errors: req.flash('errors'),
+        formValues: req.flash('formValues')[0],
       })
     }
   }
@@ -37,7 +37,7 @@ export default class StartController {
     return async (req: Request, res: Response) => {
       const { offenderNo, agencyId } = req.params
 
-      if (req.errors && req.errors.length > 0) {
+      if (req.errors) {
         req.flash('errors', req.errors)
         req.flash('formValues', req.body)
         return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment`)

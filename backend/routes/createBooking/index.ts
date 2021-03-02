@@ -2,7 +2,8 @@ import express, { Router } from 'express'
 
 import confirmation from './confirmationController'
 import StartController from './startController'
-import selectCourt from './selectCourtController'
+import SelectCourtController from './selectCourtController'
+import selectCourtValidation from './selectCourtValidation'
 import selectRooms from './selectRoomsController'
 import prisonerSearch from './prisonerSearchController'
 import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
@@ -29,10 +30,10 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const { index, post } = selectCourt(services)
+    const selectCourtController = new SelectCourtController(services.locationService, services.prisonApi)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court'
-    router.get(path, asyncMiddleware(index))
-    router.post(path, asyncMiddleware(post))
+    router.get(path, asyncMiddleware(selectCourtController.index))
+    router.post(path, validationMiddleware(selectCourtValidation), asyncMiddleware(selectCourtController.post))
   }
 
   {

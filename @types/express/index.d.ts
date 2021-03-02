@@ -21,9 +21,9 @@ export declare global {
         token: string
       }
       errors?: { text?: string; href: string }[]
+      flash(): { [key: string]: any[] }
       flash(type: string, message: any): number
       flash(message: string): any[]
-      flash(): { [key: string]: any[] }
     }
   }
 }
