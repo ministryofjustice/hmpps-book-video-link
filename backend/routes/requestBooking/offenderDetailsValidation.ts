@@ -44,7 +44,7 @@ export const errorTypes = {
   },
   commentLength: {
     text: 'Maximum length should not exceed 3600 characters',
-    href: '#comment',
+    href: '#comments',
   },
 }
 
@@ -53,8 +53,8 @@ export const dobError = {
 }
 
 export default function validate(form: Record<string, unknown>): ValidationError[] {
-  assertHasOptionalStringValues(form, ['firstName', 'lastName', 'dobDay', 'dobMonth', 'dobYear', 'comment'])
-  const { firstName, lastName, dobDay: dayString, dobMonth: monthString, dobYear: yearString, comment } = form
+  assertHasOptionalStringValues(form, ['firstName', 'lastName', 'dobDay', 'dobMonth', 'dobYear', 'comments'])
+  const { firstName, lastName, dobDay: dayString, dobMonth: monthString, dobYear: yearString, comments } = form
 
   const errors: ValidationError[] = []
 
@@ -91,7 +91,7 @@ export default function validate(form: Record<string, unknown>): ValidationError
 
   if (!yearString && (dayString || monthString)) errors.push(errorTypes.dateOfBirth.missingYear, dobError)
 
-  if (comment && comment.length > 3600) errors.push(errorTypes.commentLength)
+  if (comments && comments.length > 3600) errors.push(errorTypes.commentLength)
 
   return errors
 }

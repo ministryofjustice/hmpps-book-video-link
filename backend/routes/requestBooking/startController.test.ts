@@ -5,9 +5,6 @@ import LocationService from '../../services/locationService'
 
 jest.mock('../../services/locationService')
 
-process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
-process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
-
 describe('Request path Start controller', () => {
   const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 
@@ -53,6 +50,7 @@ describe('Request path Start controller', () => {
           {
             text: 'HMP Wandsworth',
             value: 'WWI',
+            selected: false,
           },
         ],
       })
@@ -81,6 +79,7 @@ describe('Request path Start controller', () => {
           {
             text: 'HMP Wandsworth',
             value: 'WWI',
+            selected: true,
           },
         ],
         formValues: {

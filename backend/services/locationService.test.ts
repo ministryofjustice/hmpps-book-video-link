@@ -6,7 +6,6 @@ import { app } from '../config'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
-jest.mock('./notificationService')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>

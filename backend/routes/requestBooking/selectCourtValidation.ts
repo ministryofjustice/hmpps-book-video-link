@@ -3,7 +3,7 @@ import type { ValidationError } from '../../middleware/validationMiddleware'
 export const errorTypes = {
   missingHearingLocation: {
     text: 'Select which court you are in',
-    href: '#hearingLocation',
+    href: '#hearing-location',
   },
 }
 

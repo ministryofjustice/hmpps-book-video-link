@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { BookingDetails, UpdateEmail } from './model'
+import { BookingDetails, UpdateEmail, RequestEmail } from './model'
 import config from '../config'
 import NotificationService from './notificationService'
 
@@ -56,6 +56,21 @@ const updateEmail: UpdateEmail = {
   postDescription: 'Vcc Room 2 - 19:00 to 19:20',
 }
 
+const requestEmail: RequestEmail = {
+  firstName: 'John',
+  lastName: 'Doe',
+  dateOfBirth: '10 December 2019',
+  date: '20 November 2020',
+  startTime: '10:00',
+  endTime: '11:00',
+  agencyId: 'WWI',
+  prison: 'some prison',
+  hearingLocation: 'London',
+  comments: 'some comment',
+  preHearingStartAndEndTime: '11:00 to 11:20',
+  postHearingStartAndEndTime: '09:35 to 11:00',
+}
+
 describe('Notification service', () => {
   const context = {}
   let notificationService: NotificationService
@@ -68,6 +83,113 @@ describe('Notification service', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('Send request emails', () => {
+    it('Details are retrieved for user', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
+
+      expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
+      expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
+    })
+
+    it('should send personalisation with optional fields', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingRequestEmails(context, 'A_USER', {
+        ...requestEmail,
+        comments: null,
+        preHearingStartAndEndTime: null,
+        postHearingStartAndEndTime: null,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.requestBookingCourtTemplateRequesterId,
+        'user@email.com',
+        {
+          personalisation: {
+            firstName: 'John',
+            lastName: 'Doe',
+            prison: 'some prison',
+            dateOfBirth: '10 December 2019',
+            date: '20 November 2020',
+            startTime: '10:00',
+            endTime: '11:00',
+            preHearingStartAndEndTime: 'Not required',
+            postHearingStartAndEndTime: 'Not required',
+            comments: 'None entered',
+            hearingLocation: 'London',
+            userName: 'A User',
+          },
+          reference: null,
+        }
+      )
+    })
+
+    it('should send email to Prison Video Link Booking Admin', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.requestBookingCourtTemplateVLBAdminId,
+        'vlb@prison.com',
+        {
+          personalisation: {
+            firstName: 'John',
+            lastName: 'Doe',
+            prison: 'some prison',
+            dateOfBirth: '10 December 2019',
+            date: '20 November 2020',
+            startTime: '10:00',
+            endTime: '11:00',
+            comments: 'some comment',
+            preHearingStartAndEndTime: '11:00 to 11:20',
+            postHearingStartAndEndTime: '09:35 to 11:00',
+            hearingLocation: 'London',
+          },
+          reference: null,
+        }
+      )
+    })
+
+    it('Should send email to court', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.requestBookingCourtTemplateRequesterId,
+        'user@email.com',
+        {
+          personalisation: {
+            firstName: 'John',
+            lastName: 'Doe',
+            prison: 'some prison',
+            dateOfBirth: '10 December 2019',
+            date: '20 November 2020',
+            startTime: '10:00',
+            endTime: '11:00',
+            comments: 'some comment',
+            preHearingStartAndEndTime: '11:00 to 11:20',
+            postHearingStartAndEndTime: '09:35 to 11:00',
+            hearingLocation: 'London',
+            userName: 'A User',
+          },
+          reference: null,
+        }
+      )
+    })
   })
 
   describe('Send update emails', () => {
@@ -190,6 +312,7 @@ describe('Notification service', () => {
         }
       )
     })
+
     it('Should send email to court', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
@@ -337,6 +460,7 @@ describe('Notification service', () => {
         }
       )
     })
+
     it('Should send email to court', async () => {
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })

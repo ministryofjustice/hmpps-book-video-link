@@ -1,5 +1,5 @@
 import moment from 'moment'
-import validator, { errorTypes } from './requestBookingValidation'
+import validator, { errorTypes } from './startValidation'
 
 describe('RequestBookingValidation', () => {
   const now = moment('2021-01-14T11:20:00.000Z')

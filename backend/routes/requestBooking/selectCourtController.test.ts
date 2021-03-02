@@ -5,9 +5,6 @@ import LocationService from '../../services/locationService'
 
 jest.mock('../../services/locationService')
 
-process.env.VIDEO_LINK_ENABLED_FOR = 'WWI'
-process.env.WANDSWORTH_VLB_EMAIL = 'test@justice.gov.uk'
-
 describe('Select court controller', () => {
   const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 

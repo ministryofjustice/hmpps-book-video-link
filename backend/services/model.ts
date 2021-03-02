@@ -122,3 +122,18 @@ export type UpdateEmail = {
   mainDescription: string
   postDescription?: string
 }
+
+export type RequestEmail = {
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+  date: string
+  startTime: string
+  endTime: string
+  agencyId: string
+  prison: string
+  hearingLocation: string
+  comments: string
+  preHearingStartAndEndTime?: string
+  postHearingStartAndEndTime?: string
+}

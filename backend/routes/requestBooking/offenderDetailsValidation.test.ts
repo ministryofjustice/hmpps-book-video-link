@@ -7,7 +7,7 @@ describe('OffenderDetailsValidation', () => {
     dobDay: '10',
     dobMonth: '12',
     dobYear: '2019',
-    comment: 'Some comment',
+    comments: 'Some comment',
   } as Record<string, unknown>
 
   describe('checking for missing form values', () => {
@@ -93,15 +93,15 @@ describe('OffenderDetailsValidation', () => {
 
   describe('checking maximum comment length validation', () => {
     it('should return an error when a comment exceeds 3600 characters', () => {
-      expect(validator({ ...form, comment: '#'.repeat(3601) })).toStrictEqual([errorTypes.commentLength])
+      expect(validator({ ...form, comments: '#'.repeat(3601) })).toStrictEqual([errorTypes.commentLength])
     })
 
     it('should not return an error when a comment is exactly 3600 characters', () => {
-      expect(validator({ ...form, comment: '#'.repeat(3600) })).toStrictEqual([])
+      expect(validator({ ...form, comments: '#'.repeat(3600) })).toStrictEqual([])
     })
 
     it('should not return an error when a comment is less than 3600 characters', () => {
-      expect(validator({ ...form, comment: '#'.repeat(3599) })).toStrictEqual([])
+      expect(validator({ ...form, comments: '#'.repeat(3599) })).toStrictEqual([])
     })
   })
 })

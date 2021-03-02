@@ -18,6 +18,7 @@ export default class StartController {
       const prisonDropdownValues = (await this.locationService.getVideoLinkEnabledPrisons(res.locals)).map(prison => ({
         text: prison.description,
         value: prison.agencyId,
+        selected: prison.agencyId === input?.prison,
       }))
 
       return res.render('requestBooking/requestBooking.njk', {
