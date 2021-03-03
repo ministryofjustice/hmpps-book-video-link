@@ -1,7 +1,9 @@
 import { notifications } from '../config'
 import log from '../log'
 import { Context, BookingDetails, UpdateEmail, RequestEmail, Recipient, EmailSpec } from './model'
-import BookingRequest from './emails/bookingRequest'
+import BookingRequest from './emails/BookingRequest'
+import BookingUpdated from './emails/BookingUpdate'
+import BookingCancellation from './emails/BookingCancellation'
 
 export default class NotificationService {
   constructor(private readonly oauthApi: any, private readonly notifyApi: any) {}
@@ -59,98 +61,10 @@ export default class NotificationService {
   }
 
   public async sendBookingUpdateEmails(context: Context, username: string, details: UpdateEmail): Promise<void> {
-    const { email, name } = await this.getUserDetails(context, username)
-    const { omu, vlb } = notifications.emails[details.agencyId]
-
-    const personalisation = {
-      prisonerName: details.prisonerName,
-      offenderNo: details.offenderNo,
-      prison: details.prisonName,
-      date: details.dateDescription,
-      preAppointmentInfo: details.preDescription || 'Not required',
-      mainAppointmentInfo: details.mainDescription,
-      postAppointmentInfo: details.postDescription || 'Not required',
-      comments: details.comments || 'None entered',
-    }
-
-    const courtPersonalisation = { userName: name, ...personalisation }
-    const prisonPersonalisation = { court: details.courtLocation, ...personalisation }
-
-    if (omu) {
-      this.sendEmail({
-        templateId: notifications.bookingUpdateConfirmationPrison,
-        email: omu,
-        personalisation: prisonPersonalisation,
-      }).catch(error => {
-        log.error(`Failed to notify OMU about a booking update: ${error.message}`, error.response?.data?.errors)
-      })
-    }
-
-    this.sendEmail({
-      templateId: notifications.bookingUpdateConfirmationPrison,
-      email: vlb,
-      personalisation: prisonPersonalisation,
-    }).catch(error => {
-      log.error(`Failed to notify VLB Admin about a booking update: ${error.message}`, error.response?.data?.errors)
-    })
-
-    this.sendEmail({
-      templateId: notifications.bookingUpdateConfirmationCourt,
-      email,
-      personalisation: courtPersonalisation,
-    }).catch(error => {
-      log.error(`Failed to notify court user about a booking update: ${error.message}`, error.response?.data?.errors)
-    })
+    await this.sendEmails(context, username, BookingUpdated(details))
   }
 
   public async sendCancellationEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
-    const { email, name } = await this.getUserDetails(context, username)
-    const { omu, vlb } = notifications.emails[details.agencyId]
-
-    const personalisation = {
-      prisonerName: details.prisonerName,
-      offenderNo: details.offenderNo,
-      prison: details.prisonName,
-      date: details.dateDescription,
-      preAppointmentInfo: details.preDetails?.description || 'Not required',
-      mainAppointmentInfo: details.mainDetails.description,
-      postAppointmentInfo: details.postDetails?.description || 'Not required',
-      comments: details.comments || 'None entered',
-    }
-
-    const courtPersonalisation = { userName: name, ...personalisation }
-    const prisonPersonalisation = { court: details.courtLocation, ...personalisation }
-
-    if (omu) {
-      this.sendEmail({
-        templateId: notifications.bookingCancellationPrison,
-        email: omu,
-        personalisation: prisonPersonalisation,
-      }).catch(error => {
-        log.error(`Failed to notify OMU about a booking cancellation: ${error.message}`, error.response?.data?.errors)
-      })
-    }
-
-    this.sendEmail({
-      templateId: notifications.bookingCancellationPrison,
-      email: vlb,
-      personalisation: prisonPersonalisation,
-    }).catch(error => {
-      log.error(
-        `Failed to notify VLB Admin about a booking cancellation: ${error.message}`,
-        error.response?.data?.errors
-      )
-    })
-
-    this.sendEmail({
-      templateId: notifications.bookingCancellationCourt,
-      email,
-      personalisation: courtPersonalisation,
-    }).catch(error => {
-      log.error(
-        `Failed to notify court user about a booking cancellation: ${error.message}`,
-        error.response?.data?.errors
-      )
-    })
+    await this.sendEmails(context, username, BookingCancellation(details))
   }
 }
