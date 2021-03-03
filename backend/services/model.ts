@@ -137,3 +137,15 @@ export type RequestEmail = {
   preHearingStartAndEndTime?: string
   postHearingStartAndEndTime?: string
 }
+
+export type Recipient = 'omu' | 'vlb' | 'user'
+
+export type EmailSpec = {
+  name: string
+  agencyId: string
+  recipients: {
+    recipient: Recipient
+    template: string
+    personalisation: (usersName: string) => Record<string, unknown>
+  }[]
+}
