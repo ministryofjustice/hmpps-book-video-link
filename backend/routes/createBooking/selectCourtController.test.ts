@@ -67,7 +67,7 @@ describe('Select court appoinment court', () => {
 
   describe('index', () => {
     it('should render the template correctly with the court values sorted alphabetically', async () => {
-      await controller.index(req, res, null)
+      await controller.view(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectCourt.njk',
@@ -93,7 +93,7 @@ describe('Select court appoinment court', () => {
           postAppointmentRequired: 'no',
         },
       ])
-      await controller.index(req, res, null)
+      await controller.view(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectCourt.njk',
@@ -107,7 +107,7 @@ describe('Select court appoinment court', () => {
   describe('post', () => {
     describe('when no court has been selected', () => {
       it('should return an error', async () => {
-        await controller.post(
+        await controller.submit(
           ({ ...req, errors: [{ text: 'some error', href: '#court' }] } as unknown) as Request,
           res,
           null
@@ -123,7 +123,7 @@ describe('Select court appoinment court', () => {
     describe('when a court has been selected', () => {
       it('should populate the details with the selected court and redirect to room selection page ', async () => {
         req.body = { court: 'City of London' }
-        await controller.post(req, res, null)
+        await controller.submit(req, res, null)
 
         expect(req.flash).toHaveBeenCalledWith(
           'appointmentDetails',

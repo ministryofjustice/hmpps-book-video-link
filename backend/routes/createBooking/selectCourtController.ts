@@ -22,7 +22,7 @@ const unpackAppointmentDetails = req => {
 export default class SelectCourtController {
   constructor(private readonly locationService: LocationService, private readonly prisonApi: PrisonApi) {}
 
-  public index: RequestHandler = async (req, res) => {
+  public view: RequestHandler = async (req, res) => {
     const appointmentDetails = unpackAppointmentDetails(req)
     const { offenderNo, agencyId } = req.params
 
@@ -76,7 +76,7 @@ export default class SelectCourtController {
     })
   }
 
-  public post: RequestHandler = async (req, res) => {
+  public submit: RequestHandler = async (req, res) => {
     const { offenderNo, agencyId } = req.params
     const { court } = req.body
     const appointmentDetails = unpackAppointmentDetails(req)

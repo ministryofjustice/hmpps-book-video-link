@@ -11,13 +11,13 @@
 
 {% macro appointment(params) %}
     {{ govukSelect({
-        name: params.name + "Location",
-        id: params.name + "Location",
+        name: params.name,
+        id: params.name,
         label: {
             text: params.description
         },
         items: params.locations | addDefaultSelectedVale('Select') | setSelected(params.location),
-        errorMessage: errors | findError(params.name + "Location")
+        errorMessage: errors | findError(params.name)
     }) }}
 {% endmacro %}
 
@@ -36,21 +36,42 @@
         <form method="post">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
             <input type="hidden" id="appointment-date" value="{{ date }}"/>
+            <input type="hidden" name="preAppointmentRequired" value="{{ preAppointmentRequired }}"/>
+            <input type="hidden" name="postAppointmentRequired" value="{{ postAppointmentRequired }}"/>
+
 
             {% if preAppointmentRequired %}
-                {{ appointment({description: "Prison room for pre-court hearing briefing", name:"selectPreAppointment",locations: preLocations, location: formValues.preAppointmentLocation, duration: formValues.preAppointmentDuration}) }}
+                {{ appointment({
+                    description: "Prison room for pre-court hearing briefing", 
+                    name: "preLocation",
+                    locations: preLocations, 
+                    location: form.preLocation 
+                    }) 
+                }}
             {% endif %}
 
-            {{ appointment({description: "Prison room for court hearing", name:"selectMainAppointment",locations: mainLocations, location: formValues.mainAppointmentLocation, duration: formValues.mainAppointmentDuration}) }}
+            {{ appointment({
+                description: "Prison room for court hearing", 
+                name:"mainLocation",
+                locations: mainLocations, 
+                location: form.mainLocation
+                }) 
+            }}
 
             {% if postAppointmentRequired %}
-                {{ appointment({description: "Prison room for post-court hearing briefing", name:"selectPostAppointment",locations: postLocations, location: formValues.postAppointmentLocation, duration: formValues.postAppointmentDuration}) }}
+                {{ appointment({
+                    description: "Prison room for post-court hearing briefing", 
+                    name:"postLocation",
+                    locations: postLocations, 
+                    location: form.postLocation 
+                    }) 
+                }}
             {% endif %}
 
             {{ govukTextarea({
                 name: "comment",
                 id: "comment",
-                value: formValues.comment,
+                value: form.comment,
                 errorMessage: errors | findError('comment'),
                 classes: 'govuk-!-width-one-half',
                 label: {

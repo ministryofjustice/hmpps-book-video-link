@@ -12,11 +12,16 @@ export = class NotificationService {
     })
   }
 
-  public async sendBookingRequestEmails(context: Context, username: string, details: RequestEmail): Promise<void> {
+  private async getUserDetails(context: Context, username: string) {
     const [{ email }, { name }] = await Promise.all([
       this.oauthApi.userEmail(context, username),
       this.oauthApi.userDetails(context, username),
     ])
+    return { email, name }
+  }
+
+  public async sendBookingRequestEmails(context: Context, username: string, details: RequestEmail): Promise<void> {
+    const { email, name } = await this.getUserDetails(context, username)
     const { vlb } = notifications.emails[details.agencyId]
 
     const personalisation = {
@@ -53,10 +58,7 @@ export = class NotificationService {
   }
 
   public async sendBookingUpdateEmails(context: Context, username: string, details: UpdateEmail): Promise<void> {
-    const [{ email }, { name }] = await Promise.all([
-      this.oauthApi.userEmail(context, username),
-      this.oauthApi.userDetails(context, username),
-    ])
+    const { email, name } = await this.getUserDetails(context, username)
     const { omu, vlb } = notifications.emails[details.agencyId]
 
     const personalisation = {
@@ -101,10 +103,7 @@ export = class NotificationService {
   }
 
   public async sendCancellationEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
-    const [{ email }, { name }] = await Promise.all([
-      this.oauthApi.userEmail(context, username),
-      this.oauthApi.userDetails(context, username),
-    ])
+    const { email, name } = await this.getUserDetails(context, username)
     const { omu, vlb } = notifications.emails[details.agencyId]
 
     const personalisation = {

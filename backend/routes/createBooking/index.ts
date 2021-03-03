@@ -5,6 +5,7 @@ import StartController from './startController'
 import SelectCourtController from './selectCourtController'
 import selectCourtValidation from './selectCourtValidation'
 import selectRooms from './selectRoomsController'
+import selectRoomsValidation from './selectRoomsValidation'
 import prisonerSearch from './prisonerSearchController'
 import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
 
@@ -32,15 +33,15 @@ export default function createRoutes(services: Services): Router {
   {
     const selectCourtController = new SelectCourtController(services.locationService, services.prisonApi)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court'
-    router.get(path, asyncMiddleware(selectCourtController.index))
-    router.post(path, validationMiddleware(selectCourtValidation), asyncMiddleware(selectCourtController.post))
+    router.get(path, asyncMiddleware(selectCourtController.view))
+    router.post(path, validationMiddleware(selectCourtValidation), asyncMiddleware(selectCourtController.submit))
   }
 
   {
-    const { index, validateInput, createAppointments } = selectRooms(services)
+    const { view, submit } = selectRooms(services)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms'
-    router.get(path, asyncMiddleware(index))
-    router.post(path, validateInput, checkRooms, asyncMiddleware(createAppointments))
+    router.get(path, asyncMiddleware(view))
+    router.post(path, validationMiddleware(selectRoomsValidation), checkRooms, asyncMiddleware(submit))
   }
 
   router.get(

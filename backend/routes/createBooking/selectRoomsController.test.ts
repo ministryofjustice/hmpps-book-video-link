@@ -84,11 +84,11 @@ describe('Select court appointment rooms', () => {
     } as unknown) as Services)
   })
 
-  describe('index', () => {
+  describe('view', () => {
     it('should return locations', async () => {
-      const { index } = controller
+      const { view } = controller
 
-      await index(req, res)
+      await view(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectRooms.njk',
@@ -101,9 +101,9 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should extract appointment details', async () => {
-      const { index } = controller
+      const { view } = controller
 
-      await index(req, res)
+      await view(req, res)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectRooms.njk',
@@ -120,17 +120,17 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { index } = controller
+      const { view } = controller
 
       req.flash.mockImplementation(() => [])
 
-      await expect(index(req, res)).rejects.toThrow('Appointment details are missing')
+      await expect(view(req, res)).rejects.toThrow('Appointment details are missing')
     })
 
     it('should call getAvailableLocationsForVLB with the correct parameters', async () => {
-      const { index } = controller
+      const { view } = controller
 
-      await index(req, res)
+      await view(req, res)
 
       expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(
         {},
@@ -146,129 +146,7 @@ describe('Select court appointment rooms', () => {
     })
   })
 
-  describe('validateInput', () => {
-    it('should return a validation message if the pre or post appointment location is the same as the main appointment location', async () => {
-      req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '1',
-        selectPostAppointmentLocation: '1',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
-        comment: 'Test',
-      }
-
-      const { validateInput } = controller
-      await validateInput(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking/selectRooms.njk',
-        expect.objectContaining({
-          errors: [
-            {
-              text: 'Select a different room for the post-court hearing to the room for the court hearing briefing',
-              href: '#selectPostAppointmentLocation',
-            },
-            {
-              text: 'Select a different room for the pre-court hearing to the room for the court hearing briefing',
-              href: '#selectPreAppointmentLocation',
-            },
-          ],
-        })
-      )
-    })
-
-    it('should validate presence of room locations', async () => {
-      const { validateInput } = controller
-
-      req.body = {
-        selectPreAppointmentLocation: null,
-        selectMainAppointmentLocation: null,
-        selectPostAppointmentLocation: null,
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'yes',
-        comment: 'Test',
-      }
-
-      await validateInput(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking/selectRooms.njk',
-        expect.objectContaining({
-          errors: [
-            { text: 'Select a prison room for the court hearing video link', href: '#selectMainAppointmentLocation' },
-            { text: 'Select a prison room for the pre-court hearing briefing', href: '#selectPreAppointmentLocation' },
-            {
-              text: 'Select a prison room for the post-court hearing briefing',
-              href: '#selectPostAppointmentLocation',
-            },
-          ],
-        })
-      )
-    })
-
-    it('should return selected form values on validation errors', async () => {
-      const { validateInput } = controller
-      const comment = 'Some supporting comment text'
-
-      req.body = { comment }
-
-      await validateInput(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking/selectRooms.njk',
-        expect.objectContaining({
-          formValues: { comment },
-        })
-      )
-    })
-
-    it('should return locations, links and summary details on validation errors', async () => {
-      const { validateInput } = controller
-
-      req.flash.mockImplementation(() => [
-        {
-          ...appointmentDetails,
-          mainLocations: [{ value: 1, text: 'Room 3' }],
-          postLocations: [{ value: 1, text: 'Room 3' }],
-          preLocations: [{ value: 1, text: 'Room 3' }],
-        },
-      ])
-
-      await validateInput(req, res)
-
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking/selectRooms.njk',
-        expect.objectContaining({
-          mainLocations: [{ value: 1, text: 'Room 3' }],
-          postLocations: [{ value: 1, text: 'Room 3' }],
-          preLocations: [{ value: 1, text: 'Room 3' }],
-          details: {
-            date: '10 November 2017',
-            startTime: '11:00',
-            endTime: '14:00',
-            prisonerName: 'John Doe',
-          },
-        })
-      )
-    })
-
-    it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { validateInput } = controller
-
-      req.flash.mockImplementation(() => [])
-      expect(() => validateInput(req, res)).toThrow('Appointment details are missing')
-    })
-
-    it('should pack appointment details back into flash before rendering', async () => {
-      const { validateInput } = controller
-
-      await validateInput(req, res)
-
-      expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
-    })
-  })
-
-  describe('createAppointments', () => {
+  describe('submit', () => {
     beforeEach(() => {
       req.flash.mockImplementation(() => [
         {
@@ -279,9 +157,9 @@ describe('Select court appointment rooms', () => {
       ])
 
       req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '2',
-        selectPostAppointmentLocation: '3',
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
         comment: 'Test',
       }
 
@@ -290,17 +168,33 @@ describe('Select court appointment rooms', () => {
       config.notifications.emails.WWI.vlb = 'vlb@prison.com'
     })
 
-    it('should redirect to confirmation page', async () => {
-      const { createAppointments } = controller
+    it('should redirect back when errors in request', async () => {
+      const { submit } = controller
 
       req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '2',
-        selectPostAppointmentLocation: '3',
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
         comment: 'Test',
       }
 
-      await createAppointments(req, res)
+      await submit({ ...req, errors: [{ href: '#preLocation' }] }, res)
+
+      expect(res.redirect).toHaveBeenCalledWith('/WWI/offenders/A12345/add-court-appointment/select-rooms')
+      expect(notifyApi.sendEmail).not.toHaveBeenCalled()
+    })
+
+    it('should redirect to confirmation page', async () => {
+      const { submit } = controller
+
+      req.body = {
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
+        comment: 'Test',
+      }
+
+      await submit(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment')
       expect(notifyApi.sendEmail).not.toHaveBeenCalled()
@@ -314,21 +208,21 @@ describe('Select court appointment rooms', () => {
           postAppointmentRequired: 'no',
         },
       ])
-      const { createAppointments } = controller
+      const { submit } = controller
 
       req.body = {
-        selectMainAppointmentLocation: '2',
+        mainLocation: '2',
         comment: 'Test',
       }
 
-      await createAppointments(req, res)
+      await submit(req, res)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment')
       expect(notifyApi.sendEmail).not.toHaveBeenCalled()
     })
 
     it('should call the appointment service with correct appointment details', async () => {
-      const { createAppointments } = controller
+      const { submit } = controller
       req.flash.mockImplementation(() => [
         {
           ...appointmentDetails,
@@ -339,13 +233,13 @@ describe('Select court appointment rooms', () => {
       ])
 
       req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '2',
-        selectPostAppointmentLocation: '3',
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
         comment: 'Test',
       }
 
-      await createAppointments(req, res)
+      await submit(req, res)
 
       expect(bookingService.create).toBeCalledWith(
         {},
@@ -373,16 +267,16 @@ describe('Select court appointment rooms', () => {
         email: 'test@example.com',
       })
 
-      const { createAppointments } = controller
+      const { submit } = controller
 
       req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '2',
-        selectPostAppointmentLocation: '3',
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
         comment: 'Test',
       }
 
-      await createAppointments(req, res)
+      await submit(req, res)
 
       const personalisation = {
         startTime: '11:00',
@@ -421,16 +315,16 @@ describe('Select court appointment rooms', () => {
 
       oauthApi.userEmail.mockReturnValue({ email: 'test@example.com' })
 
-      const { createAppointments } = controller
+      const { submit } = controller
 
       req.body = {
-        selectPreAppointmentLocation: '1',
-        selectMainAppointmentLocation: '2',
-        selectPostAppointmentLocation: '3',
+        preLocation: '1',
+        mainLocation: '2',
+        postLocation: '3',
         comment: 'Test',
       }
 
-      await createAppointments(req, res)
+      await submit(req, res)
 
       const personalisation = {
         startTime: '11:00',

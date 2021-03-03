@@ -131,9 +131,9 @@ describe('check availability middleware', () => {
       availabilityCheckService.isStillAvailable.mockReturnValue(false)
 
       req.body = {
-        selectPreAppointmentLocation: '45',
-        selectMainAppointmentLocation: '72',
-        selectPostAppointmentLocation: '93',
+        preLocation: '45',
+        mainLocation: '72',
+        postLocation: '93',
       }
 
       req.flash.mockReturnValue([appointmentDetails])

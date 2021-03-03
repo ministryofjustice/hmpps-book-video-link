@@ -27,11 +27,7 @@ export default function createCheckAvailability({ availabilityCheckService }: Se
   return async (req, res, next) => {
     const appointmentDetails = unpackAppointmentDetails(req)
     const { offenderNo, agencyId } = req.params
-    const {
-      selectPreAppointmentLocation: preLocation,
-      selectMainAppointmentLocation: mainLocation,
-      selectPostAppointmentLocation: postLocation,
-    } = req.body
+    const { preLocation, mainLocation, postLocation } = req.body
 
     const request = parseFlash(agencyId, appointmentDetails)
 

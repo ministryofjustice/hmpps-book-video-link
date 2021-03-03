@@ -7,6 +7,7 @@ import toAppointmentDetailsSummary from '../../services/toAppointmentDetailsSumm
 import { properCaseName } from '../../utils'
 import { Services } from '../../services'
 import { AvailabilityRequest } from '../../services/model'
+import { RoomAndComment } from './dtos'
 
 const { confirmBookingCourtTemplateId, prisonCourtBookingTemplateId, emails } = notifications
 
@@ -38,68 +39,9 @@ const packAppointmentDetails = (req, details) => {
   req.flash('appointmentDetails', details)
 }
 
-const validate = ({
-  preAppointmentRequired,
-  postAppointmentRequired,
-  selectPreAppointmentLocation,
-  selectPostAppointmentLocation,
-  selectMainAppointmentLocation,
-  comment,
-}) => {
-  const errors = []
-
-  if (!selectMainAppointmentLocation)
-    errors.push({
-      text: 'Select a prison room for the court hearing video link',
-      href: '#selectMainAppointmentLocation',
-    })
-
-  if (preAppointmentRequired === 'yes' && !selectPreAppointmentLocation)
-    errors.push({
-      text: 'Select a prison room for the pre-court hearing briefing',
-      href: '#selectPreAppointmentLocation',
-    })
-
-  if (postAppointmentRequired === 'yes' && !selectPostAppointmentLocation)
-    errors.push({
-      text: 'Select a prison room for the post-court hearing briefing',
-      href: '#selectPostAppointmentLocation',
-    })
-
-  if (
-    postAppointmentRequired === 'yes' &&
-    selectMainAppointmentLocation &&
-    selectPostAppointmentLocation &&
-    selectPostAppointmentLocation === selectMainAppointmentLocation
-  ) {
-    errors.push({
-      text: 'Select a different room for the post-court hearing to the room for the court hearing briefing',
-      href: '#selectPostAppointmentLocation',
-    })
-  }
-
-  if (
-    preAppointmentRequired === 'yes' &&
-    selectPreAppointmentLocation &&
-    selectMainAppointmentLocation &&
-    selectPreAppointmentLocation === selectMainAppointmentLocation
-  ) {
-    errors.push({
-      text: 'Select a different room for the pre-court hearing to the room for the court hearing briefing',
-      href: '#selectPreAppointmentLocation',
-    })
-  }
-
-  if (comment && comment.length > 3600)
-    errors.push({ text: 'Maximum length should not exceed 3600 characters', href: '#comment' })
-
-  return errors
-}
-
 type Handlers = {
-  index: RequestHandler
-  validateInput: RequestHandler
-  createAppointments: RequestHandler
+  view: RequestHandler
+  submit: RequestHandler
 }
 
 export default function selectRoomsFactory({
@@ -109,7 +51,7 @@ export default function selectRoomsFactory({
   oauthApi,
   notifyApi,
 }: Services): Handlers {
-  const index = async (req, res) => {
+  const view = async (req, res) => {
     const { offenderNo, agencyId } = req.params
 
     const appointmentDetails = unpackAppointmentDetails(req)
@@ -143,6 +85,9 @@ export default function selectRoomsFactory({
       date,
     })
 
+    const [input] = req.flash('input')
+    const form = input ? RoomAndComment(input) : {}
+
     res.render('createBooking/selectRooms.njk', {
       mainLocations: main,
       preLocations: pre,
@@ -157,6 +102,8 @@ export default function selectRoomsFactory({
       }),
       preAppointmentRequired: preAppointmentRequired === 'yes',
       postAppointmentRequired: postAppointmentRequired === 'yes',
+      errors: req.flash('errors') || [],
+      form,
     })
   }
 
@@ -183,69 +130,18 @@ export default function selectRoomsFactory({
     return postDetails
   }
 
-  const validateInput = (req, res, next) => {
-    const {
-      selectPreAppointmentLocation,
-      selectMainAppointmentLocation,
-      selectPostAppointmentLocation,
-      comment,
-    } = req.body
+  const submit = async (req, res) => {
+    const { offenderNo, agencyId } = req.params
+
     const appointmentDetails = unpackAppointmentDetails(req)
-    const {
-      startTime,
-      endTime,
-      firstName,
-      lastName,
-      date,
-      preAppointmentRequired,
-      postAppointmentRequired,
-      agencyDescription,
-      mainLocations,
-      preLocations,
-      postLocations,
-    } = appointmentDetails
 
-    const errors = validate({
-      preAppointmentRequired,
-      postAppointmentRequired,
-      selectPreAppointmentLocation,
-      selectPostAppointmentLocation,
-      selectMainAppointmentLocation,
-      comment,
-    })
-
-    packAppointmentDetails(req, appointmentDetails)
-    if (errors.length) {
-      return res.render('createBooking/selectRooms.njk', {
-        mainLocations,
-        preLocations,
-        postLocations,
-        formValues: {
-          preAppointmentLocation: selectPreAppointmentLocation && Number(selectPreAppointmentLocation),
-          mainAppointmentLocation: selectMainAppointmentLocation && Number(selectMainAppointmentLocation),
-          postAppointmentLocation: selectPostAppointmentLocation && Number(selectPostAppointmentLocation),
-          comment,
-        },
-        errors,
-        date,
-        details: toAppointmentDetailsSummary({
-          firstName,
-          lastName,
-          startTime,
-          endTime,
-          agencyDescription,
-        }),
-        preAppointmentRequired: preAppointmentRequired === 'yes',
-        postAppointmentRequired: postAppointmentRequired === 'yes',
-      })
+    if (req.errors) {
+      req.flash('errors', req.errors)
+      req.flash('input', req.body)
+      packAppointmentDetails(req, appointmentDetails)
+      return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/select-rooms`)
     }
 
-    return next()
-  }
-
-  const createAppointments = async (req, res) => {
-    const { offenderNo, agencyId } = req.params
-    const appointmentDetails = unpackAppointmentDetails(req)
     const {
       startTime,
       endTime,
@@ -261,33 +157,28 @@ export default function selectRoomsFactory({
       agencyDescription,
     } = appointmentDetails
     const { username, name } = req.session.userDetails
-    const {
-      selectPreAppointmentLocation,
-      selectMainAppointmentLocation,
-      selectPostAppointmentLocation,
-      comment,
-    } = req.body
+    const { preLocation, mainLocation, postLocation, comment } = req.body
 
     const prepostAppointments = {} as any
 
     if (preAppointmentRequired === 'yes') {
       prepostAppointments.preAppointment = createPreAppointment({
         startTime,
-        preAppointmentLocation: selectPreAppointmentLocation,
+        preAppointmentLocation: preLocation,
       })
     }
 
     if (postAppointmentRequired === 'yes') {
       prepostAppointments.postAppointment = createPostAppointment({
         endTime,
-        postAppointmentLocation: selectPostAppointmentLocation,
+        postAppointmentLocation: postLocation,
       })
     }
 
     packAppointmentDetails(req, {
       ...appointmentDetails,
       ...prepostAppointments,
-      locationId: selectMainAppointmentLocation,
+      locationId: mainLocation,
       comment,
     })
 
@@ -295,16 +186,16 @@ export default function selectRoomsFactory({
 
     const preAppointmentInfo =
       preAppointmentRequired === 'yes'
-        ? `${preLocations.find(l => l.value === Number(selectPreAppointmentLocation)).text}, ${Time(
+        ? `${preLocations.find(l => l.value === Number(preLocation)).text}, ${Time(
             prepostAppointments.preAppointment.startTime
           )} to ${Time(startTime)}`
         : 'Not required'
 
     const postAppointmentInfo =
       postAppointmentRequired === 'yes'
-        ? `${postLocations.find(l => l.value === Number(selectPostAppointmentLocation)).text}, ${Time(
-            endTime
-          )} to ${Time(prepostAppointments.postAppointment.endTime)}`
+        ? `${postLocations.find(l => l.value === Number(postLocation)).text}, ${Time(endTime)} to ${Time(
+            prepostAppointments.postAppointment.endTime
+          )}`
         : 'Not required'
 
     if (userEmailData && userEmailData.email) {
@@ -315,7 +206,7 @@ export default function selectRoomsFactory({
         firstName: properCaseName(firstName),
         lastName: properCaseName(lastName),
         offenderNo,
-        location: mainLocations.find(l => l.value === Number(selectMainAppointmentLocation)).text,
+        location: mainLocations.find(l => l.value === Number(mainLocation)).text,
         preAppointmentInfo,
         postAppointmentInfo,
         court,
@@ -349,7 +240,7 @@ export default function selectRoomsFactory({
       comment,
       pre: prepostAppointments.preAppointment,
       main: {
-        locationId: parseInt(selectMainAppointmentLocation, 10),
+        locationId: parseInt(mainLocation, 10),
         startTime: appointmentDetails.startTime,
         endTime: appointmentDetails.endTime,
       },
@@ -359,5 +250,5 @@ export default function selectRoomsFactory({
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment`)
   }
 
-  return { index, validateInput, createAppointments }
+  return { view, submit }
 }
