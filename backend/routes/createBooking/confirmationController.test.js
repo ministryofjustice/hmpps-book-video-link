@@ -47,7 +47,7 @@ describe('Confirm appointments', () => {
 
     res.render = jest.fn()
 
-    req.flash.mockImplementation(() => [appointmentDetails])
+    req.flash.mockReturnValue([appointmentDetails])
   })
 
   it('should load court confirmation page when user is not prison staff', async () => {
@@ -58,7 +58,7 @@ describe('Confirm appointments', () => {
 
     req.session = { userDetails: { authSource: '' } }
 
-    req.flash.mockImplementation(() => [
+    req.flash.mockReturnValue([
       {
         ...appointmentDetails,
         preAppointment: {
@@ -106,7 +106,7 @@ describe('Confirm appointments', () => {
       prisonApi,
       locationService,
     })
-    req.flash.mockImplementation(() => [])
+    req.flash.mockReturnValue([])
     req.session.userDetails.authSource = 'auth'
 
     await expect(index(req, res)).rejects.toThrow('Appointment details are missing')
