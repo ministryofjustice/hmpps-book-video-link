@@ -98,8 +98,7 @@ describe('change date and time controller', () => {
   })
 
   describe('view', () => {
-    const mockFlashState = ({ errors, input }) =>
-      (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+    const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
     describe('View page with no errors', () => {
       it('When changing date and time', async () => {

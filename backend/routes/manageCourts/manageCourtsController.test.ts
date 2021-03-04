@@ -55,7 +55,7 @@ describe('Manage courts controller', () => {
   })
 
   describe('view', () => {
-    const mockFlashState = ({ errors }) => (req.flash as any).mockReturnValueOnce(errors)
+    const mockFlashState = ({ errors }) => req.flash.mockReturnValueOnce(errors)
 
     describe('View page with no errors', () => {
       it('should display a list of courts', async () => {

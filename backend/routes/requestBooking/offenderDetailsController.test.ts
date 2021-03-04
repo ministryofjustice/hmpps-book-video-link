@@ -33,8 +33,7 @@ describe('Offender details controller', () => {
     redirect: jest.fn(),
   } as unknown) as jest.Mocked<Response>
 
-  const mockFlashState = ({ errors, input }) =>
-    (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+  const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -69,7 +68,7 @@ describe('Offender details controller', () => {
 
   describe('Submit', () => {
     it('should redirect to current page when errors are present', async () => {
-      ;(req.flash as any).mockReturnValueOnce([])
+      req.flash.mockReturnValueOnce([])
 
       const errors = [
         { text: 'Enter a first name', href: '#first-name' },
@@ -98,7 +97,7 @@ describe('Offender details controller', () => {
         prison: 'WWI',
         startTime: '2019-12-01T10:00:00',
       }
-      ;(req.flash as any).mockReturnValueOnce([details])
+      req.flash.mockReturnValueOnce([details])
 
       req.body = {
         firstName: 'John',
@@ -142,7 +141,7 @@ describe('Offender details controller', () => {
         prison: 'WWI',
         startTime: '2019-12-01T10:00:00',
       }
-      ;(req.flash as any).mockReturnValueOnce([details])
+      req.flash.mockReturnValueOnce([details])
 
       req.body = {
         firstName: 'John',

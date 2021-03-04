@@ -30,6 +30,8 @@ export default class SelectCourtController {
       const errors = req.flash('errors')
       const courtLocations = await this.locationService.getVideoLinkEnabledCourts(res.locals)
       const details = this.getBookingDetails(req)
+      if (!Object.keys(details).length) return res.redirect('/')
+
       const { date, startTime, endTime, prison, preAppointmentRequired, postAppointmentRequired } = details
 
       const getPreHearingStartAndEndTime = () => {
