@@ -60,7 +60,7 @@ describe('Select court appoinment court', () => {
       { text: 'Wimbledon', value: 'Wimbledon' },
       { text: 'City of London', value: 'City of London' },
     ])
-    ;(req.flash as any).mockImplementation(() => [appointmentDetails])
+    req.flash.mockReturnValue([appointmentDetails])
 
     controller = new SelectCourtController(locationService, prisonApi)
   })
@@ -86,7 +86,7 @@ describe('Select court appoinment court', () => {
     })
 
     it('should not include pre post data if not required', async () => {
-      ;(req.flash as any).mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           preAppointmentRequired: 'no',

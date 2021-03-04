@@ -39,8 +39,8 @@ describe('Request path Start controller', () => {
   })
 
   describe('View', () => {
-    const mockFlashState = ({ errors, input }) =>
-      (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+    const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
+
     it('should make the correct calls for information and render the correct template', async () => {
       mockFlashState({ errors: [], input: [] })
       await controller.view()(req, res, null)

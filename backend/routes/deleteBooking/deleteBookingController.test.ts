@@ -144,7 +144,7 @@ describe('Delete Booking', () => {
       expect(res.redirect).toHaveBeenCalledWith('/bookings')
     })
     it('should render videoLinkDeleted page if flash state is present', async () => {
-      ;((req.flash as unknown) as any).mockReturnValue({ offenderName: ['John Doe'], offenderNo: ['A12345'] })
+      ;(req.flash as any).mockReturnValue({ offenderName: ['John Doe'], offenderNo: ['A12345'] })
 
       await controller.deleteConfirmed()(req, res, null)
 

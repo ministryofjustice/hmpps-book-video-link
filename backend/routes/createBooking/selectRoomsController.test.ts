@@ -122,7 +122,7 @@ describe('Select court appointment rooms', () => {
     it('should throw and log an error when appointment details are missing from flash', async () => {
       const { view } = controller
 
-      req.flash.mockImplementation(() => [])
+      req.flash.mockReturnValue([])
 
       await expect(view(req, res)).rejects.toThrow('Appointment details are missing')
     })
@@ -148,7 +148,7 @@ describe('Select court appointment rooms', () => {
 
   describe('submit', () => {
     beforeEach(() => {
-      req.flash.mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           startTime: '2017-10-10T11:00',
@@ -201,7 +201,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should redirect to confirmation page if no pre or post rooms are required', async () => {
-      req.flash.mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           preAppointmentRequired: 'no',
@@ -223,7 +223,7 @@ describe('Select court appointment rooms', () => {
 
     it('should call the appointment service with correct appointment details', async () => {
       const { submit } = controller
-      req.flash.mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           preLocations: [{ value: 1, text: 'Room 1' }],
@@ -254,7 +254,7 @@ describe('Select court appointment rooms', () => {
       )
     })
     it('should try to send email with court template when court user has email', async () => {
-      req.flash.mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           preLocations: [{ value: 1, text: 'Room 1' }],
@@ -304,7 +304,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should try to send emails to prison', async () => {
-      req.flash.mockImplementation(() => [
+      req.flash.mockReturnValue([
         {
           ...appointmentDetails,
           preLocations: [{ value: 1, text: 'Room 1' }],

@@ -29,8 +29,8 @@ describe('Confirmation controller', () => {
   })
 
   describe('view', () => {
-    it('should submit an email and render the confirmation template', async () => {
-      ;(req.flash as any).mockReturnValueOnce([
+    it('should render the confirmation template and raise an analytics event', async () => {
+      req.flash.mockReturnValueOnce([
         {
           comments: 'test',
           date: 'Tuesday 1 January 2019',
@@ -78,7 +78,7 @@ describe('Confirmation controller', () => {
     })
 
     it('should throw an error and not raise analytics event if there are no request details', async () => {
-      ;(req.flash as any).mockReturnValueOnce([])
+      req.flash.mockReturnValueOnce([])
 
       await expect(controller.view()(req, res, null)).rejects.toThrow('Request details are missing')
 

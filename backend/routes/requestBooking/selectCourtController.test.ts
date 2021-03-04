@@ -31,7 +31,7 @@ describe('Select court controller', () => {
   } as unknown) as jest.Mocked<Response>
 
   const mockFlashState = ({ errors, requestBooking }) =>
-    (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)
+    req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -77,6 +77,17 @@ describe('Select court controller', () => {
         prison: 'WWI',
         startTime: '3019-01-01T01:00:00',
       })
+    })
+
+    it('should redirect to / if request booking details are missing from flash', async () => {
+      mockFlashState({
+        errors: [],
+        requestBooking: [],
+      })
+
+      await controller.view()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/')
     })
 
     it('should render the correct template with the correct view model', async () => {

@@ -87,8 +87,7 @@ describe('Select available rooms controller', () => {
   })
 
   describe('view', () => {
-    const mockFlashState = ({ errors, input }) =>
-      (req.flash as any).mockReturnValueOnce(errors).mockReturnValueOnce(input)
+    const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
     it('should redirect when no stored state', async () => {
       mockFlashState({ errors: [], input: [] })
