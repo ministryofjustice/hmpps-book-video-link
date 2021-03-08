@@ -1,14 +1,14 @@
 import express, { Router } from 'express'
 
-import confirmation from './confirmationController'
+import prisonerSearch from './prisonerSearchController'
 import StartController from './startController'
 import SelectCourtController from './selectCourtController'
 import selectCourtValidation from './selectCourtValidation'
-import selectRooms from './selectRoomsController'
+import SelectRoomController from './selectRoomsController'
 import selectRoomsValidation from './selectRoomsValidation'
-import prisonerSearch from './prisonerSearchController'
-import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
+import ConfirmationController from './confirmationController'
 
+import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import checkAvailability from '../../middleware/checkAvailability'
@@ -31,23 +31,28 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const selectCourtController = new SelectCourtController(services.locationService, services.prisonApi)
+    const { view, submit } = new SelectCourtController(services.locationService, services.prisonApi)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-court'
-    router.get(path, asyncMiddleware(selectCourtController.view))
-    router.post(path, validationMiddleware(selectCourtValidation), asyncMiddleware(selectCourtController.submit))
+    router.get(path, asyncMiddleware(view))
+    router.post(path, validationMiddleware(selectCourtValidation), asyncMiddleware(submit))
   }
 
   {
-    const { view, submit } = selectRooms(services)
+    const { view, submit } = new SelectRoomController(
+      services.prisonApi,
+      services.bookingService,
+      services.availabilityCheckService
+    )
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms'
     router.get(path, asyncMiddleware(view))
     router.post(path, validationMiddleware(selectRoomsValidation), checkRooms, asyncMiddleware(submit))
   }
 
+  const { view } = new ConfirmationController(services.bookingService)
   router.get(
-    '/offenders/:offenderNo/confirm-appointment',
+    '/offenders/:offenderNo/confirm-appointment/:videoBookingId',
     withRetryLink('/prisoner-search'),
-    asyncMiddleware(confirmation(services))
+    asyncMiddleware(view)
   )
 
   return router

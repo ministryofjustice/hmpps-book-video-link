@@ -28,3 +28,5 @@ export const services = {
 }
 
 export type Services = typeof services
+
+export { NotificationService, AvailabilityCheckService, BookingService }

@@ -12,14 +12,14 @@ export const createInterval = ([start, end]: DatePair): Interval => {
 }
 
 export const preAppointmentTimes = (startTime: Moment): DatePair => [preStartTime(startTime), startTime]
-export const postAppointmentTime = (endTime: Moment): DatePair => [endTime, postEndTime(endTime)]
+export const postAppointmentTimes = (endTime: Moment): DatePair => [endTime, postEndTime(endTime)]
 
 export const getPreAppointmentInterval = (startTime: Moment): Interval => {
   return createInterval(preAppointmentTimes(startTime))
 }
 
 export const getPostAppointmentInterval = (endTime: Moment): Interval => {
-  return createInterval(postAppointmentTime(endTime))
+  return createInterval(postAppointmentTimes(endTime))
 }
 
 export const getTotalAppointmentInterval = (

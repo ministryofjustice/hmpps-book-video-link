@@ -1,9 +1,10 @@
 import { notifications } from '../config'
 import log from '../log'
-import { Context, BookingDetails, UpdateEmail, RequestEmail, Recipient, EmailSpec } from './model'
+import { Context, BookingDetails, UpdateEmail, RequestEmail, Recipient, EmailSpec, CreateEmail } from './model'
 import BookingRequest from './emails/BookingRequest'
 import BookingUpdated from './emails/BookingUpdate'
 import BookingCancellation from './emails/BookingCancellation'
+import BookingCreation from './emails/BookingCreation'
 
 export default class NotificationService {
   constructor(private readonly oauthApi: any, private readonly notifyApi: any) {}
@@ -54,6 +55,10 @@ export default class NotificationService {
         })
       }
     })
+  }
+
+  public async sendBookingCreationEmails(context: Context, username: string, details: CreateEmail): Promise<void> {
+    await this.sendEmails(context, username, BookingCreation(details))
   }
 
   public async sendBookingRequestEmails(context: Context, username: string, details: RequestEmail): Promise<void> {

@@ -26,6 +26,16 @@ context('A user can add a video link', () => {
       details: { agencyId: 'MDI', description: 'Moorland', agencyType: 'INST' },
     })
     cy.task('stubUserEmail', 'ITAG_USER')
+    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubOffenderBooking', {
+      bookingId: 1,
+      response: {
+        bookingId: 789,
+        firstName: 'john',
+        lastName: 'doe',
+        offenderNo: 'A1234AA',
+      },
+    })
     cy.task('stubAppointmentLocations', {
       agency: 'MDI',
       locations: [
@@ -106,10 +116,34 @@ context('A user can add a video link', () => {
     selectRoomsForm.selectPreAppointmentLocation().select('1')
     selectRoomsForm.selectMainAppointmentLocation().select('2')
     selectRoomsForm.selectPostAppointmentLocation().select('3')
+
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'MDI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'London',
+      videoLinkBookingId: 123,
+      pre: {
+        locationId: 1,
+        startTime: moment().add(1, 'days').set({ hour: 10, minute: 35 }),
+        endTime: moment().add(1, 'days').set({ hour: 10, minute: 55 }),
+      },
+      main: {
+        locationId: 2,
+        startTime: moment().add(1, 'days').set({ hour: 10, minute: 55 }),
+        endTime: moment().add(1, 'days').set({ hour: 11, minute: 55 }),
+      },
+      post: {
+        locationId: 2,
+        startTime: moment().add(1, 'days').set({ hour: 11, minute: 55 }),
+        endTime: moment().add(1, 'days').set({ hour: 12, minute: 15 }),
+      },
+    })
+
     selectRoomsForm.submitButton().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
-    confirmationPage.offenderName().contains('John Smith')
+    confirmationPage.offenderName().contains('John Doe')
     confirmationPage.prison().contains('Moorland')
     confirmationPage.room().contains('Room 2')
     confirmationPage.startTime().contains('10:55')
@@ -191,10 +225,23 @@ context('A user can add a video link', () => {
     })
     const selectRoomsForm = selectRoomsPage.form()
     selectRoomsForm.selectMainAppointmentLocation().select('2')
+
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'MDI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'London',
+      videoLinkBookingId: 123,
+      main: {
+        locationId: 2,
+        startTime: moment().add(1, 'days').set({ hour: 10, minute: 55 }),
+        endTime: moment().add(1, 'days').set({ hour: 11, minute: 55 }),
+      },
+    })
     selectRoomsForm.submitButton().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
-    confirmationPage.offenderName().contains('John Smith')
+    confirmationPage.offenderName().contains('John Doe')
     confirmationPage.prison().contains('Moorland')
     confirmationPage.room().contains('Room 2')
     confirmationPage.startTime().contains('10:55')

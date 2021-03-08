@@ -1,4 +1,4 @@
-import { NewAppointment, Interval } from 'whereaboutsApi'
+import { Appointment, Interval } from 'whereaboutsApi'
 import { Moment } from 'moment'
 
 export type Context = unknown
@@ -89,12 +89,15 @@ export type Bookings = {
 }
 
 export type NewBooking = {
-  bookingId: number
+  offenderNo: string
+  agencyId: string
   court: string
+  mainStartTime: Moment
+  mainEndTime: Moment
+  main: number
+  pre: number | undefined
+  post: number | undefined
   comment: string | undefined
-  main: NewAppointment
-  pre: NewAppointment | undefined
-  post: NewAppointment | undefined
 }
 
 export type BookingUpdate = {
@@ -108,6 +111,19 @@ export type BookingUpdate = {
   postLocation?: number
   preRequired: boolean
   postRequired: boolean
+}
+
+export type CreateEmail = {
+  prison: string
+  court: string
+  agencyId: string
+  prisonerName: string
+  offenderNo: string
+  date: Moment
+  preDetails: string
+  mainDetails: string
+  postDetails: string
+  comment: string
 }
 
 export type UpdateEmail = {

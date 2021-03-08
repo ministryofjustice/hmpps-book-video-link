@@ -3,6 +3,7 @@ import moment from 'moment'
 import { DAY_MONTH_YEAR, Time } from '../../shared/dateHelpers'
 import type LocationService from '../../services/locationService'
 import type NotificationService from '../../services/notificationService'
+import type { RequestEmail } from '../../services/model'
 
 export default class OffenderDetailsController {
   public constructor(
@@ -67,7 +68,7 @@ export default class OffenderDetailsController {
 
       const matchingPrison = await this.locationService.getMatchingPrison(res.locals, prison)
 
-      const personalisation = {
+      const personalisation: RequestEmail = {
         firstName,
         lastName,
         dateOfBirth: dateOfBirth.format('D MMMM YYYY'),

@@ -17,8 +17,15 @@ import type {
 
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
-import { postAppointmentTime, preAppointmentTimes } from './bookingTimes'
+import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
 import { RoomFinderFactory, roomFinderFactory } from './roomFinder'
+
+type AppointmentDetail = {
+  locationId: number
+  description: string
+  start: Moment
+  end: Moment
+}
 
 export = class BookingService {
   roomFinderFactory: RoomFinderFactory
@@ -43,21 +50,60 @@ export = class BookingService {
     }
   }
 
-  /** filter object keys to only include fields relevant to type. */
-  private pick(appointment: NewAppointment): NewAppointment {
-    return { locationId: appointment.locationId, startTime: appointment.startTime, endTime: appointment.endTime }
+  private toNewAppointment(appointment: AppointmentDetail): NewAppointment {
+    return {
+      locationId: appointment.locationId,
+      startTime: appointment.start.format(DATE_TIME_FORMAT_SPEC),
+      endTime: appointment.end.format(DATE_TIME_FORMAT_SPEC),
+    }
   }
 
-  public async create(context: Context, { bookingId, court, comment, main, pre, post }: NewBooking): Promise<void> {
-    await this.whereaboutsApi.createVideoLinkBooking(context, {
-      bookingId,
+  public async create(
+    context: Context,
+    currentUsername: string,
+    { offenderNo, agencyId, court, comment, mainStartTime, mainEndTime, main, pre, post }: NewBooking
+  ): Promise<number> {
+    const [prisonBooking, agencyDetails, roomFinder] = await Promise.all([
+      this.prisonApi.getPrisonerDetails(context, offenderNo),
+      this.prisonApi.getAgencyDetails(context, agencyId),
+      this.roomFinderFactory(context, agencyId),
+    ])
+
+    const toAppointmentDetails = (locationId: number, [start, end]: [Moment, Moment]) => ({
+      locationId,
+      start,
+      end,
+      description: roomFinder.bookingDescription(locationId, [start, end]),
+    })
+
+    const preAppointment = pre ? toAppointmentDetails(pre, preAppointmentTimes(mainStartTime)) : null
+    const mainAppointment = toAppointmentDetails(main, [mainStartTime, mainEndTime])
+    const postAppointment = post ? toAppointmentDetails(post, postAppointmentTimes(mainEndTime)) : null
+
+    const videoBookingId = await this.whereaboutsApi.createVideoLinkBooking(context, {
+      bookingId: prisonBooking.bookingId,
       court,
       madeByTheCourt: true,
       ...(comment ? { comment } : {}),
-      main,
-      ...(pre ? { pre: this.pick(pre) } : {}),
-      ...(post ? { post: this.pick(post) } : {}),
+      main: this.toNewAppointment(mainAppointment),
+      ...(preAppointment ? { pre: this.toNewAppointment(preAppointment) } : {}),
+      ...(postAppointment ? { post: this.toNewAppointment(postAppointment) } : {}),
     })
+
+    await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
+      agencyId,
+      court,
+      prison: agencyDetails.description,
+      offenderNo,
+      prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
+      date: mainStartTime,
+      preDetails: preAppointment?.description,
+      mainDetails: mainAppointment.description,
+      postDetails: postAppointment?.description,
+      comment,
+    })
+
+    return videoBookingId
   }
 
   public async get(context: Context, videoBookingId: number): Promise<BookingDetails> {
@@ -114,7 +160,7 @@ export = class BookingService {
       comment: update.comment,
       pre: update.preLocation && this.toAppointment(update.preLocation, preAppointmentTimes(update.startTime)),
       main: this.toAppointment(update.mainLocation, [update.startTime, update.endTime]),
-      post: update.postLocation && this.toAppointment(update.postLocation, postAppointmentTime(update.endTime)),
+      post: update.postLocation && this.toAppointment(update.postLocation, postAppointmentTimes(update.endTime)),
     })
 
     const { bookingDescription: description } = await this.roomFinderFactory(context, existing.agencyId)
@@ -129,7 +175,7 @@ export = class BookingService {
       dateDescription: update.startTime.format(DATE_ONLY_LONG_FORMAT_SPEC),
       preDescription: update.preLocation && description(update.preLocation, preAppointmentTimes(update.startTime)),
       mainDescription: description(update.mainLocation, [update.startTime, update.endTime]),
-      postDescription: update.postLocation && description(update.postLocation, postAppointmentTime(update.endTime)),
+      postDescription: update.postLocation && description(update.postLocation, postAppointmentTimes(update.endTime)),
     })
   }
 

@@ -4,7 +4,7 @@ import createError from 'http-errors'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import NotificationService from './notificationService'
-import { BookingDetails, NewBooking } from './model'
+import { BookingDetails } from './model'
 import BookingService from './bookingService'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import AvailabilityCheckService from './availabilityCheckService'
@@ -132,121 +132,137 @@ describe('Booking service', () => {
   })
 
   describe('Create', () => {
-    it('Creating a booking with mandatory fields', async () => {
-      await service.create(context, {
+    beforeEach(() => {
+      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonerDetails.mockResolvedValue({
         bookingId: 1000,
-        court: 'City of London',
-        comment: 'some comment',
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
-        pre: {
-          startTime: '2020-11-20T17:40:00',
-          endTime: '2020-11-20T18:00:00',
-          locationId: 1,
-        },
-        post: {
-          startTime: '2020-11-20T19:00:00',
-          endTime: '2020-11-20T19:20:00',
-          locationId: 3,
-        },
+        firstName: 'Jim',
+        lastName: 'Bob',
+      } as InmateDetail)
+      whereaboutsApi.createVideoLinkBooking.mockResolvedValue(11)
+    })
+
+    describe('Creating a booking with all fields', () => {
+      it('booking with all fields created', async () => {
+        const videoBookingId = await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          court: 'City of London',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
+        })
+
+        expect(videoBookingId).toBe(11)
+
+        expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
+          bookingId: 1000,
+          court: 'City of London',
+          comment: 'some comment',
+          madeByTheCourt: true,
+          pre: {
+            startTime: '2020-11-20T17:40:00',
+            endTime: '2020-11-20T18:00:00',
+            locationId: 1,
+          },
+          main: {
+            locationId: 2,
+            startTime: '2020-11-20T18:00:00',
+            endTime: '2020-11-20T19:00:00',
+          },
+          post: {
+            startTime: '2020-11-20T19:00:00',
+            endTime: '2020-11-20T19:20:00',
+            locationId: 3,
+          },
+        })
       })
 
-      expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
-        bookingId: 1000,
-        court: 'City of London',
-        comment: 'some comment',
-        madeByTheCourt: true,
-        pre: {
-          startTime: '2020-11-20T17:40:00',
-          endTime: '2020-11-20T18:00:00',
-          locationId: 1,
-        },
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
-        post: {
-          startTime: '2020-11-20T19:00:00',
-          endTime: '2020-11-20T19:20:00',
-          locationId: 3,
-        },
+      it('email sent when all fields provided', async () => {
+        const videoBookingId = await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          court: 'City of London',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
+        })
+
+        expect(videoBookingId).toBe(11)
+
+        expect(notificationService.sendBookingCreationEmails).toHaveBeenCalledWith(context, 'USER-1', {
+          agencyId: 'MDI',
+          court: 'City of London',
+          prison: 'some prison',
+          comment: 'some comment',
+          prisonerName: 'Jim Bob',
+          date: moment('2020-11-20T18:00:00'),
+          offenderNo: 'AA1234AA',
+          preDetails: 'Vcc Room 1 - 17:40 to 18:00',
+          mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
+          postDetails: 'Vcc Room 3 - 19:00 to 19:20',
+        })
       })
     })
 
-    it('Extra fields are removed from locations', async () => {
-      await service.create(context, {
-        bookingId: 1000,
-        court: 'City of London',
-        comment: 'some comment',
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
-        pre: {
-          startTime: '2020-11-20T17:40:00',
-          endTime: '2020-11-20T18:00:00',
-          locationId: 1,
-          anExtraField: true,
-        },
-        post: {
-          startTime: '2020-11-20T19:00:00',
-          endTime: '2020-11-20T19:20:00',
-          locationId: 3,
-          anotherExtraField: 1234,
-        },
-      } as NewBooking)
+    describe('Creating a booking with only mandatory fields', () => {
+      it('booking with only mandatory fields created', async () => {
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          court: 'City of London',
+          comment: undefined,
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          main: 2,
+          pre: undefined,
+          post: undefined,
+        })
 
-      expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
-        bookingId: 1000,
-        court: 'City of London',
-        comment: 'some comment',
-        madeByTheCourt: true,
-        pre: {
-          startTime: '2020-11-20T17:40:00',
-          endTime: '2020-11-20T18:00:00',
-          locationId: 1,
-        },
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
-        post: {
-          startTime: '2020-11-20T19:00:00',
-          endTime: '2020-11-20T19:20:00',
-          locationId: 3,
-        },
+        expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
+          bookingId: 1000,
+          court: 'City of London',
+          madeByTheCourt: true,
+          main: {
+            locationId: 2,
+            startTime: '2020-11-20T18:00:00',
+            endTime: '2020-11-20T19:00:00',
+          },
+        })
       })
     })
 
-    it('Creating a booking with only mandatory fields', async () => {
-      await service.create(context, {
-        bookingId: 1000,
+    it('email sent when only mandatory fields provided', async () => {
+      await service.create(context, 'USER-1', {
+        offenderNo: 'AA1234AA',
+        agencyId: 'MDI',
         court: 'City of London',
         comment: undefined,
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
+        mainStartTime: moment('2020-11-20T18:00:00'),
+        mainEndTime: moment('2020-11-20T19:00:00'),
         pre: undefined,
+        main: 2,
         post: undefined,
       })
 
-      expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
-        bookingId: 1000,
+      expect(notificationService.sendBookingCreationEmails).toHaveBeenCalledWith(context, 'USER-1', {
+        agencyId: 'MDI',
         court: 'City of London',
-        madeByTheCourt: true,
-        main: {
-          locationId: 2,
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-        },
+        prison: 'some prison',
+        comment: undefined,
+        prisonerName: 'Jim Bob',
+        date: moment('2020-11-20T18:00:00'),
+        offenderNo: 'AA1234AA',
+        postDetails: undefined,
+        mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
+        preDetails: undefined,
       })
     })
   })
