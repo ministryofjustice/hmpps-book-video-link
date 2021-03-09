@@ -2,12 +2,7 @@ import type { Request, Response } from 'express'
 import moment from 'moment'
 import type { BookingDetails } from '../../services/model'
 import ConfirmationController from './confirmationController'
-import { raiseAnalyticsEvent } from '../../raiseAnalyticsEvent'
 import { BookingService } from '../../services'
-
-jest.mock('../../raiseAnalyticsEvent', () => ({
-  raiseAnalyticsEvent: jest.fn(),
-}))
 
 jest.mock('../../services')
 
@@ -89,44 +84,6 @@ describe('Confirm appointments', () => {
         'post-court hearing briefing': 'vcc room 3 - 19:00 to 19:20',
       },
       court: { courtLocation: 'City of London' },
-    })
-  })
-
-  describe('Event raising', () => {
-    it('should raise event when both pre and post', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-
-      await controller.view(req, res, null)
-
-      expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-        'VLB Appointments',
-        'Video link booked for City of London',
-        'Pre: Yes | Post: Yes'
-      )
-    })
-
-    it('should raise event when neither pre and post', async () => {
-      bookingService.get.mockResolvedValue({ ...bookingDetails, preDetails: undefined, postDetails: undefined })
-
-      await controller.view(req, res, null)
-
-      expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-        'VLB Appointments',
-        'Video link booked for City of London',
-        'Pre: No | Post: No'
-      )
-    })
-
-    it('should raise event when only pre and not post', async () => {
-      bookingService.get.mockResolvedValue({ ...bookingDetails, postDetails: undefined })
-
-      await controller.view(req, res, null)
-
-      expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-        'VLB Appointments',
-        'Video link booked for City of London',
-        'Pre: Yes | Post: No'
-      )
     })
   })
 

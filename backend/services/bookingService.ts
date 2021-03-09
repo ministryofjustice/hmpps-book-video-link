@@ -19,6 +19,7 @@ import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shar
 import { formatName } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
 import { RoomFinderFactory, roomFinderFactory } from './roomFinder'
+import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 
 type AppointmentDetail = {
   locationId: number
@@ -102,6 +103,12 @@ export = class BookingService {
       postDetails: postAppointment?.description,
       comment,
     })
+
+    raiseAnalyticsEvent(
+      'VLB Appointments',
+      `Video link booked for ${court}`,
+      `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
+    )
 
     return videoBookingId
   }
