@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment'
-import { buildDate, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import { assertHasStringValues, assertHasOptionalStringValues, Codec } from '../../utils'
+import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+import { assertHasStringValues, assertHasOptionalStringValues } from '../../utils'
 
 export type ChangeDateAndTime = {
   agencyId: string
@@ -49,29 +49,4 @@ export function RoomAndComment(form: unknown): RoomAndComment {
     postLocation: form.postLocation ? parseInt(form.postLocation, 10) : null,
     comment: form.comment,
   }
-}
-
-export const ChangeDateAndTimeCodec: Codec<ChangeDateAndTime> = {
-  write: (value: ChangeDateAndTime): Record<string, string> => {
-    return {
-      agencyId: value.agencyId,
-      date: value.date.format(DATE_TIME_FORMAT_SPEC),
-      startTime: value.startTime.format(DATE_TIME_FORMAT_SPEC),
-      endTime: value.endTime.format(DATE_TIME_FORMAT_SPEC),
-      preRequired: value.preRequired.toString(),
-      postRequired: value.postRequired.toString(),
-    }
-  },
-
-  read(record: Record<string, unknown>): ChangeDateAndTime {
-    assertHasStringValues(record, ['agencyId', 'date', 'startTime', 'endTime', 'preRequired', 'postRequired'])
-    return {
-      agencyId: record.agencyId,
-      date: moment(record.date, DATE_TIME_FORMAT_SPEC, true),
-      startTime: moment(record.startTime, DATE_TIME_FORMAT_SPEC, true),
-      endTime: moment(record.endTime, DATE_TIME_FORMAT_SPEC, true),
-      preRequired: record.preRequired === 'true',
-      postRequired: record.postRequired === 'true',
-    }
-  },
 }

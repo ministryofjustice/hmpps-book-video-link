@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import type AvailabilityCheckService from '../../services/availabilityCheckService'
 import type BookingService from '../../services/bookingService'
-import { RoomAndComment } from './dtos'
+import { RoomAndComment } from './forms'
 import { getUpdate, clearUpdate } from './state'
 
 export default class SelectAvailableRoomsController {

@@ -1,6 +1,6 @@
 import moment from 'moment'
-import { buildDate, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import { ChangeDateAndTime, ChangeDateAndTimeCodec, RoomAndComment } from './dtos'
+import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+import { ChangeDateAndTime, RoomAndComment } from './forms'
 
 describe('ChangeDateAndTime', () => {
   test('check parse', () => {
@@ -52,48 +52,6 @@ describe('ChangeDateAndTime', () => {
         postAppointmentRequired: 'no',
       })
     ).toThrowError('Missing or invalid keys: startTimeHours,endTimeHours')
-  })
-})
-
-describe('ChangeDateAndTimeCodec', () => {
-  test('read', () => {
-    const result = ChangeDateAndTimeCodec.read({
-      agencyId: 'WWI',
-      date: '2020-11-20T18:00:00',
-      startTime: '2020-11-20T18:00:00',
-      endTime: '2020-11-20T19:00:00',
-      preRequired: 'true',
-      postRequired: 'true',
-    })
-
-    expect(result).toStrictEqual({
-      agencyId: 'WWI',
-      date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-      endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-      postRequired: true,
-      preRequired: true,
-      startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-    })
-  })
-
-  test('write', () => {
-    const result = ChangeDateAndTimeCodec.write({
-      agencyId: 'WWI',
-      date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-      endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-      postRequired: true,
-      preRequired: true,
-      startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-    })
-
-    expect(result).toStrictEqual({
-      agencyId: 'WWI',
-      date: '2020-11-20T18:00:00',
-      startTime: '2020-11-20T18:00:00',
-      endTime: '2020-11-20T19:00:00',
-      preRequired: 'true',
-      postRequired: 'true',
-    })
   })
 })
 

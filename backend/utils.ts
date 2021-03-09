@@ -102,11 +102,6 @@ export const possessive = (string: string): string => {
  */
 export const flattenCalls = <T>(arg: Promise<T[]>[]): Promise<T[]> => Promise.all(arg).then(r => r.flat())
 
-export type Codec<T> = {
-  read(record: Record<string, unknown>): T
-  write(value: T): Record<string, string>
-}
-
 export function assertHasStringValues<K extends string>(
   obj: unknown,
   keysToCheck: K[]

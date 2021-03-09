@@ -1,27 +1,32 @@
-import { CookieOptions, Response, Request } from 'express'
-import config from '../../config'
-import { Codec } from '../../utils'
-import { ChangeDateAndTimeCodec } from './dtos'
+import moment from 'moment'
+import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
+import { assertHasStringValues } from '../../utils'
+import { clearState, Codec, getState, setState } from '../../utils/state'
+import { ChangeDateAndTime } from './forms'
 
-export const cookieOptions: CookieOptions = {
-  domain: config.hmppsCookie.domain,
-  httpOnly: true,
-  maxAge: config.hmppsCookie.expiryMinutes * 60 * 1000,
-  sameSite: 'lax',
-  secure: config.app.production,
-  signed: true,
-}
+export const ChangeDateAndTimeCodec: Codec<ChangeDateAndTime> = {
+  write: (value: ChangeDateAndTime): Record<string, string> => {
+    return {
+      agencyId: value.agencyId,
+      date: value.date.format(DATE_TIME_FORMAT_SPEC),
+      startTime: value.startTime.format(DATE_TIME_FORMAT_SPEC),
+      endTime: value.endTime.format(DATE_TIME_FORMAT_SPEC),
+      preRequired: value.preRequired.toString(),
+      postRequired: value.postRequired.toString(),
+    }
+  },
 
-const clearState = (name: string) => (res: Response): void => {
-  res.clearCookie(name, cookieOptions)
-}
-
-const setState = <T>(name: string, codec: Codec<T>) => (res: Response, data: T): void => {
-  res.cookie(name, codec.write(data), cookieOptions)
-}
-const getState = <T>(name: string, codec: Codec<T>) => (req: Request): T | undefined => {
-  const result = req.signedCookies[name]
-  return result ? codec.read(result) : undefined
+  read(record: Record<string, unknown>): ChangeDateAndTime {
+    assertHasStringValues(record, ['agencyId', 'date', 'startTime', 'endTime', 'preRequired', 'postRequired'])
+    return {
+      agencyId: record.agencyId,
+      date: moment(record.date, DATE_TIME_FORMAT_SPEC, true),
+      startTime: moment(record.startTime, DATE_TIME_FORMAT_SPEC, true),
+      endTime: moment(record.endTime, DATE_TIME_FORMAT_SPEC, true),
+      preRequired: record.preRequired === 'true',
+      postRequired: record.postRequired === 'true',
+    }
+  },
 }
 
 export const clearUpdate = clearState('booking-update')

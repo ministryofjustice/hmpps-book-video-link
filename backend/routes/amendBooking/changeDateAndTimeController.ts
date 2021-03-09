@@ -3,7 +3,7 @@ import type BookingService from '../../services/bookingService'
 
 import { DAY_MONTH_YEAR } from '../../shared/dateHelpers'
 import type CheckAvailabilityService from '../../services/availabilityCheckService'
-import { ChangeDateAndTime } from './dtos'
+import { ChangeDateAndTime } from './forms'
 import { clearUpdate, setUpdate } from './state'
 
 export default class ChangeDateAndTimeController {
