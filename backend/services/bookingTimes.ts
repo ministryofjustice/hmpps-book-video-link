@@ -11,6 +11,10 @@ export const createInterval = ([start, end]: DatePair): Interval => {
   return { start: start.format(MOMENT_TIME), end: end.format(MOMENT_TIME) }
 }
 
+export const formatTimes = ([start, end]: DatePair): string => {
+  return `${start.format(MOMENT_TIME)} to ${end.format(MOMENT_TIME)}`
+}
+
 export const preAppointmentTimes = (startTime: Moment): DatePair => [preStartTime(startTime), startTime]
 export const postAppointmentTimes = (endTime: Moment): DatePair => [endTime, postEndTime(endTime)]
 

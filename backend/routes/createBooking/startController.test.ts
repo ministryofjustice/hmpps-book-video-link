@@ -1,10 +1,11 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { Agency, InmateDetail } from 'prisonApi'
 
 import StartController from './startController'
 import PrisonApi from '../../api/prisonApi'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { RoomAvailability } from '../../services/model'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
@@ -18,22 +19,11 @@ describe('Add court appointment', () => {
     totalInterval: { start: '01:00', end: '02:00' },
   } as RoomAvailability
 
-  const req = ({
-    session: {
-      userDetails: {
-        username: 'COURT_USER',
-        active: true,
-        name: 'Court User',
-        authSource: 'nomis',
-        staffId: 123456,
-        userId: '654321',
-      },
-    },
+  const req = mockRequest({
     params: {
       offenderNo: 'A12345',
       agencyId: 'MDI',
     },
-    flash: jest.fn().mockReturnValue([]),
     body: {
       bookingId: '123456',
       date: '01/01/2021',
@@ -41,17 +31,12 @@ describe('Add court appointment', () => {
       startTimeMinutes: '00',
       endTimeHours: '02',
       endTimeMinutes: '00',
-      preAppointmentRequired: 'YES',
-      postAppointmentRequired: 'NO',
+      preAppointmentRequired: 'yes',
+      postAppointmentRequired: 'no',
     },
-  } as unknown) as jest.Mocked<Request>
+  })
 
-  const res = ({
-    locals: { context: {} },
-    send: jest.fn(),
-    redirect: jest.fn(),
-    render: jest.fn(),
-  } as unknown) as Response
+  const res = mockResponse()
 
   let controller: StartController
 
@@ -73,6 +58,16 @@ describe('Add court appointment', () => {
     prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
     availabilityCheckService.getAvailability.mockResolvedValue(bookingSlot)
     controller = new StartController(prisonApi, availabilityCheckService)
+  })
+
+  describe('start', () => {
+    it('Clear cookie and redirects', async () => {
+      await controller.start()(req, res, null)
+
+      expect(res.clearCookie).toHaveBeenCalledWith('booking-creation', expect.anything())
+
+      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment')
+    })
   })
 
   describe('view', () => {
@@ -107,11 +102,6 @@ describe('Add court appointment', () => {
   describe('submit', () => {
     const requestWithErrors = errors => (({ ...req, errors } as unknown) as Request)
 
-    it('should call flash 1 time if no errors', async () => {
-      await controller.submit()(req, res, null)
-
-      expect(req.flash).toHaveBeenCalledTimes(1)
-    })
     it('should call flash 2 times if errors', async () => {
       await controller.submit()(requestWithErrors([{ text: 'error message', href: 'error' }]), res, null)
 
@@ -130,8 +120,8 @@ describe('Add court appointment', () => {
             date: '01/01/2021',
             endTimeHours: '02',
             endTimeMinutes: '00',
-            postAppointmentRequired: 'NO',
-            preAppointmentRequired: 'YES',
+            postAppointmentRequired: 'no',
+            preAppointmentRequired: 'yes',
             startTimeHours: '01',
             startTimeMinutes: '00',
           },
@@ -144,22 +134,21 @@ describe('Add court appointment', () => {
       expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment')
     })
 
-    it('should place appointment details into flash if no errors', async () => {
+    it('should place appointment details into cookie if no errors', async () => {
       await controller.submit()(req, res, null)
 
-      expect(req.flash).toHaveBeenCalledWith('appointmentDetails', {
-        bookingId: '123456',
-        date: '01/01/2021',
-        endTimeHours: '02',
-        endTimeMinutes: '00',
-        postAppointmentRequired: 'NO',
-        preAppointmentRequired: 'YES',
-        startTimeHours: '01',
-        startTimeMinutes: '00',
-        endTime: '2021-01-01T02:00:00',
-        startTime: '2021-01-01T01:00:00',
-        agencyId: 'MDI',
-      })
+      expect(res.cookie).toHaveBeenCalledWith(
+        'booking-creation',
+        {
+          bookingId: '123456',
+          date: '2021-01-01T00:00:00',
+          postRequired: 'false',
+          preRequired: 'true',
+          endTime: '2021-01-01T02:00:00',
+          startTime: '2021-01-01T01:00:00',
+        },
+        expect.any(Object)
+      )
     })
 
     it('should go to the court selection page if no errors', async () => {

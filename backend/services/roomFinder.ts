@@ -1,8 +1,8 @@
-import { Moment } from 'moment'
-import { Location } from 'prisonApi'
-import PrisonApi from '../api/prisonApi'
-import { MOMENT_TIME } from '../shared/dateHelpers'
-import { Context } from './model'
+import type { Moment } from 'moment'
+import type { Location } from 'prisonApi'
+import type PrisonApi from '../api/prisonApi'
+import type { Context } from './model'
+import { formatTimes } from './bookingTimes'
 
 export class RoomFinder {
   constructor(private readonly locations: Location[]) {}
@@ -12,8 +12,8 @@ export class RoomFinder {
     return location?.userDescription || location?.description || ''
   }
 
-  public bookingDescription = (locationId: number, [start, end]: [Moment, Moment]): string =>
-    `${this.prisonRoom(locationId)} - ${start.format(MOMENT_TIME)} to ${end.format(MOMENT_TIME)}`
+  public bookingDescription = (locationId: number, times: [Moment, Moment]): string =>
+    `${this.prisonRoom(locationId)} - ${formatTimes(times)}`
 }
 
 export type RoomFinderFactory = (context: Context, agencyId: string) => Promise<RoomFinder>

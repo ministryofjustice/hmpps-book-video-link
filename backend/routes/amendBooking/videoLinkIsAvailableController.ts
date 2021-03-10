@@ -1,11 +1,8 @@
 import { RequestHandler } from 'express'
-import type { Interval } from 'whereaboutsApi'
 import type BookingService from '../../services/bookingService'
-import { getPostAppointmentInterval, getPreAppointmentInterval } from '../../services/bookingTimes'
+import { formatTimes, postAppointmentTimes, preAppointmentTimes } from '../../services/bookingTimes'
 import { DATE_ONLY_LONG_FORMAT_SPEC, MOMENT_TIME } from '../../shared/dateHelpers'
 import { getUpdate } from './state'
-
-const toDescription = (interval: Interval) => `${interval.start} to ${interval.end}`
 
 export default class VideoLinkIsAvailableController {
   public constructor(private readonly bookingService: BookingService) {}
@@ -35,10 +32,8 @@ export default class VideoLinkIsAvailableController {
             courtHearingEndTime: update.endTime.format(MOMENT_TIME),
           },
           prePostDetails: {
-            'pre-court hearing briefing':
-              update.preRequired && toDescription(getPreAppointmentInterval(update.startTime)),
-            'post-court hearing briefing':
-              update.postRequired && toDescription(getPostAppointmentInterval(update.endTime)),
+            'pre-court hearing briefing': update.preRequired && formatTimes(preAppointmentTimes(update.startTime)),
+            'post-court hearing briefing': update.postRequired && formatTimes(postAppointmentTimes(update.endTime)),
           },
         },
       })

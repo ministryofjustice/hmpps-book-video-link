@@ -7,7 +7,8 @@ import PrisonApi from '../../api/prisonApi'
 import BookingService from '../../services/bookingService'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { RoomAvailability } from '../../services/model'
-import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
+import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../api/prisonApi')
 jest.mock('../../services/bookingService')
@@ -17,34 +18,11 @@ describe('Select court appointment rooms', () => {
   const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
   const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-  let controller
+  let controller: SelectRoomsController
 
-  const req = {
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'WWI', offenderNo: 'A12345' },
-    session: { userDetails: { username: 'USER-1' } },
-    body: {},
-    flash: jest.fn(),
-  }
-  const res = { locals: {}, redirect: jest.fn(), render: jest.fn() }
-
-  const bookingId = 1
-  const appointmentDetails = {
-    bookingId,
-    offenderNo: 'A12345',
-    firstName: 'john',
-    lastName: 'doe',
-    locationId: 1,
-    startTime: '2017-11-10T11:00:00',
-    endTime: '2017-11-10T14:00:00',
-    comment: 'Test',
-    date: '10/11/2017',
-    preAppointmentRequired: 'yes',
-    postAppointmentRequired: 'yes',
-    preLocations: [{ value: 1, text: 'Room 1' }],
-    postLocations: [{ value: 3, text: 'Room 3' }],
-    court: 'Leeds',
-  }
+  const req = mockRequest({ params: { agencyId: 'WWI', offenderNo: 'A12345' } })
+  const res = mockResponse()
+  const next = mockNext()
 
   const availableLocations: RoomAvailability = {
     isAvailable: true,
@@ -59,8 +37,10 @@ describe('Select court appointment rooms', () => {
   beforeEach(() => {
     jest.resetAllMocks()
 
+    req.flash.mockReturnValue([])
+
     prisonApi.getPrisonerDetails.mockResolvedValue({
-      bookingId,
+      bookingId: 1,
       offenderNo: 'A12345',
       firstName: 'john',
       lastName: 'doe',
@@ -70,16 +50,27 @@ describe('Select court appointment rooms', () => {
 
     prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Moorland' } as Agency)
     availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
-    req.flash.mockReturnValue([appointmentDetails])
 
     controller = new SelectRoomsController(prisonApi, bookingService, availabilityCheckService)
+
+    req.signedCookies = {
+      'booking-creation': {
+        court: 'Leeds',
+        bookingId: '123456',
+        date: '2017-11-10T00:00:00',
+        postRequired: 'true',
+        preRequired: 'true',
+        endTime: '2017-11-10T14:00:00',
+        startTime: '2017-11-10T11:00:00',
+      },
+    }
   })
 
   describe('view', () => {
     it('should return locations', async () => {
       const { view } = controller
 
-      await view(req, res)
+      await view(req, res, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectRooms.njk',
@@ -91,62 +82,26 @@ describe('Select court appointment rooms', () => {
       )
     })
 
-    it('should extract appointment details', async () => {
+    it('should call getAvailability with the correct parameters', async () => {
       const { view } = controller
 
-      await view(req, res)
+      await view(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking/selectRooms.njk',
-        expect.objectContaining({
-          details: {
-            date: '10 November 2017',
-            endTime: '14:00',
-            prisonerName: 'John Doe',
-            startTime: '11:00',
-            prison: 'Moorland',
-          },
-        })
-      )
-    })
-
-    it('should throw and log an error when appointment details are missing from flash', async () => {
-      const { view } = controller
-
-      req.flash.mockReturnValue([])
-
-      await expect(view(req, res)).rejects.toThrow('Appointment details are missing')
-    })
-
-    it('should call getAvailableLocationsForVLB with the correct parameters', async () => {
-      const { view } = controller
-
-      await view(req, res)
-
-      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(
-        {},
-        {
-          agencyId: 'WWI',
-          date: moment('10/11/2017', DAY_MONTH_YEAR, true),
-          startTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
-          endTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
-          postRequired: true,
-          preRequired: true,
-        }
-      )
+      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
+        bookingId: 123456,
+        court: 'Leeds',
+        agencyId: 'WWI',
+        date: moment('2017-11-10T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
+        postRequired: true,
+        preRequired: true,
+      })
     })
   })
 
   describe('submit', () => {
     beforeEach(() => {
-      req.flash.mockReturnValue([
-        {
-          ...appointmentDetails,
-          startTime: '2017-10-10T11:00',
-          endTime: '2017-10-10T14:00',
-        },
-      ])
-
       req.body = {
         preLocation: '1',
         mainLocation: '2',
@@ -162,14 +117,18 @@ describe('Select court appointment rooms', () => {
     it('should redirect back when errors in request', async () => {
       const { submit } = controller
 
-      req.body = {
-        preLocation: '1',
-        mainLocation: '2',
-        postLocation: '3',
-        comment: 'Test',
-      }
+      const reqWithErrors = mockRequest({
+        params: { agencyId: 'WWI', offenderNo: 'A12345' },
+        body: {
+          preLocation: '1',
+          mainLocation: '2',
+          postLocation: '3',
+          comment: 'Test',
+        },
+        errors: [{ href: '#preLocation' }],
+      })
 
-      await submit({ ...req, errors: [{ href: '#preLocation' }] }, res)
+      await submit(reqWithErrors, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/WWI/offenders/A12345/add-court-appointment/select-rooms')
       expect(bookingService.create).not.toHaveBeenCalled()
@@ -185,19 +144,12 @@ describe('Select court appointment rooms', () => {
         comment: 'Test',
       }
 
-      await submit(req, res)
+      await submit(req, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment/123')
     })
 
     it('should redirect to confirmation page if no pre or post rooms are required', async () => {
-      req.flash.mockReturnValue([
-        {
-          ...appointmentDetails,
-          preAppointmentRequired: 'no',
-          postAppointmentRequired: 'no',
-        },
-      ])
       const { submit } = controller
 
       req.body = {
@@ -205,7 +157,7 @@ describe('Select court appointment rooms', () => {
         comment: 'Test',
       }
 
-      await submit(req, res)
+      await submit(req, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment/123')
     })
@@ -213,14 +165,6 @@ describe('Select court appointment rooms', () => {
     describe('should call the booking service with correct details', () => {
       it('with all fields ', async () => {
         const { submit } = controller
-        req.flash.mockReturnValue([
-          {
-            ...appointmentDetails,
-            preLocations: [{ value: 1, text: 'Room 1' }],
-            mainLocations: [{ value: 2, text: 'Room 2' }],
-            postLocations: [{ value: 3, text: 'Room 3' }],
-          },
-        ])
 
         req.body = {
           preLocation: '1',
@@ -229,14 +173,14 @@ describe('Select court appointment rooms', () => {
           comment: 'Test',
         }
 
-        await submit(req, res)
+        await submit(req, res, next)
 
-        expect(bookingService.create).toBeCalledWith(res.locals, 'USER-1', {
+        expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
           court: 'Leeds',
           comment: 'Test',
-          mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC),
-          mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC),
+          mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
+          mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
           offenderNo: 'A12345',
           pre: 1,
           main: 2,
@@ -246,31 +190,37 @@ describe('Select court appointment rooms', () => {
 
       it('with only mandatory fields ', async () => {
         const { submit } = controller
-        req.flash.mockReturnValue([
-          {
-            ...appointmentDetails,
-            mainLocations: [{ value: 2, text: 'Room 2' }],
-          },
-        ])
 
         req.body = {
           mainLocation: '2',
         }
 
-        await submit(req, res)
+        await submit(req, res, next)
 
-        expect(bookingService.create).toBeCalledWith(res.locals, 'USER-1', {
+        expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
           court: 'Leeds',
-          comment: undefined,
-          mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC),
-          mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC),
+          comment: null,
+          mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
+          mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
           offenderNo: 'A12345',
-          pre: undefined,
+          pre: null,
           main: 2,
-          post: undefined,
+          post: null,
         })
       })
+    })
+
+    it('cookie is cleared on successful submit ', async () => {
+      const { submit } = controller
+
+      req.body = {
+        mainLocation: '2',
+      }
+
+      await submit(req, res, next)
+
+      expect(res.clearCookie).toHaveBeenCalledWith('booking-creation', expect.any(Object))
     })
   })
 })

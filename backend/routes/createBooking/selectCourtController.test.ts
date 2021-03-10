@@ -1,7 +1,8 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { Agency, InmateDetail } from 'prisonApi'
 import PrisonApi from '../../api/prisonApi'
 import LocationService from '../../services/locationService'
+import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
 import SelectCourtController from './selectCourtController'
 
 jest.mock('../../services/locationService')
@@ -13,42 +14,14 @@ describe('Select court appoinment court', () => {
 
   let controller: SelectCourtController
 
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345' },
-    session: { userDetails: {} },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
-
-  const res = ({ locals: {}, render: jest.fn(), redirect: jest.fn() } as unknown) as jest.Mocked<Response>
-
-  const bookingId = 1
-  const appointmentDetails = {
-    bookingId,
-    offenderNo: 'A12345',
-    firstName: 'john',
-    lastName: 'doe',
-    locationId: 1,
-    startTime: '2017-10-10T11:00',
-    endTime: '2017-10-10T14:00',
-    recurring: 'No',
-    comment: 'Test',
-    locationDescription: 'Room 3',
-    locationTypes: [
-      { value: 1, text: 'Room 3' },
-      { value: 2, text: 'Room 2' },
-      { value: 3, text: 'Room 3' },
-    ],
-    date: '10/10/2019',
-    preAppointmentRequired: 'yes',
-    postAppointmentRequired: 'yes',
-  }
+  const req = mockRequest({ params: { agencyId: 'MDI', offenderNo: 'A12345' } })
+  const res = mockResponse()
+  const next = mockNext()
 
   beforeEach(() => {
     jest.resetAllMocks()
     prisonApi.getPrisonerDetails.mockResolvedValue({
-      bookingId,
+      bookingId: 1,
       offenderNo: 'A12345',
       firstName: 'John',
       lastName: 'Doe',
@@ -60,14 +33,25 @@ describe('Select court appoinment court', () => {
       { text: 'Wimbledon', value: 'Wimbledon' },
       { text: 'City of London', value: 'City of London' },
     ])
-    req.flash.mockReturnValue([appointmentDetails])
+    req.flash.mockReturnValue([])
 
     controller = new SelectCourtController(locationService, prisonApi)
+
+    req.signedCookies = {
+      'booking-creation': {
+        bookingId: '123456',
+        date: '2017-11-10T00:00:00',
+        postRequired: 'true',
+        preRequired: 'true',
+        endTime: '2017-11-10T14:00:00',
+        startTime: '2017-11-10T11:00:00',
+      },
+    }
   })
 
   describe('index', () => {
     it('should render the template correctly with the court values sorted alphabetically', async () => {
-      await controller.view(req, res, null)
+      await controller.view(req, res, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectCourt.njk',
@@ -86,14 +70,19 @@ describe('Select court appoinment court', () => {
     })
 
     it('should not include pre post data if not required', async () => {
-      req.flash.mockReturnValue([
-        {
-          ...appointmentDetails,
-          preAppointmentRequired: 'no',
-          postAppointmentRequired: 'no',
+      req.signedCookies = {
+        'booking-creation': {
+          court: 'Leeds',
+          bookingId: '123456',
+          date: '2017-11-10T00:00:00',
+          postRequired: 'false',
+          preRequired: 'false',
+          endTime: '2017-11-10T14:00:00',
+          startTime: '2017-11-10T11:00:00',
         },
-      ])
-      await controller.view(req, res, null)
+      }
+
+      await controller.view(req, res, next)
 
       expect(res.render).toHaveBeenCalledWith(
         'createBooking/selectCourt.njk',
@@ -114,8 +103,6 @@ describe('Select court appoinment court', () => {
         )
 
         expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/select-court')
-
-        expect(req.flash).toHaveBeenCalledWith('appointmentDetails', appointmentDetails)
         expect(req.flash).toHaveBeenCalledWith('errors', [{ href: '#court', text: 'some error' }])
       })
     })
@@ -123,12 +110,23 @@ describe('Select court appoinment court', () => {
     describe('when a court has been selected', () => {
       it('should populate the details with the selected court and redirect to room selection page ', async () => {
         req.body = { court: 'City of London' }
-        await controller.submit(req, res, null)
 
-        expect(req.flash).toHaveBeenCalledWith(
-          'appointmentDetails',
-          expect.objectContaining({ court: 'City of London' })
+        await controller.submit(req, res, next)
+
+        expect(res.cookie).toHaveBeenCalledWith(
+          'booking-creation',
+          {
+            court: 'City of London',
+            bookingId: '123456',
+            date: '2017-11-10T00:00:00',
+            postRequired: 'true',
+            preRequired: 'true',
+            endTime: '2017-11-10T14:00:00',
+            startTime: '2017-11-10T11:00:00',
+          },
+          expect.any(Object)
         )
+
         expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/select-rooms')
       })
     })

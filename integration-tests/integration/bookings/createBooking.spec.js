@@ -62,7 +62,7 @@ context('A user can add a video link', () => {
         },
       ],
     })
-    cy.visit(`/MDI/offenders/${offenderNo}/add-court-appointment`)
+    cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
   })
 
   it('A user is taken to select court and rooms pages and then to court video link confirm', () => {
