@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
-import { DateAndTimeAndCourtCodec, DateAndTimeCodec } from './state'
+import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { DateAndTimeAndCourtCodec, DateAndTimeCodec, ensureNewBookingPresentMiddleware } from './state'
 
 describe('DateAndTimeCodec', () => {
   test('read', () => {
@@ -87,5 +88,46 @@ describe('DateAndTimeAndCourtCodec', () => {
       preRequired: 'true',
       postRequired: 'true',
     })
+  })
+})
+
+describe('ensureNewBookingPresentMiddleware', () => {
+  test('when present', () => {
+    const req = mockRequest({})
+    const res = mockResponse()
+    const next = mockNext()
+
+    req.signedCookies = { 'booking-creation': 'some content' }
+
+    ensureNewBookingPresentMiddleware('/redirect')(req, res, next)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+  })
+
+  test('when empty', () => {
+    const req = mockRequest({})
+    const res = mockResponse()
+    const next = mockNext()
+
+    req.signedCookies = { 'booking-creation': '' }
+
+    ensureNewBookingPresentMiddleware('/redirect')(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/redirect')
+    expect(next).not.toHaveBeenCalled()
+  })
+
+  test('when absent', () => {
+    const req = mockRequest({})
+    const res = mockResponse()
+    const next = mockNext()
+
+    req.signedCookies = {}
+
+    ensureNewBookingPresentMiddleware('/redirect')(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/redirect')
+    expect(next).not.toHaveBeenCalled()
   })
 })

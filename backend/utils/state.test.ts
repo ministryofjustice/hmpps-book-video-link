@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import moment, { Moment } from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import { assertHasStringValues } from '../utils'
-import { cookieOptions, Codec, clearState, getState, setState } from './state'
+import { cookieOptions, Codec, clearState, getState, setState, isStatePresent } from './state'
 
 type TestType = {
   agencyId: string
@@ -104,6 +104,38 @@ describe('state', () => {
         },
         cookieOptions
       )
+    })
+  })
+
+  describe('isStatePresent', () => {
+    it('when present', () => {
+      const req = ({
+        signedCookies: { test: 'blah' },
+      } as unknown) as Request
+
+      const result = isStatePresent('test')(req)
+
+      expect(result).toStrictEqual(true)
+    })
+
+    it('when empty', () => {
+      const req = ({
+        signedCookies: { test: '' },
+      } as unknown) as Request
+
+      const result = isStatePresent('test')(req)
+
+      expect(result).toStrictEqual(false)
+    })
+
+    it('when absent', () => {
+      const req = ({
+        signedCookies: {},
+      } as unknown) as Request
+
+      const result = isStatePresent('test')(req)
+
+      expect(result).toStrictEqual(false)
     })
   })
 })

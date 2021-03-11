@@ -1,9 +1,7 @@
 import moment from 'moment'
-import { Agency, InmateDetail } from 'prisonApi'
 
 import SelectRoomsController from './selectRoomsController'
 import config from '../../config'
-import PrisonApi from '../../api/prisonApi'
 import BookingService from '../../services/bookingService'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { RoomAvailability } from '../../services/model'
@@ -15,7 +13,6 @@ jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
 
 describe('Select court appointment rooms', () => {
-  const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
   const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   let controller: SelectRoomsController
@@ -39,19 +36,11 @@ describe('Select court appointment rooms', () => {
 
     req.flash.mockReturnValue([])
 
-    prisonApi.getPrisonerDetails.mockResolvedValue({
-      bookingId: 1,
-      offenderNo: 'A12345',
-      firstName: 'john',
-      lastName: 'doe',
-    } as InmateDetail)
-
     bookingService.create.mockResolvedValue(123)
 
-    prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Moorland' } as Agency)
     availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
 
-    controller = new SelectRoomsController(prisonApi, bookingService, availabilityCheckService)
+    controller = new SelectRoomsController(bookingService, availabilityCheckService)
 
     req.signedCookies = {
       'booking-creation': {

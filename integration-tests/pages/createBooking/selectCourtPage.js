@@ -17,8 +17,9 @@ const selectCourtPage = () =>
 
 export default {
   verifyOnPage: selectCourtPage,
+  url: (caseload, offenderNo) => `/${caseload}/offenders/${offenderNo}/add-court-appointment/select-court`,
   goTo: (caseload, offenderNo) => {
-    cy.visit(`/${caseload}/offenders/${offenderNo}/add-court-appointment/select-court`)
+    cy.visit(this.url(caseload, offenderNo))
     return selectCourtPage()
   },
 }

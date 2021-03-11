@@ -26,3 +26,7 @@ export const getState = <T>(name: string, codec: Codec<T>) => (req: Request): T 
   const result = req.signedCookies[name]
   return result ? codec.read(result) : undefined
 }
+
+export const isStatePresent = (name: string) => (req: Request): boolean => {
+  return Boolean(req.signedCookies[name])
+}

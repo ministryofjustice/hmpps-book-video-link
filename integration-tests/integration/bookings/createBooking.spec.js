@@ -1,5 +1,6 @@
 const moment = require('moment')
 const offenderBasicDetails = require('../../mockApis/responses/offenderBasicDetails.json')
+const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage')
 const StartPage = require('../../pages/createBooking/startPage')
 const SelectCourtPage = require('../../pages/createBooking/selectCourtPage')
 const SelectRoomsPage = require('../../pages/createBooking/selectRoomsPage')
@@ -65,7 +66,7 @@ context('A user can add a video link', () => {
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
   })
 
-  it('A user is taken to select court and rooms pages and then to court video link confirm', () => {
+  it('A user creates a booking for a pre, main and post appointment', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
     cy.task('stubLoginCourt')
@@ -177,8 +178,6 @@ context('A user can add a video link', () => {
     })
   })
   it('A user creates a booking for only a main appointment', () => {
-    // This is a bit of a cheat, as we only check the user role.
-    // Saves dealing with logging out and logging back in in the setup.
     cy.task('stubLoginCourt')
     cy.task('stubRoomAvailability', {
       pre: [],
@@ -263,6 +262,68 @@ context('A user can add a video link', () => {
         },
       })
     })
+  })
+
+  it('Pages are protected when cookie is absent', () => {
+    cy.task('stubLoginCourt')
+    cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
+    cy.task('stubRoomAvailability', {
+      pre: [],
+      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
+      post: [],
+    })
+
+    const startPage = StartPage.verifyOnPage()
+    const addAppointmentForm = startPage.form()
+    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+
+    startPage.activeDate().click()
+    addAppointmentForm.startTimeHours().select('10')
+    addAppointmentForm.startTimeMinutes().select('55')
+    addAppointmentForm.endTimeHours().select('11')
+    addAppointmentForm.endTimeMinutes().select('55')
+    addAppointmentForm.preAppointmentRequiredNo().click()
+    addAppointmentForm.postAppointmentRequiredNo().click()
+    addAppointmentForm.submitButton().click()
+
+    const selectCourtPage = SelectCourtPage.verifyOnPage()
+
+    const selectCourtForm = selectCourtPage.form()
+    selectCourtForm.court().select('London')
+    selectCourtForm.submitButton().click()
+
+    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
+
+    const selectRoomsForm = selectRoomsPage.form()
+    selectRoomsForm.selectMainAppointmentLocation().select('2')
+
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'MDI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'London',
+      videoLinkBookingId: 123,
+      main: {
+        locationId: 2,
+        startTime: moment().add(1, 'days').set({ hour: 10, minute: 55 }),
+        endTime: moment().add(1, 'days').set({ hour: 11, minute: 55 }),
+      },
+    })
+    selectRoomsForm.submitButton().click()
+
+    ConfirmationPage.verifyOnPage()
+
+    cy.go('back')
+
+    PrisonerSearchPage.verifyOnPage()
+
+    cy.visit(SelectCourtPage.url('WWI', 'A1234AA'))
+
+    PrisonerSearchPage.verifyOnPage()
+
+    cy.visit(SelectRoomsPage.url('WWI', 'A1234AA'))
+
+    PrisonerSearchPage.verifyOnPage()
   })
 
   it('A user is redirected to no availability for time page', () => {

@@ -1,28 +1,19 @@
 import { RequestHandler } from 'express'
 
-import { DAY_MONTH_YEAR, Time } from '../../shared/dateHelpers'
 import { RoomAndComment } from './forms'
 import type { AvailabilityCheckService, BookingService } from '../../services'
-import type PrisonApi from '../../api/prisonApi'
 import { getNewBooking, DateAndTimeAndCourtCodec, clearNewBooking } from './state'
-import { formatName } from '../../utils'
 
 export default class SelectRoomsController {
   constructor(
-    private readonly prisonApi: PrisonApi,
     private readonly bookingService: BookingService,
     private readonly availabilityCheckService: AvailabilityCheckService
   ) {}
 
   public view: RequestHandler = async (req, res) => {
-    const { offenderNo, agencyId } = req.params
+    const { agencyId } = req.params
 
     const newBooking = getNewBooking(req, DateAndTimeAndCourtCodec)
-
-    const [offenderDetails, agencyDetails] = await Promise.all([
-      this.prisonApi.getPrisonerDetails(res.locals, offenderNo),
-      this.prisonApi.getAgencyDetails(res.locals, agencyId),
-    ])
 
     const {
       rooms: { pre, main, post },

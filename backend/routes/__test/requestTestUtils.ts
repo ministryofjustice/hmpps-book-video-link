@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { ValidationError } from '../../middleware/validationMiddleware'
 
 const exampleUserDetails = {
@@ -43,4 +43,4 @@ export const mockResponse = (): jest.Mocked<Response> =>
     clearCookie: jest.fn(),
   } as unknown) as jest.Mocked<Response>)
 
-export const mockNext = jest.fn()
+export const mockNext = (): NextFunction => jest.fn()

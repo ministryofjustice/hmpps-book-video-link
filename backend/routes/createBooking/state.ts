@@ -1,8 +1,8 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, RequestHandler, Response } from 'express'
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { assertHasStringValues } from '../../utils'
-import { clearState, Codec, getState, setState } from '../../utils/state'
+import { clearState, Codec, getState, isStatePresent, setState } from '../../utils/state'
 import { ChangeDateAndTime } from './forms'
 
 export type DateAndTime = ChangeDateAndTime
@@ -44,10 +44,19 @@ export const DateAndTimeAndCourtCodec: Codec<DateAndTimeAndCourt> = {
   },
 }
 
-export const clearNewBooking = clearState('booking-creation')
+const COOKIE_NAME = 'booking-creation'
+
+export const clearNewBooking = clearState(COOKIE_NAME)
 
 export const setNewBooking = <T>(res: Response, codec: Codec<T>, data: T): void =>
-  setState('booking-creation', codec)(res, data)
+  setState(COOKIE_NAME, codec)(res, data)
 
-export const getNewBooking = <T>(req: Request, codec: Codec<T>): T | undefined =>
-  getState('booking-creation', codec)(req)
+export const getNewBooking = <T>(req: Request, codec: Codec<T>): T | undefined => getState(COOKIE_NAME, codec)(req)
+
+export const ensureNewBookingPresentMiddleware = (redirectUrl: string): RequestHandler => (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return isStatePresent(COOKIE_NAME)(req) ? next() : res.redirect(redirectUrl)
+}
