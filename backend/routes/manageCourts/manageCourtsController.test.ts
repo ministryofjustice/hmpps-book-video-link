@@ -3,25 +3,16 @@ import type { Agency } from 'prisonApi'
 
 import ManageCourtsController from './manageCourtsController'
 import ManageCourtsService from '../../services/manageCourtsService'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/manageCourtsService')
 
 describe('Manage courts controller', () => {
   const manageCourtsService = new ManageCourtsService(null) as jest.Mocked<ManageCourtsService>
   let controller: ManageCourtsController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({})
+  const res = mockResponse()
 
   const courtList = ({
     A: [

@@ -1,22 +1,12 @@
-import { Request, Response } from 'express'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 
 describe('video link is not available controller', () => {
   let controller: VideoLinkNotAvailableController
 
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
-
-  const res = ({
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({ params: { bookingId: '123' } })
+  const res = mockResponse()
 
   beforeEach(() => {
     controller = new VideoLinkNotAvailableController()
@@ -43,7 +33,7 @@ describe('video link is not available controller', () => {
 
       await controller.view()(req, res, null)
       expect(res.render).toHaveBeenCalledWith('amendBooking/videoLinkNotAvailable.njk', {
-        bookingId: 123,
+        bookingId: '123',
         data: {
           date: 'Friday 20 November 2020',
           endTime: '19:20',
@@ -83,7 +73,7 @@ describe('video link is not available controller', () => {
   describe('roomNoLongerAvailable', () => {
     it('should render the page', async () => {
       await controller.roomNoLongerAvailable()(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('amendBooking/roomNoLongerAvailable.njk', { bookingId: 123 })
+      expect(res.render).toHaveBeenCalledWith('amendBooking/roomNoLongerAvailable.njk', { bookingId: '123' })
     })
   })
 })

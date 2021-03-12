@@ -1,27 +1,17 @@
-import { Request, Response } from 'express'
 import moment from 'moment'
 import BookingDetailsController from './bookingDetailsController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails } from '../../services/model'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/bookingService')
 
 describe('Booking details', () => {
   const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   let controller: BookingDetailsController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({ params: { bookingId: '123' } })
+  const res = mockResponse()
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

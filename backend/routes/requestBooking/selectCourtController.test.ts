@@ -1,7 +1,6 @@
-import { Request, Response } from 'express'
-
 import SelectCourtController from './selectCourtController'
 import LocationService from '../../services/locationService'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/locationService')
 
@@ -10,25 +9,8 @@ describe('Select court controller', () => {
 
   let controller: SelectCourtController
 
-  const req = ({
-    body: {},
-    originalUrl: 'http://localhost',
-    session: {
-      userDetails: {
-        name: 'Test User',
-        username: 'testUsername',
-      },
-      data: {},
-    },
-    params: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
-
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({})
+  const res = mockResponse()
 
   const mockFlashState = ({ errors, requestBooking }) =>
     req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)

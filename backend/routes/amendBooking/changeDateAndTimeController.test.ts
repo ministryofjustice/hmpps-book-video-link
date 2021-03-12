@@ -1,9 +1,9 @@
-import { Request, Response } from 'express'
 import moment from 'moment'
 import ChangeDateAndTimeController from './changeDateAndTimeController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails, RoomAvailability } from '../../services/model'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
@@ -13,11 +13,8 @@ describe('change date and time controller', () => {
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
   let controller: ChangeDateAndTimeController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'WWI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    query: {},
+  const req = mockRequest({
+    params: { bookingId: '123' },
     body: {
       agencyId: 'WWI',
       date: '20/11/2020',
@@ -28,16 +25,9 @@ describe('change date and time controller', () => {
       preAppointmentRequired: 'yes',
       postAppointmentRequired: 'yes',
     },
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
+  })
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-    clearCookie: jest.fn(),
-    cookie: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const res = mockResponse()
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',
@@ -87,9 +77,9 @@ describe('change date and time controller', () => {
     })
 
     it('Clears cookie and redirects when changing time only', async () => {
-      req.query.changeTime = 'true'
+      const reqWithQuery = mockRequest({ params: { bookingId: '123' }, query: { changeTime: 'true' } })
 
-      await controller.start()(req, res, null)
+      await controller.start()(reqWithQuery, res, null)
 
       expect(res.clearCookie).toHaveBeenCalledWith('booking-update', expect.anything())
 
@@ -108,7 +98,7 @@ describe('change date and time controller', () => {
         await controller.view(false)(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-          bookingId: 123,
+          bookingId: '123',
           agencyId: 'WWI',
           changeTime: false,
           locations: { court: 'City of London', prison: 'some prison' },
@@ -127,7 +117,7 @@ describe('change date and time controller', () => {
         await controller.view(true)(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-          bookingId: 123,
+          bookingId: '123',
           agencyId: 'WWI',
           changeTime: true,
           locations: { court: 'City of London', prison: 'some prison' },
@@ -161,7 +151,7 @@ describe('change date and time controller', () => {
         await controller.view(false)(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-          bookingId: 123,
+          bookingId: '123',
           agencyId: 'WWI',
           changeTime: false,
           locations: { court: 'City of London', prison: 'some prison' },
@@ -199,7 +189,7 @@ describe('change date and time controller', () => {
         await controller.view(true)(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-          bookingId: 123,
+          bookingId: '123',
           agencyId: 'WWI',
           changeTime: true,
           errors: [{ text: 'error message', href: 'error' }],
@@ -228,7 +218,7 @@ describe('change date and time controller', () => {
       await controller.view(false)(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-        bookingId: 123,
+        bookingId: '123',
         agencyId: 'WWI',
         changeTime: false,
         locations: { court: 'City of London', prison: 'some prison' },
@@ -250,7 +240,7 @@ describe('change date and time controller', () => {
       await controller.view(true)(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith('amendBooking/changeDateAndTime.njk', {
-        bookingId: 123,
+        bookingId: '123',
         agencyId: 'WWI',
         changeTime: true,
         errors: [{ text: 'error message', href: 'error' }],

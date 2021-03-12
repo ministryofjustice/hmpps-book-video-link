@@ -1,22 +1,12 @@
-import type { Request, Response } from 'express'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 import CourtSelectionConfirmationController from './courtSelectionConfirmationController'
 
-describe('video link is available controller', () => {
+describe('court selection confirmation controller', () => {
   let controller: CourtSelectionConfirmationController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({})
+  const res = mockResponse()
 
   beforeEach(() => {
     controller = new CourtSelectionConfirmationController()

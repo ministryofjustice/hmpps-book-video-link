@@ -1,29 +1,19 @@
-import { Request, Response } from 'express'
 import moment from 'moment'
 
 import ChangeCommentsController from './changeCommentsController'
 import BookingService from '../../services/bookingService'
 import { BookingDetails } from '../../services/model'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/bookingService')
 
 describe('Change comments controller', () => {
   const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   let controller: ChangeCommentsController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: 123 },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
+  const req = mockRequest({ params: { bookingId: '123' } })
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const res = mockResponse()
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',
@@ -72,7 +62,7 @@ describe('Change comments controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeComments.njk', {
-          bookingId: 123,
+          bookingId: '123',
           formValues: {
             comments: 'some comment',
           },
@@ -96,7 +86,7 @@ describe('Change comments controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeComments.njk', {
-          bookingId: 123,
+          bookingId: '123',
           formValues: {
             comments: 'another comment',
           },
@@ -114,7 +104,7 @@ describe('Change comments controller', () => {
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/changeComments.njk', {
-          bookingId: 123,
+          bookingId: '123',
           formValues: {
             comments: 'some comment',
           },
@@ -141,7 +131,7 @@ describe('Change comments controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.updateComments).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, 'another comment')
+      expect(bookingService.updateComments).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, 'another comment')
     })
 
     describe('when errors are present', () => {

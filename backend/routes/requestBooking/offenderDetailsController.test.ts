@@ -1,8 +1,7 @@
-import { Request, Response } from 'express'
-
 import OffenderDetailsController from './offenderDetailsController'
 import LocationService from '../../services/locationService'
 import NotificationService from '../../services/notificationService'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/locationService')
 jest.mock('../../services/notificationService')
@@ -13,25 +12,8 @@ describe('Offender details controller', () => {
 
   let controller: OffenderDetailsController
 
-  const req = ({
-    body: {},
-    originalUrl: 'http://localhost',
-    session: {
-      userDetails: {
-        name: 'Test User',
-        username: 'testUsername',
-      },
-      data: {},
-    },
-    params: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
-
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({})
+  const res = mockResponse()
 
   const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
@@ -68,22 +50,24 @@ describe('Offender details controller', () => {
 
   describe('Submit', () => {
     it('should redirect to current page when errors are present', async () => {
-      req.flash.mockReturnValueOnce([])
-
       const errors = [
         { text: 'Enter a first name', href: '#first-name' },
         { text: 'Enter a last name', href: '#last-name' },
         { text: 'Enter a date of birth', href: '#dobDay' },
       ]
-      await controller.submit()(({ ...req, errors } as unknown) as Request, res, null)
 
-      expect(req.flash).toHaveBeenCalledWith('requestBooking', {})
-      expect(req.flash).toHaveBeenCalledWith('errors', [
+      const request = mockRequest({ errors })
+      request.flash.mockReturnValueOnce([])
+
+      await controller.submit()(request, res, null)
+
+      expect(request.flash).toHaveBeenCalledWith('requestBooking', {})
+      expect(request.flash).toHaveBeenCalledWith('errors', [
         { text: 'Enter a first name', href: '#first-name' },
         { text: 'Enter a last name', href: '#last-name' },
         { text: 'Enter a date of birth', href: '#dobDay' },
       ])
-      expect(req.flash).toHaveBeenCalledWith('input', {})
+      expect(request.flash).toHaveBeenCalledWith('input', {})
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/enter-offender-details')
     })
 
@@ -126,7 +110,7 @@ describe('Offender details controller', () => {
 
       expect(notificationService.sendBookingRequestEmails).toHaveBeenCalledWith(
         res.locals,
-        'testUsername',
+        'COURT_USER',
         personalisation
       )
     })

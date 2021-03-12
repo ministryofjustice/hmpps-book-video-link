@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import moment from 'moment'
 
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
@@ -6,6 +5,7 @@ import BookingService from '../../services/bookingService'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { BookingDetails, RoomAvailability } from '../../services/model'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
@@ -14,20 +14,9 @@ describe('Select available rooms controller', () => {
   const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   let controller: SelectAvailableRoomsController
-  const req = ({
-    originalUrl: 'http://localhost',
-    params: { agencyId: 'MDI', offenderNo: 'A12345', bookingId: '12' },
-    session: { userDetails: { name: 'Bob Smith', username: 'BOB_SMITH' } },
-    body: {},
-    flash: jest.fn(),
-  } as unknown) as jest.Mocked<Request>
 
-  const res = ({
-    locals: {},
-    render: jest.fn(),
-    redirect: jest.fn(),
-    clearCookie: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const req = mockRequest({ params: { bookingId: '12' } })
+  const res = mockResponse()
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',
@@ -236,7 +225,7 @@ describe('Select available rooms controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
+      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, {
         comment: 'A comment',
         agencyId: 'WWI',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -268,7 +257,7 @@ describe('Select available rooms controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'BOB_SMITH', 12, {
+      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, {
         comment: undefined,
         agencyId: 'WWI',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
