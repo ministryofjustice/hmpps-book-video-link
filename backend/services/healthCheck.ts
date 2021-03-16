@@ -3,7 +3,7 @@ import { serviceCheckFactory } from '../api/healthCheck'
 
 const loadBuildInfo = () => {
   try {
-    return JSON.parse(readFileSync('../../build-info.json').toString())
+    return JSON.parse(readFileSync('./build-info.json').toString())
   } catch (e) {
     return undefined
   }
@@ -32,7 +32,7 @@ const addAppInfo = result => {
   const buildInfo = {
     uptime: process.uptime(),
     build: buildInformation,
-    version: (buildInformation && buildInformation.buildNumber) || 'Not available',
+    version: buildInformation?.buildNumber || 'Not available',
   }
 
   return { ...result, ...buildInfo }
