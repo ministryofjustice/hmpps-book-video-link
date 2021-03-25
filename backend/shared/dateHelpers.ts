@@ -13,23 +13,6 @@ export const DayOfTheWeek = (dateTime: string): string =>
 export const DayMonthYear = (dateTime: string): string => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
 export const Time = (dateTime: string | Moment): string => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(MOMENT_TIME)
 
-/**
- * @deprecated use buildDate instead.
- * TODO: this needs tidying up - at the moment returns {string | Moment} but nowhere seems to handle the string case.
- * @return {moment.Moment}
- */
-export const buildDateTime = ({ date, hours, minutes, dateFormat = DAY_MONTH_YEAR }): moment.Moment => {
-  const time =
-    date &&
-    Number.isSafeInteger(Number.parseInt(hours, 10)) &&
-    Number.isSafeInteger(Number.parseInt(minutes, 10)) &&
-    moment(date, dateFormat)
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  return time ? time.hour(Number(hours)).minutes(Number(minutes)) : ''
-}
-
 export const buildDate = (
   date: string | undefined,
   hours: string,

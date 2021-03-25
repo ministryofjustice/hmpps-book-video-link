@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import errorHandler from './errorHandler'
 import { logError } from '../logError'
-import { serviceUnavailableMessage } from '../common-messages'
 
 jest.mock('../logError', () => ({
   logError: jest.fn(),
@@ -29,7 +28,7 @@ describe('Error handling middleware', () => {
   it('should log an error when an error is thrown', async () => {
     handleErrorWhenRetryLinkIs('/bookings')
 
-    expect(logError).toHaveBeenCalledWith(req.originalUrl, error, serviceUnavailableMessage)
+    expect(logError).toHaveBeenCalledWith(req.originalUrl, error, 'An error occurred')
   })
 
   it('should handle an error when the retry link is overridden', async () => {

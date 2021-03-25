@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions, prefer-promise-reject-errors */
 const request = require('supertest')
 const express = require('express')
-const bodyParser = require('body-parser')
 const session = require('express-session')
 const passport = require('passport')
 const flash = require('connect-flash')
@@ -24,7 +23,7 @@ describe('Test the routes and middleware installed by sessionManagementRoutes', 
   const app = express()
 
   app.set('view engine', 'njk')
-  app.use(bodyParser.urlencoded({ extended: false }))
+  app.use(express.urlencoded({ extended: false }))
 
   app.use(
     session({

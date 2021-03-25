@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const formData = require('express-form-data')
 const os = require('os')
 
@@ -12,8 +11,8 @@ module.exports = () => {
       autoClean: true,
     })
   )
-  router.use(bodyParser.urlencoded({ extended: true, limit: '5mb', parameterLimit: 1000000 }))
-  router.use(bodyParser.json({ limit: '1mb' }))
+  router.use(express.urlencoded({ extended: true, limit: '5mb', parameterLimit: 1000000 }))
+  router.use(express.json({ limit: '1mb' }))
 
   return router
 }

@@ -1,6 +1,5 @@
 import { config } from 'dotenv'
 import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
-import ignoreNotFoundErrors from './telemetryProcessors/ignoreNotFound'
 import applicationVersion from './application-version'
 
 export const initialiseAppInsights = (name = defaultName()): void => {
@@ -12,7 +11,6 @@ export const initialiseAppInsights = (name = defaultName()): void => {
     setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
     defaultClient.context.tags['ai.cloud.role'] = name
     defaultClient.context.tags['ai.application.ver'] = version()
-    defaultClient.addTelemetryProcessor(ignoreNotFoundErrors)
   }
 }
 
