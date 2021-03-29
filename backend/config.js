@@ -34,8 +34,6 @@ module.exports = {
       timeoutSeconds: toInt(process.env.API_ENDPOINT_TIMEOUT_SECONDS, 10),
       clientId: process.env.API_CLIENT_ID || 'book-video-link-client',
       clientSecret: process.env.API_CLIENT_SECRET || 'clientsecret',
-      systemClientId: process.env.API_SYSTEM_CLIENT_ID || 'book-video-link-admin',
-      systemClientSecret: process.env.API_SYSTEM_CLIENT_SECRET || 'clientsecret',
     },
     prison: {
       url: process.env.API_ENDPOINT_URL || 'http://localhost:8080/',
