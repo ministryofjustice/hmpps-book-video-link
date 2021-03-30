@@ -2,7 +2,7 @@ import WhereaboutsApi from '../../api/whereaboutsApi'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 import EventsController from './eventsController'
 
-jest.mock('../../api/WhereaboutsApi')
+jest.mock('../../api/whereaboutsApi')
 
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
