@@ -1,0 +1,96 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% set title = 'Booking events download' %}
+
+{% macro errorClass(field) -%}
+    {{ ' govuk-input--error' if errors | hasErrorWithPrefix([field, 'startError']) else '' }}
+{%- endmacro %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: "/",
+        classes: "govuk-!-display-none-print"
+    }) }}
+{% endblock %}
+
+{% block content %}
+    {% if errors.length > 0 %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errors,
+            attributes: { 'data-qa-errors': true }
+        }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-l">{{ title }}</h1>
+
+    <form novalidate="novalidate">
+        <formValues type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ govukDateInput({
+            id: "start",
+            fieldset: {
+                legend: {
+                    text: "What is the earliest event date?",
+                    isPageHeading: false,
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            hint: {
+                text: "For example, 28 03 2021"
+            },
+            errorMessage: errors | findErrors(['startDay', 'startMonth', 'startYear']),
+            items: [
+                {
+                    id: "startDay",
+                    name: "startDay",
+                    label: "Day",
+                    classes: "govuk-input--width-2" + errorClass('startDay'),
+                    value: formValues.startDay
+                },
+                {
+                    id: "startMonth",
+                    name: "startMonth",
+                    label: "Month",
+                    classes: "govuk-input--width-2" + errorClass('startMonth'),
+                    value: formValues.startMonth
+                },
+                {
+                    id: "startYear",
+                    name: "startYear",
+                    label: "Year",
+                    classes: "govuk-input--width-4" + errorClass('startYear'),
+                    value: formValues.startYear
+                }
+            ]
+        }) }}
+
+        {{ govukInput({
+            label: {
+                text: "How many days of events?",
+                isPageHeading: false
+            },
+            classes: "govuk-input--width-2",
+            id: "days",
+            name: "days",
+            hint: {
+                text: "For example, 7"
+            },
+            value: formValues.days,
+            errorMessage: errors | findError('days')
+        }) }}
+
+        {{ govukButton({
+            text: "Download",
+            preventDoubleClick: true,
+            type: "submit"
+        }) }}
+    </form>
+    <iframe src="{{downloadPath}}" class="govuk-!-display-none"></iframe>
+{% endblock %}

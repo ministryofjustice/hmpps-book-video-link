@@ -99,6 +99,19 @@ export default class Client {
     })
   }
 
+  public getToStream(context: Context, path: string, stream: NodeJS.WritableStream) {
+    superagent
+      .get(this.remoteUrl + path)
+      .agent(this.keepaliveAgent)
+      .set(getHeaders(context))
+      .retry(2, (err, res) => {
+        if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
+        return undefined // retry handler only for logging retries, not to influence retry logic
+      })
+      .timeout({ deadline: this.timeout / 3 })
+      .pipe(stream)
+  }
+
   /**
    * An superagent POST with Oauth token refresh and retry behaviour
    * @param {any} context A request scoped context. Holds OAuth tokens and pagination information for the request

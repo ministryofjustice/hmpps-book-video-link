@@ -39,7 +39,10 @@ export const mockRequest = ({
 export const mockResponse = (): jest.Mocked<Response> =>
   (({
     locals: { context: {} },
+    sendStatus: jest.fn(),
     send: jest.fn(),
+    contentType: jest.fn(),
+    set: jest.fn(),
     redirect: jest.fn(),
     render: jest.fn(),
     cookie: jest.fn(),

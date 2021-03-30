@@ -7,6 +7,7 @@ import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
 import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
+import eventRoutes from './events'
 import amendBookingsRoutes from './amendBooking'
 
 import { supportEmail } from '../config'
@@ -22,6 +23,7 @@ export = function createRoutes(services: Services): Router {
   router.use(requestBookingRoutes(services))
   router.use(viewBookingsRoutes(services))
   router.use(amendBookingsRoutes(services))
+  router.use(eventRoutes(services))
 
   router.get('/feedback-and-support', (req, res) => {
     res.render('feedbackAndSupport.njk', { supportEmail })

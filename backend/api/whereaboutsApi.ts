@@ -1,15 +1,18 @@
 import {
-  CourtLocations,
-  NewVideoLinkBooking,
-  VideoLinkBooking,
   AppointmentLocationsSpecification,
   AvailableLocations,
+  CourtLocations,
+  NewVideoLinkBooking,
   UpdateVideoLinkBooking,
+  VideoLinkBooking,
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
+import moment from 'moment'
 import Client, { Context } from './oauthEnabledClient'
 import { mapToQueryString } from '../utils'
+import { setCustomRequestHeaders } from '../contextProperties'
+import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
 
 export = class WhereaboutsApi {
   constructor(private readonly client: Client) {}
@@ -80,5 +83,20 @@ export = class WhereaboutsApi {
 
   public deleteVideoLinkBooking(context: Context, videoBookingId: number): Promise<void> {
     return this.delete(context, `/court/video-link-bookings/${videoBookingId}`)
+  }
+
+  public getVideoLinkBookingEvents(
+    context: Context,
+    stream: NodeJS.WritableStream,
+    date: moment.Moment,
+    days?: number
+  ): void {
+    setCustomRequestHeaders(context, { Accept: 'text/csv' })
+    const daysQP = days ? `&days=${days}` : ''
+    this.client.getToStream(
+      context,
+      `/events/video-link-booking-events?start-date=${date.format(DATE_ONLY_FORMAT_SPEC)}${daysQP}`,
+      stream
+    )
   }
 }
