@@ -288,6 +288,7 @@ module.exports = {
       },
     })
   },
+
   stubGetLocationPrefix: ({ agencyId, groupName, response }) =>
     stubFor({
       request: {
@@ -302,6 +303,7 @@ module.exports = {
         jsonBody: response,
       },
     }),
+
   stubLocationGroups: locationGroups =>
     stubFor({
       request: {
@@ -314,6 +316,21 @@ module.exports = {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: locationGroups || [],
+      },
+    }),
+
+  stubGetEventsCsv: body =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/whereabouts/events/video-link-booking-events',
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/csv;charset=UTF-8',
+        },
+        body,
       },
     }),
 }

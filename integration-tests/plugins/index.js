@@ -1,3 +1,4 @@
+const { rmdir } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
 const whereabouts = require('../mockApis/whereabouts')
@@ -63,5 +64,21 @@ module.exports = on => {
     stubLocation: ({ locationId, response }) => prisonApi.stubLocation(locationId, response),
 
     stubFindPrisonersByBookingIds: prisonerOffenderSearch.stubFindPrisonersByBookingIds,
+
+    stubGetEventsCsv: body => whereabouts.stubGetEventsCsv(body),
+
+    deleteFolder: folderName => {
+      console.log('deleting folder %s', folderName)
+
+      return new Promise((resolve, reject) => {
+        rmdir(folderName, { maxRetries: 10, recursive: true }, err => {
+          if (err) {
+            console.error(err)
+            return reject(err)
+          }
+          return resolve(null)
+        })
+      })
+    },
   })
 }
