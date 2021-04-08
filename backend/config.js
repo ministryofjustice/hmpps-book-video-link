@@ -83,6 +83,10 @@ module.exports = {
         omu: process.env.HEWELL_OMU_EMAIL,
         vlb: process.env.HEWELL_VLB_EMAIL,
       },
+      BWI: {
+        omu: process.env.BERWYN_OMU_EMAIL,
+        vlb: process.env.BERWYN_VLB_EMAIL,
+      },
     },
   },
 }

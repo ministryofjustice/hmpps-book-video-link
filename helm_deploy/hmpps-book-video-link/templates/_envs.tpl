@@ -76,6 +76,18 @@ env:
         name: {{ template "app.name" . }}
         key: THAMESIDE_VLB_EMAIL
 
+  - name: BERWYN_OMU_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: BERWYN_OMU_EMAIL
+
+  - name: BERWYN_VLB_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: BERWYN_VLB_EMAIL
+
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
