@@ -10,7 +10,7 @@ import viewBookingsRoutes from './viewBookings'
 import eventRoutes from './events'
 import amendBookingsRoutes from './amendBooking'
 
-import { supportEmail } from '../config'
+import { supportEmail, supportTelephone } from '../config'
 
 const router = express.Router()
 
@@ -26,7 +26,7 @@ export = function createRoutes(services: Services): Router {
   router.use(eventRoutes(services))
 
   router.get('/feedback-and-support', (req, res) => {
-    res.render('feedbackAndSupport.njk', { supportEmail })
+    res.render('feedbackAndSupport.njk', { supportEmail, supportTelephone })
   })
   router.use((req, res) => res.status(404).render('notFoundPage.njk'))
 

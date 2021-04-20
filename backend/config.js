@@ -12,6 +12,8 @@ module.exports = {
 
   supportEmail: 'bookavideolink@digital.justice.gov.uk',
 
+  supportTelephone: '0800 917 5148',
+
   analytics: {
     googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID,
   },
