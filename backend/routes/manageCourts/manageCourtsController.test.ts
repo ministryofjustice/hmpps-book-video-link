@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import type { Agency } from 'prisonApi'
 
 import ManageCourtsController from './manageCourtsController'

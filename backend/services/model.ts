@@ -1,4 +1,4 @@
-import { Appointment, Interval } from 'whereaboutsApi'
+import { Interval } from 'whereaboutsApi'
 import { Moment } from 'moment'
 
 export type Context = unknown
