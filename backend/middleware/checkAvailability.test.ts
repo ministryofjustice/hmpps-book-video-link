@@ -2,7 +2,7 @@ import moment from 'moment'
 
 import AvailabilityCheckService from '../services/availabilityCheckService'
 import checkAvailability from './checkAvailability'
-import { DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
+import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import { Room } from '../services/model'
 import { Services } from '../services'
 import { mockRequest, mockResponse } from '../routes/__test/requestTestUtils'

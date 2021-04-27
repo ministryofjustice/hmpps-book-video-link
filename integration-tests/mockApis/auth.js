@@ -91,7 +91,7 @@ const token = () =>
     },
   })
 
-const stubUser = (username, caseload) => {
+const stubUser = username => {
   const user = username || 'ITAG_USER'
   return stubFor({
     request: {
