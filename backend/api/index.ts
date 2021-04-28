@@ -1,6 +1,7 @@
 import config from '../config'
 import Client from './oauthEnabledClient'
 
+import CourtApi from './courtApi'
 import WhereaboutsApi from './whereaboutsApi'
 import PrisonApi from './prisonApi'
 import PrisonerOffenderSearchApi from './prisonerOffenderSearchApi'
@@ -8,6 +9,13 @@ import PrisonerOffenderSearchApi from './prisonerOffenderSearchApi'
 import { oauthApiFactory } from './oauthApi'
 import { tokenVerificationApiFactory } from './tokenVerificationApi'
 import { notifyApi } from './notifyApi'
+
+const courtApi = new CourtApi(
+  new Client({
+    baseUrl: config.apis.courts.url,
+    timeout: config.apis.courts.timeoutSeconds * 1000,
+  })
+)
 
 const prisonApi = new PrisonApi(
   new Client({
@@ -46,6 +54,7 @@ const tokenVerificationApi = tokenVerificationApiFactory(
 )
 
 export const apis = {
+  courtApi,
   notifyApi,
   oauthApi,
   prisonApi,
