@@ -4,7 +4,7 @@ const manageCourtsPage = () =>
   page('Manage your list of courts', {
     form: {
       section: section => cy.get(`#accordion-default-heading-${section}`),
-      court: agencyId => cy.get(`label[for="court-${agencyId}"]`),
+      court: courtId => cy.get(`label[for="court-${courtId}"]`),
     },
     errorSummaryTitle: () => cy.get('#error-summary-title'),
     errorSummaryBody: () => cy.get('.govuk-error-summary__body'),
