@@ -116,6 +116,9 @@ env:
   - name: API_WHEREABOUTS_ENDPOINT_URL
     value: {{ .Values.env.API_WHEREABOUTS_ENDPOINT_URL | quote }}
 
+  - name: API_COURTS_ENDPOINT_URL
+    value: {{ .Values.env.API_COURTS_ENDPOINT_URL | quote }}    
+
   - name: API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL
     value: {{ .Values.env.API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL | quote }}    
 

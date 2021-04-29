@@ -21,7 +21,8 @@ env:
   OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth/
   API_WHEREABOUTS_ENDPOINT_URL: https://whereabouts-api.service.justice.gov.uk/
   API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL: https://prisoner-offender-search.prison.service.justice.gov.uk/
-  HMPPS_COOKIE_NAME: hmpps-session-preprod
+  API_COURTS_ENDPOINT_URL: https://court-register.hmpps.service.justice.gov.uk/
+  HMPPS_COOKIE_NAME: hmpps-session-prod
   REMOTE_AUTH_STRATEGY: "true"
   WEB_SESSION_TIMEOUT_IN_MINUTES: "60"
   VIDEO_LINK_ENABLED_FOR: "WWI,TSI,HEI,BWI"
@@ -35,9 +36,9 @@ whitelist:
   cloudplatform-live1-3: 35.177.252.54/32
   mojvpn: 81.134.202.29/32
   office: 217.33.148.210/32
-  analyticplatform: 34.250.17.221/32
-  analyticplatform: 34.251.212.33/32
-  analyticplatform: 34.252.4.39/32
+  analyticplatform-1: 34.250.17.221/32
+  analyticplatform-2: 34.251.212.33/32
+  analyticplatform-3: 34.252.4.39/32
   ark-dom1-psn1: 51.247.4.0/24
   ark-dom1-psn2: 51.247.3.0/24
   ark-nps-hmcts-ttp1: 195.59.75.0/24
