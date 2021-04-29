@@ -1,4 +1,4 @@
-import type { Agency } from 'prisonApi'
+import type { CourtDto } from 'courtRegister'
 
 import ManageCourtsController from './manageCourtsController'
 import ManageCourtsService from '../../services/manageCourtsService'
@@ -16,28 +16,34 @@ describe('Manage courts controller', () => {
   const courtList = ({
     A: [
       {
+        courtId: 'ABDRCT',
+        courtName: 'Aberdare County Court',
+        type: {
+          courtType: 'COU',
+          courtName: 'Aberdare County Court',
+        },
         active: true,
-        agencyId: 'ABDRCT',
-        agencyType: 'CRT',
-        description: 'Aberdare County Court',
-        longdescription: 'Aberdare County Court',
       },
       {
+        courtId: 'ABDRMC',
+        courtName: 'Aberdare Mc',
+        type: {
+          courtType: 'MAG',
+          courtName: 'Aberdare Mc',
+        },
         active: true,
-        agencyId: 'ABDRMC',
-        agencyType: 'CRT',
-        description: 'Aberdare Mc',
-        longdescription: 'Aberdare Mc',
       },
       {
+        courtId: 'ABDRYC',
+        courtName: 'Aberdare Youth Court',
+        type: {
+          courtType: 'YTH',
+          courtName: 'Aberdare Youth Court',
+        },
         active: true,
-        agencyId: 'ABDRYC',
-        agencyType: 'CRT',
-        description: 'Aberdare Youth Court',
-        longdescription: 'Aberdare Youth Court',
       },
     ],
-  } as unknown) as Map<string, Agency[]>
+  } as unknown) as Map<string, CourtDto[]>
 
   beforeEach(() => {
     jest.resetAllMocks()
