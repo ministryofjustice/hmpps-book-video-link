@@ -14,32 +14,40 @@ context('A user can view the manage courts page', () => {
 
     cy.task('stubAllCourts', [
       {
+        courtId: 'ABDRCT',
+        courtName: 'Aberdare County Court',
+        type: {
+          courtType: 'COU',
+          courtName: 'Aberdare County Court',
+        },
         active: true,
-        agencyId: 'AAA',
-        agencyType: 'CRT',
-        description: 'AAA Court',
-        longDescription: 'AAA Crown Court',
       },
       {
+        courtId: 'BANBCT',
+        courtName: 'Banbury County Court',
+        type: {
+          courtType: 'COU',
+          courtName: 'Banbury County Court',
+        },
         active: true,
-        agencyId: 'BAC',
-        agencyType: 'CRT',
-        description: 'BAC Court',
-        longDescription: 'BAC Magistrates Court',
       },
       {
+        courtId: 'ABGVMC',
+        courtName: 'Abergavenny Magistrates Court',
+        type: {
+          courtType: 'MAG',
+          courtName: 'Abergavenny Magistrates Court',
+        },
         active: true,
-        agencyId: 'AAD',
-        agencyType: 'CRT',
-        description: 'AAD Court',
-        longDescription: 'AAD Immigration Court',
       },
       {
+        courtId: 'ABRYCT',
+        courtName: 'Aberystwyth County Court',
+        type: {
+          courtType: 'COU',
+          courtName: 'Aberystwyth County Court',
+        },
         active: true,
-        agencyId: 'AAB',
-        agencyType: 'CRT',
-        description: 'AAB Court',
-        longDescription: 'AAB Crown Court',
       },
     ])
   })
@@ -48,10 +56,10 @@ context('A user can view the manage courts page', () => {
     const manageCourtsPage = ManageCourtsPage.goTo()
     manageCourtsPage.form.section('A').should('exist')
     manageCourtsPage.form.section('B').should('exist')
-    manageCourtsPage.form.court('AAA').should('not.be.visible')
+    manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
     manageCourtsPage.form.section('A').click()
-    manageCourtsPage.form.court('AAA').should('be.visible')
-    manageCourtsPage.form.court('AAA').click()
+    manageCourtsPage.form.court('ABDRCT').should('be.visible')
+    manageCourtsPage.form.court('ABDRCT').click()
     manageCourtsPage.form.section('A').click()
     manageCourtsPage.continue().click()
 
@@ -62,9 +70,9 @@ context('A user can view the manage courts page', () => {
     let manageCourtsPage = ManageCourtsPage.goTo()
     manageCourtsPage.form.section('A').should('exist')
     manageCourtsPage.form.section('B').should('exist')
-    manageCourtsPage.form.court('AAA').should('not.be.visible')
+    manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
     manageCourtsPage.form.section('A').click()
-    manageCourtsPage.form.court('AAA').should('be.visible')
+    manageCourtsPage.form.court('ABDRCT').should('be.visible')
     manageCourtsPage.form.section('A').click()
     manageCourtsPage.continue().click()
     manageCourtsPage = ManageCourtsPage.verifyOnPage()

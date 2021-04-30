@@ -81,5 +81,6 @@ Dockerrun.aws.json
 # Cypress
 integration-tests/videos
 integration-tests/screenshots
+integration-tests/downloads
 
 build-info.json

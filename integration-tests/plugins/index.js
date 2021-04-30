@@ -1,6 +1,7 @@
 const { rmdir } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
+const courtApi = require('../mockApis/courtApi')
 const whereabouts = require('../mockApis/whereabouts')
 const tokenverification = require('../mockApis/tokenverification')
 const prisonerOffenderSearch = require('../mockApis/prisonerOffenderSearch')
@@ -51,7 +52,7 @@ module.exports = on => {
     stubLoginPage: auth.redirect,
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
-    stubAllCourts: prisonApi.stubAllCourts,
+    stubAllCourts: courtApi.stubAllCourts,
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),

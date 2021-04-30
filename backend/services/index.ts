@@ -6,14 +6,14 @@ import LocationService from './locationService'
 import AvailabilityCheckService from './availabilityCheckService'
 import ManageCourtsService from './manageCourtsService'
 
-const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi } = apis
+const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi, courtApi } = apis
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
 const locationService = new LocationService(prisonApi, whereaboutsApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi)
-const manageCourtsService = new ManageCourtsService(prisonApi)
+const manageCourtsService = new ManageCourtsService(courtApi)
 
 export const services = {
   bookingService,

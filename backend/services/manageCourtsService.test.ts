@@ -1,28 +1,29 @@
-import type { Agency } from 'prisonApi'
+import type { CourtDto } from 'courtRegister'
 
-import PrisonApi from '../api/prisonApi'
+import CourtApi from '../api/courtApi'
 import ManageCourtsService from './manageCourtsService'
 
-jest.mock('../api/prisonApi')
+jest.mock('../api/courtApi')
 
-const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
+const courtApi = new CourtApi(null) as jest.Mocked<CourtApi>
 
-const createCourt = (agencyId: string, description: string): Agency => {
+const createCourt = (courtId: string, courtName: string): CourtDto => {
   return {
+    courtId,
+    courtName,
+    type: {
+      courtType: 'CRN',
+      courtName,
+    },
     active: true,
-    agencyId,
-    agencyType: 'CRT',
-    description,
-    longDescription: description,
   }
 }
 
 describe('Manage courts service', () => {
-  const context = {}
   let service: ManageCourtsService
 
   beforeEach(() => {
-    service = new ManageCourtsService(prisonApi)
+    service = new ManageCourtsService(courtApi)
   })
 
   afterEach(() => {
@@ -31,29 +32,29 @@ describe('Manage courts service', () => {
 
   describe('Get courts', () => {
     it('Should return nothing when no courts are active', async () => {
-      prisonApi.getCourts.mockResolvedValue([])
+      courtApi.getCourts.mockResolvedValue([])
 
-      const result = await service.getCourtsByLetter(context)
+      const result = await service.getCourtsByLetter()
 
       expect(result).toStrictEqual(new Map())
     })
 
     it('can handle a single court', async () => {
-      prisonApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
+      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
 
-      const result = await service.getCourtsByLetter(context)
+      const result = await service.getCourtsByLetter()
 
       expect(result).toStrictEqual(new Map(Object.entries({ A: [createCourt('1', 'A Court')] })))
     })
 
     it('can handle and sort multiple courts under one letter key', async () => {
-      prisonApi.getCourts.mockResolvedValue([
+      courtApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
       ])
 
-      const result = await service.getCourtsByLetter(context)
+      const result = await service.getCourtsByLetter()
 
       expect(result).toStrictEqual(
         new Map(
@@ -65,7 +66,7 @@ describe('Manage courts service', () => {
     })
 
     it('can handle and sort multiple courts under multiple letter keys', async () => {
-      prisonApi.getCourts.mockResolvedValue([
+      courtApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
@@ -77,7 +78,7 @@ describe('Manage courts service', () => {
         createCourt('9', 'CA Court'),
       ])
 
-      const result = await service.getCourtsByLetter(context)
+      const result = await service.getCourtsByLetter()
 
       expect(result).toStrictEqual(
         new Map(
