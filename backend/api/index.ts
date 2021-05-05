@@ -9,11 +9,19 @@ import PrisonerOffenderSearchApi from './prisonerOffenderSearchApi'
 import { oauthApiFactory } from './oauthApi'
 import { tokenVerificationApiFactory } from './tokenVerificationApi'
 import { notifyApi } from './notifyApi'
+import UserCourtPreferencesApi from './userCourtPreferencesApi'
 
 const courtApi = new CourtApi(
   new Client({
     baseUrl: config.apis.courts.url,
     timeout: config.apis.courts.timeoutSeconds * 1000,
+  })
+)
+
+const userCourtPreferencesApi = new UserCourtPreferencesApi(
+  new Client({
+    baseUrl: config.apis.userPreferences.url,
+    timeout: config.apis.userPreferences.timeoutSeconds * 1000,
   })
 )
 
@@ -55,6 +63,7 @@ const tokenVerificationApi = tokenVerificationApiFactory(
 
 export const apis = {
   courtApi,
+  userCourtPreferencesApi,
   notifyApi,
   oauthApi,
   prisonApi,
