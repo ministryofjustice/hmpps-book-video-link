@@ -1,8 +1,13 @@
 declare module 'courtRegister' {
   export type CourtDtoPage = schemas['CourtDtoPage']
   export type CourtDto = schemas['CourtDto']
+  export type CourtIdDto = schemas['CourtIdDto']
 
   interface schemas {
+    /** array of court ids */
+    CourtIdDto: {
+      items: string[]
+    }
     /** Court Update Record */
     UpdateCourtDto: {
       /** Name of the court */
