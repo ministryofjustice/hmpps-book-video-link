@@ -58,7 +58,7 @@ module.exports = {
       url: process.env.API_COURTS_ENDPOINT_URL || 'http://localhost:8084/',
       timeoutSeconds: toInt(process.env.API_COURTS_TIMEOUT_SECONDS, 30),
     },
-    userCourtPreferences: {
+    userPreferences: {
       url: process.env.API_HMPPS_USER_PREFERENCE_ENDPOINT_URL || 'http://localhost:8085/',
       timeoutSeconds: toInt(process.env.API_HMPPS_USER_PREFERENCE_TIMEOUT_SECONDS, 30),
     },

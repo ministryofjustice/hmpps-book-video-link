@@ -5,7 +5,7 @@ module.exports = {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: `/userCourtPreferences/users/${userId}/preferences/video_link_booking.preferred_courts`,
+        urlPattern: `/userPreferences/users/${userId}/preferences/video_link_booking.preferred_courts`,
       },
       response: {
         status: 200,
@@ -20,7 +20,7 @@ module.exports = {
     stubFor({
       request: {
         method: 'PUT',
-        urlPattern: `/userCourtPreferences/users/${userId}/preferences/video_link_booking.preferred_courts`,
+        urlPattern: `/userPreferences/users/${userId}/preferences/video_link_booking.preferred_courts`,
       },
       response: {
         status: 200,

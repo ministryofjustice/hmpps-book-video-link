@@ -20,8 +20,8 @@ const courtApi = new CourtApi(
 
 const userCourtPreferencesApi = new UserCourtPreferencesApi(
   new Client({
-    baseUrl: config.apis.courts.url,
-    timeout: config.apis.courts.timeoutSeconds * 1000,
+    baseUrl: config.apis.userPreferences.url,
+    timeout: config.apis.userPreferences.timeoutSeconds * 1000,
   })
 )
 
