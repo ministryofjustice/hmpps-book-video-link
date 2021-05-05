@@ -6,8 +6,9 @@ export = class ManageCourtsController {
 
   public view(): RequestHandler {
     return async (req, res) => {
+      const { username } = res.locals.user
       const errors = req.flash('errors') || []
-      const courts = await this.manageCourtsService.getCourtsByLetter()
+      const courts = await this.manageCourtsService.getCourtsByLetter(username)
       res.render('manageCourts/manageCourts.njk', {
         courts,
         errors,

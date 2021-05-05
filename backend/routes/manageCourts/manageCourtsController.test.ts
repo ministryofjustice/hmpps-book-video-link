@@ -7,7 +7,7 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/manageCourtsService')
 
 describe('Manage courts controller', () => {
-  const manageCourtsService = new ManageCourtsService(null) as jest.Mocked<ManageCourtsService>
+  const manageCourtsService = new ManageCourtsService(null, null) as jest.Mocked<ManageCourtsService>
   let controller: ManageCourtsController
 
   const req = mockRequest({})
