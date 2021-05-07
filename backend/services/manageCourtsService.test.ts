@@ -11,10 +11,15 @@ jest.mock('../api/userCourtPreferencesApi')
 const courtApi = new CourtApi(null) as jest.Mocked<CourtApi>
 const userCourtPreferencesApi = new UserCourtPreferencesApi(null) as jest.Mocked<UserCourtPreferencesApi>
 
-const createCourt = (courtId: string, courtName: string): CourtDto => {
+type UserPreferenceCourts = CourtDto & {
+  isSelected: boolean
+}
+
+const createCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourts => {
   return {
     courtId,
     courtName,
+    isSelected,
     type: {
       courtType: 'CRN',
       courtName,
@@ -30,6 +35,8 @@ const createCourtIds = (courtId: string[]): PreferencesDTO => {
 }
 
 describe('Manage courts service', () => {
+  const userId = 'A_USER'
+  const context = {}
   let service: ManageCourtsService
 
   beforeEach(() => {
@@ -41,19 +48,18 @@ describe('Manage courts service', () => {
   })
 
   describe('Get courts', () => {
-    const userId = 'A_USER'
     it('Should return nothing when no courts are active', async () => {
       courtApi.getCourts.mockResolvedValue([])
 
-      const result = await service.getCourtsByLetter(userId)
+      const result = await service.getCourtsByLetter(context, userId)
 
       expect(result).toStrictEqual(new Map())
     })
 
     it('can handle a single court', async () => {
       courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
-
-      const result = await service.getCourtsByLetter(userId)
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
+      const result = await service.getCourtsByLetter(context, userId)
 
       expect(result).toStrictEqual(new Map(Object.entries({ A: [createCourt('1', 'A Court')] })))
     })
@@ -65,7 +71,9 @@ describe('Manage courts service', () => {
         createCourt('3', 'AB Court'),
       ])
 
-      const result = await service.getCourtsByLetter(userId)
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
+
+      const result = await service.getCourtsByLetter(context, userId)
 
       expect(result).toStrictEqual(
         new Map(
@@ -89,7 +97,9 @@ describe('Manage courts service', () => {
         createCourt('9', 'CA Court'),
       ])
 
-      const result = await service.getCourtsByLetter(userId)
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
+
+      const result = await service.getCourtsByLetter(context, userId)
 
       expect(result).toStrictEqual(
         new Map(
@@ -104,35 +114,65 @@ describe('Manage courts service', () => {
   })
 
   describe('Get user preferred courts', () => {
-    const userId = 'A_USER'
-    it('Should return nothing when no courts are preferred', async () => {
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue(createCourtIds([]))
+    it('Should return no pre selected courts when none are preferred', async () => {
+      courtApi.getCourts.mockResolvedValue([
+        createCourt('1', 'AA Court'),
+        createCourt('2', 'AC Court'),
+        createCourt('3', 'AB Court'),
+      ])
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
 
-      const result = await service.getUserPreferredCourts(userId)
+      const result = await service.getCourtsByLetter(context, userId)
 
-      expect(result).toStrictEqual({ items: [] })
+      expect(result).toStrictEqual(
+        new Map(
+          Object.entries({
+            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court'), createCourt('2', 'AC Court')],
+          })
+        )
+      )
     })
 
     it('can handle a single preferred court', async () => {
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue(createCourtIds(['AAC']))
+      courtApi.getCourts.mockResolvedValue([
+        createCourt('1', 'AA Court'),
+        createCourt('2', 'AC Court'),
+        createCourt('3', 'AB Court'),
+      ])
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['3'] })
 
-      const result = await service.getUserPreferredCourts(userId)
+      const result = await service.getCourtsByLetter(context, userId)
 
-      expect(result).toStrictEqual({ items: ['AAC'] })
+      expect(result).toStrictEqual(
+        new Map(
+          Object.entries({
+            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court', true), createCourt('2', 'AC Court')],
+          })
+        )
+      )
     })
 
     it('can handle multiple preferred courts', async () => {
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue(createCourtIds(['AAC', 'ACC', 'ABC']))
+      courtApi.getCourts.mockResolvedValue([
+        createCourt('1', 'AA Court'),
+        createCourt('2', 'AC Court'),
+        createCourt('3', 'AB Court'),
+      ])
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['1', '3'] })
 
-      const result = await service.getUserPreferredCourts(userId)
+      const result = await service.getCourtsByLetter(context, userId)
 
-      expect(result).toStrictEqual({ items: ['AAC', 'ACC', 'ABC'] })
+      expect(result).toStrictEqual(
+        new Map(
+          Object.entries({
+            A: [createCourt('1', 'AA Court', true), createCourt('3', 'AB Court', true), createCourt('2', 'AC Court')],
+          })
+        )
+      )
     })
   })
 
   describe('Update user preferred courts', () => {
-    const context = {}
-    const userId = 'A_USER'
     it('Should return all preferred courts when updating', async () => {
       userCourtPreferencesApi.putUserPreferredCourts.mockResolvedValue(createCourtIds(['AAC', 'ACC', 'ABC']))
 

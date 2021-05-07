@@ -11,7 +11,7 @@ import type { Services } from '../../services'
 export default function createRoutes({ manageCourtsService }: Services): Router {
   const router = express.Router()
   const courtsList = new ManageCourtsController(manageCourtsService)
-  const courtsConfirmation = new CourtSelectionConfirmationController()
+  const courtsConfirmation = new CourtSelectionConfirmationController(manageCourtsService)
 
   router.get('/manage-courts', asyncMiddleware(courtsList.view()))
   router.post('/manage-courts', validationMiddleware(manageCourtsValidation), asyncMiddleware(courtsList.submit()))

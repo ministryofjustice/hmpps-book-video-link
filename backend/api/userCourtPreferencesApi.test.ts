@@ -18,7 +18,7 @@ describe('court api tests', () => {
     it('Gets preferred courts', async () => {
       mock.get('/users/user_1/preferences/video_link_booking.preferred_courts').reply(200, { items: ['ABC'] })
 
-      const data = await userCourtPreferencesApi.getUserPreferredCourts('user_1')
+      const data = await userCourtPreferencesApi.getUserPreferredCourts({}, 'user_1')
       expect(data).toEqual({ items: ['ABC'] })
     })
   })

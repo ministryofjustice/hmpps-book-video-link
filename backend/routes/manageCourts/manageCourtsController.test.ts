@@ -1,8 +1,9 @@
 import type { CourtDto } from 'courtRegister'
+import { Response } from 'express'
 
 import ManageCourtsController from './manageCourtsController'
 import ManageCourtsService from '../../services/manageCourtsService'
-import { mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { mockRequest } from '../__test/requestTestUtils'
 
 jest.mock('../../services/manageCourtsService')
 
@@ -11,7 +12,17 @@ describe('Manage courts controller', () => {
   let controller: ManageCourtsController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = ({
+    locals: { context: {}, user: { username: 'user_1' } },
+    sendStatus: jest.fn(),
+    send: jest.fn(),
+    contentType: jest.fn(),
+    set: jest.fn(),
+    redirect: jest.fn(),
+    render: jest.fn(),
+    cookie: jest.fn(),
+    clearCookie: jest.fn(),
+  } as unknown) as jest.Mocked<Response>
 
   const courtList = ({
     A: [
@@ -57,7 +68,6 @@ describe('Manage courts controller', () => {
       it('should display a list of courts', async () => {
         manageCourtsService.getCourtsByLetter.mockResolvedValue(courtList)
         mockFlashState({ errors: [] })
-
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('manageCourts/manageCourts.njk', {
