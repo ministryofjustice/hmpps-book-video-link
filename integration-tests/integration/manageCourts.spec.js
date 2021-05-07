@@ -50,6 +50,9 @@ context('A user can view the manage courts page', () => {
         active: true,
       },
     ])
+    cy.task('stubGetUserCourtPreferences', {
+      items: ['ABDRCT', 'ABRYCT'],
+    })
   })
 
   it('The list of courts are displayed', () => {
