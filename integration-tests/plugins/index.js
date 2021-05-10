@@ -54,7 +54,11 @@ module.exports = on => {
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
     stubAllCourts: courtApi.stubAllCourts,
-    stubGetUserCourtPreferences: username => userCourtPreferencesApi.stubGetUserCourtPreferences(username),
+    stubGetUserCourtPreferences: ({ username, courts }) =>
+      userCourtPreferencesApi.stubGetUserCourtPreferences(username, courts),
+
+    stubUpdateUserCourtPreferences: ({ username, courts }) =>
+      Promise.all([userCourtPreferencesApi.stubUpdateUserCourtPreferences(username, courts)]),
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),

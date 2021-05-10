@@ -18,7 +18,7 @@
             <ul class="govuk-list govuk-list--bullet">
                 {% for item in courts %}
                     {% if item.isSelected %}
-                        <li>{{item.courtName}}</li>
+                        <li data-qa="court">{{item.courtName}}</li>
                     {% endif %}
                 {% endfor %}
             </ul>
