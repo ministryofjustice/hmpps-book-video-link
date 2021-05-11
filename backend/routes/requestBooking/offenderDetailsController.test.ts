@@ -13,7 +13,7 @@ describe('Offender details controller', () => {
   let controller: OffenderDetailsController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 

@@ -10,7 +10,7 @@ describe('Request path Start controller', () => {
   let controller: StartController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = mockResponse({})
 
   beforeEach(() => {
     jest.resetAllMocks()

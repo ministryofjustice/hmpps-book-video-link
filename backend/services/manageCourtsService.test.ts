@@ -57,11 +57,11 @@ describe('Manage courts service', () => {
     })
 
     it('can handle a single court', async () => {
-      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
+      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court', false)])
       userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
       const result = await service.getCourtsByLetter(context, userId)
 
-      expect(result).toStrictEqual(new Map(Object.entries({ A: [createCourt('1', 'A Court')] })))
+      expect(result).toStrictEqual(new Map(Object.entries({ A: [createCourt('1', 'A Court', false)] })))
     })
 
     it('can handle and sort multiple courts under one letter key', async () => {
@@ -78,7 +78,11 @@ describe('Manage courts service', () => {
       expect(result).toStrictEqual(
         new Map(
           Object.entries({
-            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court'), createCourt('2', 'AC Court')],
+            A: [
+              createCourt('1', 'AA Court', false),
+              createCourt('3', 'AB Court', false),
+              createCourt('2', 'AC Court', false),
+            ],
           })
         )
       )
@@ -104,16 +108,28 @@ describe('Manage courts service', () => {
       expect(result).toStrictEqual(
         new Map(
           Object.entries({
-            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court'), createCourt('2', 'AC Court')],
-            B: [createCourt('6', 'BA Court'), createCourt('7', 'BB Court'), createCourt('8', 'BC Court')],
-            C: [createCourt('9', 'CA Court'), createCourt('5', 'CB Court'), createCourt('4', 'CC Court')],
+            A: [
+              createCourt('1', 'AA Court', false),
+              createCourt('3', 'AB Court', false),
+              createCourt('2', 'AC Court', false),
+            ],
+            B: [
+              createCourt('6', 'BA Court', false),
+              createCourt('7', 'BB Court', false),
+              createCourt('8', 'BC Court', false),
+            ],
+            C: [
+              createCourt('9', 'CA Court', false),
+              createCourt('5', 'CB Court', false),
+              createCourt('4', 'CC Court', false),
+            ],
           })
         )
       )
     })
   })
 
-  describe('Get user preferred courts', () => {
+  describe('Get pre selected user preferred courts', () => {
     it('Should return no pre selected courts when none are preferred', async () => {
       courtApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
@@ -127,7 +143,11 @@ describe('Manage courts service', () => {
       expect(result).toStrictEqual(
         new Map(
           Object.entries({
-            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court'), createCourt('2', 'AC Court')],
+            A: [
+              createCourt('1', 'AA Court', false),
+              createCourt('3', 'AB Court', false),
+              createCourt('2', 'AC Court', false),
+            ],
           })
         )
       )
@@ -146,7 +166,11 @@ describe('Manage courts service', () => {
       expect(result).toStrictEqual(
         new Map(
           Object.entries({
-            A: [createCourt('1', 'AA Court'), createCourt('3', 'AB Court', true), createCourt('2', 'AC Court')],
+            A: [
+              createCourt('1', 'AA Court', false),
+              createCourt('3', 'AB Court', true),
+              createCourt('2', 'AC Court', false),
+            ],
           })
         )
       )
@@ -165,10 +189,46 @@ describe('Manage courts service', () => {
       expect(result).toStrictEqual(
         new Map(
           Object.entries({
-            A: [createCourt('1', 'AA Court', true), createCourt('3', 'AB Court', true), createCourt('2', 'AC Court')],
+            A: [
+              createCourt('1', 'AA Court', true),
+              createCourt('3', 'AB Court', true),
+              createCourt('2', 'AC Court', false),
+            ],
           })
         )
       )
+    })
+  })
+
+  describe('Get confirmed user preferred courts', () => {
+    it('can handle a single preferred court', async () => {
+      courtApi.getCourts.mockResolvedValue([
+        createCourt('1', 'AA Court'),
+        createCourt('2', 'AC Court'),
+        createCourt('3', 'AB Court'),
+      ])
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['3'] })
+
+      const result = await service.getSelectedCourts(context, userId)
+
+      expect(result).toStrictEqual([createCourt('3', 'AB Court', true)])
+    })
+
+    it('can handle a multiple preferred courts', async () => {
+      courtApi.getCourts.mockResolvedValue([
+        createCourt('1', 'AA Court'),
+        createCourt('2', 'AC Court'),
+        createCourt('3', 'AB Court'),
+      ])
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['1', '2', '3'] })
+
+      const result = await service.getSelectedCourts(context, userId)
+
+      expect(result).toStrictEqual([
+        createCourt('1', 'AA Court', true),
+        createCourt('3', 'AB Court', true),
+        createCourt('2', 'AC Court', true),
+      ])
     })
   })
 

@@ -17,7 +17,7 @@ describe('EventsController', () => {
 
     it('First view', async () => {
       const req = mockRequest({})
-      const res = mockResponse()
+      const res = mockResponse({})
 
       await controller.view(req, res, null)
       expect(res.render).toHaveBeenCalledWith('events/index.njk', {
@@ -36,7 +36,7 @@ describe('EventsController', () => {
           days: '7',
         },
       })
-      const res = mockResponse()
+      const res = mockResponse({})
 
       await controller.view(req, res, null)
       expect(res.render).toHaveBeenCalledWith('events/index.njk', {
@@ -59,7 +59,7 @@ describe('EventsController', () => {
           startYear: '2021',
         },
       })
-      const res = mockResponse()
+      const res = mockResponse({})
 
       await controller.view(req, res, null)
       expect(res.render).toHaveBeenCalledWith('events/index.njk', {
@@ -82,7 +82,7 @@ describe('EventsController', () => {
           'start-date': 'xxxx',
         },
       })
-      const res = mockResponse()
+      const res = mockResponse({})
 
       controller.getCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
@@ -96,7 +96,7 @@ describe('EventsController', () => {
           days: 'x',
         },
       })
-      const res = mockResponse()
+      const res = mockResponse({})
 
       controller.getCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
@@ -110,7 +110,7 @@ describe('EventsController', () => {
           days: '7',
         },
       })
-      const res = mockResponse()
+      const res = mockResponse({})
 
       controller.getCsv(req, res, null)
 

@@ -10,7 +10,7 @@ describe('Confirmation controller', () => {
   let controller: ConfirmationController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = mockResponse({})
 
   beforeEach(() => {
     jest.resetAllMocks()

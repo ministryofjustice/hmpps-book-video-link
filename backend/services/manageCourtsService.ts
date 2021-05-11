@@ -24,13 +24,18 @@ export = class ManageCourtsService {
     const courtsList = await this.courtApi.getCourts()
     const preferredCourts = await this.userCourtPreferencesApi.getUserPreferredCourts(context, userId)
     return this.sortAlphabetically(
-      courtsList.map(court => (preferredCourts.items.includes(court.courtId) ? { ...court, isSelected: true } : court))
+      courtsList.map(court => ({ ...court, isSelected: preferredCourts.items.includes(court.courtId) }))
     )
   }
 
   public async getCourtsByLetter(context: Context, userId: string): Promise<CourtsByLetter> {
     const courts = await this.getSortedCourts(context, userId)
     return groupBy(courts, (court: CourtDto) => court.courtName.charAt(0).toUpperCase())
+  }
+
+  public async getSelectedCourts(context: Context, userId: string): Promise<UserPreferenceCourts[]> {
+    const courts = await this.getSortedCourts(context, userId)
+    return courts.filter(court => court.isSelected)
   }
 
   public async updateUserPreferredCourts(

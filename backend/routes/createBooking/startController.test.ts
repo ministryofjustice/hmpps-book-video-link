@@ -36,7 +36,7 @@ describe('Add court appointment', () => {
     },
   })
 
-  const res = mockResponse()
+  const res = mockResponse({})
 
   let controller: StartController
 

@@ -8,7 +8,7 @@ jest.mock('../../services')
 
 describe('Confirm appointments', () => {
   const req = mockRequest({ params: { videoBookingId: '123' } })
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

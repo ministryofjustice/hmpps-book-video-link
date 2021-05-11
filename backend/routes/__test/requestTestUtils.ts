@@ -18,6 +18,10 @@ type RequestParams = {
   errors?: ValidationError[]
 }
 
+type ResponseParams = {
+  locals?: unknown
+}
+
 export const mockRequest = ({
   userDetails = exampleUserDetails,
   params = {},
@@ -36,9 +40,9 @@ export const mockRequest = ({
     errors,
   } as unknown) as jest.Mocked<Request>)
 
-export const mockResponse = (): jest.Mocked<Response> =>
+export const mockResponse = ({ locals = { context: {} } }: ResponseParams): jest.Mocked<Response> =>
   (({
-    locals: { context: {} },
+    locals,
     sendStatus: jest.fn(),
     send: jest.fn(),
     contentType: jest.fn(),

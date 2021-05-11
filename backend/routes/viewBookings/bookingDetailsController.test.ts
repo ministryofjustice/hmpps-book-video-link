@@ -11,7 +11,7 @@ describe('Booking details', () => {
   let controller: BookingDetailsController
 
   const req = mockRequest({ params: { bookingId: '123' } })
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

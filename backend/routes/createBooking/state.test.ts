@@ -94,7 +94,7 @@ describe('DateAndTimeAndCourtCodec', () => {
 describe('ensureNewBookingPresentMiddleware', () => {
   test('when present', () => {
     const req = mockRequest({})
-    const res = mockResponse()
+    const res = mockResponse({})
     const next = mockNext()
 
     req.signedCookies = { 'booking-creation': 'some content' }
@@ -107,7 +107,7 @@ describe('ensureNewBookingPresentMiddleware', () => {
 
   test('when empty', () => {
     const req = mockRequest({})
-    const res = mockResponse()
+    const res = mockResponse({})
     const next = mockNext()
 
     req.signedCookies = { 'booking-creation': '' }
@@ -120,7 +120,7 @@ describe('ensureNewBookingPresentMiddleware', () => {
 
   test('when absent', () => {
     const req = mockRequest({})
-    const res = mockResponse()
+    const res = mockResponse({})
     const next = mockNext()
 
     req.signedCookies = {}

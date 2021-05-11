@@ -18,7 +18,7 @@ describe('Select court appointment rooms', () => {
   let controller: SelectRoomsController
 
   const req = mockRequest({ params: { agencyId: 'WWI', offenderNo: 'A12345' } })
-  const res = mockResponse()
+  const res = mockResponse({})
   const next = mockNext()
 
   const availableLocations: RoomAvailability = {

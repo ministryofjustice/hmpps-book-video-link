@@ -7,7 +7,7 @@ export default class CourtSelectionConfirmationController {
   public view(): RequestHandler {
     return async (req, res) => {
       const { username } = res.locals.user
-      const courts = await this.manageCourtsService.getSortedCourts(res.locals, username)
+      const courts = await this.manageCourtsService.getSelectedCourts(res.locals, username)
       res.render('manageCourts/courtSelectionConfirmation.njk', {
         courts,
       })

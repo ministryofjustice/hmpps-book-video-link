@@ -1,34 +1,18 @@
-import type { CourtDto } from 'courtRegister'
-import { Response } from 'express'
-import { mockRequest } from '../__test/requestTestUtils'
+import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 import CourtSelectionConfirmationController from './courtSelectionConfirmationController'
 import ManageCourtsService from '../../services/manageCourtsService'
 
 jest.mock('../../services/manageCourtsService')
 
-type UserPreferenceCourts = CourtDto & {
-  isSelected?: boolean
-}
-
 describe('court selection confirmation controller', () => {
   const manageCourtsService = new ManageCourtsService(null, null) as jest.Mocked<ManageCourtsService>
   let controller: CourtSelectionConfirmationController
 
   const req = mockRequest({})
-  const res = ({
-    locals: { context: {}, user: { username: 'user_1' } },
-    sendStatus: jest.fn(),
-    send: jest.fn(),
-    contentType: jest.fn(),
-    set: jest.fn(),
-    redirect: jest.fn(),
-    render: jest.fn(),
-    cookie: jest.fn(),
-    clearCookie: jest.fn(),
-  } as unknown) as jest.Mocked<Response>
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
-  const courtList = ([
+  const courtList = [
     {
       courtId: 'ABDRCT',
       courtName: 'Aberdare County Court',
@@ -56,7 +40,7 @@ describe('court selection confirmation controller', () => {
       },
       active: true,
     },
-  ] as unknown) as jest.Mocked<UserPreferenceCourts[]>
+  ]
 
   beforeEach(() => {
     controller = new CourtSelectionConfirmationController(manageCourtsService)
@@ -64,7 +48,7 @@ describe('court selection confirmation controller', () => {
 
   describe('view', () => {
     it('should display a list the user preferred courts', async () => {
-      manageCourtsService.getSortedCourts.mockResolvedValue(courtList)
+      manageCourtsService.getSelectedCourts.mockResolvedValue(courtList)
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith('manageCourts/courtSelectionConfirmation.njk', { courts: courtList })
