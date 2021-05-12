@@ -15,16 +15,22 @@ type UserPreferenceCourts = CourtDto & {
   isSelected: boolean
 }
 
-const createCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourts => {
+const createCourt = (courtId: string, courtName: string): CourtDto => {
   return {
     courtId,
     courtName,
-    isSelected,
     type: {
       courtType: 'CRN',
       courtName,
     },
     active: true,
+  }
+}
+
+const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourts => {
+  return {
+    ...createCourt(courtId, courtName),
+    isSelected,
   }
 }
 
@@ -57,11 +63,11 @@ describe('Manage courts service', () => {
     })
 
     it('can handle a single court', async () => {
-      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court', false)])
+      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
       userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
       const result = await service.getCourtsByLetter(context, userId)
 
-      expect(result).toStrictEqual(new Map(Object.entries({ A: [createCourt('1', 'A Court', false)] })))
+      expect(result).toStrictEqual(new Map(Object.entries({ A: [createSeletedCourt('1', 'A Court', false)] })))
     })
 
     it('can handle and sort multiple courts under one letter key', async () => {
@@ -79,9 +85,9 @@ describe('Manage courts service', () => {
         new Map(
           Object.entries({
             A: [
-              createCourt('1', 'AA Court', false),
-              createCourt('3', 'AB Court', false),
-              createCourt('2', 'AC Court', false),
+              createSeletedCourt('1', 'AA Court', false),
+              createSeletedCourt('3', 'AB Court', false),
+              createSeletedCourt('2', 'AC Court', false),
             ],
           })
         )
@@ -109,19 +115,19 @@ describe('Manage courts service', () => {
         new Map(
           Object.entries({
             A: [
-              createCourt('1', 'AA Court', false),
-              createCourt('3', 'AB Court', false),
-              createCourt('2', 'AC Court', false),
+              createSeletedCourt('1', 'AA Court', false),
+              createSeletedCourt('3', 'AB Court', false),
+              createSeletedCourt('2', 'AC Court', false),
             ],
             B: [
-              createCourt('6', 'BA Court', false),
-              createCourt('7', 'BB Court', false),
-              createCourt('8', 'BC Court', false),
+              createSeletedCourt('6', 'BA Court', false),
+              createSeletedCourt('7', 'BB Court', false),
+              createSeletedCourt('8', 'BC Court', false),
             ],
             C: [
-              createCourt('9', 'CA Court', false),
-              createCourt('5', 'CB Court', false),
-              createCourt('4', 'CC Court', false),
+              createSeletedCourt('9', 'CA Court', false),
+              createSeletedCourt('5', 'CB Court', false),
+              createSeletedCourt('4', 'CC Court', false),
             ],
           })
         )
@@ -144,39 +150,16 @@ describe('Manage courts service', () => {
         new Map(
           Object.entries({
             A: [
-              createCourt('1', 'AA Court', false),
-              createCourt('3', 'AB Court', false),
-              createCourt('2', 'AC Court', false),
+              createSeletedCourt('1', 'AA Court', false),
+              createSeletedCourt('3', 'AB Court', false),
+              createSeletedCourt('2', 'AC Court', false),
             ],
           })
         )
       )
     })
 
-    it('can handle a single preferred court', async () => {
-      courtApi.getCourts.mockResolvedValue([
-        createCourt('1', 'AA Court'),
-        createCourt('2', 'AC Court'),
-        createCourt('3', 'AB Court'),
-      ])
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['3'] })
-
-      const result = await service.getCourtsByLetter(context, userId)
-
-      expect(result).toStrictEqual(
-        new Map(
-          Object.entries({
-            A: [
-              createCourt('1', 'AA Court', false),
-              createCourt('3', 'AB Court', true),
-              createCourt('2', 'AC Court', false),
-            ],
-          })
-        )
-      )
-    })
-
-    it('can handle multiple preferred courts', async () => {
+    it('can handle preferred courts', async () => {
       courtApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
@@ -190,9 +173,9 @@ describe('Manage courts service', () => {
         new Map(
           Object.entries({
             A: [
-              createCourt('1', 'AA Court', true),
-              createCourt('3', 'AB Court', true),
-              createCourt('2', 'AC Court', false),
+              createSeletedCourt('1', 'AA Court', true),
+              createSeletedCourt('3', 'AB Court', true),
+              createSeletedCourt('2', 'AC Court', false),
             ],
           })
         )
@@ -201,33 +184,19 @@ describe('Manage courts service', () => {
   })
 
   describe('Get confirmed user preferred courts', () => {
-    it('can handle a single preferred court', async () => {
+    it('can handle preferred courts', async () => {
       courtApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
       ])
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['3'] })
-
-      const result = await service.getSelectedCourts(context, userId)
-
-      expect(result).toStrictEqual([createCourt('3', 'AB Court', true)])
-    })
-
-    it('can handle a multiple preferred courts', async () => {
-      courtApi.getCourts.mockResolvedValue([
-        createCourt('1', 'AA Court'),
-        createCourt('2', 'AC Court'),
-        createCourt('3', 'AB Court'),
-      ])
-      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['1', '2', '3'] })
+      userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: ['1', '3'] })
 
       const result = await service.getSelectedCourts(context, userId)
 
       expect(result).toStrictEqual([
-        createCourt('1', 'AA Court', true),
-        createCourt('3', 'AB Court', true),
-        createCourt('2', 'AC Court', true),
+        createSeletedCourt('1', 'AA Court', true),
+        createSeletedCourt('3', 'AB Court', true),
       ])
     })
   })
