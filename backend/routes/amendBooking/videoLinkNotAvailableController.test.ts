@@ -6,7 +6,7 @@ describe('video link is not available controller', () => {
   let controller: VideoLinkNotAvailableController
 
   const req = mockRequest({ params: { bookingId: '123' } })
-  const res = mockResponse()
+  const res = mockResponse({})
 
   beforeEach(() => {
     controller = new VideoLinkNotAvailableController()

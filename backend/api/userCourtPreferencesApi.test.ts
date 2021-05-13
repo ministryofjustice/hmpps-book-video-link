@@ -16,18 +16,17 @@ describe('court api tests', () => {
 
   describe('GET court preferences', () => {
     it('Gets preferred courts', async () => {
-      mock.get('/users/user_1/preferences/video_link_booking.preferred_courts').reply(200, { items: ['ABC'] })
+      mock.get('/users/A_USER/preferences/video_link_booking.preferred_courts').reply(200, { items: ['ABC'] })
 
-      const data = await userCourtPreferencesApi.getUserPreferredCourts('user_1')
+      const data = await userCourtPreferencesApi.getUserPreferredCourts({}, 'A_USER')
       expect(data).toEqual({ items: ['ABC'] })
     })
   })
 
   describe('PUT court preferences', () => {
     it('Sets preferred courts', async () => {
-      mock.put('/users/user_1/preferences/video_link_booking.preferred_courts').reply(200, { items: ['ABC', 'DEF'] })
-      const context = { user: { username: 'user_2' } }
-      const response = await userCourtPreferencesApi.putUserPreferredCourts(context, 'user_1', ['ABC', 'DEF'])
+      mock.put('/users/A_USER/preferences/video_link_booking.preferred_courts').reply(200, { items: ['ABC', 'DEF'] })
+      const response = await userCourtPreferencesApi.putUserPreferredCourts({}, 'A_USER', ['ABC', 'DEF'])
       expect(response).toEqual({ items: ['ABC', 'DEF'] })
     })
   })

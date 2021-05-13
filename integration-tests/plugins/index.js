@@ -7,6 +7,7 @@ const tokenverification = require('../mockApis/tokenverification')
 const prisonerOffenderSearch = require('../mockApis/prisonerOffenderSearch')
 
 const { resetStubs } = require('../mockApis/wiremock')
+const userCourtPreferencesApi = require('../mockApis/userCourtPreferencesApi')
 
 module.exports = on => {
   on('task', {
@@ -53,6 +54,11 @@ module.exports = on => {
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
     stubAllCourts: courtApi.stubAllCourts,
+    stubGetUserCourtPreferences: ({ username, courts }) =>
+      userCourtPreferencesApi.stubGetUserCourtPreferences(username, courts),
+
+    stubUpdateUserCourtPreferences: ({ username, courts }) =>
+      Promise.all([userCourtPreferencesApi.stubUpdateUserCourtPreferences(username, courts)]),
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),

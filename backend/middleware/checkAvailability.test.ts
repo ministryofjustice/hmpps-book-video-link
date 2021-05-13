@@ -18,7 +18,7 @@ const req = mockRequest({
   },
 })
 
-const res = mockResponse()
+const res = mockResponse({})
 const next = jest.fn()
 
 describe('check availability middleware', () => {

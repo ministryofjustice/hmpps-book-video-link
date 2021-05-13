@@ -13,7 +13,7 @@ describe('Change comments controller', () => {
   let controller: ChangeCommentsController
   const req = mockRequest({ params: { bookingId: '123' } })
 
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

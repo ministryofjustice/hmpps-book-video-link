@@ -12,7 +12,7 @@ describe('video link is available controller', () => {
   let controller: VideoLinkIsAvailableController
 
   const req = mockRequest({ params: { bookingId: '123' } })
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

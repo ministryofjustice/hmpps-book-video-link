@@ -10,7 +10,7 @@ describe('Select court controller', () => {
   let controller: SelectCourtController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const mockFlashState = ({ errors, requestBooking }) =>
     req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)

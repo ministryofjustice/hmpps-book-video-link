@@ -7,11 +7,11 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/manageCourtsService')
 
 describe('Manage courts controller', () => {
-  const manageCourtsService = new ManageCourtsService(null) as jest.Mocked<ManageCourtsService>
+  const manageCourtsService = new ManageCourtsService(null, null) as jest.Mocked<ManageCourtsService>
   let controller: ManageCourtsController
 
   const req = mockRequest({})
-  const res = mockResponse()
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
   const courtList = ({
     A: [
@@ -57,7 +57,6 @@ describe('Manage courts controller', () => {
       it('should display a list of courts', async () => {
         manageCourtsService.getCourtsByLetter.mockResolvedValue(courtList)
         mockFlashState({ errors: [] })
-
         await controller.view()(req, res, null)
 
         expect(res.render).toHaveBeenCalledWith('manageCourts/manageCourts.njk', {

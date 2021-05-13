@@ -27,7 +27,7 @@ describe('change date and time controller', () => {
     },
   })
 
-  const res = mockResponse()
+  const res = mockResponse({})
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',

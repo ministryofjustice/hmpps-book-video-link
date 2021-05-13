@@ -15,7 +15,7 @@ describe('Select court appoinment court', () => {
   let controller: SelectCourtController
 
   const req = mockRequest({ params: { agencyId: 'MDI', offenderNo: 'A12345' } })
-  const res = mockResponse()
+  const res = mockResponse({})
   const next = mockNext()
 
   beforeEach(() => {

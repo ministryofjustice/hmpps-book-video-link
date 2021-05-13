@@ -5,6 +5,7 @@ const manageCourtsPage = () =>
     form: {
       section: section => cy.get(`#accordion-default-heading-${section}`),
       court: courtId => cy.get(`label[for="court-${courtId}"]`),
+      checkbox: courtId => cy.get(`input#court-${courtId}`),
     },
     errorSummaryTitle: () => cy.get('#error-summary-title'),
     errorSummaryBody: () => cy.get('.govuk-error-summary__body'),

@@ -17,7 +17,7 @@ module.exports = {
     })
   },
   stubUpdateUserCourtPreferences: (userId, courts) => {
-    stubFor({
+    return stubFor({
       request: {
         method: 'PUT',
         urlPattern: `/userPreferences/users/${userId}/preferences/video_link_booking.preferred_courts`,
