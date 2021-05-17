@@ -1,0 +1,38 @@
+[
+  {
+    "courtId": "ABDRCT",
+    "courtName": "Aberdare County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "Aberdare County Court"
+    },
+    "active": true
+  },
+  {
+    "courtId": "BANBCT",
+    "courtName": "Banbury County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "Banbury County Court"
+    },
+    "active": true
+  },
+  {
+    "courtId": "ABGVMC",
+    "courtName": "Abergavenny Magistrates Court",
+    "type": {
+      "courtType": "MAG",
+      "courtName": "Abergavenny Magistrates Court"
+    },
+    "active": true
+  },
+  {
+    "courtId": "ABRYCT",
+    "courtName": "Aberystwyth County Court",
+    "type": {
+      "courtType": "COU",
+      "courtName": "Aberystwyth County Court"
+    },
+    "active": true
+  }
+]

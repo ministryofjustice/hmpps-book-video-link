@@ -10,7 +10,7 @@ const ChangeTimePage = require('../../../pages/amendBooking/changeTimePage')
 context('A user can amend a booking', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
     cy.task('stubUserEmail', 'ITAG_USER')
     cy.task('stubUser', 'ITAG_USER', 'WWI')
@@ -160,7 +160,7 @@ context('A user can amend a booking', () => {
   })
 
   it('A user successfully amends a booking', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubUpdateVideoLinkBooking', 10)
 
     const tomorrow = moment().add(1, 'days')
@@ -258,14 +258,14 @@ context('A user can amend a booking', () => {
   })
 
   it('A user can view date in change-time page', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     ChangeTimePage.goTo(10)
     const changeTimePage = ChangeTimePage.verifyOnPage()
     changeTimePage.date().should('have.value', '02/01/2020')
   })
 
   it('A user will be shown a validation message when a past date is provided', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     const yesterday = moment().subtract(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
@@ -297,7 +297,7 @@ context('A user can amend a booking', () => {
   })
 
   it('A user will be shown a validation message when selecting the same location for pre and main rooms', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
       main: [
@@ -348,7 +348,7 @@ context('A user can amend a booking', () => {
 
   it('Select drop downs for pre and post are not displayed when pre and post appointments are not present', () => {
     const tomorrow = moment().add(1, 'days')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubRoomAvailability', {
       main: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
     })
@@ -391,7 +391,7 @@ context('A user can amend a booking', () => {
   })
 
   it('A user will be navigated to the booking-details page', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     ChangeTimePage.goTo(10)
     const changeTimePage = ChangeTimePage.verifyOnPage()
     changeTimePage.cancel().click()

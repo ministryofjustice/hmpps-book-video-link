@@ -8,7 +8,7 @@ context('A user can request a booking', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
   })
   beforeEach(() => {

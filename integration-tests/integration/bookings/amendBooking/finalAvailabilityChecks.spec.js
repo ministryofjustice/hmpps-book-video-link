@@ -14,7 +14,7 @@ const room4 = { locationId: 130, description: 'Room 4', locationType: 'VIDE' }
 context('Final availability checks before submitting update', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
 
     cy.task('stubAppointmentLocations', { agency: 'WWI', locations: [room1, room2, room3, room4] })
@@ -59,7 +59,7 @@ context('Final availability checks before submitting update', () => {
   })
 
   it('Room no longer available', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubUpdateVideoLinkBooking', 10)
 
     const tomorrow = moment().add(1, 'days')
@@ -101,7 +101,7 @@ context('Final availability checks before submitting update', () => {
   })
 
   it('Last room taken leading to no longer having any availability', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubUpdateVideoLinkBooking', 10)
 
     const tomorrow = moment().add(1, 'days')

@@ -7,7 +7,7 @@ context('Booking is not available', () => {
   beforeEach(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
 
     cy.task('stubAppointmentLocations', {

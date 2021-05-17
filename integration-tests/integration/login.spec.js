@@ -49,7 +49,7 @@ context('Login functionality', () => {
   })
   it('New user login should log current user out', () => {
     // login as James Stuart
-    cy.task('stubLoginCourt', { name: 'James Stuart' })
+    cy.task('stubLoginCourt', { user: { name: 'James Stuart' } })
     cy.login()
     const homePage = HomePage.verifyOnPage()
     homePage.loggedInName().contains('J. Stuart')
@@ -58,7 +58,7 @@ context('Login functionality', () => {
 
     // now login as Bobby Brown
     cy.task('stubVerifyToken', false)
-    cy.task('stubLoginCourt', { name: 'Bobby Brown' })
+    cy.task('stubLoginCourt', { user: { name: 'Bobby Brown' } })
     cy.login()
 
     homePage.loggedInName().contains('B. Brown')

@@ -2,7 +2,7 @@ context('A user can search for an offender', () => {
   before(() => {
     cy.clearCookies()
     cy.task('resetAndStubTokenVerification')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
   })
 

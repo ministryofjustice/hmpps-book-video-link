@@ -9,6 +9,8 @@ declare module 'express-session' {
       name: string
       username: string
     }
+    userRoles: any
+    preferredCourts: CourtDto[]
   }
 }
 
@@ -20,6 +22,7 @@ export declare global {
         username: string
         token: string
       }
+      csrfToken: any
       errors?: { text?: string; href: string }[]
       flash(): { [key: string]: any[] }
       flash(type: string, message: any): number
