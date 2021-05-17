@@ -165,6 +165,6 @@ env:
     value: {{ .Values.env.REDIS_ENABLED | quote }}
 
   - name: MANAGE_COURTS_ENABLED
-  value: {{ .Values.env.MANAGE_COURTS_ENABLED | quote }}
+    value: {{ .Values.env.MANAGE_COURTS_ENABLED | quote }}
 
 {{- end -}}
