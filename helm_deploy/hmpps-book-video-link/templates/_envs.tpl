@@ -88,6 +88,18 @@ env:
         name: {{ template "app.name" . }}
         key: BERWYN_VLB_EMAIL
 
+  - name: NOTTINGHAM_OMU_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: NOTTINGHAM_OMU_EMAIL
+    
+  - name: NOTTINGHAM_VLB_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: NOTTINGHAM_VLB_EMAIL
+
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
