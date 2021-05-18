@@ -1,13 +1,13 @@
-import { Response } from 'express'
 import type { CourtDto } from 'courtRegister'
-import { mockRequest, mockResponse } from '../routes/__test/requestTestUtils'
+import { mockRequest, mockResponse, mockNext } from '../routes/__test/requestTestUtils'
 
 import checkForPreferredCourts from './checkForPreferredCourts'
 
 describe('Preferred courts check middleware', () => {
   const req = mockRequest({})
-  const res = mockResponse({})
+  const next = mockNext()
   const manageCourtsEnabled = true
+  const manageCourtsDisabled = false
 
   const createCourt = (courtId: string, courtName: string): CourtDto => {
     return {
@@ -21,26 +21,31 @@ describe('Preferred courts check middleware', () => {
     }
   }
 
-  const handleCheckWithLinkAndCourts = (returnUrl: string, courts: CourtDto[]) =>
-    checkForPreferredCourts(manageCourtsEnabled)(
-      req,
-      ({ ...res, locals: { user: { returnUrl }, preferredCourts: courts } } as unknown) as Response,
-      null
-    )
-
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
-  it('should redirect to courts not selected page when a user has no preferred courts', async () => {
-    handleCheckWithLinkAndCourts('/', [])
+  it('should redirect to courts not selected page when a user has no preferred courts', () => {
+    const res = mockResponse({ locals: { user: { returnUrl: '/' }, preferredCourts: [] } })
 
-    expect(res.render).toHaveBeenCalledWith('courtsNotSelected.njk', {})
+    checkForPreferredCourts(manageCourtsEnabled)(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/courts-not-selected')
   })
 
-  it('should not redirect to courts not selected page if a user already has preferred courts', async () => {
-    handleCheckWithLinkAndCourts('/', [createCourt('1', 'A Court')])
+  it('should not redirect to courts not selected page if a user already has preferred courts', () => {
+    const res = mockResponse({ locals: { user: { returnUrl: '/' }, preferredCourts: [createCourt('1', 'A Court')] } })
 
-    expect(res.render).toHaveBeenCalledTimes(0)
+    checkForPreferredCourts(manageCourtsEnabled)(req, res, next)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+  })
+
+  it('should not redirect to courts not selected page if manageCourtsEnabled is false', () => {
+    const res = mockResponse({ locals: { user: { returnUrl: '/' }, preferredCourts: [] } })
+
+    checkForPreferredCourts(manageCourtsDisabled)(req, res, next)
+
+    expect(res.redirect).not.toHaveBeenCalled()
   })
 })
