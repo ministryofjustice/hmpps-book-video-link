@@ -12,7 +12,7 @@ context('A user can add a video link', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
   })
   beforeEach(() => {
@@ -69,7 +69,7 @@ context('A user can add a video link', () => {
   it('A user creates a booking for a pre, main and post appointment', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
@@ -178,7 +178,7 @@ context('A user can add a video link', () => {
     })
   })
   it('A user creates a booking for only a main appointment', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubRoomAvailability', {
       pre: [],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
@@ -265,7 +265,7 @@ context('A user can add a video link', () => {
   })
 
   it('Pages are protected when cookie is absent', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
     cy.task('stubRoomAvailability', {
       pre: [],
@@ -376,7 +376,7 @@ context('A user can add a video link', () => {
   it('User selects rooms but they become unavailable before confirmation', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],

@@ -9,7 +9,7 @@ context('A user can delete a booking', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
   })
 
@@ -157,7 +157,7 @@ context('A user can delete a booking', () => {
   })
 
   it('A user is required to confirm they wish to delete a booking', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
 
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
@@ -173,7 +173,7 @@ context('A user can delete a booking', () => {
   })
 
   it('A user chooses not to delete a booking', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
 
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
@@ -190,7 +190,7 @@ context('A user can delete a booking', () => {
   })
 
   it('A user chooses to delete a booking', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
 
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
@@ -210,7 +210,7 @@ context('A user can delete a booking', () => {
   })
 
   it('A user chooses to delete a booking then selects to add another', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
 
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()

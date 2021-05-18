@@ -32,7 +32,7 @@ context('A user can update a booking comment', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
 
     // Stub booking list
@@ -137,7 +137,7 @@ context('A user can update a booking comment', () => {
   })
 
   it('A user successfully amends a booking comment', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     stubBookingDetailsWithComment('A comment')
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
     bookingDetailsPage.changeComment().contains('Change comment')
@@ -170,7 +170,7 @@ context('A user can update a booking comment', () => {
   })
 
   it('A user successfully adds a booking comment', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     stubBookingDetailsWithComment(null)
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
@@ -203,7 +203,7 @@ context('A user can update a booking comment', () => {
   })
 
   it('A user will be shown a validation message when a comment exceeds 3600 characters', () => {
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     stubBookingDetailsWithComment('#'.repeat(3601))
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')

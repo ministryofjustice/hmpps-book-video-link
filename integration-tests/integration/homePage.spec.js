@@ -4,7 +4,7 @@ context('A user can view the video link home page', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.login()
   })
 

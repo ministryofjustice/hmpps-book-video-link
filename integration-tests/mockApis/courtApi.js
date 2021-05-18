@@ -1,7 +1,8 @@
 const { stubFor } = require('./wiremock')
+const courtResponse = require('./responses/courts.json')
 
 module.exports = {
-  stubAllCourts: courts => {
+  stubAllCourts: (courts = courtResponse) => {
     return stubFor({
       request: {
         method: 'GET',

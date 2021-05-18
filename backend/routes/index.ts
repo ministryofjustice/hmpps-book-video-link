@@ -9,15 +9,22 @@ import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
 import eventRoutes from './events'
 import amendBookingsRoutes from './amendBooking'
+import asyncMiddleware from '../middleware/asyncMiddleware'
+import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
 
-import { supportEmail, supportTelephone } from '../config'
+import { supportEmail, supportTelephone, app } from '../config'
 
 const router = express.Router()
 
 export = function createRoutes(services: Services): Router {
+  router.get('/courts-not-selected', (req, res) => {
+    res.render('courtsNotSelected.njk')
+  })
+  router.use(manageCourtsRoutes(services))
+  router.use(asyncMiddleware(checkForPreferredCourts(app.manageCourtsEnabled)))
+
   router.get('/', (req, res) => res.render('home.njk'))
 
-  router.use(manageCourtsRoutes(services))
   router.use(createBookingRoutes(services))
   router.use(deleteBookingRoutes(services))
   router.use(requestBookingRoutes(services))

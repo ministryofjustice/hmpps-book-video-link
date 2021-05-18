@@ -1,7 +1,10 @@
-const { forenameToInitial } = require('../utils')
-const config = require('../config')
+import { RequestHandler } from 'express'
+import { forenameToInitial } from '../utils'
 
-module.exports = ({ oauthApi }) => async (req, res, next) => {
+import config from '../config'
+import ManageCourtsService from '../services/manageCourtsService'
+
+export default (oauthApi, manageCourtsService: ManageCourtsService): RequestHandler => async (req, res, next) => {
   if (!req.xhr) {
     if (!req.session.userDetails) {
       req.session.userDetails = await oauthApi.currentUser(res.locals)
@@ -16,6 +19,10 @@ module.exports = ({ oauthApi }) => async (req, res, next) => {
 
     const { name, username } = req.session.userDetails
 
+    if (!req.session.preferredCourts) {
+      req.session.preferredCourts = await manageCourtsService.getSelectedCourts(res.locals, username)
+    }
+
     const returnUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`
     const clientID = config.apis.oauth2.clientId
 
@@ -28,6 +35,7 @@ module.exports = ({ oauthApi }) => async (req, res, next) => {
     }
 
     res.locals.userRoles = req.session.userRoles
+    res.locals.preferredCourts = req.session.preferredCourts
   }
   next()
 }

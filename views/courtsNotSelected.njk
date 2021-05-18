@@ -1,0 +1,21 @@
+{% extends "./partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% set title = 'Select the courts you book video links for' %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">{{ title }}</h1>
+            <p class="govuk-body">
+                Before you can book a new video link or view existing bookings, you need to select the courts you book video links for. These courts will be saved for future bookings you make.
+            </p>
+
+            <p class="govuk-body">
+                {{ govukButton({
+                    text: "Continue",
+                    href: '/manage-courts'
+                }) }}
+            </p>
+        </div>
+    </div>
+{% endblock %}

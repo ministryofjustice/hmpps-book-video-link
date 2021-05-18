@@ -1,7 +1,7 @@
 const { stubFor } = require('./wiremock')
 
 module.exports = {
-  stubGetUserCourtPreferences: (userId, courts) => {
+  stubGetUserCourtPreferences: (userId = 'ITAG_USER', preferredCourts) => {
     return stubFor({
       request: {
         method: 'GET',
@@ -12,11 +12,11 @@ module.exports = {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: { items: courts || [] },
+        jsonBody: { items: preferredCourts || [] },
       },
     })
   },
-  stubUpdateUserCourtPreferences: (userId, courts) => {
+  stubUpdateUserCourtPreferences: (userId = 'ITAG_USER', preferredCourts) => {
     return stubFor({
       request: {
         method: 'PUT',
@@ -27,7 +27,7 @@ module.exports = {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: { items: courts || [] },
+        jsonBody: { items: preferredCourts || [] },
       },
     })
   },

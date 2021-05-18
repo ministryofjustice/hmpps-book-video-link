@@ -30,7 +30,13 @@ module.exports = on => {
         prisonerOffenderSearch.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
-    stubLoginCourt: user => Promise.all([auth.stubLoginCourt(user), tokenverification.stubVerifyToken(true)]),
+    stubLoginCourt: ({ user = {}, preferredCourts = ['ABDRCT'] }) =>
+      Promise.all([
+        auth.stubLoginCourt(user),
+        courtApi.stubAllCourts(),
+        userCourtPreferencesApi.stubGetUserCourtPreferences(user.username, preferredCourts),
+        tokenverification.stubVerifyToken(true),
+      ]),
 
     stubUserEmail: username => auth.stubEmail(username),
     stubUser: (username, caseload) => auth.stubUser(username, caseload),

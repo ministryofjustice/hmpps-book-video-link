@@ -3,10 +3,12 @@ import createRequestLogger from './middleware/requestLogger'
 
 import loggingSerialiser from './loggingSerialiser'
 import currentUser from './middleware/currentUser'
+import asyncMiddleware from './middleware/asyncMiddleware'
+import type { Services } from './services'
 
-export default function setupCurrentUserAndRequestLogging({ oauthApi }): Router {
+export default function setupCurrentUserAndRequestLogging({ oauthApi, manageCourtsService }: Services): Router {
   const router = express.Router()
-  router.use(currentUser({ oauthApi }))
+  router.use(asyncMiddleware(currentUser(oauthApi, manageCourtsService)))
   router.use(async (req, res, next) => {
     res.locals = {
       ...res.locals,

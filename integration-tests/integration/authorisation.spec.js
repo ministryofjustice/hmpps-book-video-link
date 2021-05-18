@@ -6,7 +6,7 @@ context('A user can book an appointment if has all the required roles', () => {
   beforeEach(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt')
+    cy.task('stubLoginCourt', {})
     cy.task('stubUserMe')
   })
 
