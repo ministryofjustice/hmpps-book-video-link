@@ -53,5 +53,12 @@ describe('court selection confirmation controller', () => {
 
       expect(res.render).toHaveBeenCalledWith('manageCourts/courtSelectionConfirmation.njk', { courts: courtList })
     })
+
+    it('should update user preferred courts in req.session to undefined triggering a new service call to update preferred courts in res.locals via current user middleware', async () => {
+      manageCourtsService.getSelectedCourts.mockResolvedValue(courtList)
+      await controller.view()(req, res, null)
+
+      expect(req.session.preferredCourts).toStrictEqual(undefined)
+    })
   })
 })

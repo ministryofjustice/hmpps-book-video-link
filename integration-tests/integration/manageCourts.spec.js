@@ -1,5 +1,6 @@
 const ManageCourtsPage = require('../pages/manageCourts/manageCourtsPage')
 const CourtSelectionConfirmationPage = require('../pages/manageCourts/courtSelectionConfirmationPage')
+const HomePage = require('../pages/homePage')
 
 context('A user can view the manage courts page', () => {
   beforeEach(() => {
@@ -44,6 +45,8 @@ context('A user can view the manage courts page', () => {
     const courtSelectionConfirmationPage = CourtSelectionConfirmationPage.verifyOnPage()
     courtSelectionConfirmationPage.courts().should('have.length', 1)
     courtSelectionConfirmationPage.getCourt(1).contains('Aberystwyth')
+    courtSelectionConfirmationPage.continue().click()
+    HomePage.verifyOnPage()
   })
 
   it('When a user updates their list of preferred courts', () => {
@@ -86,6 +89,8 @@ context('A user can view the manage courts page', () => {
     courtSelectionConfirmationPage.getCourt(1).contains('Aberdare County')
     courtSelectionConfirmationPage.getCourt(2).contains('Aberystwyth')
     courtSelectionConfirmationPage.getCourt(3).contains('Banbury')
+    courtSelectionConfirmationPage.continue().click()
+    HomePage.verifyOnPage()
   })
 
   it('When no court is selected a validation error is displayed', () => {
