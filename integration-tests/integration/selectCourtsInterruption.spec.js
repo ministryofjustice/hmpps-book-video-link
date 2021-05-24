@@ -36,6 +36,8 @@ context('A user is shown the select courts interrruption page when required', ()
     const courtSelectionConfirmationPage = CourtSelectionConfirmationPage.verifyOnPage()
     courtSelectionConfirmationPage.courts().should('have.length', 1)
     courtSelectionConfirmationPage.getCourt(1).contains('Aberdare')
+    courtSelectionConfirmationPage.continue().click()
+    HomePage.verifyOnPage()
   })
 
   it('A user is not redirected to the select courts interruption page when they have selected preferred courts', () => {
