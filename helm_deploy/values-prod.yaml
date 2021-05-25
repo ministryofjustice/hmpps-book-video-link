@@ -56,3 +56,7 @@ whitelist:
   quantum1: 62.25.109.197/32
   quantum2: 212.137.36.230/32
   quantum3: 195.92.38.16/28
+
+# determine which slack channel alerts are sent to, via the correct Alert Manager receiver
+generic-prometheus-alerts:
+  alertSeverity: digital-prison-service
