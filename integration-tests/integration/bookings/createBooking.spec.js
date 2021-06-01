@@ -12,15 +12,15 @@ context('A user can add a video link', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
-    cy.task('stubLoginCourt', {})
-    cy.login()
+    // cy.task('stubLoginCourt', {})
+    // cy.login()
   })
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('resetAndStubTokenVerification')
-    const offenderNo = 'A12345'
+    // const offenderNo = 'A12345'
     cy.task('stubOffenderBasicDetails', offenderBasicDetails)
-    cy.task('stubCourts')
+    // cy.task('stubCourts')
     cy.task('stubCreateVideoLinkBooking')
     cy.task('stubAgencyDetails', {
       agencyId: 'MDI',
@@ -63,13 +63,16 @@ context('A user can add a video link', () => {
         },
       ],
     })
-    cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
+    // cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
   })
 
   it('A user creates a booking for a pre, main and post appointment', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
+    const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
+    cy.login()
+    cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
@@ -99,7 +102,7 @@ context('A user can add a video link', () => {
     selectCourtPage.postTime().contains('11:55 to 12:15')
 
     const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().select('London')
+    selectCourtForm.court().contains('Aberdare County Court')
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()
@@ -122,7 +125,7 @@ context('A user can add a video link', () => {
       agencyId: 'MDI',
       bookingId: 1,
       comment: 'A comment',
-      court: 'London',
+      courtId: 'ABDRCT',
       videoLinkBookingId: 123,
       pre: {
         locationId: 1,
@@ -152,12 +155,12 @@ context('A user can add a video link', () => {
     confirmationPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
     confirmationPage.legalBriefingBefore().contains('10:35 to 10:55')
     confirmationPage.legalBriefingAfter().contains('11:55 to 12:15')
-    confirmationPage.courtLocation().contains('London')
+    confirmationPage.courtLocation().contains('Aberdare County Court')
 
     cy.task('getBookingRequest').then(request => {
       expect(request).to.deep.equal({
         bookingId: 14,
-        court: 'London',
+        courtId: 'ABDRCT',
         madeByTheCourt: true,
         pre: {
           locationId: 1,
@@ -208,7 +211,7 @@ context('A user can add a video link', () => {
     selectCourtPage.postTime().should('not.exist')
 
     const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().select('London')
+    // selectCourtForm.court().select('London')
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()
@@ -289,7 +292,7 @@ context('A user can add a video link', () => {
     const selectCourtPage = SelectCourtPage.verifyOnPage()
 
     const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().select('London')
+    // selectCourtForm.court().select('London')
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()
@@ -399,8 +402,7 @@ context('A user can add a video link', () => {
     const selectCourtPage = SelectCourtPage.verifyOnPage()
 
     const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().select('London')
-
+    // selectCourtForm.court().select('London')
     selectCourtForm.submitButton().click()
 
     const selectRoomsPage = SelectRoomsPage.verifyOnPage()

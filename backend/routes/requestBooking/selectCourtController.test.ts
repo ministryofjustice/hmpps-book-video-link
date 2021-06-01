@@ -5,12 +5,12 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/locationService')
 
 describe('Select court controller', () => {
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
 
   let controller: SelectCourtController
 
   const req = mockRequest({})
-  const res = mockResponse({})
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
   const mockFlashState = ({ errors, requestBooking }) =>
     req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)
@@ -134,14 +134,15 @@ describe('Select court controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(res.locals)
+      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(res.locals, res.locals.user.username)
       expect(locationService.getMatchingPrison).toHaveBeenCalledWith(res.locals, prison)
     })
   })
 
   describe('Submit', () => {
     it('should stash hearing location into flash and redirect to enter offender details', async () => {
-      req.body = { hearingLocation: 'London' }
+      req.body = { courtId: 'London' }
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'London', text: 'London' })
       mockFlashState({
         errors: [],
         requestBooking: [

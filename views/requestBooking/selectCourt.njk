@@ -65,17 +65,33 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="POST" novalidate="novalidate" action="/request-booking/validate-court">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-
-                {{ govukSelect({
-                    id: "hearing-location",
-                    name: "hearingLocation",
-                    label: {
-                        text: "Which court is the hearing for?"
-                    },
-                    items: hearingLocations | addDefaultSelectedVale('Select'),
-                    errorMessage: errors | findError('hearingLocation')
-                }) }}
-
+                    {% if hearingLocations.length === 1 %}
+                        <input type="hidden" name="courtId" value="{{ hearingLocations | first | showValue }}" />
+                        {{ govukSummaryList({
+                            classes: "govuk-summary-list--no-border",
+                            rows: [{
+                                key: {
+                                    text: "Court",
+                                    classes: "govuk-summary-list__key qa-hearingLocation-key govuk-!-padding-bottom-0 govuk-!-width-one-half"
+                                },
+                                value: {
+                                    text: hearingLocations | first | showText,
+                                    classes: "govuk-summary-list__value qa-hearingLocation-value govuk-!-padding-bottom-0 govuk-!-width-one-half"
+                                    }
+                                }]
+                        }) }}
+                    {% else %}
+                        {{ govukSelect({
+                            id: "court-id",
+                            classes: "qa-hearingLocation-value",
+                            name: "courtId",
+                            label: {
+                                text: "Which court is the hearing for?"
+                            },
+                            items: hearingLocations | addDefaultSelectedVale('Select'),
+                            errorMessage: errors | findError('courtId')
+                        }) }}
+                    {% endif %}
                 {{ govukButton({ text: "Continue", type: "submit" }) }}
             </form>
         </div>

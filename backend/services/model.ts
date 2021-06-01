@@ -56,6 +56,7 @@ export type BookingDetails = {
   prisonName: string
   prisonBookingId: number
   agencyId: string
+  courtId: string
   courtLocation: string
   date: Moment
   dateDescription: string
@@ -91,7 +92,7 @@ export type Bookings = {
 export type NewBooking = {
   offenderNo: string
   agencyId: string
-  court: string
+  courtId: string
   mainStartTime: Moment
   mainEndTime: Moment
   main: number

@@ -1,13 +1,16 @@
 import type { RequestHandler } from 'express'
 import type { BookingService } from '../../services'
+import LocationService from '../../services/locationService'
 
 export default class ConfirmationController {
-  constructor(private readonly bookingService: BookingService) {}
+  constructor(private readonly bookingService: BookingService, private readonly locationService: LocationService) {}
 
   public view: RequestHandler = async (req, res) => {
     const { videoBookingId } = req.params
+    const { username } = res.locals.user
 
     const details = await this.bookingService.get(res.locals, Number(videoBookingId))
+    const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, details.courtId, username)
 
     res.render('createBooking/confirmation.njk', {
       videolinkPrisonerSearchLink: '/prisoner-search',
@@ -27,7 +30,7 @@ export default class ConfirmationController {
         'post-court hearing briefing': details.postDetails?.description,
       },
       court: {
-        courtLocation: details.courtLocation,
+        courtLocation: court.text,
       },
     })
   }

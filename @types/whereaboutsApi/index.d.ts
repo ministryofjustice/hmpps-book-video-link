@@ -6,7 +6,7 @@ declare module 'whereaboutsApi' {
   export type NewVideoLinkBooking = {
     bookingId: number
     comment?: string
-    court: string
+    courtId: string
     madeByTheCourt: boolean
     main: NewAppointment
     post?: NewAppointment
@@ -19,6 +19,7 @@ declare module 'whereaboutsApi' {
     agencyId: string
     bookingId: number
     comment?: string
+    courtId: string
     court: string
     main: Appointment
     post: Appointment

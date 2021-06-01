@@ -27,6 +27,7 @@ describe('Add court appointment', () => {
     bookingId: 1,
     comment: 'A comment',
     court: 'Westminster',
+    courtId: 'WTMTR',
     videoLinkBookingId: 10,
     pre: {
       locationId: 100,

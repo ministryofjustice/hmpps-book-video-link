@@ -6,21 +6,23 @@ import CourtApi from '../api/courtApi'
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
 import { groupBy } from '../utils'
 
-type CourtsByLetter = Map<string, CourtDto[]>
+export type CourtsByLetter = Map<string, UserPreferenceCourt[]>
 
-type UserPreferenceCourts = CourtDto & {
+export type UserPreferenceCourt = {
+  courtName: string
+  courtId: string
   isSelected?: boolean
 }
 
-export = class ManageCourtsService {
+export default class ManageCourtsService {
   constructor(private readonly courtApi: CourtApi, private readonly userCourtPreferencesApi: UserCourtPreferencesApi) {}
 
-  private sortAlphabetically(courts: UserPreferenceCourts[]): UserPreferenceCourts[] {
+  private sortAlphabetically(courts: UserPreferenceCourt[]): UserPreferenceCourt[] {
     const sortedCourtList = courts.sort((a, b) => a.courtName.localeCompare(b.courtName))
     return sortedCourtList
   }
 
-  public async getSortedCourts(context: Context, userId: string): Promise<UserPreferenceCourts[]> {
+  public async getSortedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {
     const courtsList = await this.courtApi.getCourts()
     const preferredCourts = await this.userCourtPreferencesApi.getUserPreferredCourts(context, userId)
     return this.sortAlphabetically(
@@ -33,7 +35,7 @@ export = class ManageCourtsService {
     return groupBy(courts, (court: CourtDto) => court.courtName.charAt(0).toUpperCase())
   }
 
-  public async getSelectedCourts(context: Context, userId: string): Promise<UserPreferenceCourts[]> {
+  public async getSelectedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {
     const courts = await this.getSortedCourts(context, userId)
     return courts.filter(court => court.isSelected)
   }

@@ -7,7 +7,7 @@ jest.mock('../../services/locationService')
 jest.mock('../../services/notificationService')
 
 describe('Offender details controller', () => {
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
   const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
 
   let controller: OffenderDetailsController

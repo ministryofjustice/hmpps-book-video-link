@@ -1,19 +1,20 @@
 import moment from 'moment'
 import type { BookingDetails } from '../../services/model'
 import ConfirmationController from './confirmationController'
-import { BookingService } from '../../services'
+import { BookingService, LocationService } from '../../services'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services')
 
 describe('Confirm appointments', () => {
   const req = mockRequest({ params: { videoBookingId: '123' } })
-  const res = mockResponse({})
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',
     videoBookingId: 123,
     courtLocation: 'City of London',
+    courtId: 'CLDN',
     dateDescription: '20 November 2020',
     date: moment('2020-11-20T18:00:00'),
     offenderNo: 'A123AA',
@@ -42,16 +43,17 @@ describe('Confirm appointments', () => {
   }
 
   let controller: ConfirmationController
-  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
-
+  const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
   beforeEach(() => {
     jest.resetAllMocks()
 
-    controller = new ConfirmationController(bookingService)
+    controller = new ConfirmationController(bookingService, locationService)
   })
 
   it('should render page', async () => {
     bookingService.get.mockResolvedValue(bookingDetails)
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
 
     await controller.view(req, res, null)
 
@@ -78,9 +80,19 @@ describe('Confirm appointments', () => {
 
   it('Should call booking service with correct params', async () => {
     bookingService.get.mockResolvedValue(bookingDetails)
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
 
     await controller.view(req, res, null)
 
     expect(bookingService.get).toBeCalledWith(res.locals, 123)
+  })
+
+  it('Should call location service with correct params', async () => {
+    bookingService.get.mockResolvedValue(bookingDetails)
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+
+    await controller.view(req, res, null)
+
+    expect(locationService.getVideoLinkEnabledCourt).toBeCalledWith(res.locals, 'CLDN', 'A_USER')
   })
 })

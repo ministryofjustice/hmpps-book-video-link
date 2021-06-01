@@ -5,6 +5,7 @@ import NotificationService from './notificationService'
 import LocationService from './locationService'
 import AvailabilityCheckService from './availabilityCheckService'
 import ManageCourtsService from './manageCourtsService'
+import { app } from '../config'
 
 const {
   oauthApi,
@@ -18,10 +19,16 @@ const {
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
-const bookingService = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
-const locationService = new LocationService(prisonApi, whereaboutsApi)
 const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi)
 const manageCourtsService = new ManageCourtsService(courtApi, userCourtPreferencesApi)
+const locationService = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
+const bookingService = new BookingService(
+  prisonApi,
+  whereaboutsApi,
+  notificationService,
+  availabilityCheckService,
+  locationService
+)
 
 export const services = {
   bookingService,
@@ -37,4 +44,4 @@ export const services = {
 
 export type Services = typeof services
 
-export { NotificationService, AvailabilityCheckService, BookingService }
+export { NotificationService, AvailabilityCheckService, BookingService, LocationService }

@@ -6,7 +6,7 @@ import { clearState, Codec, getState, isStatePresent, setState } from '../../uti
 import { ChangeDateAndTime } from './forms'
 
 export type DateAndTime = ChangeDateAndTime
-export type DateAndTimeAndCourt = DateAndTime & { court: string }
+export type DateAndTimeAndCourt = DateAndTime & { courtId: string }
 
 export const DateAndTimeCodec: Codec<DateAndTime> = {
   write: (value: ChangeDateAndTime): Record<string, string> => {
@@ -35,12 +35,12 @@ export const DateAndTimeCodec: Codec<DateAndTime> = {
 
 export const DateAndTimeAndCourtCodec: Codec<DateAndTimeAndCourt> = {
   write: (value: DateAndTimeAndCourt): Record<string, string> => {
-    return { ...DateAndTimeCodec.write(value), court: value.court }
+    return { ...DateAndTimeCodec.write(value), courtId: value.courtId }
   },
 
   read(record: Record<string, unknown>): DateAndTimeAndCourt {
-    assertHasStringValues(record, ['court'])
-    return { ...DateAndTimeCodec.read(record), court: record.court }
+    assertHasStringValues(record, ['courtId'])
+    return { ...DateAndTimeCodec.read(record), courtId: record.courtId }
   },
 }
 

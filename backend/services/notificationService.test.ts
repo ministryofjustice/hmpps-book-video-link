@@ -315,6 +315,7 @@ describe('Notification service', () => {
       offenderNo: 'A1234AA',
       comments: 'some comment',
       courtLocation: 'City of London',
+      courtId: 'CLDN',
       date: moment('2020-11-20'),
       dateDescription: '20 November 2020',
       prisonBookingId: 789,

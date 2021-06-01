@@ -12,7 +12,7 @@ const confirmationPage = () =>
     endTime: () => cy.get('.qa-courtHearingEndTime-value'),
     legalBriefingBefore: () => cy.get('.qa-preCourtHearingBriefing-value'),
     legalBriefingAfter: () => cy.get('.qa-postCourtHearingBriefing-value'),
-    courtLocation: () => cy.get('.qa-courtLocation-value'),
+    courtLocation: () => cy.get('.courtLocation'),
   })
 
 export default {
