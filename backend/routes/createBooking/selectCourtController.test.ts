@@ -29,9 +29,9 @@ describe('Select court appoinment court', () => {
     prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Moorland' } as Agency)
 
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { text: 'Westminster', value: 'Westminster' },
-      { text: 'Wimbledon', value: 'Wimbledon' },
-      { text: 'City of London', value: 'City of London' },
+      { text: 'Westminster Crown Court', value: 'WMRCN' },
+      { text: 'Wimbledon County Court', value: 'WLDCOU' },
+      { text: 'City of London', value: 'CLDN' },
     ])
     req.flash.mockReturnValue([])
 
@@ -57,9 +57,9 @@ describe('Select court appoinment court', () => {
         'createBooking/selectCourt.njk',
         expect.objectContaining({
           courts: [
-            { text: 'Westminster', value: 'Westminster' },
-            { text: 'Wimbledon', value: 'Wimbledon' },
-            { text: 'City of London', value: 'City of London' },
+            { text: 'Westminster Crown Court', value: 'WMRCN' },
+            { text: 'Wimbledon County Court', value: 'WLDCOU' },
+            { text: 'City of London', value: 'CLDN' },
           ],
           prePostData: {
             'post-court hearing briefing': '14:00 to 14:20',
@@ -72,7 +72,7 @@ describe('Select court appoinment court', () => {
     it('should not include pre post data if not required', async () => {
       req.signedCookies = {
         'booking-creation': {
-          courtId: 'Leeds',
+          courtId: 'CLDN',
           bookingId: '123456',
           date: '2017-11-10T00:00:00',
           postRequired: 'false',
@@ -109,14 +109,14 @@ describe('Select court appoinment court', () => {
 
     describe('when a court has been selected', () => {
       it('should populate the details with the selected court and redirect to room selection page ', async () => {
-        req.body = { courtId: 'City of London' }
+        req.body = { courtId: 'CLDN' }
 
         await controller.submit(req, res, next)
 
         expect(res.cookie).toHaveBeenCalledWith(
           'booking-creation',
           {
-            courtId: 'City of London',
+            courtId: 'CLDN',
             bookingId: '123456',
             date: '2017-11-10T00:00:00',
             postRequired: 'true',

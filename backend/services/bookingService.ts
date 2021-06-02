@@ -176,14 +176,13 @@ export = class BookingService {
     })
 
     const { bookingDescription: description } = await this.roomFinderFactory(context, existing.agencyId)
-    const court = await this.locationService.getVideoLinkEnabledCourt(context, existing.courtId, currentUsername)
 
     await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       offenderNo: existing.offenderNo,
       agencyId: existing.agencyId,
       prisonName: existing.prisonName,
       prisonerName: existing.prisonerName,
-      courtLocation: court.text,
+      courtLocation: existing.courtLocation,
       comments: update.comment,
       dateDescription: update.startTime.format(DATE_ONLY_LONG_FORMAT_SPEC),
       preDescription: update.preLocation && description(update.preLocation, preAppointmentTimes(update.startTime)),

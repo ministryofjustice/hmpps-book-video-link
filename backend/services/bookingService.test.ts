@@ -162,7 +162,7 @@ describe('Booking service', () => {
 
     describe('Creating a booking with all fields', () => {
       it('booking with all fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -202,7 +202,7 @@ describe('Booking service', () => {
       })
 
       it('email sent when all fields provided', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -236,13 +236,13 @@ describe('Booking service', () => {
         it('should raise event when both pre and post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
             text: 'City of London',
-            value: 'City of London',
+            value: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            courtId: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -261,13 +261,13 @@ describe('Booking service', () => {
         it('should raise event when neither pre and post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
             text: 'City of London',
-            value: 'City of London',
+            value: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            courtId: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -286,13 +286,13 @@ describe('Booking service', () => {
         it('should raise event when only pre and not post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
             text: 'City of London',
-            value: 'City of London',
+            value: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            courtId: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -312,12 +312,12 @@ describe('Booking service', () => {
 
     describe('Creating a booking with only mandatory fields', () => {
       it('booking with only mandatory fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
-          courtId: 'City of London',
+          courtId: 'CLDN',
           comment: undefined,
           mainStartTime: moment('2020-11-20T18:00:00'),
           mainEndTime: moment('2020-11-20T19:00:00'),
@@ -328,7 +328,7 @@ describe('Booking service', () => {
 
         expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
           bookingId: 1000,
-          courtId: 'City of London',
+          courtId: 'CLDN',
           madeByTheCourt: true,
           main: {
             locationId: 2,
@@ -340,12 +340,12 @@ describe('Booking service', () => {
     })
 
     it('email sent when only mandatory fields provided', async () => {
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.create(context, 'USER-1', {
         offenderNo: 'AA1234AA',
         agencyId: 'MDI',
-        courtId: 'City of London',
+        courtId: 'CLDN',
         comment: undefined,
         mainStartTime: moment('2020-11-20T18:00:00'),
         mainEndTime: moment('2020-11-20T19:00:00'),
@@ -417,7 +417,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.updateComments(context, 'A_USER', 1234, 'another comment')
 
@@ -440,7 +440,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -484,7 +484,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',

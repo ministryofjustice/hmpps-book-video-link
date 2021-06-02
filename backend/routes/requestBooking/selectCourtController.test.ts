@@ -24,8 +24,8 @@ describe('Select court controller', () => {
     })
 
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { value: 'London', text: 'London' },
-      { value: 'York', text: 'York' },
+      { value: 'LDNCOU', text: 'London County Court' },
+      { value: 'YKCRN', text: 'York Crown Court' },
     ])
 
     controller = new SelectCourtController(locationService)
@@ -104,12 +104,12 @@ describe('Select court controller', () => {
         },
         hearingLocations: [
           {
-            text: 'London',
-            value: 'London',
+            text: 'London County Court',
+            value: 'LDNCOU',
           },
           {
-            text: 'York',
-            value: 'York',
+            text: 'York Crown Court',
+            value: 'YKCRN',
           },
         ],
         errors: [],
@@ -141,8 +141,8 @@ describe('Select court controller', () => {
 
   describe('Submit', () => {
     it('should stash hearing location into flash and redirect to enter offender details', async () => {
-      req.body = { courtId: 'London' }
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'London', text: 'London' })
+      req.body = { courtId: 'LDNCOU' }
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'LDNCOU', text: 'London County Court' })
       mockFlashState({
         errors: [],
         requestBooking: [
@@ -159,7 +159,7 @@ describe('Select court controller', () => {
       await controller.submit()(req, res, null)
 
       expect(req.flash).toHaveBeenCalledWith('requestBooking', {
-        hearingLocation: 'London',
+        hearingLocation: 'London County Court',
       })
       expect(res.redirect('/request-booking/enter-offender-details'))
     })

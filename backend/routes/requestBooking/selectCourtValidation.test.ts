@@ -11,7 +11,7 @@ describe('SelectCourtValidation', () => {
     })
 
     it('should not return an error when a hearing location is entered', () => {
-      expect(validator({ ...form, courtId: 'Croydon' })).toStrictEqual([])
+      expect(validator({ ...form, courtId: 'CRNMC' })).toStrictEqual([])
     })
   })
 })

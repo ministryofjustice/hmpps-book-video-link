@@ -2,7 +2,7 @@ import validator, { errorTypes } from './selectCourtValidation'
 
 describe('SelectCourtValidation', () => {
   const form = {
-    courtId: 'London',
+    courtId: 'CLDN',
   } as Record<string, string>
 
   describe('checking court validation', () => {
@@ -11,7 +11,7 @@ describe('SelectCourtValidation', () => {
     })
 
     it('should not return an error when a court is entered', () => {
-      expect(validator({ ...form, courtId: 'Croydon' })).toStrictEqual([])
+      expect(validator({ ...form, courtId: 'CRNMC' })).toStrictEqual([])
     })
   })
 })

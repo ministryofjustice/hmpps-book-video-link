@@ -102,28 +102,28 @@ describe('Location service', () => {
       app.manageCourtsEnabled = true
       service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
       const courtLocations = [
-        { courtName: 'London', courtId: 'London' },
-        { courtName: 'York', courtId: 'York' },
+        { courtName: 'London County Court', courtId: 'LDNCOU' },
+        { courtName: 'York Crown Court', courtId: 'YKCRN' },
       ]
       manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
       const response = await service.getVideoLinkEnabledCourts(context, userId)
       expect(response).toEqual([
-        { value: 'London', text: 'London' },
-        { value: 'York', text: 'York' },
+        { value: 'LDNCOU', text: 'London County Court' },
+        { value: 'YKCRN', text: 'York Crown Court' },
       ])
     })
 
     it('Should find single matching court from courtId ', async () => {
       app.manageCourtsEnabled = true
       service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
-      const courtId = 'London'
+      const courtId = 'LDNCOU'
       const courtLocations = [
-        { courtName: 'London', courtId: 'London' },
-        { courtName: 'York', courtId: 'York' },
+        { courtName: 'London County Court', courtId: 'LDNCOU' },
+        { courtName: 'York Crown Court', courtId: 'YKCRN' },
       ]
       manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
       const response = await service.getVideoLinkEnabledCourt(context, courtId, userId)
-      expect(response).toEqual({ text: 'London', value: 'London' })
+      expect(response).toEqual({ text: 'London County Court', value: 'LDNCOU' })
     })
   })
 })
