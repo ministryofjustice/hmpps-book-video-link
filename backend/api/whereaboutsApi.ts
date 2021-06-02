@@ -1,7 +1,7 @@
 import {
   AppointmentLocationsSpecification,
   AvailableLocations,
-  CourtLocations,
+  Court,
   NewVideoLinkBooking,
   UpdateVideoLinkBooking,
   VideoLinkBooking,
@@ -37,8 +37,8 @@ export = class WhereaboutsApi {
     return this.client.delete(context, url).then(this.processResponse)
   }
 
-  public getCourtLocations(context: Context): Promise<CourtLocations> {
-    return this.get(context, '/court/all-courts')
+  public getCourts(context: Context): Promise<Court[]> {
+    return this.get(context, '/court/courts')
   }
 
   public createVideoLinkBooking(context: Context, body: NewVideoLinkBooking): Promise<number> {

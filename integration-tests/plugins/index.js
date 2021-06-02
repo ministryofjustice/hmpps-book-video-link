@@ -1,7 +1,6 @@
 const { rmdir } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
-const courtApi = require('../mockApis/courtApi')
 const whereabouts = require('../mockApis/whereabouts')
 const tokenverification = require('../mockApis/tokenverification')
 const prisonerOffenderSearch = require('../mockApis/prisonerOffenderSearch')
@@ -33,14 +32,14 @@ module.exports = on => {
     stubLoginCourt: ({ user = {}, preferredCourts = ['ABDRCT'] }) =>
       Promise.all([
         auth.stubLoginCourt(user),
-        courtApi.stubAllCourts(),
+        whereabouts.stubCourts(),
         userCourtPreferencesApi.stubGetUserCourtPreferences(user.username, preferredCourts),
         tokenverification.stubVerifyToken(true),
       ]),
 
     stubUserEmail: username => auth.stubEmail(username),
     stubUser: (username, caseload) => auth.stubUser(username, caseload),
-    stubCourts: courts => whereabouts.stubCourtLocations(courts),
+    stubCourts: courts => whereabouts.stubCourts(courts),
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),
@@ -59,7 +58,6 @@ module.exports = on => {
     stubLoginPage: auth.redirect,
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
-    stubAllCourts: courtApi.stubAllCourts,
     stubGetUserCourtPreferences: ({ username, courts }) =>
       userCourtPreferencesApi.stubGetUserCourtPreferences(username, courts),
 

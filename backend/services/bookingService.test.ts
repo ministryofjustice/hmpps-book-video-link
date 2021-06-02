@@ -26,7 +26,7 @@ const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
+const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 
 const offenderDetails = {
   bookingId: 789,

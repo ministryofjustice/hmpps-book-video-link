@@ -1,34 +1,23 @@
-import type { CourtDto } from 'courtRegister'
 import type { PreferencesDTO } from 'userPreferences'
+import { Court } from 'whereaboutsApi'
 
-import CourtApi from '../api/courtApi'
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
+import WhereaboutsApi from '../api/whereaboutsApi'
 import ManageCourtsService, { UserPreferenceCourt } from './manageCourtsService'
 
-jest.mock('../api/courtApi')
+jest.mock('../api/whereaboutsApi')
 jest.mock('../api/userCourtPreferencesApi')
 
-const courtApi = new CourtApi(null) as jest.Mocked<CourtApi>
+const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const userCourtPreferencesApi = new UserCourtPreferencesApi(null) as jest.Mocked<UserCourtPreferencesApi>
 
-const createCourt = (courtId: string, courtName: string): CourtDto => {
-  return {
-    courtId,
-    courtName,
-    type: {
-      courtType: 'CRN',
-      courtName,
-    },
-    active: true,
-  }
-}
+const createCourt = (id: string, name: string): Court => ({ id, name })
 
-const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourt => {
-  return {
-    ...createCourt(courtId, courtName),
-    isSelected,
-  }
-}
+const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourt => ({
+  courtId,
+  courtName,
+  isSelected,
+})
 
 const createCourtIds = (courtId: string[]): PreferencesDTO => {
   return {
@@ -42,7 +31,7 @@ describe('Manage courts service', () => {
   let service: ManageCourtsService
 
   beforeEach(() => {
-    service = new ManageCourtsService(courtApi, userCourtPreferencesApi)
+    service = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
   })
 
   afterEach(() => {
@@ -51,7 +40,7 @@ describe('Manage courts service', () => {
 
   describe('Get courts', () => {
     it('Should return nothing when no courts are active', async () => {
-      courtApi.getCourts.mockResolvedValue([])
+      whereaboutsApi.getCourts.mockResolvedValue([])
 
       const result = await service.getCourtsByLetter(context, userId)
 
@@ -59,7 +48,7 @@ describe('Manage courts service', () => {
     })
 
     it('can handle a single court', async () => {
-      courtApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
+      whereaboutsApi.getCourts.mockResolvedValue([createCourt('1', 'A Court')])
       userCourtPreferencesApi.getUserPreferredCourts.mockResolvedValue({ items: [] })
       const result = await service.getCourtsByLetter(context, userId)
 
@@ -67,7 +56,7 @@ describe('Manage courts service', () => {
     })
 
     it('can handle and sort multiple courts under one letter key', async () => {
-      courtApi.getCourts.mockResolvedValue([
+      whereaboutsApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
@@ -91,7 +80,7 @@ describe('Manage courts service', () => {
     })
 
     it('can handle and sort multiple courts under multiple letter keys', async () => {
-      courtApi.getCourts.mockResolvedValue([
+      whereaboutsApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
@@ -133,7 +122,7 @@ describe('Manage courts service', () => {
 
   describe('Get pre selected user preferred courts', () => {
     it('Should return no pre selected courts when none are preferred', async () => {
-      courtApi.getCourts.mockResolvedValue([
+      whereaboutsApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
@@ -156,7 +145,7 @@ describe('Manage courts service', () => {
     })
 
     it('can handle preferred courts', async () => {
-      courtApi.getCourts.mockResolvedValue([
+      whereaboutsApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),
@@ -181,7 +170,7 @@ describe('Manage courts service', () => {
 
   describe('Get confirmed user preferred courts', () => {
     it('can handle preferred courts', async () => {
-      courtApi.getCourts.mockResolvedValue([
+      whereaboutsApi.getCourts.mockResolvedValue([
         createCourt('1', 'AA Court'),
         createCourt('2', 'AC Court'),
         createCourt('3', 'AB Court'),

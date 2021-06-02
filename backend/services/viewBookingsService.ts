@@ -2,6 +2,7 @@ import type { Location, Prison } from 'prisonApi'
 import type { Prisoner } from 'prisonerOffenderSearchApi'
 import moment from 'moment'
 import type { Appointment, VideoLinkBooking } from 'whereaboutsApi'
+
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls, toMap } from '../utils'
@@ -68,15 +69,17 @@ export = class ViewBookingsService {
     )
 
     const [courts, prisons, locations, bookings] = await Promise.all([
-      this.whereaboutsApi.getCourtLocations(context).then(r => r.courtLocations),
+      this.whereaboutsApi.getCourts(context),
       this.prisonApi.getAgencies(context).then(result => toMap(result, 'agencyId')),
       flattenCalls(locationRequests).then(result => toMap(result, 'locationId')),
       flattenCalls(bookingRequests),
     ])
 
+    const courtNames = courts.map(c => c.name)
+
     const relevantBookings = bookings
       .flatMap(array => array)
-      .filter(booking => this.filterByCourt(courtFilter, courts, booking))
+      .filter(booking => this.filterByCourt(courtFilter, courtNames, booking))
 
     const toAppointment = await this.appointmentBuilder(context, prisons, locations, relevantBookings)
 
@@ -88,6 +91,6 @@ export = class ViewBookingsService {
       ])
       .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
 
-    return { courts, appointments }
+    return { courts: courtNames, appointments }
   }
 }

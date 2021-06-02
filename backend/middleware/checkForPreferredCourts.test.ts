@@ -1,5 +1,5 @@
-import type { CourtDto } from 'courtRegister'
 import { mockRequest, mockResponse, mockNext } from '../routes/__test/requestTestUtils'
+import { UserPreferenceCourt } from '../services/manageCourtsService'
 
 import checkForPreferredCourts from './checkForPreferredCourts'
 
@@ -9,17 +9,7 @@ describe('Preferred courts check middleware', () => {
   const manageCourtsEnabled = true
   const manageCourtsDisabled = false
 
-  const createCourt = (courtId: string, courtName: string): CourtDto => {
-    return {
-      courtId,
-      courtName,
-      type: {
-        courtType: 'CRN',
-        courtName,
-      },
-      active: true,
-    }
-  }
+  const createCourt = (courtId: string, courtName: string): UserPreferenceCourt => ({ courtId, courtName })
 
   beforeEach(() => {
     jest.resetAllMocks()

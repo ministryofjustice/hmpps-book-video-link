@@ -21,7 +21,6 @@ env:
   OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth/
   API_WHEREABOUTS_ENDPOINT_URL: https://whereabouts-api.service.justice.gov.uk/
   API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL: https://prisoner-offender-search.prison.service.justice.gov.uk/
-  API_COURTS_ENDPOINT_URL: https://court-register.hmpps.service.justice.gov.uk/
   API_HMPPS_USER_PREFERENCE_ENDPOINT_URL: https://hmpps-user-preferences.hmpps.service.justice.gov.uk/
   HMPPS_COOKIE_NAME: hmpps-session-prod
   REMOTE_AUTH_STRATEGY: "true"

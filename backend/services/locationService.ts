@@ -1,16 +1,10 @@
 import type PrisonApi from '../api/prisonApi'
-import type WhereaboutsApi from '../api/whereaboutsApi'
 import ManageCourtsService from './manageCourtsService'
 import { Context, Room, Prison, Court } from './model'
 import { app } from '../config'
 
 export = class LocationService {
-  constructor(
-    private readonly prisonApi: PrisonApi,
-    private readonly whereaboutsApi: WhereaboutsApi,
-    private readonly manageCourtsService: ManageCourtsService,
-    private readonly manageCourtsEnabled: boolean
-  ) {}
+  constructor(private readonly prisonApi: PrisonApi, private readonly manageCourtsService: ManageCourtsService) {}
 
   private transformRoom(location): Room {
     return { value: location.locationId, text: location.userDescription || location.description }
@@ -37,17 +31,10 @@ export = class LocationService {
   }
 
   public async getVideoLinkEnabledCourts(context: Context, userId: string): Promise<Court[]> {
-    if (this.manageCourtsEnabled) {
-      const prefCourtNames = await this.manageCourtsService.getSelectedCourts(context, userId)
-      return prefCourtNames.map(prefCourtName => ({
-        value: prefCourtName.courtId,
-        text: prefCourtName.courtName,
-      }))
-    }
-    const { courtLocations } = await this.whereaboutsApi.getCourtLocations(context)
-    return courtLocations.map(location => ({
-      value: location,
-      text: location,
+    const courts = await this.manageCourtsService.getSelectedCourts(context, userId)
+    return courts.map(court => ({
+      value: court.courtId,
+      text: court.courtName,
     }))
   }
 
