@@ -53,7 +53,7 @@ export default function createRoutes(services: Services): Router {
     )
   }
 
-  const { view } = new ConfirmationController(services.bookingService)
+  const { view } = new ConfirmationController(services.bookingService, services.locationService)
   router.get(
     '/offenders/:offenderNo/confirm-appointment/:videoBookingId',
     withRetryLink('/prisoner-search'),

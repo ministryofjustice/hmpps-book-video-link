@@ -5,12 +5,12 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/locationService')
 
 describe('Select court controller', () => {
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
 
   let controller: SelectCourtController
 
   const req = mockRequest({})
-  const res = mockResponse({})
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
   const mockFlashState = ({ errors, requestBooking }) =>
     req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(requestBooking)
@@ -24,8 +24,8 @@ describe('Select court controller', () => {
     })
 
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { value: 'London', text: 'London' },
-      { value: 'York', text: 'York' },
+      { value: 'LDNCOU', text: 'London County Court' },
+      { value: 'YKCRN', text: 'York Crown Court' },
     ])
 
     controller = new SelectCourtController(locationService)
@@ -104,12 +104,12 @@ describe('Select court controller', () => {
         },
         hearingLocations: [
           {
-            text: 'London',
-            value: 'London',
+            text: 'London County Court',
+            value: 'LDNCOU',
           },
           {
-            text: 'York',
-            value: 'York',
+            text: 'York Crown Court',
+            value: 'YKCRN',
           },
         ],
         errors: [],
@@ -134,14 +134,15 @@ describe('Select court controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(res.locals)
+      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(res.locals, res.locals.user.username)
       expect(locationService.getMatchingPrison).toHaveBeenCalledWith(res.locals, prison)
     })
   })
 
   describe('Submit', () => {
     it('should stash hearing location into flash and redirect to enter offender details', async () => {
-      req.body = { hearingLocation: 'London' }
+      req.body = { courtId: 'LDNCOU' }
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'LDNCOU', text: 'London County Court' })
       mockFlashState({
         errors: [],
         requestBooking: [
@@ -158,7 +159,7 @@ describe('Select court controller', () => {
       await controller.submit()(req, res, null)
 
       expect(req.flash).toHaveBeenCalledWith('requestBooking', {
-        hearingLocation: 'London',
+        hearingLocation: 'London County Court',
       })
       expect(res.redirect('/request-booking/enter-offender-details'))
     })

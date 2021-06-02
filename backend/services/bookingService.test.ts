@@ -8,6 +8,7 @@ import { BookingDetails } from './model'
 import BookingService from './bookingService'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import AvailabilityCheckService from './availabilityCheckService'
+import LocationService from './locationService'
 
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 
@@ -15,6 +16,7 @@ jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
 jest.mock('./notificationService')
 jest.mock('./availabilityCheckService')
+jest.mock('./locationService')
 
 jest.mock('../raiseAnalyticsEvent', () => ({
   raiseAnalyticsEvent: jest.fn(),
@@ -24,6 +26,7 @@ const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
 
 const offenderDetails = {
   bookingId: 789,
@@ -52,6 +55,7 @@ const bookingDetail: BookingDetails = {
   offenderNo: 'A1234AA',
   comments: 'some comment',
   courtLocation: 'City of London',
+  courtId: 'CLDN',
   dateDescription: '20 November 2020',
   date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC),
   prisonBookingId: 789,
@@ -83,7 +87,13 @@ describe('Booking service', () => {
   let service: BookingService
 
   beforeEach(() => {
-    service = new BookingService(prisonApi, whereaboutsApi, notificationService, availabilityCheckService)
+    service = new BookingService(
+      prisonApi,
+      whereaboutsApi,
+      notificationService,
+      availabilityCheckService,
+      locationService
+    )
   })
 
   afterEach(() => {
@@ -96,6 +106,7 @@ describe('Booking service', () => {
       bookingId: 789,
       comment: 'some comment',
       court: 'City of London',
+      courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
       post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
       pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
@@ -151,10 +162,12 @@ describe('Booking service', () => {
 
     describe('Creating a booking with all fields', () => {
       it('booking with all fields created', async () => {
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
-          court: 'City of London',
+          courtId: 'CLDN',
           comment: 'some comment',
           mainStartTime: moment('2020-11-20T18:00:00'),
           mainEndTime: moment('2020-11-20T19:00:00'),
@@ -167,7 +180,7 @@ describe('Booking service', () => {
 
         expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
           bookingId: 1000,
-          court: 'City of London',
+          courtId: 'CLDN',
           comment: 'some comment',
           madeByTheCourt: true,
           pre: {
@@ -189,10 +202,12 @@ describe('Booking service', () => {
       })
 
       it('email sent when all fields provided', async () => {
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
-          court: 'City of London',
+          courtId: 'CLDN',
           comment: 'some comment',
           mainStartTime: moment('2020-11-20T18:00:00'),
           mainEndTime: moment('2020-11-20T19:00:00'),
@@ -219,10 +234,15 @@ describe('Booking service', () => {
 
       describe('Event raising', () => {
         it('should raise event when both pre and post', async () => {
+          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
+            text: 'City of London',
+            value: 'CLDN',
+          })
+
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            court: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -239,10 +259,15 @@ describe('Booking service', () => {
         })
 
         it('should raise event when neither pre and post', async () => {
+          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
+            text: 'City of London',
+            value: 'CLDN',
+          })
+
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            court: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -259,10 +284,15 @@ describe('Booking service', () => {
         })
 
         it('should raise event when only pre and not post', async () => {
+          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
+            text: 'City of London',
+            value: 'CLDN',
+          })
+
           await service.create(context, 'USER-1', {
             offenderNo: 'AA1234AA',
             agencyId: 'MDI',
-            court: 'City of London',
+            courtId: 'CLDN',
             comment: 'some comment',
             mainStartTime: moment('2020-11-20T18:00:00'),
             mainEndTime: moment('2020-11-20T19:00:00'),
@@ -282,10 +312,12 @@ describe('Booking service', () => {
 
     describe('Creating a booking with only mandatory fields', () => {
       it('booking with only mandatory fields created', async () => {
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
-          court: 'City of London',
+          courtId: 'CLDN',
           comment: undefined,
           mainStartTime: moment('2020-11-20T18:00:00'),
           mainEndTime: moment('2020-11-20T19:00:00'),
@@ -296,7 +328,7 @@ describe('Booking service', () => {
 
         expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
           bookingId: 1000,
-          court: 'City of London',
+          courtId: 'CLDN',
           madeByTheCourt: true,
           main: {
             locationId: 2,
@@ -308,10 +340,12 @@ describe('Booking service', () => {
     })
 
     it('email sent when only mandatory fields provided', async () => {
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+
       await service.create(context, 'USER-1', {
         offenderNo: 'AA1234AA',
         agencyId: 'MDI',
-        court: 'City of London',
+        courtId: 'CLDN',
         comment: undefined,
         mainStartTime: moment('2020-11-20T18:00:00'),
         mainEndTime: moment('2020-11-20T19:00:00'),
@@ -341,6 +375,7 @@ describe('Booking service', () => {
       bookingId: 789,
       comment: 'some comment',
       court: 'City of London',
+      courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
       post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
       pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
@@ -370,6 +405,7 @@ describe('Booking service', () => {
       bookingId: 789,
       comment: 'some comment',
       court: 'City of London',
+      courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
       post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
       pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
@@ -381,6 +417,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.updateComments(context, 'A_USER', 1234, 'another comment')
 
@@ -403,6 +440,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -446,6 +484,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -529,6 +568,7 @@ describe('Booking service', () => {
       bookingId: 789,
       comment: 'some comment',
       court: 'City of London',
+      courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
       post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
       pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },

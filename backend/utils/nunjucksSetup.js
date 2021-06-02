@@ -153,6 +153,14 @@ module.exports = (app, path) => {
       }))
   )
 
+  njkEnv.addFilter('showText', value => {
+    return value.text
+  })
+
+  njkEnv.addFilter('showValue', value => {
+    return value.value
+  })
+
   njkEnv.addFilter('showDefault', (value, specifiedText) => {
     if (value === 0) return value
 

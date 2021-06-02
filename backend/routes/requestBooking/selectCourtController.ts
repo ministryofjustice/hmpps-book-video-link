@@ -28,7 +28,8 @@ export default class SelectCourtController {
   public view(): RequestHandler {
     return async (req, res) => {
       const errors = req.flash('errors')
-      const courtLocations = await this.locationService.getVideoLinkEnabledCourts(res.locals)
+      const { username } = res.locals.user
+      const courtLocations = await this.locationService.getVideoLinkEnabledCourts(res.locals, username)
       const details = this.getBookingDetails(req)
       if (!Object.keys(details).length) return res.redirect('/')
 
@@ -78,16 +79,18 @@ export default class SelectCourtController {
 
   public submit(): RequestHandler {
     return async (req, res) => {
-      const { hearingLocation } = req.body
-      const bookingDetails = this.getBookingDetails(req)
-      this.packBookingDetails(req, {
-        ...bookingDetails,
-        hearingLocation,
-      })
+      const { courtId } = req.body
+      const { username } = res.locals.user
       if (req.errors) {
         req.flash('errors', req.errors)
         return res.redirect('/request-booking/select-court')
       }
+      const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, courtId, username)
+      const bookingDetails = this.getBookingDetails(req)
+      this.packBookingDetails(req, {
+        ...bookingDetails,
+        hearingLocation: court.text,
+      })
       return res.redirect('/request-booking/enter-offender-details')
     }
   }

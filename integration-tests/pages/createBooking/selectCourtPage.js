@@ -3,7 +3,7 @@ const page = require('../page')
 const selectCourtPage = () =>
   page('The video link date and time is available', {
     form: () => ({
-      court: () => cy.get('#court'),
+      court: () => cy.get('.qa-court-value'),
       submitButton: () => cy.get('button[type="submit"]'),
     }),
     offenderName: () => cy.get('.qa-name-value'),

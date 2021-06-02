@@ -50,7 +50,7 @@ export default class SelectRoomsController {
     const videoBookingId = await this.bookingService.create(res.locals, username, {
       offenderNo,
       agencyId,
-      court: newBooking.court,
+      courtId: newBooking.courtId,
       mainStartTime: newBooking.startTime,
       mainEndTime: newBooking.endTime,
       pre: form.preLocation,

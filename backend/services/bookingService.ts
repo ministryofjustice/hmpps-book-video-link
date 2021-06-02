@@ -5,6 +5,7 @@ import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 import type NotificationService from './notificationService'
 import type AvailabilityCheckService from './availabilityCheckService'
+import type LocationService from './locationService'
 
 import type {
   BookingDetails,
@@ -35,7 +36,8 @@ export = class BookingService {
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService,
-    private readonly availabilityCheckService: AvailabilityCheckService
+    private readonly availabilityCheckService: AvailabilityCheckService,
+    private readonly locationService: LocationService
   ) {
     this.roomFinderFactory = roomFinderFactory(this.prisonApi)
   }
@@ -62,7 +64,7 @@ export = class BookingService {
   public async create(
     context: Context,
     currentUsername: string,
-    { offenderNo, agencyId, court, comment, mainStartTime, mainEndTime, main, pre, post }: NewBooking
+    { offenderNo, agencyId, courtId, comment, mainStartTime, mainEndTime, main, pre, post }: NewBooking
   ): Promise<number> {
     const [prisonBooking, agencyDetails, roomFinder] = await Promise.all([
       this.prisonApi.getPrisonerDetails(context, offenderNo),
@@ -83,7 +85,7 @@ export = class BookingService {
 
     const videoBookingId = await this.whereaboutsApi.createVideoLinkBooking(context, {
       bookingId: prisonBooking.bookingId,
-      court,
+      courtId,
       madeByTheCourt: true,
       ...(comment ? { comment } : {}),
       main: this.toNewAppointment(mainAppointment),
@@ -91,9 +93,11 @@ export = class BookingService {
       ...(postAppointment ? { post: this.toNewAppointment(postAppointment) } : {}),
     })
 
+    const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId, currentUsername)
+
     await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
       agencyId,
-      court,
+      court: court.text,
       prison: agencyDetails.description,
       offenderNo,
       prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
@@ -106,7 +110,7 @@ export = class BookingService {
 
     raiseAnalyticsEvent(
       'VLB Appointments',
-      `Video link booked for ${court}`,
+      `Video link booked for ${court.text}`,
       `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
     )
 
@@ -140,6 +144,7 @@ export = class BookingService {
       prisonName: agencyDetails.description,
       agencyId: agencyDetails.agencyId,
       courtLocation: bookingDetails.court,
+      courtId: bookingDetails.courtId,
       dateDescription: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC).format(DATE_ONLY_LONG_FORMAT_SPEC),
       date: moment(bookingDetails.main.startTime, DATE_TIME_FORMAT_SPEC),
       comments: bookingDetails.comment,

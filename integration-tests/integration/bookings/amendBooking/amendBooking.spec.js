@@ -9,6 +9,7 @@ const ChangeTimePage = require('../../../pages/amendBooking/changeTimePage')
 
 context('A user can amend a booking', () => {
   beforeEach(() => {
+    cy.clearCookies()
     cy.task('reset')
     cy.task('stubLoginCourt', {})
     cy.login()
@@ -160,9 +161,7 @@ context('A user can amend a booking', () => {
   })
 
   it('A user successfully amends a booking', () => {
-    cy.task('stubLoginCourt', {})
     cy.task('stubUpdateVideoLinkBooking', 10)
-
     const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
@@ -191,7 +190,6 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
-
     const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
     selectAvailableRoomsForm.preLocation().select('100')
     selectAvailableRoomsForm.mainLocation().select('110')

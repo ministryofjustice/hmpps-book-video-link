@@ -104,9 +104,9 @@
     "lint": "eslint backend integration-tests",
     "typecheck": "tsc",
     "security_audit": "npx audit-ci --config audit-ci.json",
-    "int-test": "cypress run",
-    "int-test-no-artefacts": "cypress run --config video=false,screenshotOnRunFailure=false",
-    "int-test-ui": "cypress open",
+    "int-test": "TZ=utc cypress run",
+    "int-test-no-artefacts": "TZ=utc cypress run --config video=false,screenshotOnRunFailure=false",
+    "int-test-ui": "TZ=utc cypress open",
     "compile-sass": "sass --load-path=. ./sass:./build/stylesheets --style compressed",
     "compile-sass-watch": "npm run compile-sass && sass --load-path=. ./sass:./build/stylesheets --watch --style compressed"
   },

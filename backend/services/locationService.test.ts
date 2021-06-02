@@ -1,14 +1,17 @@
 import type { Location, PrisonContactDetail } from 'prisonApi'
 import LocationService from './locationService'
+import ManageCourtsService from './manageCourtsService'
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { app } from '../config'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
+jest.mock('./manageCourtsService')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
+const manageCourtsService = new ManageCourtsService(null, null) as jest.Mocked<ManageCourtsService>
 
 const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`, locationType) =>
   ({
@@ -19,6 +22,7 @@ const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}
   } as Location)
 
 describe('Location service', () => {
+  const userId = 'A_USER'
   const context = {}
   const agency = 'LEI'
   const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj', 'VIDE'), room(27188, 'RES-MCASU-MCASU', null, 'VIDE')]
@@ -30,7 +34,7 @@ describe('Location service', () => {
   let service: LocationService
 
   beforeEach(() => {
-    service = new LocationService(prisonApi, whereaboutsApi)
+    service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
   })
 
   afterEach(() => {
@@ -82,14 +86,44 @@ describe('Location service', () => {
   })
 
   describe('Get video link court locations', () => {
-    it('Should map video link court locations correctly', async () => {
+    it('Should map video link court locations correctly when manage courts disabled', async () => {
+      app.manageCourtsEnabled = false
+      service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
       const courtLocations = { courtLocations: ['London', 'York'] }
       whereaboutsApi.getCourtLocations.mockResolvedValue(courtLocations)
-      const response = await service.getVideoLinkEnabledCourts(context)
+      const response = await service.getVideoLinkEnabledCourts(context, userId)
       expect(response).toEqual([
         { value: 'London', text: 'London' },
         { value: 'York', text: 'York' },
       ])
+    })
+
+    it('Should map video link court locations correctly when manage courts enabled', async () => {
+      app.manageCourtsEnabled = true
+      service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
+      const courtLocations = [
+        { courtName: 'London County Court', courtId: 'LDNCOU' },
+        { courtName: 'York Crown Court', courtId: 'YKCRN' },
+      ]
+      manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
+      const response = await service.getVideoLinkEnabledCourts(context, userId)
+      expect(response).toEqual([
+        { value: 'LDNCOU', text: 'London County Court' },
+        { value: 'YKCRN', text: 'York Crown Court' },
+      ])
+    })
+
+    it('Should find single matching court from courtId ', async () => {
+      app.manageCourtsEnabled = true
+      service = new LocationService(prisonApi, whereaboutsApi, manageCourtsService, app.manageCourtsEnabled)
+      const courtId = 'LDNCOU'
+      const courtLocations = [
+        { courtName: 'London County Court', courtId: 'LDNCOU' },
+        { courtName: 'York Crown Court', courtId: 'YKCRN' },
+      ]
+      manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
+      const response = await service.getVideoLinkEnabledCourt(context, courtId, userId)
+      expect(response).toEqual({ text: 'London County Court', value: 'LDNCOU' })
     })
   })
 })

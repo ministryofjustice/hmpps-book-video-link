@@ -3,17 +3,13 @@ import type { PreferencesDTO } from 'userPreferences'
 
 import CourtApi from '../api/courtApi'
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
-import ManageCourtsService from './manageCourtsService'
+import ManageCourtsService, { UserPreferenceCourt } from './manageCourtsService'
 
 jest.mock('../api/courtApi')
 jest.mock('../api/userCourtPreferencesApi')
 
 const courtApi = new CourtApi(null) as jest.Mocked<CourtApi>
 const userCourtPreferencesApi = new UserCourtPreferencesApi(null) as jest.Mocked<UserCourtPreferencesApi>
-
-type UserPreferenceCourts = CourtDto & {
-  isSelected: boolean
-}
 
 const createCourt = (courtId: string, courtName: string): CourtDto => {
   return {
@@ -27,7 +23,7 @@ const createCourt = (courtId: string, courtName: string): CourtDto => {
   }
 }
 
-const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourts => {
+const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourt => {
   return {
     ...createCourt(courtId, courtName),
     isSelected,

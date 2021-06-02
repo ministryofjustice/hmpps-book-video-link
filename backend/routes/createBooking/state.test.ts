@@ -48,7 +48,7 @@ describe('DateAndTimeCodec', () => {
 describe('DateAndTimeAndCourtCodec', () => {
   test('read', () => {
     const result = DateAndTimeAndCourtCodec.read({
-      court: 'London',
+      courtId: 'LDNCOU',
       bookingId: '123456',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',
@@ -58,7 +58,7 @@ describe('DateAndTimeAndCourtCodec', () => {
     })
 
     expect(result).toStrictEqual({
-      court: 'London',
+      courtId: 'LDNCOU',
       bookingId: 123456,
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -70,7 +70,7 @@ describe('DateAndTimeAndCourtCodec', () => {
 
   test('write', () => {
     const result = DateAndTimeAndCourtCodec.write({
-      court: 'London',
+      courtId: 'LDNCOU',
       bookingId: 123456,
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -80,7 +80,7 @@ describe('DateAndTimeAndCourtCodec', () => {
     })
 
     expect(result).toStrictEqual({
-      court: 'London',
+      courtId: 'LDNCOU',
       bookingId: '123456',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',

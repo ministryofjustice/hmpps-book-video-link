@@ -11,7 +11,7 @@ jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
 
 describe('Select available rooms controller', () => {
-  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   let controller: SelectAvailableRoomsController
 
@@ -22,6 +22,7 @@ describe('Select available rooms controller', () => {
     agencyId: 'WWI',
     videoBookingId: 123,
     courtLocation: 'City of London',
+    courtId: 'CLDN',
     dateDescription: '20 November 2020',
     date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
     offenderNo: 'A123AA',

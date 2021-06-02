@@ -11,11 +11,12 @@ export default class SelectCourtController {
 
   public view: RequestHandler = async (req, res) => {
     const { offenderNo, agencyId } = req.params
+    const { username } = res.locals.user
 
     const [offenderDetails, agencyDetails, courts] = await Promise.all([
       this.prisonApi.getPrisonerDetails(res.locals, offenderNo),
       this.prisonApi.getAgencyDetails(res.locals, agencyId),
-      this.locationService.getVideoLinkEnabledCourts(res.locals),
+      this.locationService.getVideoLinkEnabledCourts(res.locals, username),
     ])
 
     const { firstName, lastName } = offenderDetails
@@ -42,7 +43,7 @@ export default class SelectCourtController {
 
   public submit: RequestHandler = async (req, res) => {
     const { offenderNo, agencyId } = req.params
-    const { court } = req.body
+    const { courtId } = req.body
 
     if (req.errors) {
       req.flash('errors', req.errors)
@@ -50,7 +51,7 @@ export default class SelectCourtController {
     }
 
     const dateAndTime = getNewBooking(req, DateAndTimeCodec)
-    setNewBooking(res, DateAndTimeAndCourtCodec, { ...dateAndTime, court })
+    setNewBooking(res, DateAndTimeAndCourtCodec, { ...dateAndTime, courtId })
 
     return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/select-rooms`)
   }

@@ -13,7 +13,7 @@ jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
 
 describe('Select court appointment rooms', () => {
-  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   let controller: SelectRoomsController
 
@@ -44,7 +44,7 @@ describe('Select court appointment rooms', () => {
 
     req.signedCookies = {
       'booking-creation': {
-        court: 'Leeds',
+        courtId: 'LEEMC',
         bookingId: '123456',
         date: '2017-11-10T00:00:00',
         postRequired: 'true',
@@ -78,7 +78,7 @@ describe('Select court appointment rooms', () => {
 
       expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
         bookingId: 123456,
-        court: 'Leeds',
+        courtId: 'LEEMC',
         agencyId: 'WWI',
         date: moment('2017-11-10T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -166,7 +166,7 @@ describe('Select court appointment rooms', () => {
 
         expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
-          court: 'Leeds',
+          courtId: 'LEEMC',
           comment: 'Test',
           mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
           mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -188,7 +188,7 @@ describe('Select court appointment rooms', () => {
 
         expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
-          court: 'Leeds',
+          courtId: 'LEEMC',
           comment: null,
           mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
           mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),

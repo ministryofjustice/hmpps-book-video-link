@@ -8,7 +8,7 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/bookingService')
 
 describe('video link is available controller', () => {
-  const bookingService = new BookingService(null, null, null, null) as jest.Mocked<BookingService>
+  const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   let controller: VideoLinkIsAvailableController
 
   const req = mockRequest({ params: { bookingId: '123' } })
@@ -18,6 +18,7 @@ describe('video link is available controller', () => {
     agencyId: 'WWI',
     videoBookingId: 123,
     courtLocation: 'City of London',
+    courtId: 'CLDN',
     dateDescription: '20 November 2020',
     date: moment('20/11/2020', DAY_MONTH_YEAR),
     offenderNo: 'A123AA',
