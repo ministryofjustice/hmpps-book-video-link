@@ -1,10 +1,9 @@
-import type { CourtDto } from 'courtRegister'
 import type { PreferencesDTO } from 'userPreferences'
 import { Context } from './model'
 
-import CourtApi from '../api/courtApi'
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
 import { groupBy } from '../utils'
+import WhereaboutsApi from '../api/whereaboutsApi'
 
 export type CourtsByLetter = Map<string, UserPreferenceCourt[]>
 
@@ -15,24 +14,30 @@ export type UserPreferenceCourt = {
 }
 
 export default class ManageCourtsService {
-  constructor(private readonly courtApi: CourtApi, private readonly userCourtPreferencesApi: UserCourtPreferencesApi) {}
+  constructor(
+    private readonly whereaboutsApi: WhereaboutsApi,
+    private readonly userCourtPreferencesApi: UserCourtPreferencesApi
+  ) {}
 
   private sortAlphabetically(courts: UserPreferenceCourt[]): UserPreferenceCourt[] {
-    const sortedCourtList = courts.sort((a, b) => a.courtName.localeCompare(b.courtName))
-    return sortedCourtList
+    return courts.sort((a, b) => a.courtName.localeCompare(b.courtName))
   }
 
   public async getSortedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {
-    const courtsList = await this.courtApi.getCourts()
+    const courtsList = await this.whereaboutsApi.getCourts(context)
     const preferredCourts = await this.userCourtPreferencesApi.getUserPreferredCourts(context, userId)
     return this.sortAlphabetically(
-      courtsList.map(court => ({ ...court, isSelected: preferredCourts.items.includes(court.courtId) }))
+      courtsList.map(court => ({
+        courtId: court.id,
+        courtName: court.name,
+        isSelected: preferredCourts.items.includes(court.id),
+      }))
     )
   }
 
   public async getCourtsByLetter(context: Context, userId: string): Promise<CourtsByLetter> {
     const courts = await this.getSortedCourts(context, userId)
-    return groupBy(courts, (court: CourtDto) => court.courtName.charAt(0).toUpperCase())
+    return groupBy(courts, (court: UserPreferenceCourt) => court.courtName.charAt(0).toUpperCase())
   }
 
   public async getSelectedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {

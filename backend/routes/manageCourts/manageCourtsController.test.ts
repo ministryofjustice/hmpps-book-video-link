@@ -1,7 +1,5 @@
-import type { CourtDto } from 'courtRegister'
-
 import ManageCourtsController from './manageCourtsController'
-import ManageCourtsService from '../../services/manageCourtsService'
+import ManageCourtsService, { UserPreferenceCourt } from '../../services/manageCourtsService'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/manageCourtsService')
@@ -18,32 +16,20 @@ describe('Manage courts controller', () => {
       {
         courtId: 'ABDRCT',
         courtName: 'Aberdare County Court',
-        type: {
-          courtType: 'COU',
-          courtName: 'Aberdare County Court',
-        },
-        active: true,
+        isSelected: true,
       },
       {
         courtId: 'ABDRMC',
         courtName: 'Aberdare Mc',
-        type: {
-          courtType: 'MAG',
-          courtName: 'Aberdare Mc',
-        },
-        active: true,
+        isSelected: true,
       },
       {
         courtId: 'ABDRYC',
         courtName: 'Aberdare Youth Court',
-        type: {
-          courtType: 'YTH',
-          courtName: 'Aberdare Youth Court',
-        },
-        active: true,
+        isSelected: true,
       },
     ],
-  } as unknown) as Map<string, CourtDto[]>
+  } as unknown) as Map<string, UserPreferenceCourt[]>
 
   beforeEach(() => {
     jest.resetAllMocks()

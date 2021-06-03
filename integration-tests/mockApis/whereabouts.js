@@ -1,3 +1,4 @@
+const courts = require('./responses/courts.json')
 const { stubFor, verifyPosts, getMatchingRequests } = require('./wiremock')
 
 module.exports = {
@@ -15,11 +16,11 @@ module.exports = {
       },
     })
   },
-  stubCourtLocations: (locations, status = 200) => {
+  stubCourts: (locations = courts, status = 200) => {
     return stubFor({
       request: {
         method: 'GET',
-        url: '/whereabouts/court/all-courts',
+        url: '/whereabouts/court/courts',
       },
       response: {
         status,

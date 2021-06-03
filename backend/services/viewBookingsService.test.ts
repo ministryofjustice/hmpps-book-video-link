@@ -57,12 +57,15 @@ describe('Add court appointment', () => {
   })
 
   it('courts are returned', async () => {
-    whereaboutsApi.getCourtLocations.mockResolvedValue({ courtLocations: ['Westminster', 'Southwark'] })
+    whereaboutsApi.getCourts.mockResolvedValue([
+      { id: 'WST', name: 'Westminster' },
+      { id: 'STWK', name: 'Southwark' },
+    ])
 
     const result = await viewBookingsService.getList(context, now, null)
 
     expect(result).toStrictEqual({ appointments: [], courts: ['Westminster', 'Southwark'] })
-    expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
+    expect(whereaboutsApi.getCourts).toHaveBeenCalledWith(context)
   })
 
   describe('Creating bookings', () => {
@@ -117,7 +120,10 @@ describe('Add court appointment', () => {
         { agencyId: 'MDI', formattedDescription: 'Moorland (HMP)' },
       ] as Prison[])
 
-      whereaboutsApi.getCourtLocations.mockResolvedValue({ courtLocations: ['Westminster', 'Southwark'] })
+      whereaboutsApi.getCourts.mockResolvedValue([
+        { id: 'WST', name: 'Westminster' },
+        { id: 'STWK', name: 'Southwark' },
+      ])
     })
 
     it('A booking is turned into appointments', async () => {
@@ -140,7 +146,7 @@ describe('Add court appointment', () => {
 
       await viewBookingsService.getList(context, now, null)
 
-      expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
+      expect(whereaboutsApi.getCourts).toHaveBeenCalledWith(context)
       expect(prisonerOffenderSearchApi.getPrisoners).toHaveBeenCalledWith(context, [1, 2])
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
@@ -151,7 +157,7 @@ describe('Add court appointment', () => {
 
       await viewBookingsService.getList(context, now, null)
 
-      expect(whereaboutsApi.getCourtLocations).toHaveBeenCalledWith(context)
+      expect(whereaboutsApi.getCourts).toHaveBeenCalledWith(context)
       expect(prisonerOffenderSearchApi.getPrisoners).not.toHaveBeenCalled()
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')

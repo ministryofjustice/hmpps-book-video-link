@@ -31,7 +31,8 @@ context('A user can view the video link home page', () => {
           agencyId: 'WWI',
           bookingId: 1,
           comment: 'A comment',
-          court: 'Leeds',
+          court: 'Banbury County Court',
+          courtId: 'BANBCT',
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
@@ -54,6 +55,7 @@ context('A user can view the video link home page', () => {
           bookingId: 2,
           comment: 'A comment',
           court: 'Other court',
+          courtId: 'BLAH',
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
@@ -94,7 +96,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 1')
       location().contains('in: HMP Wandsworth')
-      court().contains('Leeds')
+      court().contains('Banbury County Court')
       type().contains('Pre-court hearing')
       action().should('not.exist')
     }
@@ -104,7 +106,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 2')
       location().contains('in: HMP Wandsworth')
-      court().contains('Leeds')
+      court().contains('Banbury County Court')
       type().contains('Court hearing')
       action().contains('Change')
     }
@@ -114,7 +116,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 3')
       location().contains('in: HMP Wandsworth')
-      court().contains('Leeds')
+      court().contains('Banbury County Court')
       type().contains('Post-court hearing')
       action().should('not.exist')
     }
