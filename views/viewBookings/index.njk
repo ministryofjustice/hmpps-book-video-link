@@ -4,6 +4,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% set title = "Video link bookings" %}
 
 {% block beforeContent %}
   {{ govukBackLink({
@@ -15,6 +16,9 @@
 
 {% block content %}
   <h1 class="govuk-heading-l">{{title}}</h1>
+
+  <p class="govuk-body">You can view and change video link bookings for all the courts you have selected.</p>
+
 
   {% set rows = [] %}
       {% for item in appointments %}
@@ -40,15 +44,19 @@
       errorMessage: errors | findError('date')
     }) }}
 
-    {{ govukSelect({
-      name: 'courtOption',
-      id: 'courtOption',
-      label: {
-          text: "Court"
-      },
-      items: courts | addDefaultSelectedVale('All', true) | setSelected(courtOption),
-      errorMessage: errors | findError(courtOption)
-    }) }}
+    {% if courts.length === 1 %}
+      <input type="hidden" name="courtId" value="{{ courts | first | showValue }}" />
+    {% else %}
+      {{ govukSelect({
+          name: 'courtId',
+          id: 'courtId',
+          label: {
+              text: "Court"
+          },
+          items: courts | setSelected(courtId),
+          errorMessage: errors | findError(courtId)
+      }) }}
+    {% endif %}
 
     {{ govukButton({
       text: "Update results",

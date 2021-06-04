@@ -10,9 +10,15 @@ const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchAp
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
-const viewBookingsService = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi)
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
 const locationService = new LocationService(prisonApi, manageCourtsService)
+const viewBookingsService = new ViewBookingsService(
+  prisonApi,
+  whereaboutsApi,
+  prisonerOffenderSearchApi,
+  locationService
+)
+
 const bookingService = new BookingService(
   prisonApi,
   whereaboutsApi,
