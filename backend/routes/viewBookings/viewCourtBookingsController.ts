@@ -3,7 +3,7 @@ import moment from 'moment'
 import type ViewBookingsService from '../../services/viewBookingsService'
 
 export = (viewBookingsService: ViewBookingsService): RequestHandler => async (req, res) => {
-  const { date, courtId } = req.query as { date: string; courtId?: string }
+  const { date, courtId } = req.query as { date?: string; courtId?: string }
   const searchDate = date ? moment(date as string, 'D MMMM YYYY') : moment()
   const { username } = res.locals.user
 

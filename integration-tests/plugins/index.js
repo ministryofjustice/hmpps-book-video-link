@@ -44,8 +44,8 @@ module.exports = on => {
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),
     getFindAvailabilityRequests: () => whereabouts.getFindAvailabilityRequests(),
-    stubGetVideoLinkBookings: ({ agencyId, date, bookings }) =>
-      whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings),
+    stubGetVideoLinkBookings: ({ agencyId, date, bookings, courtId }) =>
+      whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings, courtId),
     stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
     getUpdateCommentRequest: () => whereabouts.getUpdateCommentRequest(),
     stubUpdateVideoLinkBookingComment: videoBookingId => whereabouts.stubUpdateVideoLinkBookingComment(videoBookingId),

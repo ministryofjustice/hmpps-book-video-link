@@ -20,7 +20,7 @@ const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const prisonerOffenderSearchApi = new PrisonerOffenderSearchApi(null) as jest.Mocked<PrisonerOffenderSearchApi>
 const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 
-describe('Add court appointment', () => {
+describe('ViewBookingService', () => {
   let service: ViewBookingsService
   const context = { context: 'some-context' }
   const now = moment()
@@ -60,18 +60,7 @@ describe('Add court appointment', () => {
     config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
 
-  it('courts are returned', async () => {
-    locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { text: 'Westminster Crown Court', value: 'WMRCN' },
-      { text: 'Wimbledon County Court', value: 'WLDCOU' },
-    ])
-    const result = await service.getList(context, now, 'WMRCN', username)
-
-    expect(result).toStrictEqual({ appointments: [], courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }] })
-    expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(context, username)
-  })
-
-  describe('Creating bookings', () => {
+  describe('Get List', () => {
     const preAppointment = {
       court: 'Westminster Crown Court',
       endTime: '2020-12-23T10:00:00',
@@ -109,6 +98,11 @@ describe('Add court appointment', () => {
       videoLinkBookingId: 10,
     }
 
+    const courts = [
+      { text: 'Westminster Crown Court', value: 'WMRCN' },
+      { text: 'Wimbledon County Court', value: 'WLDCOU' },
+    ]
+
     beforeEach(() => {
       prisonerOffenderSearchApi.getPrisoners.mockResolvedValue([
         { bookingId: '1', firstName: 'BOB', lastName: 'SMITH' } as Prisoner,
@@ -123,10 +117,7 @@ describe('Add court appointment', () => {
         { agencyId: 'MDI', formattedDescription: 'Moorland (HMP)' },
       ] as Prison[])
 
-      locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-        { text: 'Westminster Crown Court', value: 'WMRCN' },
-        { text: 'Wimbledon County Court', value: 'WLDCOU' },
-      ])
+      locationService.getVideoLinkEnabledCourts.mockResolvedValue(courts)
     })
 
     it('A booking is turned into appointments', async () => {
@@ -136,7 +127,7 @@ describe('Add court appointment', () => {
 
       expect(result).toStrictEqual({
         appointments: [preAppointment, mainAppointment, postAppointment],
-        courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }],
+        courts,
       })
     })
 
@@ -153,6 +144,8 @@ describe('Add court appointment', () => {
       expect(prisonerOffenderSearchApi.getPrisoners).toHaveBeenCalledWith(context, [1, 2])
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
+      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'WWI', now, 'WMRCN')
+      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
     })
 
     it('Check APIs are called correctly when no bookings', async () => {
@@ -164,6 +157,7 @@ describe('Add court appointment', () => {
       expect(prisonerOffenderSearchApi.getPrisoners).not.toHaveBeenCalled()
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
       expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
+      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
     })
 
     it('multiple bookings', async () => {
@@ -182,20 +176,7 @@ describe('Add court appointment', () => {
           postAppointment,
           postAppointment,
         ],
-        courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }],
-      })
-    })
-
-    it('Can filter by court', async () => {
-      whereaboutsApi.getVideoLinkBookings
-        .mockResolvedValueOnce([booking({ court: 'Wimbledon County Court', courtId: 'WLDCOU' })])
-        .mockResolvedValueOnce([booking({ court: 'Wimbledon County Court', courtId: 'WLDCOU' })])
-
-      const result = await service.getList(context, now, 'WLDCOU', username)
-
-      expect(result).toStrictEqual({
-        appointments: [preAppointment, mainAppointment, postAppointment],
-        courts: [{ text: 'Wimbledon County Court', value: 'WLDCOU' }],
+        courts,
       })
     })
 
@@ -210,7 +191,7 @@ describe('Add court appointment', () => {
           { ...mainAppointment, offenderName: '' },
           { ...postAppointment, offenderName: '' },
         ],
-        courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }],
+        courts,
       })
     })
 
@@ -233,7 +214,7 @@ describe('Add court appointment', () => {
           { ...mainAppointment },
           { ...postAppointment },
         ],
-        courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }],
+        courts,
       })
     })
   })

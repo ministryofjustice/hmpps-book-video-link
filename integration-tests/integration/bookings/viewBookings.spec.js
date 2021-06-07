@@ -2,16 +2,9 @@ const moment = require('moment')
 const CourtVideoLinkBookingsPage = require('../../pages/viewBookings/courtVideoBookingsPage')
 
 context('A user can view the video link home page', () => {
-  before(() => {
+  beforeEach(() => {
     cy.clearCookies()
     cy.task('resetAndStubTokenVerification')
-    cy.task('stubLoginCourt', {})
-    cy.login()
-  })
-
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('hmpps-session-dev')
-    cy.task('stubCourts')
     cy.task('stubAgencies', [{ agencyId: 'WWI', formattedDescription: 'HMP Wandsworth' }])
     cy.task('stubFindPrisonersByBookingIds', [
       { bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' },
@@ -22,17 +15,38 @@ context('A user can view the video link home page', () => {
       agencyId: '.*?',
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
+      courtId: '.*?',
     })
+
+    cy.task('stubAppointmentLocations', {
+      agency: '.*?',
+      locations: [],
+    })
+    cy.task('stubAppointmentLocations', {
+      agency: 'WWI',
+      locations: [
+        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
+        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
+        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
+      ],
+    })
+  })
+
+  it('The results are displayed', () => {
+    cy.task('stubLoginCourt', {})
+    cy.login()
+
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
+      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',
           bookingId: 1,
           comment: 'A comment',
-          court: 'Banbury County Court',
-          courtId: 'BANBCT',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
@@ -54,8 +68,8 @@ context('A user can view the video link home page', () => {
           agencyId: 'WWI',
           bookingId: 2,
           comment: 'A comment',
-          court: 'Other court',
-          courtId: 'BLAH',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
@@ -71,21 +85,6 @@ context('A user can view the video link home page', () => {
       ],
     })
 
-    cy.task('stubAppointmentLocations', {
-      agency: '.*?',
-      locations: [],
-    })
-    cy.task('stubAppointmentLocations', {
-      agency: 'WWI',
-      locations: [
-        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
-        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
-        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
-      ],
-    })
-  })
-
-  it('The results are displayed', () => {
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
     courtVideoBookingsPage.noResultsMessage().should('not.exist')
@@ -96,7 +95,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 1')
       location().contains('in: HMP Wandsworth')
-      court().contains('Banbury County Court')
+      court().contains('Aberdare County Court')
       type().contains('Pre-court hearing')
       action().should('not.exist')
     }
@@ -106,7 +105,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 2')
       location().contains('in: HMP Wandsworth')
-      court().contains('Banbury County Court')
+      court().contains('Aberdare County Court')
       type().contains('Court hearing')
       action().contains('Change')
     }
@@ -116,7 +115,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender One')
       location().contains('Room 3')
       location().contains('in: HMP Wandsworth')
-      court().contains('Banbury County Court')
+      court().contains('Aberdare County Court')
       type().contains('Post-court hearing')
       action().should('not.exist')
     }
@@ -126,7 +125,7 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender Two')
       location().contains('Room 1')
       location().contains('in: HMP Wandsworth')
-      court().contains('Other court')
+      court().contains('Aberdare County Court')
       type().contains('Pre-court hearing')
       action().should('not.exist')
     }
@@ -136,17 +135,77 @@ context('A user can view the video link home page', () => {
       prisoner().contains('Offender Two')
       location().contains('Room 2')
       location().contains('in: HMP Wandsworth')
-      court().contains('Other court')
+      court().contains('Aberdare County Court')
       type().contains('Court hearing')
       action().contains('Change')
     }
   })
 
-  it('Has correct date format and returns unsupported courts when Other is selected', () => {
+  it('Has correct date format, defaults to first court, and allows selecting other court', () => {
+    cy.task('stubLoginCourt', { preferredCourts: ['ABDRCT', 'BANBCT'] })
+
+    cy.task('stubGetVideoLinkBookings', {
+      agencyId: 'WWI',
+      date: moment().format('yyyy-MM-DD'),
+      courtId: 'ABDRCT',
+      bookings: [
+        {
+          agencyId: 'WWI',
+          bookingId: 2,
+          comment: 'A comment',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
+          videoLinkBookingId: 11,
+          main: {
+            locationId: 110,
+            startTime: '2020-01-02T15:00:00',
+            endTime: '2020-01-02T15:30:00',
+          },
+        },
+      ],
+    })
+
+    cy.login()
+
     cy.visit('/bookings')
     const courtVideoBookingsPage = CourtVideoLinkBookingsPage.verifyOnPage()
+    courtVideoBookingsPage.getRows().should('have.length', 1)
+    {
+      const { time, prisoner, location, court, type } = courtVideoBookingsPage.getRow(0)
+      time().contains('15:00 to 15:30')
+      prisoner().contains('Offender Two')
+      location().contains('Room 2')
+      court().contains('Aberdare County Court')
+      type().contains('Court hearing')
+    }
     courtVideoBookingsPage.dateInput().should('have.value', moment().format('D MMMM YYYY'))
-    courtVideoBookingsPage.courtOption().select('Other')
+    courtVideoBookingsPage.courtOption().select('BANBCT')
+
+    cy.task('stubGetVideoLinkBookings', {
+      agencyId: 'WWI',
+      date: moment().format('yyyy-MM-DD'),
+      courtId: 'BANBCT',
+      bookings: [
+        {
+          agencyId: 'WWI',
+          bookingId: 2,
+          comment: 'A comment',
+          court: 'Banbury County Court',
+          courtId: 'BANBCT',
+          videoLinkBookingId: 11,
+          pre: {
+            locationId: 100,
+            startTime: '2020-01-02T14:40:00',
+            endTime: '2020-01-02T15:00:00',
+          },
+          main: {
+            locationId: 110,
+            startTime: '2020-01-02T15:00:00',
+            endTime: '2020-01-02T15:30:00',
+          },
+        },
+      ],
+    })
     courtVideoBookingsPage.submitButton().click()
 
     courtVideoBookingsPage.getRows().should('have.length', 2)
@@ -155,7 +214,7 @@ context('A user can view the video link home page', () => {
       time().contains('14:40 to 15:00')
       prisoner().contains('Offender Two')
       location().contains('Room 1')
-      court().contains('Other court')
+      court().contains('Banbury County Court')
       type().contains('Pre-court hearing')
       action().should('not.exist')
     }
@@ -164,13 +223,16 @@ context('A user can view the video link home page', () => {
       time().contains('15:00 to 15:30')
       prisoner().contains('Offender Two')
       location().contains('Room 2')
-      court().contains('Other court')
+      court().contains('Banbury County Court')
       type().contains('Court hearing')
       action().contains('Change')
     }
   })
 
   it('The no results message is displayed', () => {
+    cy.task('stubLoginCourt', {})
+    cy.login()
+
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),

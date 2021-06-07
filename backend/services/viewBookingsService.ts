@@ -59,7 +59,7 @@ export = class ViewBookingsService {
   public async getList(
     context: Context,
     searchDate: moment.Moment,
-    courtFilter: string,
+    courtIdFilter: string,
     username: string
   ): Promise<Bookings> {
     const [courts, prisons] = await Promise.all([
@@ -68,7 +68,7 @@ export = class ViewBookingsService {
     ])
 
     const sortedCourts = this.sortAlphabetically(courts)
-    const courtId = courtFilter || sortedCourts[0].value
+    const courtId = courtIdFilter || sortedCourts[0].value
 
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
       this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate, courtId)

@@ -4,11 +4,11 @@ const row = i => cy.get(`[data-qa='court-bookings-table'] tbody tr`).eq(i)
 const col = (i, j) => row(i).find('td').eq(j)
 
 const courtVideoBookingsPage = () =>
-  page('Video link bookings for', {
+  page('Video link bookings', {
     searchResultsTableRows: () => cy.get("[data-qa='court-bookings-table'] tr"),
     noResultsMessage: () => cy.get("[data-qa='no-results-message']"),
     dateInput: () => cy.get('#date'),
-    courtOption: () => cy.get('#courtOption'),
+    courtOption: () => cy.get('#courtId'),
     submitButton: () => cy.get('button[type="submit"]'),
     getRows: () => cy.get(`[data-qa='court-bookings-table'] tbody tr`),
     getRow: i => ({
