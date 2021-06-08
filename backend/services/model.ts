@@ -84,7 +84,7 @@ type Row = {
 export type HearingType = 'PRE' | 'MAIN' | 'POST'
 
 export type Bookings = {
-  courts: string[]
+  courts: Court[]
   // Each booking is split into up to 3 separate appointments, this is the flattened list.
   appointments: Row[]
 }

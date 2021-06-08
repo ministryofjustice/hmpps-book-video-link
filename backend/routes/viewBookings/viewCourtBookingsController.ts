@@ -3,19 +3,17 @@ import moment from 'moment'
 import type ViewBookingsService from '../../services/viewBookingsService'
 
 export = (viewBookingsService: ViewBookingsService): RequestHandler => async (req, res) => {
-  const { date, courtOption } = req.query as { date: string; courtOption?: string }
+  const { date, courtId } = req.query as { date?: string; courtId?: string }
   const searchDate = date ? moment(date as string, 'D MMMM YYYY') : moment()
+  const { username } = res.locals.user
 
-  const { appointments, courts } = await viewBookingsService.getList(res.locals, searchDate, courtOption)
-
-  const title = `Video link bookings for ${moment(searchDate).format('D MMMM YYYY')}`
+  const { appointments, courts } = await viewBookingsService.getList(res.locals, searchDate, courtId, username)
 
   return res.render('viewBookings/index.njk', {
-    courts: [...courts.map(key => ({ value: key, text: key })), { value: 'Other', text: 'Other' }],
-    courtOption,
+    courts: courts.map(court => ({ value: court.value, text: court.text })),
+    courtId,
     appointments,
     date: searchDate,
-    title: courtOption ? `${title} - ${courtOption}` : title,
     hearingDescriptions: { PRE: 'Pre-court hearing', MAIN: 'Court hearing', POST: 'Post-court hearing' },
   })
 }

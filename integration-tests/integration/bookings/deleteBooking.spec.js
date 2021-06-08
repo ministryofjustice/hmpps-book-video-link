@@ -26,6 +26,7 @@ context('A user can delete a booking', () => {
     ])
 
     cy.task('stubGetVideoLinkBookings', {
+      courtId: '.*?',
       agencyId: '.*?',
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
@@ -46,6 +47,7 @@ context('A user can delete a booking', () => {
     })
 
     cy.task('stubGetVideoLinkBookings', {
+      courtId: 'ABDRCT',
       agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
       bookings: [
@@ -53,7 +55,8 @@ context('A user can delete a booking', () => {
           agencyId: 'WWI',
           bookingId: 1,
           comment: 'A comment',
-          court: 'Leeds',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
@@ -75,7 +78,8 @@ context('A user can delete a booking', () => {
           agencyId: 'WWI',
           bookingId: 2,
           comment: 'A comment',
-          court: 'Other court',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
@@ -96,7 +100,8 @@ context('A user can delete a booking', () => {
       agencyId: 'WWI',
       bookingId: 1,
       comment: 'A comment',
-      court: 'Leeds',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
       videoLinkBookingId: 10,
       pre: {
         locationId: 100,

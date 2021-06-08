@@ -25,6 +25,7 @@ context('A user can amend a booking', () => {
 
     cy.task('stubGetVideoLinkBookings', {
       agencyId: '.*?',
+      courtId: '.*?',
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })
@@ -52,12 +53,14 @@ context('A user can amend a booking', () => {
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
+      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',
           bookingId: 1,
           comment: 'A comment',
-          court: 'Leeds',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
@@ -79,7 +82,8 @@ context('A user can amend a booking', () => {
           agencyId: 'WWI',
           bookingId: 2,
           comment: 'A comment',
-          court: 'Other court',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
@@ -100,7 +104,8 @@ context('A user can amend a booking', () => {
       agencyId: 'WWI',
       bookingId: 1,
       comment: 'A comment',
-      court: 'Leeds',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
       videoLinkBookingId: 10,
       pre: {
         locationId: 100,
@@ -181,7 +186,7 @@ context('A user can amend a booking', () => {
     const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
     videoLinkIsAvailablePage.offenderName().contains('John Doe')
     videoLinkIsAvailablePage.prison().contains('Wandsworth')
-    videoLinkIsAvailablePage.courtLocation().contains('Leeds')
+    videoLinkIsAvailablePage.courtLocation().contains('Aberdare County Court')
     videoLinkIsAvailablePage.date().contains(tomorrow.format('D MMMM YYYY'))
     videoLinkIsAvailablePage.startTime().contains('10:55')
     videoLinkIsAvailablePage.endTime().contains('11:55')
@@ -207,7 +212,7 @@ context('A user can amend a booking', () => {
     confirmationPage.comments().contains('A comment')
     confirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
     confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
-    confirmationPage.courtLocation().contains('Leeds')
+    confirmationPage.courtLocation().contains('Aberdare County Court')
     confirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
@@ -354,7 +359,7 @@ context('A user can amend a booking', () => {
       agencyId: 'WWI',
       bookingId: 1,
       comment: 'A comment',
-      court: 'Leeds',
+      court: 'Aberdare County Court',
       videoLinkBookingId: 10,
       main: {
         locationId: 110,

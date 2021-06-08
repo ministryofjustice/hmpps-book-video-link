@@ -57,10 +57,10 @@ export = class WhereaboutsApi {
     context: Context,
     agencyId: string,
     date: moment.Moment,
-    court?: string
+    courtId?: string
   ): Promise<VideoLinkBooking[]> {
     const searchParams = mapToQueryString({
-      court,
+      courtId,
     })
 
     return this.get(

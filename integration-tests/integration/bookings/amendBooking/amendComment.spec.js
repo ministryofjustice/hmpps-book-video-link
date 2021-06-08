@@ -10,7 +10,8 @@ context('A user can update a booking comment', () => {
       agencyId: 'WWI',
       bookingId: 1,
       comment,
-      court: 'Leeds',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
       videoLinkBookingId: 10,
       pre: {
         locationId: 100,
@@ -40,6 +41,7 @@ context('A user can update a booking comment', () => {
     cy.task('stubFindPrisonersByBookingIds', [{ bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' }])
 
     cy.task('stubGetVideoLinkBookings', {
+      courtId: '.*?',
       agencyId: '.*?',
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
@@ -67,12 +69,14 @@ context('A user can update a booking comment', () => {
     cy.task('stubGetVideoLinkBookings', {
       agencyId: 'WWI',
       date: moment().format('yyyy-MM-DD'),
+      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',
           bookingId: 1,
           comment: 'A comment',
-          court: 'Leeds',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
@@ -94,7 +98,8 @@ context('A user can update a booking comment', () => {
           agencyId: 'WWI',
           bookingId: 2,
           comment: 'A comment',
-          court: 'Other court',
+          court: 'Aberdare County Court',
+          courtId: 'ABDRCT',
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
@@ -160,7 +165,7 @@ context('A user can update a booking comment', () => {
     commentsConfirmationPage.comments().contains('A comment is updated')
     commentsConfirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
     commentsConfirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
-    commentsConfirmationPage.courtLocation().contains('Leeds')
+    commentsConfirmationPage.courtLocation().contains('Aberdare County Court')
     commentsConfirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()
@@ -193,7 +198,7 @@ context('A user can update a booking comment', () => {
     commentsConfirmationPage.comments().contains('A new comment')
     commentsConfirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
     commentsConfirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
-    commentsConfirmationPage.courtLocation().contains('Leeds')
+    commentsConfirmationPage.courtLocation().contains('Aberdare County Court')
     commentsConfirmationPage.exitToAllBookings().click()
 
     CourtVideoLinkBookingsPage.verifyOnPage()

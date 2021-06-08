@@ -7,25 +7,17 @@ import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls, toMap } from '../utils'
 import { app } from '../config'
-import { Context, HearingType, Bookings } from './model'
+import { Context, HearingType, Bookings, Court } from './model'
 import PrisonerOffenderSearchApi from '../api/prisonerOffenderSearchApi'
+import LocationService from './locationService'
 
 export = class ViewBookingsService {
   constructor(
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
-    private readonly prisonerOffenderSearch: PrisonerOffenderSearchApi
+    private readonly prisonerOffenderSearch: PrisonerOffenderSearchApi,
+    private readonly locationService: LocationService
   ) {}
-
-  private filterByCourt(option: string, courts: string[], booking: VideoLinkBooking) {
-    if (!option) {
-      return true
-    }
-    if (option === 'Other') {
-      return !courts.includes(booking.court)
-    }
-    return option === booking.court
-  }
 
   private getOffenderName(offenderBookings: Prisoner[], booking: VideoLinkBooking) {
     const offenderBooking = offenderBookings.find(b => Number(b.bookingId) === booking.bookingId)
@@ -60,26 +52,37 @@ export = class ViewBookingsService {
     }
   }
 
-  public async getList(context: Context, searchDate: moment.Moment, courtFilter: string): Promise<Bookings> {
+  private sortAlphabetically(courts: Court[]): Court[] {
+    return courts.sort((a, b) => a.text.localeCompare(b.text))
+  }
+
+  public async getList(
+    context: Context,
+    searchDate: moment.Moment,
+    courtIdFilter: string,
+    username: string
+  ): Promise<Bookings> {
+    const [courts, prisons] = await Promise.all([
+      this.locationService.getVideoLinkEnabledCourts(context, username),
+      this.prisonApi.getAgencies(context).then(result => toMap(result, 'agencyId')),
+    ])
+
+    const sortedCourts = this.sortAlphabetically(courts)
+    const courtId = courtIdFilter || sortedCourts[0].value
+
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
-      this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate)
+      this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate, courtId)
     )
     const locationRequests = app.videoLinkEnabledFor.map(prison =>
       this.prisonApi.getLocationsForAppointments(context, prison)
     )
 
-    const [courts, prisons, locations, bookings] = await Promise.all([
-      this.whereaboutsApi.getCourts(context),
-      this.prisonApi.getAgencies(context).then(result => toMap(result, 'agencyId')),
+    const [locations, bookings] = await Promise.all([
       flattenCalls(locationRequests).then(result => toMap(result, 'locationId')),
       flattenCalls(bookingRequests),
     ])
 
-    const courtNames = courts.map(c => c.name)
-
-    const relevantBookings = bookings
-      .flatMap(array => array)
-      .filter(booking => this.filterByCourt(courtFilter, courtNames, booking))
+    const relevantBookings = bookings.flatMap(array => array)
 
     const toAppointment = await this.appointmentBuilder(context, prisons, locations, relevantBookings)
 
@@ -91,6 +94,6 @@ export = class ViewBookingsService {
       ])
       .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
 
-    return { courts: courtNames, appointments }
+    return { courts: sortedCourts, appointments }
   }
 }
