@@ -35,50 +35,6 @@ describe('SelectAvailableRoomsValidation', () => {
     })
   })
 
-  describe('checking for difference of locations', () => {
-    it('should return an error when the pre location and main location are the same', () => {
-      expect(
-        validator({
-          ...form,
-          preLocation: '1',
-          mainLocation: '1',
-        })
-      ).toStrictEqual([errorTypes.preLocation.different])
-    })
-
-    it('should return an error when the post location and main location are the same', () => {
-      expect(
-        validator({
-          ...form,
-          mainLocation: '1',
-          postLocation: '1',
-        })
-      ).toStrictEqual([errorTypes.postLocation.different])
-    })
-
-    it('should not return an error when the pre, main and post locations are all different', () => {
-      expect(
-        validator({
-          ...form,
-          preLocation: '2',
-          mainLocation: '1',
-          postLocation: '3',
-        })
-      ).toStrictEqual([])
-    })
-
-    it('should not return an error when the pre and post locations are the same but different to the main location', () => {
-      expect(
-        validator({
-          ...form,
-          preLocation: '2',
-          mainLocation: '1',
-          postLocation: '2',
-        })
-      ).toStrictEqual([])
-    })
-  })
-
   describe('checking maximum comment length validation', () => {
     it('should return an error when a comment exceeds 3600 characters', () => {
       expect(validator({ ...form, comment: '#'.repeat(3601) })).toStrictEqual([errorTypes.commentLength])
