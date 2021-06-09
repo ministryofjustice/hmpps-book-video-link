@@ -299,56 +299,6 @@ context('A user can amend a booking', () => {
     changeDateAndTimePage.form.inlineError().contains('Select a date that is not in the past')
   })
 
-  it('A user will be shown a validation message when selecting the same location for pre and main rooms', () => {
-    cy.task('stubLoginCourt', {})
-    cy.task('stubRoomAvailability', {
-      pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
-      main: [
-        { locationId: 100, description: 'Room 1', locationType: 'VIDE' },
-        { locationId: 110, description: 'Room 2', locationType: 'VIDE' },
-      ],
-      post: [{ locationId: 120, description: 'Room 3', locationType: 'VIDE' }],
-    })
-    const tomorrow = moment().add(1, 'days')
-
-    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
-    bookingDetailsPage.changeDate().click()
-
-    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
-    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
-    changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
-    changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
-    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
-    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
-    changeDateAndTimePage.form.continue().click()
-
-    const videoLinkIsAvailablePage = VideoLinkIsAvailablePage.verifyOnPage()
-    videoLinkIsAvailablePage.continue().click()
-
-    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
-
-    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.preLocation().select('100')
-    selectAvailableRoomsForm.mainLocation().select('100')
-    selectAvailableRoomsForm.postLocation().select('120')
-    selectAvailableRoomsPage.bookVideoLink().click()
-
-    SelectAvailableRoomsPage.verifyOnPage()
-    selectAvailableRoomsForm.preLocation().should('have.value', '100')
-    selectAvailableRoomsForm.mainLocation().should('have.value', '100')
-    selectAvailableRoomsForm.postLocation().should('have.value', '120')
-    selectAvailableRoomsPage.errorSummaryTitle().contains('There is a problem')
-    selectAvailableRoomsPage
-      .errorSummaryBody()
-      .contains('Select a different room for the pre-court hearing to the room for the court hearing briefing')
-    selectAvailableRoomsForm
-      .inlineError()
-      .contains('Select a different room for the pre-court hearing to the room for the court hearing briefing')
-  })
-
   it('Select drop downs for pre and post are not displayed when pre and post appointments are not present', () => {
     const tomorrow = moment().add(1, 'days')
     cy.task('stubLoginCourt', {})
