@@ -1,14 +1,11 @@
 {% extends "./partials/layout.njk" %}
 {% from "./components/card/card.njk" import card %}
-
 {% set title = "Book a video link with a prison" %}
-
 {% block main %}
     <div class="govuk-width-container">
         <h1 class="govuk-heading-l govuk-!-margin-top-7">{{ title }}</h1>
         <p class="govuk-body govuk-!-margin-bottom-7">If you work in a court, you can book a video link with a prison for a court appearance.</p>
     </div>
-
     <div class="homepage-content">
         <div class="govuk-width-container">
             <ul class="govuk-grid-row card-group">
@@ -21,7 +18,6 @@
               "data-qa": "bookings-link"
             }) }}
                 </li>
-
                 <li class="govuk-grid-column-one-third card-group__item">
                     {{ card({
               "href": '/bookings',
@@ -31,11 +27,19 @@
               "data-qa": "appointments-link"
             }) }}
                 </li>
+                <li class="govuk-grid-column-one-third card-group__item">
+                    {{ card({
+              "href": '/manage-courts',
+              "clickable": "true",
+              "heading": 'Manage your list of courts',
+              "description": 'Choose the courts you book video links for.',
+              "data-qa": "manage-courts-link"
+            }) }}
+                </li>
             </ul>
         </div>
     </div>
 {% endblock %}
-
 {% block pageScripts %}
     <script src="/js/card.js"></script>
 {% endblock %}
