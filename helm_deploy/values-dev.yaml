@@ -29,4 +29,3 @@ env:
   TOKENVERIFICATION_API_URL: https://token-verification-api-dev.prison.service.justice.gov.uk
   TOKENVERIFICATION_API_ENABLED: true
   REDIS_ENABLED: true
-  MANAGE_COURTS_ENABLED: true

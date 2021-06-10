@@ -88,7 +88,7 @@ describe('setupAuthorisation tests', () => {
       nunjucksSetup(app, path)
       const services = /** @type{any} */ ({})
       app.use((req, res, next) => {
-        res.locals = { userRoles: () => [] }
+        res.locals = { userRoles: () => [], preferredCourts: ['ABRDCT'] }
         next()
       })
 

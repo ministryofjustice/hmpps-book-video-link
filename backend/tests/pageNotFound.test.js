@@ -19,6 +19,7 @@ describe('Page not found ', () => {
     app.use((req, res, next) => {
       req.session = /** @type {Session} */ ({})
       req.session.userDetails = { name: 'Jim', username: 'JIM' }
+      res.locals.preferredCourts = 0
       next()
     })
     const services = /** @type{any} */ ({ prisonApi, whereaboutsApi, oauthApi })
