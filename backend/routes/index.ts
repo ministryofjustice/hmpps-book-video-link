@@ -12,7 +12,7 @@ import amendBookingsRoutes from './amendBooking'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
 
-import { supportEmail, supportTelephone, app } from '../config'
+import { supportEmail, supportTelephone } from '../config'
 
 const router = express.Router()
 
@@ -21,7 +21,7 @@ export = function createRoutes(services: Services): Router {
     res.render('courtsNotSelected.njk')
   })
   router.use(manageCourtsRoutes(services))
-  router.use(asyncMiddleware(checkForPreferredCourts(app.manageCourtsEnabled)))
+  router.use(asyncMiddleware(checkForPreferredCourts()))
 
   router.get('/', (req, res) => res.render('home.njk'))
 
