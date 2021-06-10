@@ -11,6 +11,12 @@ describe('Feedback and support', () => {
     const app = express()
     nunjucksSetup(app, path)
     const services = /** @type{any} */ ({})
+
+    app.use((req, res, next) => {
+      res.locals = { preferredCourts: ['ABRDCT'] }
+      next()
+    })
+
     app.use(routes(services))
     request = supertest(app)
   })
