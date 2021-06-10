@@ -13,7 +13,7 @@ describe('Feedback and support', () => {
     const services = /** @type{any} */ ({})
 
     app.use((req, res, next) => {
-      res.locals = { preferredCourts: 0 }
+      res.locals = { preferredCourts: ['ABRDCT'] }
       next()
     })
 
