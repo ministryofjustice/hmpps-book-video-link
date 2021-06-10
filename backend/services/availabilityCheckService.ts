@@ -52,13 +52,7 @@ export default class AvailabilityCheckService {
   }
 
   private async isAvailable(request: AvailabilityRequest, { pre, main, post }: Rooms): Promise<boolean> {
-    return main
-      .map(l => l.value)
-      .some(mainRoom => {
-        const preSatisfied = !request.preRequired || pre.some(preRoom => preRoom.value !== mainRoom)
-        const postSatisfied = !request.postRequired || post.some(postRoom => postRoom.value !== mainRoom)
-        return preSatisfied && postSatisfied
-      })
+    return main.length > 0 && (!request.preRequired || pre.length > 0) && (!request.postRequired || post.length > 0)
   }
 
   private selectedRoomExists(selectedRoom: number, possibleRooms: Room[]): boolean {
