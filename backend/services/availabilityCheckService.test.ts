@@ -255,7 +255,7 @@ describe('AvailabilityCheckService', () => {
           post: [],
         })
 
-        await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
+        await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('Same set of available rooms each - available', async () => {
@@ -327,7 +327,7 @@ describe('AvailabilityCheckService', () => {
           post: [],
         })
 
-        await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(false)
+        await expect(isAvailable({ ...request, preRequired: true, postRequired: false })).resolves.toBe(true)
       })
 
       test('Same set of available rooms each - available', async () => {
@@ -399,7 +399,7 @@ describe('AvailabilityCheckService', () => {
           post: [location(1)],
         })
 
-        await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(false)
+        await expect(isAvailable({ ...request, preRequired: false, postRequired: true })).resolves.toBe(true)
       })
 
       test('Same set of available rooms each - available', async () => {
@@ -471,7 +471,7 @@ describe('AvailabilityCheckService', () => {
           post: [location(1)],
         })
 
-        await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(false)
+        await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(true)
       })
 
       test('Share room for main and post - not available', async () => {
@@ -481,7 +481,7 @@ describe('AvailabilityCheckService', () => {
           post: [location(2)],
         })
 
-        await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(false)
+        await expect(isAvailable({ ...request, preRequired: true, postRequired: true })).resolves.toBe(true)
       })
 
       test('2 rooms available all the time - available', async () => {
