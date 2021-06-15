@@ -23,7 +23,7 @@ context('Booking is not available', () => {
       videoLinkBookingId: 10,
       pre: {
         locationId: 100,
-        startTime: '2020-01-02T12:40:00',
+        startTime: '2020-01-02T12:45:00',
         endTime: '2020-01-02T13:00:00',
       },
       main: {
@@ -34,7 +34,7 @@ context('Booking is not available', () => {
       post: {
         locationId: 120,
         startTime: '2020-01-02T13:30:00',
-        endTime: '2020-01-02T13:50:00',
+        endTime: '2020-01-02T13:45:00',
       },
     })
 
@@ -69,9 +69,9 @@ context('Booking is not available', () => {
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
     changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('35')
-    changeDateAndTimePage.form.endTimeHours().select('12')
-    changeDateAndTimePage.form.endTimeMinutes().select('15')
+    changeDateAndTimePage.form.startTimeMinutes().select('30')
+    changeDateAndTimePage.form.endTimeHours().select('11')
+    changeDateAndTimePage.form.endTimeMinutes().select('00')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()
@@ -79,7 +79,7 @@ context('Booking is not available', () => {
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
     videoLinkNotAvailablePage.date().contains(tomorrow.format('dddd D MMMM YYYY'))
     videoLinkNotAvailablePage.startTime().contains('10:15')
-    videoLinkNotAvailablePage.endTime().contains('12:35')
+    videoLinkNotAvailablePage.endTime().contains('11:15')
   })
 
   it('Should redirect user to retry with alternative appointment and previous request should already be populated', () => {
@@ -89,10 +89,10 @@ context('Booking is not available', () => {
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeHours().select('11')
+    changeDateAndTimePage.form.startTimeMinutes().select('00')
     changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeMinutes().select('30')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()
@@ -103,24 +103,24 @@ context('Booking is not available', () => {
     ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().should('have.value', tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.form.startTimeHours().contains('10')
-    changeDateAndTimePage.form.startTimeMinutes().contains('55')
+    changeDateAndTimePage.form.startTimeMinutes().contains('45')
     changeDateAndTimePage.form.endTimeHours().contains('11')
-    changeDateAndTimePage.form.startTimeMinutes().contains('55')
+    changeDateAndTimePage.form.startTimeMinutes().contains('45')
     changeDateAndTimePage.form.preAppointmentRequiredYes().should('have.value', 'yes')
     changeDateAndTimePage.form.postAppointmentRequiredYes().should('have.value', 'yes')
   })
 
-  it('Should redirect to details page', () => {
+  it('Cancellation should redirect to details page', () => {
     const tomorrow = moment().add(1, 'days')
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
     bookingDetailsPage.changeDate().click()
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeHours().select('11')
+    changeDateAndTimePage.form.startTimeMinutes().select('00')
     changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeMinutes().select('30')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()

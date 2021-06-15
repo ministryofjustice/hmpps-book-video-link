@@ -16,18 +16,18 @@ describe('bookingTimes', () => {
   })
 
   test('getPreAppointmentInterval', () => {
-    expect(getPreAppointmentInterval(startTime)).toStrictEqual({ start: '10:10', end: '10:30' })
+    expect(getPreAppointmentInterval(startTime)).toStrictEqual({ start: '10:15', end: '10:30' })
   })
 
   test('getPostAppointmentInterval', () => {
-    expect(getPostAppointmentInterval(endTime)).toStrictEqual({ start: '11:00', end: '11:20' })
+    expect(getPostAppointmentInterval(endTime)).toStrictEqual({ start: '11:00', end: '11:15' })
   })
 
   describe('getTotalAppointmentInterval', () => {
     test('both pre and post', () => {
       expect(getTotalAppointmentInterval(startTime, endTime, true, true)).toStrictEqual({
-        start: '10:10',
-        end: '11:20',
+        start: '10:15',
+        end: '11:15',
       })
     })
 
@@ -39,14 +39,14 @@ describe('bookingTimes', () => {
     })
     test('pre only', () => {
       expect(getTotalAppointmentInterval(startTime, endTime, true, false)).toStrictEqual({
-        start: '10:10',
+        start: '10:15',
         end: '11:00',
       })
     })
     test('post only', () => {
       expect(getTotalAppointmentInterval(startTime, endTime, false, true)).toStrictEqual({
         start: '10:30',
-        end: '11:20',
+        end: '11:15',
       })
     })
   })

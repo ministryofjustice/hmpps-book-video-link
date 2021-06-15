@@ -63,10 +63,10 @@ const bookingDetail: BookingDetails = {
   prisonerName: 'John Doe',
   videoBookingId: 1234,
   preDetails: {
-    description: 'Vcc Room 3 - 17:40 to 18:00',
+    description: 'Vcc Room 3 - 17:45 to 18:00',
     endTime: '18:00',
     prisonRoom: 'Vcc Room 3',
-    startTime: '17:40',
+    startTime: '17:45',
   },
   mainDetails: {
     description: 'Vcc Room 1 - 18:00 to 19:00',
@@ -75,8 +75,8 @@ const bookingDetail: BookingDetails = {
     startTime: '18:00',
   },
   postDetails: {
-    description: 'Vcc Room 2 - 19:00 to 19:20',
-    endTime: '19:20',
+    description: 'Vcc Room 2 - 19:00 to 19:15',
+    endTime: '19:15',
     prisonRoom: 'Vcc Room 2',
     startTime: '19:00',
   },
@@ -108,8 +108,8 @@ describe('Booking service', () => {
       court: 'City of London',
       courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
-      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
-      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:15:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:45:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
       videoLinkBookingId: 1234,
     }
 
@@ -184,7 +184,7 @@ describe('Booking service', () => {
           comment: 'some comment',
           madeByTheCourt: true,
           pre: {
-            startTime: '2020-11-20T17:40:00',
+            startTime: '2020-11-20T17:45:00',
             endTime: '2020-11-20T18:00:00',
             locationId: 1,
           },
@@ -195,7 +195,7 @@ describe('Booking service', () => {
           },
           post: {
             startTime: '2020-11-20T19:00:00',
-            endTime: '2020-11-20T19:20:00',
+            endTime: '2020-11-20T19:15:00',
             locationId: 3,
           },
         })
@@ -226,9 +226,9 @@ describe('Booking service', () => {
           prisonerName: 'Jim Bob',
           date: moment('2020-11-20T18:00:00'),
           offenderNo: 'AA1234AA',
-          preDetails: 'Vcc Room 1 - 17:40 to 18:00',
+          preDetails: 'Vcc Room 1 - 17:45 to 18:00',
           mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
-          postDetails: 'Vcc Room 3 - 19:00 to 19:20',
+          postDetails: 'Vcc Room 3 - 19:00 to 19:15',
         })
       })
 
@@ -377,8 +377,8 @@ describe('Booking service', () => {
       court: 'City of London',
       courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
-      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
-      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:15:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:45:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
       videoLinkBookingId: 1234,
     }
 
@@ -407,8 +407,8 @@ describe('Booking service', () => {
       court: 'City of London',
       courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
-      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
-      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:15:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:45:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
       videoLinkBookingId: 1234,
     }
 
@@ -425,9 +425,9 @@ describe('Booking service', () => {
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
         ...bookingDetail,
         comments: 'another comment',
-        preDescription: 'Vcc Room 3 - 17:40 to 18:00',
+        preDescription: 'Vcc Room 3 - 17:45 to 18:00',
         mainDescription: 'Vcc Room 1 - 18:00 to 19:00',
-        postDescription: 'Vcc Room 2 - 19:00 to 19:20',
+        postDescription: 'Vcc Room 2 - 19:00 to 19:15',
       })
       expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
         whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]
@@ -457,9 +457,9 @@ describe('Booking service', () => {
 
       expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
         comment: 'A comment',
-        pre: { locationId: 1, startTime: '2020-11-20T08:40:00', endTime: '2020-11-20T09:00:00' },
+        pre: { locationId: 1, startTime: '2020-11-20T08:45:00', endTime: '2020-11-20T09:00:00' },
         main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
-        post: { locationId: 3, startTime: '2020-11-20T10:00:00', endTime: '2020-11-20T10:20:00' },
+        post: { locationId: 3, startTime: '2020-11-20T10:00:00', endTime: '2020-11-20T10:15:00' },
       })
       expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
         agencyId: 'WWI',
@@ -469,9 +469,9 @@ describe('Booking service', () => {
         comments: 'A comment',
         prisonName: 'some prison',
         prisonerName: 'John Doe',
-        preDescription: 'Vcc Room 1 - 08:40 to 09:00',
+        preDescription: 'Vcc Room 1 - 08:45 to 09:00',
         mainDescription: 'Vcc Room 2 - 09:00 to 10:00',
-        postDescription: 'Vcc Room 3 - 10:00 to 10:20',
+        postDescription: 'Vcc Room 3 - 10:00 to 10:15',
       })
       expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
         whereaboutsApi.updateVideoLinkBooking.mock.invocationCallOrder[0]
@@ -570,8 +570,8 @@ describe('Booking service', () => {
       court: 'City of London',
       courtId: 'CLDN',
       main: { startTime: '2020-11-20T18:00:00', endTime: '2020-11-20T19:00:00', locationId: 1 },
-      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:20:00', locationId: 2 },
-      pre: { startTime: '2020-11-20T17:40:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
+      post: { startTime: '2020-11-20T19:00:00', endTime: '2020-11-20T19:15:00', locationId: 2 },
+      pre: { startTime: '2020-11-20T17:45:00', endTime: '2020-11-20T18:00:00', locationId: 3 },
       videoLinkBookingId: 1234,
     }
 

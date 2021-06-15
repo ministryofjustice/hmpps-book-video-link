@@ -62,8 +62,8 @@ describe('Select court appoinment court', () => {
             { text: 'City of London', value: 'CLDN' },
           ],
           prePostData: {
-            'post-court hearing briefing': '14:00 to 14:20',
-            'pre-court hearing briefing': '10:40 to 11:00',
+            'post-court hearing briefing': '14:00 to 14:15',
+            'pre-court hearing briefing': '10:45 to 11:00',
           },
         })
       )
