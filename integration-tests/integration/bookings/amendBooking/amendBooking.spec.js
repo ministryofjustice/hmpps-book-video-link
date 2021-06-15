@@ -64,7 +64,7 @@ context('A user can amend a booking', () => {
           videoLinkBookingId: 10,
           pre: {
             locationId: 100,
-            startTime: '2020-01-02T12:40:00',
+            startTime: '2020-01-02T12:45:00',
             endTime: '2020-01-02T13:00:00',
           },
           main: {
@@ -75,7 +75,7 @@ context('A user can amend a booking', () => {
           post: {
             locationId: 120,
             startTime: '2020-01-02T13:30:00',
-            endTime: '2020-01-02T13:50:00',
+            endTime: '2020-01-02T13:45:00',
           },
         },
         {
@@ -87,7 +87,7 @@ context('A user can amend a booking', () => {
           videoLinkBookingId: 11,
           pre: {
             locationId: 100,
-            startTime: '2020-01-02T14:40:00',
+            startTime: '2020-01-02T14:45:00',
             endTime: '2020-01-02T15:00:00',
           },
           main: {
@@ -109,7 +109,7 @@ context('A user can amend a booking', () => {
       videoLinkBookingId: 10,
       pre: {
         locationId: 100,
-        startTime: '2020-01-02T12:40:00',
+        startTime: '2020-01-02T12:45:00',
         endTime: '2020-01-02T13:00:00',
       },
       main: {
@@ -120,7 +120,7 @@ context('A user can amend a booking', () => {
       post: {
         locationId: 120,
         startTime: '2020-01-02T13:30:00',
-        endTime: '2020-01-02T13:50:00',
+        endTime: '2020-01-02T13:45:00',
       },
     })
 
@@ -175,10 +175,10 @@ context('A user can amend a booking', () => {
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeHours().select('11')
+    changeDateAndTimePage.form.startTimeMinutes().select('00')
     changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeMinutes().select('30')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()
@@ -188,10 +188,10 @@ context('A user can amend a booking', () => {
     videoLinkIsAvailablePage.prison().contains('Wandsworth')
     videoLinkIsAvailablePage.courtLocation().contains('Aberdare County Court')
     videoLinkIsAvailablePage.date().contains(tomorrow.format('D MMMM YYYY'))
-    videoLinkIsAvailablePage.startTime().contains('10:55')
-    videoLinkIsAvailablePage.endTime().contains('11:55')
-    videoLinkIsAvailablePage.legalBriefingBefore().contains('10:35 to 10:55')
-    videoLinkIsAvailablePage.legalBriefingAfter().contains('11:55 to 12:15')
+    videoLinkIsAvailablePage.startTime().contains('11:00')
+    videoLinkIsAvailablePage.endTime().contains('11:30')
+    videoLinkIsAvailablePage.legalBriefingBefore().contains('10:45 to 11:00')
+    videoLinkIsAvailablePage.legalBriefingAfter().contains('11:30 to 11:45')
     videoLinkIsAvailablePage.continue().click()
 
     const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
@@ -210,8 +210,8 @@ context('A user can amend a booking', () => {
     confirmationPage.startTime().contains('13:00')
     confirmationPage.endTime().contains('13:30')
     confirmationPage.comments().contains('A comment')
-    confirmationPage.legalBriefingBefore().contains('Room 1 - 12:40 to 13:00')
-    confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:50')
+    confirmationPage.legalBriefingBefore().contains('Room 1 - 12:45 to 13:00')
+    confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:45')
     confirmationPage.courtLocation().contains('Aberdare County Court')
     confirmationPage.exitToAllBookings().click()
 
@@ -224,27 +224,27 @@ context('A user can amend a booking', () => {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),
           vlbIdsToExclude: [10],
-          preInterval: { start: '10:35', end: '10:55' },
-          mainInterval: { start: '10:55', end: '11:55' },
-          postInterval: { start: '11:55', end: '12:15' },
+          preInterval: { start: '10:45', end: '11:00' },
+          mainInterval: { start: '11:00', end: '11:30' },
+          postInterval: { start: '11:30', end: '11:45' },
         },
         // To retrieve available rooms
         {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),
           vlbIdsToExclude: [10],
-          preInterval: { start: '10:35', end: '10:55' },
-          mainInterval: { start: '10:55', end: '11:55' },
-          postInterval: { start: '11:55', end: '12:15' },
+          preInterval: { start: '10:45', end: '11:00' },
+          mainInterval: { start: '11:00', end: '11:30' },
+          postInterval: { start: '11:30', end: '11:45' },
         },
         // Final check, just before submitting
         {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),
           vlbIdsToExclude: [10],
-          preInterval: { start: '10:35', end: '10:55' },
-          mainInterval: { start: '10:55', end: '11:55' },
-          postInterval: { start: '11:55', end: '12:15' },
+          preInterval: { start: '10:45', end: '11:00' },
+          mainInterval: { start: '11:00', end: '11:30' },
+          postInterval: { start: '11:30', end: '11:45' },
         },
       ])
     })
@@ -253,9 +253,9 @@ context('A user can amend a booking', () => {
     cy.task('getUpdateBookingRequest').then(request =>
       expect(request).to.deep.equal({
         comment: 'A comment',
-        pre: { locationId: 100, startTime: `${tomorrowDate}T10:35:00`, endTime: `${tomorrowDate}T10:55:00` },
-        main: { locationId: 110, startTime: `${tomorrowDate}T10:55:00`, endTime: `${tomorrowDate}T11:55:00` },
-        post: { locationId: 120, startTime: `${tomorrowDate}T11:55:00`, endTime: `${tomorrowDate}T12:15:00` },
+        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
       })
     )
   })
@@ -277,20 +277,20 @@ context('A user can amend a booking', () => {
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().type(yesterday.format('DD/MM/YYYY'))
     changeDateAndTimePage.form.date().type('{esc}')
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeHours().select('11')
+    changeDateAndTimePage.form.startTimeMinutes().select('00')
     changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeMinutes().select('30')
     changeDateAndTimePage.form.preAppointmentRequiredYes().click()
     changeDateAndTimePage.form.postAppointmentRequiredYes().click()
     changeDateAndTimePage.form.continue().click()
 
     ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().should('have.value', yesterday.format('DD/MM/YYYY'))
-    changeDateAndTimePage.form.startTimeHours().contains('10')
-    changeDateAndTimePage.form.startTimeMinutes().contains('55')
+    changeDateAndTimePage.form.startTimeHours().contains('11')
+    changeDateAndTimePage.form.startTimeMinutes().contains('00')
     changeDateAndTimePage.form.endTimeHours().contains('11')
-    changeDateAndTimePage.form.endTimeMinutes().contains('55')
+    changeDateAndTimePage.form.endTimeMinutes().contains('30')
     changeDateAndTimePage.form.preAppointmentRequiredYes().should('have.value', 'yes')
     changeDateAndTimePage.form.postAppointmentRequiredYes().should('have.value', 'yes')
 
@@ -324,10 +324,10 @@ context('A user can amend a booking', () => {
     const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
     changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
     changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('10')
-    changeDateAndTimePage.form.startTimeMinutes().select('55')
+    changeDateAndTimePage.form.startTimeHours().select('11')
+    changeDateAndTimePage.form.startTimeMinutes().select('00')
     changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('55')
+    changeDateAndTimePage.form.endTimeMinutes().select('30')
     changeDateAndTimePage.form.preAppointmentRequiredNo().click()
     changeDateAndTimePage.form.postAppointmentRequiredNo().click()
     changeDateAndTimePage.form.continue().click()
