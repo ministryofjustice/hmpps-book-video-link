@@ -53,7 +53,7 @@ describe('Select court controller', () => {
         date: '01/01/3019',
         endTime: '3019-01-01T02:00:00',
         postAppointmentRequired: 'yes',
-        postHearingStartAndEndTime: '02:00 to 02:20',
+        postHearingStartAndEndTime: '02:00 to 02:15',
         preAppointmentRequired: 'no',
         preHearingStartAndEndTime: 'Not required',
         prison: 'WWI',
@@ -99,8 +99,8 @@ describe('Select court controller', () => {
           date: '1 January 3019',
         },
         prePostDetails: {
-          'post-court hearing briefing': '02:00 to 02:20',
-          'pre-court hearing briefing': '00:40 to 01:00',
+          'post-court hearing briefing': '02:00 to 02:15',
+          'pre-court hearing briefing': '00:45 to 01:00',
         },
         hearingLocations: [
           {

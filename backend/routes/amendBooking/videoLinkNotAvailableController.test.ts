@@ -36,8 +36,8 @@ describe('video link is not available controller', () => {
         bookingId: '123',
         data: {
           date: 'Friday 20 November 2020',
-          endTime: '19:20',
-          startTime: '17:40',
+          endTime: '19:15',
+          startTime: '17:45',
         },
       })
     })

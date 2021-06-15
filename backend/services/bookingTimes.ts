@@ -4,8 +4,8 @@ import { MOMENT_TIME } from '../shared/dateHelpers'
 
 type DatePair = [start: Moment, end: Moment]
 
-const preStartTime = (startTime: Moment): Moment => moment(startTime).subtract(20, 'minutes')
-const postEndTime = (endTime: Moment): Moment => moment(endTime).add(20, 'minutes')
+const preStartTime = (startTime: Moment): Moment => moment(startTime).subtract(15, 'minutes')
+const postEndTime = (endTime: Moment): Moment => moment(endTime).add(15, 'minutes')
 
 export const createInterval = ([start, end]: DatePair): Interval => {
   return { start: start.format(MOMENT_TIME), end: end.format(MOMENT_TIME) }

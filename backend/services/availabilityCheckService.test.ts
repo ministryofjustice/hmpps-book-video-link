@@ -18,9 +18,9 @@ describe('AvailabilityCheckService', () => {
     service = new AvailabilityCheckService(whereaboutsApi)
   })
 
-  const preInterval = { start: '13:40', end: '14:00' }
+  const preInterval = { start: '13:45', end: '14:00' }
   const mainInterval = { start: '14:00', end: '14:30' }
-  const postInterval = { start: '14:30', end: '14:50' }
+  const postInterval = { start: '14:30', end: '14:45' }
 
   const room = (value): Room => ({ value, text: `Room-${value}` })
 
@@ -561,7 +561,7 @@ describe('AvailabilityCheckService', () => {
           preRequired: true,
           postRequired: false,
         })
-      ).resolves.toStrictEqual({ start: '13:40', end: '14:30' })
+      ).resolves.toStrictEqual({ start: '13:45', end: '14:30' })
     })
 
     test('main and post', async () => {
@@ -574,7 +574,7 @@ describe('AvailabilityCheckService', () => {
           preRequired: false,
           postRequired: true,
         })
-      ).resolves.toStrictEqual({ start: '14:00', end: '14:50' })
+      ).resolves.toStrictEqual({ start: '14:00', end: '14:45' })
     })
 
     test('pre, main and post', async () => {
@@ -587,7 +587,7 @@ describe('AvailabilityCheckService', () => {
           preRequired: true,
           postRequired: true,
         })
-      ).resolves.toStrictEqual({ start: '13:40', end: '14:50' })
+      ).resolves.toStrictEqual({ start: '13:45', end: '14:45' })
     })
   })
 

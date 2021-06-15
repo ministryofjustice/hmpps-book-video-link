@@ -28,9 +28,9 @@ describe('video link is available controller', () => {
     comments: 'some comment',
     preDetails: {
       prisonRoom: 'vcc room 2',
-      startTime: '17:40',
+      startTime: '17:45',
       endTime: '18:00',
-      description: 'vcc room 2 - 17:40 to 18:00',
+      description: 'vcc room 2 - 17:45 to 18:00',
     },
     mainDetails: {
       prisonRoom: 'vcc room 1',
@@ -41,8 +41,8 @@ describe('video link is available controller', () => {
     postDetails: {
       prisonRoom: 'vcc room 3',
       startTime: '19:00',
-      endTime: '19:20',
-      description: 'vcc room 3 - 19:00 to 19:20',
+      endTime: '19:15',
+      description: 'vcc room 3 - 19:00 to 19:15',
     },
   }
 
@@ -89,8 +89,8 @@ describe('video link is available controller', () => {
             courtHearingStartTime: '18:00',
           },
           prePostDetails: {
-            'pre-court hearing briefing': '17:40 to 18:00',
-            'post-court hearing briefing': '19:00 to 19:20',
+            'pre-court hearing briefing': '17:45 to 18:00',
+            'post-court hearing briefing': '19:00 to 19:15',
           },
         },
       })

@@ -9,12 +9,9 @@
         '08','09','10','11','12','13','14','15',
         '16','17','18','19','20','21','22','23'
     ] %}
-
-    {% set minutes = [
-        '00','05','10','15','20',
-        '25','30','35','40','45',
-        '50', '55'
-    ] %}
+    {% 
+        set minutes = ['00','15','30','45']
+    %}
 
 <div class="govuk-form-group {%- if params.errorMessage %} govuk-form-group--error{% endif %}{%- if params.classes %} {{ params.classes }}{% endif %}">
     <div class="time-picker">
@@ -23,7 +20,6 @@
                     text: params.label
                 }) }}
             {% endif %}
-
             {% if params.errorMessage %}
                 {{ govukErrorMessage({
                     text: params.errorMessage.text
@@ -41,7 +37,6 @@
                         'aria-label': 'Hours'
                     }
                 }) }}
-
                 {{ govukSelect({
                     id: params.id +'-minutes',
                     name: params.name + 'Minutes',
@@ -53,7 +48,6 @@
                     }
                 }) }}
             </div>
+        </div>
     </div>
-</div>
-
 {% endmacro %}
