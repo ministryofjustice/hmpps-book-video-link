@@ -32,7 +32,7 @@ const TestCodec: Codec<TestType> = {
 describe('state', () => {
   describe('clearUpdate', () => {
     it('interacts with response', () => {
-      const res = ({ clearCookie: jest.fn() } as unknown) as Response<unknown>
+      const res = { clearCookie: jest.fn() } as unknown as Response<unknown>
 
       clearState('test')(res)
 
@@ -42,7 +42,7 @@ describe('state', () => {
 
   describe('getState', () => {
     it('interacts with request and returns signed cookie', () => {
-      const req = ({
+      const req = {
         signedCookies: {
           test: {
             agencyId: 'MDI',
@@ -50,7 +50,7 @@ describe('state', () => {
             required: 'true',
           },
         },
-      } as unknown) as Request
+      } as unknown as Request
 
       const result = getState('test', TestCodec)(req)
 
@@ -62,9 +62,9 @@ describe('state', () => {
     })
 
     it('returns undefined when no state', () => {
-      const req = ({
+      const req = {
         signedCookies: {},
-      } as unknown) as Request
+      } as unknown as Request
 
       const result = getState('test', TestCodec)(req)
 
@@ -72,14 +72,14 @@ describe('state', () => {
     })
 
     it('validates field are present and correct type', () => {
-      const req = ({
+      const req = {
         signedCookies: {
           test: {
             agencyId: 'MDI',
             required: true,
           },
         },
-      } as unknown) as Request
+      } as unknown as Request
 
       expect(() => getState('test', TestCodec)(req)).toThrowError('Missing or invalid keys: date,required')
     })
@@ -87,7 +87,7 @@ describe('state', () => {
 
   describe('setState', () => {
     it('sets signed cookie', () => {
-      const res = ({ cookie: jest.fn() } as unknown) as Response<unknown>
+      const res = { cookie: jest.fn() } as unknown as Response<unknown>
 
       setState('test', TestCodec)(res, {
         agencyId: 'MDI',
@@ -109,9 +109,9 @@ describe('state', () => {
 
   describe('isStatePresent', () => {
     it('when present', () => {
-      const req = ({
+      const req = {
         signedCookies: { test: 'blah' },
-      } as unknown) as Request
+      } as unknown as Request
 
       const result = isStatePresent('test')(req)
 
@@ -119,9 +119,9 @@ describe('state', () => {
     })
 
     it('when empty', () => {
-      const req = ({
+      const req = {
         signedCookies: { test: '' },
-      } as unknown) as Request
+      } as unknown as Request
 
       const result = isStatePresent('test')(req)
 
@@ -129,9 +129,9 @@ describe('state', () => {
     })
 
     it('when absent', () => {
-      const req = ({
+      const req = {
         signedCookies: {},
-      } as unknown) as Request
+      } as unknown as Request
 
       const result = isStatePresent('test')(req)
 

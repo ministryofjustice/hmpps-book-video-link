@@ -11,7 +11,7 @@ describe('Manage courts controller', () => {
   const req = mockRequest({})
   const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
-  const courtList = ({
+  const courtList = {
     A: [
       {
         courtId: 'ABDRCT',
@@ -29,7 +29,7 @@ describe('Manage courts controller', () => {
         isSelected: true,
       },
     ],
-  } as unknown) as Map<string, UserPreferenceCourt[]>
+  } as unknown as Map<string, UserPreferenceCourt[]>
 
   beforeEach(() => {
     jest.resetAllMocks()
