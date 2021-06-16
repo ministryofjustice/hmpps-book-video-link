@@ -29,7 +29,7 @@ export const mockRequest = ({
   body = {},
   errors = undefined,
 }: RequestParams): jest.Mocked<Request> =>
-  (({
+  ({
     session: {
       userDetails,
     },
@@ -38,10 +38,10 @@ export const mockRequest = ({
     flash: jest.fn().mockReturnValue([]),
     body,
     errors,
-  } as unknown) as jest.Mocked<Request>)
+  } as unknown as jest.Mocked<Request>)
 
 export const mockResponse = ({ locals = { context: {} } }: ResponseParams): jest.Mocked<Response> =>
-  (({
+  ({
     locals,
     sendStatus: jest.fn(),
     send: jest.fn(),
@@ -51,6 +51,6 @@ export const mockResponse = ({ locals = { context: {} } }: ResponseParams): jest
     render: jest.fn(),
     cookie: jest.fn(),
     clearCookie: jest.fn(),
-  } as unknown) as jest.Mocked<Response>)
+  } as unknown as jest.Mocked<Response>)
 
 export const mockNext = (): NextFunction => jest.fn()

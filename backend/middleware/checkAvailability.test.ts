@@ -26,7 +26,7 @@ describe('check availability middleware', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    middleware = checkAvailability(({ availabilityCheckService } as unknown) as Services)
+    middleware = checkAvailability({ availabilityCheckService } as unknown as Services)
     req.signedCookies = {
       'booking-creation': {
         bookingId: '123456',

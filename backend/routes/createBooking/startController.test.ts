@@ -100,7 +100,7 @@ describe('Add court appointment', () => {
   })
 
   describe('submit', () => {
-    const requestWithErrors = errors => (({ ...req, errors } as unknown) as Request)
+    const requestWithErrors = errors => ({ ...req, errors } as unknown as Request)
 
     it('should call flash 2 times if errors', async () => {
       await controller.submit()(requestWithErrors([{ text: 'error message', href: 'error' }]), res, null)

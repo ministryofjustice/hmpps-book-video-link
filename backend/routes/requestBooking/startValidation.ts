@@ -32,8 +32,7 @@ export const errorTypes = {
   date: {
     missing: { text: 'Select the date of the video link', href: '#date' },
     invalid: {
-      text:
-        'Enter the date of the video link using numbers in the format of day, month and year separated using a forward slash. For example, 02/08/2020',
+      text: 'Enter the date of the video link using numbers in the format of day, month and year separated using a forward slash. For example, 02/08/2020',
       href: '#date',
     },
     past: { text: 'Select a date that is not in the past', href: '#date' },

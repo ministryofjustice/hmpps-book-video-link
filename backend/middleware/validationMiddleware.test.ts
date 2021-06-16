@@ -10,9 +10,9 @@ describe('Validation middleware', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    req = ({
+    req = {
       body: 'content',
-    } as unknown) as Request
+    } as unknown as Request
   })
 
   it('should add errors to request object when any are present', async () => {

@@ -53,10 +53,8 @@ export const setNewBooking = <T>(res: Response, codec: Codec<T>, data: T): void 
 
 export const getNewBooking = <T>(req: Request, codec: Codec<T>): T | undefined => getState(COOKIE_NAME, codec)(req)
 
-export const ensureNewBookingPresentMiddleware = (redirectUrl: string): RequestHandler => (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  return isStatePresent(COOKIE_NAME)(req) ? next() : res.redirect(redirectUrl)
-}
+export const ensureNewBookingPresentMiddleware =
+  (redirectUrl: string): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction) => {
+    return isStatePresent(COOKIE_NAME)(req) ? next() : res.redirect(redirectUrl)
+  }

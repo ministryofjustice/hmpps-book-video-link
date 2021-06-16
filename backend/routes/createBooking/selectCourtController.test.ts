@@ -97,7 +97,7 @@ describe('Select court appoinment court', () => {
     describe('when no court has been selected', () => {
       it('should return an error', async () => {
         await controller.submit(
-          ({ ...req, errors: [{ text: 'some error', href: '#courtId' }] } as unknown) as Request,
+          { ...req, errors: [{ text: 'some error', href: '#courtId' }] } as unknown as Request,
           res,
           null
         )
