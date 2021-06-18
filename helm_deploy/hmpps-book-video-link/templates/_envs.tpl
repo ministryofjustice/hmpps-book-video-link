@@ -100,6 +100,18 @@ env:
         name: {{ template "app.name" . }}
         key: NOTTINGHAM_VLB_EMAIL
 
+  - name: ELMLEY_OMU_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: ELMLEY_OMU_EMAIL
+    
+  - name: ELMLEY_VLB_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: ELMLEY_VLB_EMAIL
+
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:

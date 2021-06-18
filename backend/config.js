@@ -97,6 +97,10 @@ module.exports = {
         omu: process.env.NOTTINGHAM_OMU_EMAIL,
         vlb: process.env.NOTTINGHAM_VLB_EMAIL,
       },
+      EYI: {
+        omu: process.env.ELMLEY_OMU_EMAIL,
+        vlb: process.env.ELMLEY_VLB_EMAIL,
+      },
     },
   },
 }
