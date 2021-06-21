@@ -173,4 +173,7 @@ env:
   - name: REDIS_ENABLED
     value: {{ .Values.env.REDIS_ENABLED | quote }}
 
+  - name: NEW_AVAILABILITY_CHECK_ENABLED
+    value: {{ .Values.env.NEW_AVAILABILITY_CHECK_ENABLED | quote }}
+
 {{- end -}}

@@ -29,6 +29,7 @@ env:
   TOKENVERIFICATION_API_URL: https://token-verification-api-preprod.prison.service.justice.gov.uk
   TOKENVERIFICATION_API_ENABLED: true
   REDIS_ENABLED: true
+  NEW_AVAILABILITY_CHECK_ENABLED: false
 
 whitelist:
   cloudplatform-live1-1: 35.178.209.113/32
