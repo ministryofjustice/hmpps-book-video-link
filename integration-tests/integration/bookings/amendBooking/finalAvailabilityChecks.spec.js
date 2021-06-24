@@ -1,6 +1,6 @@
 const moment = require('moment')
 const BookingDetailsPage = require('../../../pages/viewBookings/bookingDetailsPage')
-const ChangeDateAndTimePage = require('../../../pages/amendBooking/changeDateAndTimePage')
+const ChangeVideoLinkBookingPage = require('../../../pages/amendBooking/changeVideoLinkBookingPage')
 const VideoLinkIsAvailablePage = require('../../../pages/amendBooking/videoLinkIsAvailablePage')
 const SelectAvailableRoomsPage = require('../../../pages/amendBooking/selectAvailableRoomsPage')
 const NoLongerAvailablePage = require('../../../pages/amendBooking/noLongerAvailablePage')
@@ -65,21 +65,21 @@ context('Final availability checks before submitting update', () => {
     const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
-    bookingDetailsPage.changeDate().click()
+    bookingDetailsPage.changeDateAndTime().click()
 
-    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
-    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
-    changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('11')
-    changeDateAndTimePage.form.startTimeMinutes().select('00')
-    changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('30')
-    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
-    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
+    const changeVideoLinkBookingPage = ChangeVideoLinkBookingPage.verifyOnPage()
+    changeVideoLinkBookingPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkBookingPage.activeDate().click()
+    changeVideoLinkBookingPage.form.startTimeHours().select('11')
+    changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
+    changeVideoLinkBookingPage.form.endTimeHours().select('11')
+    changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
+    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
 
     cy.task('stubRoomAvailability', { pre: [room1, room4], main: [room2], post: [room3] })
 
-    changeDateAndTimePage.form.continue().click()
+    changeVideoLinkBookingPage.form.continue().click()
 
     VideoLinkIsAvailablePage.verifyOnPage().continue().click()
 
@@ -107,21 +107,21 @@ context('Final availability checks before submitting update', () => {
     const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
-    bookingDetailsPage.changeDate().click()
+    bookingDetailsPage.changeDateAndTime().click()
 
-    const changeDateAndTimePage = ChangeDateAndTimePage.verifyOnPage()
-    changeDateAndTimePage.form.date().type(tomorrow.format('DD/MM/YYYY'))
-    changeDateAndTimePage.activeDate().click()
-    changeDateAndTimePage.form.startTimeHours().select('11')
-    changeDateAndTimePage.form.startTimeMinutes().select('00')
-    changeDateAndTimePage.form.endTimeHours().select('11')
-    changeDateAndTimePage.form.endTimeMinutes().select('30')
-    changeDateAndTimePage.form.preAppointmentRequiredYes().click()
-    changeDateAndTimePage.form.postAppointmentRequiredYes().click()
+    const changeVideoLinkBookingPage = ChangeVideoLinkBookingPage.verifyOnPage()
+    changeVideoLinkBookingPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkBookingPage.activeDate().click()
+    changeVideoLinkBookingPage.form.startTimeHours().select('11')
+    changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
+    changeVideoLinkBookingPage.form.endTimeHours().select('11')
+    changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
+    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
 
     cy.task('stubRoomAvailability', { pre: [room1, room4], main: [room2], post: [room3] })
 
-    changeDateAndTimePage.form.continue().click()
+    changeVideoLinkBookingPage.form.continue().click()
 
     VideoLinkIsAvailablePage.verifyOnPage().continue().click()
 
@@ -139,6 +139,6 @@ context('Final availability checks before submitting update', () => {
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
     videoLinkNotAvailablePage.continue().click()
 
-    ChangeDateAndTimePage.verifyOnPage()
+    ChangeVideoLinkBookingPage.verifyOnPage()
   })
 })

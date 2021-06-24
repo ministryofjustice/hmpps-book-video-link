@@ -18,9 +18,7 @@ export class RoomFinder {
 
 export type RoomFinderFactory = (context: Context, agencyId: string) => Promise<RoomFinder>
 
-export const roomFinderFactory =
-  (prisonApi: PrisonApi): RoomFinderFactory =>
-  async (context, agencyId) => {
-    const locations = await prisonApi.getLocationsForAppointments(context, agencyId)
-    return new RoomFinder(locations)
-  }
+export const roomFinderFactory = (prisonApi: PrisonApi): RoomFinderFactory => async (context, agencyId) => {
+  const locations = await prisonApi.getLocationsForAppointments(context, agencyId)
+  return new RoomFinder(locations)
+}

@@ -1,7 +1,7 @@
 const page = require('../page')
 
-const changeDateAndTimePage = () =>
-  page('Change video link date and time', {
+const changeVideoLinkBookingPage = () =>
+  page('Change video link booking', {
     form: {
       inlineError: () => cy.get('.govuk-error-message'),
       date: () => cy.get('#date'),
@@ -14,6 +14,7 @@ const changeDateAndTimePage = () =>
       postAppointmentRequiredYes: () => cy.get('#post-appointment-required'),
       postAppointmentRequiredNo: () => cy.get('#post-appointment-required-2'),
       continue: () => cy.get('button[type="submit"]'),
+      cancel: () => cy.get("[data-qa='cancel']"),
     },
     datePicker: () => cy.get('#ui-datepicker-div'),
     activeDate: () => cy.get('.ui-state-active'),
@@ -22,5 +23,9 @@ const changeDateAndTimePage = () =>
   })
 
 export default {
-  verifyOnPage: changeDateAndTimePage,
+  verifyOnPage: changeVideoLinkBookingPage,
+  goTo: id => {
+    cy.visit(`/change-video-link-date-and-time/${id}`)
+    return changeVideoLinkBookingPage()
+  },
 }

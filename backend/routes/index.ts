@@ -7,14 +7,26 @@ import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
 import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
+import viewBookingsRoutesV2 from './viewBookings-v2'
 import eventRoutes from './events'
 import amendBookingsRoutes from './amendBooking'
+import amendBookingsRoutesV2 from './amendBooking-v2'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
 
-import { supportEmail, supportTelephone } from '../config'
+import { supportEmail, supportTelephone, app } from '../config'
 
 const router = express.Router()
+
+const amendRoute = (services: Services) =>
+  app.newAvailabilityCheckEnabled
+    ? router.use(amendBookingsRoutesV2(services))
+    : router.use(amendBookingsRoutes(services))
+
+const viewRoute = (services: Services) =>
+  app.newAvailabilityCheckEnabled
+    ? router.use(viewBookingsRoutesV2(services))
+    : router.use(viewBookingsRoutes(services))
 
 export = function createRoutes(services: Services): Router {
   router.get('/courts-not-selected', (req, res) => {
@@ -28,8 +40,10 @@ export = function createRoutes(services: Services): Router {
   router.use(createBookingRoutes(services))
   router.use(deleteBookingRoutes(services))
   router.use(requestBookingRoutes(services))
-  router.use(viewBookingsRoutes(services))
-  router.use(amendBookingsRoutes(services))
+
+  viewRoute(services)
+  amendRoute(services)
+
   router.use(eventRoutes(services))
 
   router.get('/feedback-and-support', (req, res) => {
