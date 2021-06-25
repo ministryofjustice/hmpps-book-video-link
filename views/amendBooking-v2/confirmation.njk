@@ -1,0 +1,76 @@
+{% extends "../partials/layout.njk" %} 
+{% from "govuk/components/button/macro.njk" import govukButton %} 
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %} 
+{% from "govuk/components/radios/macro.njk" import govukRadios %} 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% if changeComments == true %}
+        {% set title = "Your comments have been updated" %}
+        {% set emailMessage = "We have sent you an email with your updated comments" %}
+    {% else %}
+        {% set title = "Your booking has been updated" %}
+        {% set emailMessage = "We have sent you an email with the video link details" %}
+    {% endif %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{ govukPanel({
+                titleText: title,
+                classes: "govuk-!-margin-bottom-6"
+            }) }}
+      <p class="govuk-body">{{ emailMessage }}. An email has also been sent to the prison.</p>
+    <h3 class="govuk-heading-m">Video link details</h3>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.prePostDetails | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    {{
+      govukSummaryList({
+        classes: 'govuk-summary-list--no-border',
+        rows: bookingDetails.courtDetails | toSummaryViewModel | removePaddingBottom
+      })
+    }}
+  </div>
+</div>
+
+<p class="govuk-body govuk-!-margin-top-2">
+  <a href='/bookings' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="exit-to-all-bookings">Exit to all video link bookings</a>
+</p>
+{% endblock %}
+

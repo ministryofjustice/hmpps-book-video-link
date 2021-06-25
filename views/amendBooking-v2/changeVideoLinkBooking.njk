@@ -1,0 +1,64 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
+{% set title = "Change video link booking" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row govuk-!-padding-left-6">
+        <div class="govuk-grid-column-two-thirds">
+
+            {% if errors.length > 0 %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: errors,
+                    attributes: { 'data-qa-errors': true }
+                    }) 
+                }}
+            {% endif %}
+
+            <h1 class="govuk-heading-l">{{ title }}</h1>
+
+            {{
+                govukSummaryList({
+                classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
+                rows: prisoner | toSummaryViewModel | removePaddingBottom
+                })
+            }}
+            {{
+                govukSummaryList({
+                classes: 'govuk-summary-list--no-border',
+                rows: locations | toSummaryViewModel | removePaddingBottom
+                })
+            }}
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-padding-left-6">
+        <div class="govuk-grid-column-full">
+            <form method="POST" novalidate="novalidate">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="agencyId" value="{{ agencyId }}"/>
+
+                {{ dateTimeAndCourtBriefingPicker(form, errors) }}
+
+                {{ govukButton({ 
+                    text: "Continue",
+                    type: "submit",
+                    classes: "govuk-!-margin-top-6",
+                    attributes: {'data-qa': 'continue'}
+                    }) 
+                }}
+
+            </form>
+
+            <p class="govuk-body">
+                <a href="/booking-details/{{bookingId}}" class="govuk-link" data-qa="cancel">Cancel</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

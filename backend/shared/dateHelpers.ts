@@ -7,11 +7,15 @@ export const DATE_ONLY_EXTRA_LONG_FORMAT_SPEC = 'dddd D MMMM YYYY'
 export const DAY_MONTH_YEAR = 'DD/MM/YYYY'
 export const MOMENT_DAY_OF_THE_WEEK = 'dddd'
 export const MOMENT_TIME = 'HH:mm'
+export const HOURS_TIME = 'HH'
+export const MINUTES_TIME = 'mm'
 
 export const DayOfTheWeek = (dateTime: string): string =>
   moment(dateTime, DATE_TIME_FORMAT_SPEC).format(MOMENT_DAY_OF_THE_WEEK)
 export const DayMonthYear = (dateTime: string): string => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(DAY_MONTH_YEAR)
 export const Time = (dateTime: string | Moment): string => moment(dateTime, DATE_TIME_FORMAT_SPEC).format(MOMENT_TIME)
+export const Hours = (time: string): string => moment(time, MOMENT_TIME).format(HOURS_TIME)
+export const Minutes = (time: string): string => moment(time, MOMENT_TIME).format(MINUTES_TIME)
 
 export const buildDate = (
   date: string | undefined,
