@@ -19,7 +19,7 @@ describe('Error handling middleware', () => {
   const production = false
 
   const handleErrorWhenRetryLinkIs = redirectUrl =>
-    errorHandler(production)(error, req, ({ ...res, locals: { redirectUrl } } as unknown) as Response, null)
+    errorHandler(production)(error, req, { ...res, locals: { redirectUrl } } as unknown as Response, null)
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -50,7 +50,7 @@ describe('Error handling middleware', () => {
   })
 
   it('should not display error information in production', async () => {
-    const response = ({ ...res, locals: { redirectUrl: '/bookings' } } as unknown) as Response
+    const response = { ...res, locals: { redirectUrl: '/bookings' } } as unknown as Response
     errorHandler(true)(error, req, response, null)
 
     expect(response.locals.message).toMatch('Something went wrong. The error has been logged. Please try again.')
