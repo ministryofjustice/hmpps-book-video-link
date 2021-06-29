@@ -1,22 +1,29 @@
-import type PrisonApi from '../api/prisonApi'
-import ManageCourtsService from './manageCourtsService'
-import { Context, Room, Prison, Court } from './model'
+import { Location } from 'whereaboutsApi'
+import type { PrisonApi } from '../api'
+import type ManageCourtsService from './manageCourtsService'
+import { Context, Prison, Court } from './model'
 import { app } from '../config'
+import { RoomFinder, RoomFinderFactory } from './roomFinder'
 
 export = class LocationService {
-  constructor(private readonly prisonApi: PrisonApi, private readonly manageCourtsService: ManageCourtsService) {}
-
-  private transformRoom(location): Room {
-    return { value: location.locationId, text: location.userDescription || location.description }
-  }
+  constructor(
+    private readonly prisonApi: PrisonApi,
+    private readonly manageCourtsService: ManageCourtsService,
+    private readonly roomFinderFactory: RoomFinderFactory
+  ) {}
 
   private transformPrison(prison): Prison {
     return { agencyId: prison.agencyId, description: prison.formattedDescription || prison.description }
   }
 
-  public async getRooms(context: Context, agency: string): Promise<Room[]> {
-    const locations = await this.prisonApi.getLocationsForAppointments(context, agency)
-    return locations.filter(loc => loc.locationType === 'VIDE').map(this.transformRoom)
+  public async createRoomFinder(context: Context, agencyId: string): Promise<RoomFinder> {
+    const roomFinder = await this.roomFinderFactory(context, agencyId)
+    return roomFinder
+  }
+
+  public async getRooms(context: Context, agencyId: string): Promise<Location[]> {
+    const roomFinder = await this.roomFinderFactory(context, agencyId)
+    return roomFinder.allRooms()
   }
 
   public async getMatchingPrison(context: Context, prison: string): Promise<Prison> {

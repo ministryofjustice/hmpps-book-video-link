@@ -1,4 +1,5 @@
 import moment, { Moment } from 'moment'
+import { post } from 'superagent'
 import { Interval } from 'whereaboutsApi'
 import { MOMENT_TIME } from '../shared/dateHelpers'
 
@@ -37,3 +38,9 @@ export const getTotalAppointmentInterval = (
     postRequired ? postEndTime(endTime) : endTime,
   ])
 }
+
+export const getPreDescription = (startTime: Moment, preRequired: boolean): string | undefined =>
+  preRequired ? formatTimes(preAppointmentTimes(startTime)) : undefined
+
+export const getPostDescription = (endTime: Moment, postRequired: boolean): string | undefined =>
+  postRequired ? formatTimes(postAppointmentTimes(endTime)) : undefined

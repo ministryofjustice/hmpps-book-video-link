@@ -1,8 +1,8 @@
 const moment = require('moment')
-const { formatName } = require('../../utils')
-const config = require('../../config')
+const { formatName } = require('../../../utils')
+const config = require('../../../config')
 const videolinkPrisonerSearchValidation = require('./prisonerSearchValidation')
-const dobValidation = require('../../shared/dobValidation')
+const dobValidation = require('../../../shared/dobValidation')
 
 module.exports =
   ({ prisonApi }) =>

@@ -5,6 +5,7 @@ import {
   NewVideoLinkBooking,
   UpdateVideoLinkBooking,
   VideoLinkBooking,
+  Location,
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
@@ -51,6 +52,10 @@ export = class WhereaboutsApi {
 
   public getAvailableRooms(context: Context, request: AppointmentLocationsSpecification): Promise<AvailableLocations> {
     return this.post(context, '/court/vlb-appointment-location-finder', request)
+  }
+
+  public getRooms(context: Context, agencyId: string): Promise<Location[]> {
+    return this.get(context, `/video-link-rooms/${agencyId}`)
   }
 
   public getVideoLinkBookings(

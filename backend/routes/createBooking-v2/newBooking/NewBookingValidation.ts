@@ -1,4 +1,4 @@
-import type { ValidationError } from '../../middleware/validationMiddleware'
+import type { ValidationError } from '../../../middleware/validationMiddleware'
 
 export const errorTypes = {
   missingCourt: {

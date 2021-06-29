@@ -90,6 +90,22 @@ module.exports = {
     })
   },
 
+  stubGetRooms: (agencyId, response) => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/whereabouts/video-link-rooms/${agencyId}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response || [],
+      },
+    })
+  },
+
   getFindAvailabilityRequests: () =>
     getMatchingRequests({
       method: 'POST',

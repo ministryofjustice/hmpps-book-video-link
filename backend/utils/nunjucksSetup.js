@@ -161,6 +161,20 @@ module.exports = (app, path) => {
     return value.value
   })
 
+  njkEnv.addFilter('toSelect', (array, valueKey, textKey, value) => {
+    const emptyOption = {
+      value: '',
+      text: 'Select',
+      selected: value === '',
+    }
+    const items = array.map(item => ({
+      value: item[valueKey],
+      text: item[textKey],
+      selected: item[valueKey].toString() === value,
+    }))
+    return [emptyOption, ...items]
+  })
+
   njkEnv.addFilter('showDefault', (value, specifiedText) => {
     if (value === 0) return value
 

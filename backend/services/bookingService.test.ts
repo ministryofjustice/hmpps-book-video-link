@@ -11,6 +11,7 @@ import AvailabilityCheckService from './availabilityCheckService'
 import LocationService from './locationService'
 
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
+import { RoomFinder } from './roomFinder'
 
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
@@ -26,7 +27,7 @@ const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
 const offenderDetails = {
   bookingId: 789,
@@ -43,11 +44,10 @@ const agencyDetail = {
   longDescription: 'some prison',
 }
 
-const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`) =>
+const room = (i, description = `Vcc Room ${i}`) =>
   ({
     description,
     locationId: i,
-    userDescription,
   } as Location)
 
 const bookingDetail: BookingDetails = {
@@ -87,6 +87,10 @@ describe('Booking service', () => {
   let service: BookingService
 
   beforeEach(() => {
+    locationService.createRoomFinder.mockImplementation(
+      async (ctx, agencyId) => new RoomFinder(await whereaboutsApi.getRooms(ctx, agencyId))
+    )
+
     service = new BookingService(
       prisonApi,
       whereaboutsApi,
@@ -117,14 +121,14 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       const result = await service.find(context, 1234)
 
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledTimes(1)
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledTimes(1)
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
 
       expect(result).toStrictEqual(bookingDetail)
     })
@@ -150,7 +154,7 @@ describe('Booking service', () => {
 
   describe('Create', () => {
     beforeEach(() => {
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonerDetails.mockResolvedValue({
         bookingId: 1000,
@@ -386,14 +390,14 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       const result = await service.get(context, 1234)
 
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'WWI')
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledTimes(1)
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledTimes(1)
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
 
       expect(result).toStrictEqual(bookingDetail)
     })
@@ -416,7 +420,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
       locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.updateComments(context, 'A_USER', 1234, 'another comment')
@@ -439,7 +443,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
       locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
@@ -483,7 +487,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
       locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
@@ -524,7 +528,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -545,7 +549,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -579,7 +583,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       await service.delete(context, 'A_USER', 1234)
 
@@ -593,7 +597,7 @@ describe('Booking service', () => {
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
-      prisonApi.getLocationsForAppointments.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
 
       return expect(service.delete(context, 'A_USER', 1234)).resolves.toStrictEqual({
         offenderNo: 'A1234AA',

@@ -9,12 +9,14 @@ const exampleUserDetails = {
   staffId: 123456,
   userId: '654321',
 }
+type CookieValues = Record<string, string>
 
 type RequestParams = {
   userDetails?: unknown
   params?: Record<string, string>
   body?: Record<string, string>
   query?: Record<string, string>
+  signedCookies?: Record<string, CookieValues>
   errors?: ValidationError[]
 }
 
@@ -27,12 +29,14 @@ export const mockRequest = ({
   params = {},
   query = {},
   body = {},
+  signedCookies = {},
   errors = undefined,
 }: RequestParams): jest.Mocked<Request> =>
   ({
     session: {
       userDetails,
     },
+    signedCookies,
     query,
     params,
     flash: jest.fn().mockReturnValue([]),

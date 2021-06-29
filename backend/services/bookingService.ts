@@ -19,7 +19,6 @@ import type {
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
-import { RoomFinderFactory, roomFinderFactory } from './roomFinder'
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 
 type AppointmentDetail = {
@@ -30,17 +29,13 @@ type AppointmentDetail = {
 }
 
 export = class BookingService {
-  roomFinderFactory: RoomFinderFactory
-
   constructor(
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService,
     private readonly availabilityCheckService: AvailabilityCheckService,
     private readonly locationService: LocationService
-  ) {
-    this.roomFinderFactory = roomFinderFactory(this.prisonApi)
-  }
+  ) {}
 
   public async find(context: Context, videoBookingId: number): Promise<BookingDetails | undefined> {
     try {
@@ -69,7 +64,7 @@ export = class BookingService {
     const [prisonBooking, agencyDetails, roomFinder] = await Promise.all([
       this.prisonApi.getPrisonerDetails(context, offenderNo),
       this.prisonApi.getAgencyDetails(context, agencyId),
-      this.roomFinderFactory(context, agencyId),
+      this.locationService.createRoomFinder(context, agencyId),
     ])
 
     const toAppointmentDetails = (locationId: number, [start, end]: [Moment, Moment]) => ({
@@ -122,7 +117,7 @@ export = class BookingService {
     const [prisonBooking, agencyDetails, roomFinder] = await Promise.all([
       this.prisonApi.getPrisonBooking(context, bookingDetails.bookingId),
       this.prisonApi.getAgencyDetails(context, bookingDetails.agencyId),
-      this.roomFinderFactory(context, bookingDetails.agencyId),
+      this.locationService.createRoomFinder(context, bookingDetails.agencyId),
     ])
 
     const toAppointmentDetails = (appointment: Appointment) => {
@@ -175,7 +170,7 @@ export = class BookingService {
       post: update.postLocation && this.toAppointment(update.postLocation, postAppointmentTimes(update.endTime)),
     })
 
-    const { bookingDescription: description } = await this.roomFinderFactory(context, existing.agencyId)
+    const { bookingDescription: description } = await this.locationService.createRoomFinder(context, existing.agencyId)
 
     await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       offenderNo: existing.offenderNo,

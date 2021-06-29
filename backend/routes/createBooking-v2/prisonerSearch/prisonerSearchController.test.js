@@ -1,5 +1,5 @@
 const prisonerSearchController = require('./prisonerSearchController')
-const config = require('../../config')
+const config = require('../../../config')
 
 config.app.videoLinkEnabledFor = ['MDI']
 

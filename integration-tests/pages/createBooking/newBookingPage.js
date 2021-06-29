@@ -1,10 +1,11 @@
 const page = require('../page')
 
 const startPage = () =>
-  page('Add video link date and time', {
+  page('Search for a video link booking', {
     form: () => ({
       location: () => cy.get('#location'),
       date: () => cy.get('#date'),
+      court: () => cy.get('.qa-court-value'),
       startTimeHours: () => cy.get('#start-time-hours'),
       startTimeMinutes: () => cy.get('#start-time-minutes'),
       endTimeHours: () => cy.get('#end-time-hours'),
@@ -13,14 +14,14 @@ const startPage = () =>
       preAppointmentRequiredNo: () => cy.get('#pre-appointment-required-2'),
       postAppointmentRequiredYes: () => cy.get('#post-appointment-required'),
       postAppointmentRequiredNo: () => cy.get('#post-appointment-required-2'),
+      selectPreAppointmentLocation: () => cy.get('#preLocation'),
+      selectMainAppointmentLocation: () => cy.get('#mainLocation'),
+      selectPostAppointmentLocation: () => cy.get('#postLocation'),
       comments: () => cy.get('#comments'),
       submitButton: () => cy.get('button[type="submit"]'),
     }),
     datePicker: () => cy.get('#ui-datepicker-div'),
     activeDate: () => cy.get('.ui-state-active'),
-    recurringInputs: () => cy.get('[data-qa="recurring-inputs"]'),
-    offenderEvents: () => cy.get('[data-qa="offender-events"]'),
-    locationEvents: () => cy.get('[data-qa="location-events"]'),
     errorSummary: () => cy.get('.govuk-error-summary'),
   })
 

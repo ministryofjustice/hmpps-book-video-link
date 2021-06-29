@@ -1,0 +1,72 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set title = "Check and confirm your booking" %}
+
+{% macro appointment(params) %}
+    {{ govukSelect({
+        name: params.name,
+        id: params.name,
+        label: {
+            text: params.description
+        },
+        items: params.locations | addDefaultSelectedVale('Select') | setSelected(params.location),
+        errorMessage: errors | findError(params.name)
+    }) }}
+{% endmacro %}
+
+{% block content %}
+    <div class="govuk-width-container">
+        {% if errors.length > 0 %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: errors,
+                attributes: { 'data-qa-errors': true }
+            }) }}
+        {% endif %}
+
+        <h1 class="govuk-heading-l">{{title}}</h1>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                {{ govukSummaryList({
+                    classes: "govuk-summary-list--no-border govuk-body govuk-!-margin-bottom-2",
+                    rows: offender | toSummaryViewModel | removePaddingBottom
+                }) }}
+
+                {{ govukSummaryList({
+                    classes: "govuk-summary-list--no-border govuk-body govuk-!-margin-bottom-2",
+                    rows: details | toSummaryViewModel | removePaddingBottom
+                }) }}
+
+                <form method="post" class="govuk-!-margin-top-6">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+                    {{ govukTextarea({
+                        name: "comment",
+                        id: "comment",
+                        value: form.comment,
+                        errorMessage: errors | findError('comment'),
+                        label: {
+                            text: "Comments (optional)"
+                        },
+                        hint: {
+                            text: "This can include the hearing number, type of hearing and any other additional details"
+                        }
+                    }) }}
+
+                    {{ govukButton({
+                            text: "Book video link",
+                            type: 'submit',
+                            classes: "govuk-!-margin-right-2"
+                    }) }}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
