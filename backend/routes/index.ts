@@ -5,6 +5,7 @@ import type { Services } from '../services'
 import manageCourtsRoutes from './manageCourts'
 import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
+import createBookingRoutesV2 from './createBooking-v2'
 import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
 import viewBookingsRoutesV2 from './viewBookings-v2'
@@ -18,16 +19,6 @@ import { supportEmail, supportTelephone, app } from '../config'
 
 const router = express.Router()
 
-const amendRoute = (services: Services) =>
-  app.newAvailabilityCheckEnabled
-    ? router.use(amendBookingsRoutesV2(services))
-    : router.use(amendBookingsRoutes(services))
-
-const viewRoute = (services: Services) =>
-  app.newAvailabilityCheckEnabled
-    ? router.use(viewBookingsRoutesV2(services))
-    : router.use(viewBookingsRoutes(services))
-
 export = function createRoutes(services: Services): Router {
   router.get('/courts-not-selected', (req, res) => {
     res.render('courtsNotSelected.njk')
@@ -37,12 +28,18 @@ export = function createRoutes(services: Services): Router {
 
   router.get('/', (req, res) => res.render('home.njk'))
 
-  router.use(createBookingRoutes(services))
   router.use(deleteBookingRoutes(services))
   router.use(requestBookingRoutes(services))
 
-  viewRoute(services)
-  amendRoute(services)
+  if (app.newAvailabilityCheckEnabled) {
+    router.use(createBookingRoutesV2(services))
+    router.use(amendBookingsRoutesV2(services))
+    router.use(viewBookingsRoutesV2(services))
+  } else {
+    router.use(createBookingRoutes(services))
+    router.use(amendBookingsRoutes(services))
+    router.use(viewBookingsRoutes(services))
+  }
 
   router.use(eventRoutes(services))
 
