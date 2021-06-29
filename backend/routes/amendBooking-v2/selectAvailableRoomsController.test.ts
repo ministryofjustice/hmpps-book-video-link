@@ -67,6 +67,7 @@ describe('Select available rooms controller', () => {
     req.signedCookies = {
       'booking-update': {
         agencyId: 'WWI',
+        courtId: 'CLDN',
         date: '2020-11-20T00:00:00',
         startTime: '2020-11-20T18:00:00',
         endTime: '2020-11-20T19:00:00',
@@ -119,6 +120,7 @@ describe('Select available rooms controller', () => {
 
         expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
           agencyId: 'WWI',
+          courtId: 'CLDN',
           videoBookingId: 12,
           date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
           startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -229,6 +231,7 @@ describe('Select available rooms controller', () => {
       expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, {
         comment: 'A comment',
         agencyId: 'WWI',
+        courtId: 'CLDN',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
@@ -247,6 +250,7 @@ describe('Select available rooms controller', () => {
       req.signedCookies = {
         'booking-update': {
           agencyId: 'WWI',
+          courtId: 'CLDN',
           date: '2020-11-20T00:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
@@ -261,6 +265,7 @@ describe('Select available rooms controller', () => {
       expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, {
         comment: undefined,
         agencyId: 'WWI',
+        courtId: 'CLDN',
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),

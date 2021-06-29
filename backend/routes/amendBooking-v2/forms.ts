@@ -2,8 +2,9 @@ import moment, { Moment } from 'moment'
 import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
 import { assertHasStringValues, assertHasOptionalStringValues } from '../../utils'
 
-export type ChangeDateAndTime = {
+export type ChangeVideoLinkBooking = {
   agencyId: string
+  courtId: string
   date: Moment
   startTime: Moment
   endTime: Moment
@@ -11,9 +12,10 @@ export type ChangeDateAndTime = {
   postRequired: boolean
 }
 
-export function ChangeDateAndTime(form: unknown): ChangeDateAndTime {
+export function ChangeVideoLinkBooking(form: unknown): ChangeVideoLinkBooking {
   assertHasStringValues(form, [
     'agencyId',
+    'courtId',
     'date',
     'startTimeHours',
     'startTimeMinutes',
@@ -25,6 +27,7 @@ export function ChangeDateAndTime(form: unknown): ChangeDateAndTime {
 
   return {
     agencyId: form.agencyId,
+    courtId: form.courtId,
     date: moment(form.date, DAY_MONTH_YEAR),
     startTime: buildDate(form.date, form.startTimeHours, form.startTimeMinutes),
     endTime: buildDate(form.date, form.endTimeHours, form.endTimeMinutes),

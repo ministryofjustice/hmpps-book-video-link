@@ -2,12 +2,13 @@ import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { assertHasStringValues } from '../../utils'
 import { clearState, Codec, getState, setState } from '../../utils/state'
-import { ChangeDateAndTime } from './forms'
+import { ChangeVideoLinkBooking } from './forms'
 
-export const ChangeDateAndTimeCodec: Codec<ChangeDateAndTime> = {
-  write: (value: ChangeDateAndTime): Record<string, string> => {
+export const ChangeVideoLinkBookingCodec: Codec<ChangeVideoLinkBooking> = {
+  write: (value: ChangeVideoLinkBooking): Record<string, string> => {
     return {
       agencyId: value.agencyId,
+      courtId: value.courtId,
       date: value.date.format(DATE_TIME_FORMAT_SPEC),
       startTime: value.startTime.format(DATE_TIME_FORMAT_SPEC),
       endTime: value.endTime.format(DATE_TIME_FORMAT_SPEC),
@@ -16,10 +17,19 @@ export const ChangeDateAndTimeCodec: Codec<ChangeDateAndTime> = {
     }
   },
 
-  read(record: Record<string, unknown>): ChangeDateAndTime {
-    assertHasStringValues(record, ['agencyId', 'date', 'startTime', 'endTime', 'preRequired', 'postRequired'])
+  read(record: Record<string, unknown>): ChangeVideoLinkBooking {
+    assertHasStringValues(record, [
+      'agencyId',
+      'courtId',
+      'date',
+      'startTime',
+      'endTime',
+      'preRequired',
+      'postRequired',
+    ])
     return {
       agencyId: record.agencyId,
+      courtId: record.courtId,
       date: moment(record.date, DATE_TIME_FORMAT_SPEC, true),
       startTime: moment(record.startTime, DATE_TIME_FORMAT_SPEC, true),
       endTime: moment(record.endTime, DATE_TIME_FORMAT_SPEC, true),
@@ -30,5 +40,5 @@ export const ChangeDateAndTimeCodec: Codec<ChangeDateAndTime> = {
 }
 
 export const clearUpdate = clearState('booking-update')
-export const setUpdate = setState('booking-update', ChangeDateAndTimeCodec)
-export const getUpdate = getState('booking-update', ChangeDateAndTimeCodec)
+export const setUpdate = setState('booking-update', ChangeVideoLinkBookingCodec)
+export const getUpdate = getState('booking-update', ChangeVideoLinkBookingCodec)
