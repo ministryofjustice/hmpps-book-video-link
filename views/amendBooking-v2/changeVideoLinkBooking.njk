@@ -31,10 +31,25 @@
             }}
             {{
                 govukSummaryList({
-                classes: 'govuk-summary-list--no-border',
+                classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
                 rows: locations | toSummaryViewModel | removePaddingBottom
                 })
             }}
+            {% if courts.length === 1 %}
+            {{ govukSummaryList({
+                classes: "govuk-summary-list--no-border",
+                rows: [{
+                    key: {
+                        text: "Court",
+                        classes: "qa-court-key govuk-!-padding-bottom-0"
+                        },
+                    value: {
+                        text: courts | first | showText,
+                        classes: "qa-court-value govuk-!-padding-bottom-0"
+                        }
+                    }]
+            }) }}
+            {% endif %}    
         </div>
     </div>
 
@@ -43,7 +58,22 @@
             <form method="POST" novalidate="novalidate">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <input type="hidden" name="agencyId" value="{{ agencyId }}"/>
-
+            {% if courts.length === 1 %}
+                <input type="hidden" name="courtId" value="{{ courts | first | showValue }}" />
+            {% endif %} 
+            {% if courts.length > 1 %}
+                {{ govukSelect({
+                    name: "courtId",
+                    id: "courtId",
+                    classes: "qa-court-value",
+                    label: {
+                        text: "Which court is the hearing for?",
+                        classes: "govuk-!-margin-top-8"
+                        },
+                    items: courts | setSelected(form.courtId),
+                    errorMessage: errors | findError("courtId")
+                }) }}
+            {% endif %}
                 {{ dateTimeAndCourtBriefingPicker(form, errors) }}
 
                 {{ govukButton({ 

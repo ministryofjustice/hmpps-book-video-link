@@ -1,11 +1,12 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
-import { ChangeDateAndTimeCodec } from './state'
+import { ChangeVideoLinkBookingCodec } from './state'
 
-describe('ChangeDateAndTimeCodec', () => {
+describe('ChangeVideoLinkBookingCodec', () => {
   test('read', () => {
-    const result = ChangeDateAndTimeCodec.read({
+    const result = ChangeVideoLinkBookingCodec.read({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',
       endTime: '2020-11-20T19:00:00',
@@ -15,6 +16,7 @@ describe('ChangeDateAndTimeCodec', () => {
 
     expect(result).toStrictEqual({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
       postRequired: true,
@@ -24,8 +26,9 @@ describe('ChangeDateAndTimeCodec', () => {
   })
 
   test('write', () => {
-    const result = ChangeDateAndTimeCodec.write({
+    const result = ChangeVideoLinkBookingCodec.write({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
       endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
       postRequired: true,
@@ -35,6 +38,7 @@ describe('ChangeDateAndTimeCodec', () => {
 
     expect(result).toStrictEqual({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: '2020-11-20T18:00:00',
       startTime: '2020-11-20T18:00:00',
       endTime: '2020-11-20T19:00:00',

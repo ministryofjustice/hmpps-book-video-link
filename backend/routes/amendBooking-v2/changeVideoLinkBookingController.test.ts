@@ -1,22 +1,26 @@
 import moment from 'moment'
 import ChangeVideoLinkBookingController from './changeVideoLinkBookingController'
 import BookingService from '../../services/bookingService'
+import LocationService from '../../services/locationService'
 import { BookingDetails, RoomAvailability } from '../../services/model'
 import AvailabilityCheckService from '../../services/availabilityCheckService'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/bookingService')
 jest.mock('../../services/availabilityCheckService')
+jest.mock('../../services/locationService')
 
 describe('change video link booking controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
 
   let controller: ChangeVideoLinkBookingController
   const req = mockRequest({
     params: { bookingId: '123' },
     body: {
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: '20/11/2020',
       startTimeHours: '17',
       startTimeMinutes: '40',
@@ -27,7 +31,7 @@ describe('change video link booking controller', () => {
     },
   })
 
-  const res = mockResponse({})
+  const res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
   const bookingDetails: BookingDetails = {
     agencyId: 'WWI',
@@ -63,7 +67,12 @@ describe('change video link booking controller', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    controller = new ChangeVideoLinkBookingController(bookingService, availabilityCheckService)
+    controller = new ChangeVideoLinkBookingController(bookingService, availabilityCheckService, locationService)
+    locationService.getVideoLinkEnabledCourts.mockResolvedValue([
+      { text: 'Westminster Crown Court', value: 'WMRCN' },
+      { text: 'Wimbledon County Court', value: 'WLDCOU' },
+      { text: 'City of London', value: 'CLDN' },
+    ])
   })
 
   describe('start', () => {
@@ -90,12 +99,17 @@ describe('change video link booking controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
+        courts: [
+          { text: 'Westminster Crown Court', value: 'WMRCN' },
+          { text: 'Wimbledon County Court', value: 'WLDCOU' },
+          { text: 'City of London', value: 'CLDN' },
+        ],
         locations: { prison: 'some prison' },
         prisoner: { name: 'John Doe' },
         errors: [],
         form: {
           date: '20/11/2020',
-          court: 'City of London',
+          courtId: 'CLDN',
           startTimeHours: '18',
           startTimeMinutes: '00',
           endTimeHours: '19',
@@ -106,6 +120,7 @@ describe('change video link booking controller', () => {
         },
       })
     })
+
     it('View page with errors present', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       mockFlashState({
@@ -128,6 +143,11 @@ describe('change video link booking controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
+        courts: [
+          { text: 'Westminster Crown Court', value: 'WMRCN' },
+          { text: 'Wimbledon County Court', value: 'WLDCOU' },
+          { text: 'City of London', value: 'CLDN' },
+        ],
         locations: { prison: 'some prison' },
         prisoner: { name: 'John Doe' },
         errors: [{ text: 'error message', href: 'error' }],
@@ -155,12 +175,17 @@ describe('change video link booking controller', () => {
       expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
+        courts: [
+          { text: 'Westminster Crown Court', value: 'WMRCN' },
+          { text: 'Wimbledon County Court', value: 'WLDCOU' },
+          { text: 'City of London', value: 'CLDN' },
+        ],
         locations: { prison: 'some prison' },
         prisoner: { name: 'John Doe' },
         errors: [{ text: 'error message', href: 'error' }],
         form: {
           date: '20/11/2020',
-          court: 'City of London',
+          courtId: 'CLDN',
           startTimeHours: '18',
           startTimeMinutes: '00',
           endTimeHours: '19',
@@ -223,6 +248,7 @@ describe('change video link booking controller', () => {
         'booking-update',
         {
           agencyId: 'WWI',
+          courtId: 'CLDN',
           date: '2020-11-20T00:00:00',
           endTime: '2020-11-20T19:20:00',
           postRequired: 'true',
@@ -232,6 +258,7 @@ describe('change video link booking controller', () => {
         expect.anything()
       )
     })
+
     describe('when errors are present', () => {
       beforeEach(() => {
         req.errors = [{ text: 'error message', href: 'error' }]

@@ -1,15 +1,17 @@
 import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
+import LocationService from '../../services/locationService'
 
 import { DAY_MONTH_YEAR, Hours, Minutes } from '../../shared/dateHelpers'
 import type CheckAvailabilityService from '../../services/availabilityCheckService'
-import { ChangeDateAndTime } from './forms'
+import { ChangeVideoLinkBooking } from './forms'
 import { clearUpdate, setUpdate } from './state'
 
 export default class ChangeVideoLinkBookingController {
   public constructor(
     private readonly bookingService: BookingService,
-    private readonly availabilityCheckService: CheckAvailabilityService
+    private readonly availabilityCheckService: CheckAvailabilityService,
+    private readonly locationService: LocationService
   ) {}
 
   public start(): RequestHandler {
@@ -23,13 +25,16 @@ export default class ChangeVideoLinkBookingController {
   public view(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
+      const { username } = res.locals.user
 
       const errors = req.flash('errors') || []
       const [input] = req.flash('input')
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
+      const courts = await this.locationService.getVideoLinkEnabledCourts(res.locals, username)
 
       return res.render('amendBooking-v2/changeVideoLinkBooking.njk', {
         errors,
+        courts,
         bookingId,
         agencyId: bookingDetails.agencyId,
         prisoner: {
@@ -40,7 +45,7 @@ export default class ChangeVideoLinkBookingController {
         },
         form: input || {
           date: bookingDetails.date.format(DAY_MONTH_YEAR),
-          court: bookingDetails.courtLocation,
+          courtId: bookingDetails.courtId,
           startTimeHours: Hours(bookingDetails.mainDetails.startTime),
           startTimeMinutes: Minutes(bookingDetails.mainDetails.startTime),
           endTimeHours: Hours(bookingDetails.mainDetails.endTime),
@@ -62,7 +67,7 @@ export default class ChangeVideoLinkBookingController {
         return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
       }
 
-      const form = ChangeDateAndTime(req.body)
+      const form = ChangeVideoLinkBooking(req.body)
 
       const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
         videoBookingId: parseInt(bookingId, 10),

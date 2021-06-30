@@ -11,7 +11,7 @@ const selectAvailableRoomsPage = () =>
     }),
     errorSummaryTitle: () => cy.get('#error-summary-title'),
     errorSummaryBody: () => cy.get('.govuk-error-summary__body'),
-    bookVideoLink: () => cy.get('button[type="submit"]'),
+    updateVideoLink: () => cy.get('button[type="submit"]'),
   })
 
 export default {

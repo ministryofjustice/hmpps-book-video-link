@@ -4,6 +4,7 @@ const changeVideoLinkBookingPage = () =>
   page('Change video link booking', {
     form: {
       inlineError: () => cy.get('.govuk-error-message'),
+      court: () => cy.get('.qa-court-value'),
       date: () => cy.get('#date'),
       startTimeHours: () => cy.get('#start-time-hours'),
       startTimeMinutes: () => cy.get('#start-time-minutes'),
@@ -16,6 +17,7 @@ const changeVideoLinkBookingPage = () =>
       continue: () => cy.get('button[type="submit"]'),
       cancel: () => cy.get("[data-qa='cancel']"),
     },
+    summaryListCourt: () => cy.get('.qa-court-value'),
     datePicker: () => cy.get('#ui-datepicker-div'),
     activeDate: () => cy.get('.ui-state-active'),
     errorSummaryTitle: () => cy.get('#error-summary-title'),

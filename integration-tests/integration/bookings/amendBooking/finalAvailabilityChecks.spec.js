@@ -92,7 +92,7 @@ context('Final availability checks before submitting update', () => {
 
     cy.task('stubRoomAvailability', { pre: [room4], main: [room2], post: [room3] })
 
-    selectAvailableRoomsPage.bookVideoLink().click()
+    selectAvailableRoomsPage.updateVideoLink().click()
 
     const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
     noLongerAvailablePage.continue().click()
@@ -134,7 +134,7 @@ context('Final availability checks before submitting update', () => {
 
     cy.task('stubRoomAvailability', { pre: [], main: [room2], post: [room3] })
 
-    selectAvailableRoomsPage.bookVideoLink().click()
+    selectAvailableRoomsPage.updateVideoLink().click()
 
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
     videoLinkNotAvailablePage.continue().click()
