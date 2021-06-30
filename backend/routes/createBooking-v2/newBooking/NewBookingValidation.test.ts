@@ -1,6 +1,6 @@
 import validator, { errorTypes } from './selectCourtValidation'
 
-describe('StartValidation', () => {
+describe('selectCourtValidation', () => {
   const form = {
     courtId: 'CLDN',
   } as Record<string, string>

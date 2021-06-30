@@ -17,7 +17,15 @@ context('Final availability checks before submitting update', () => {
     cy.task('stubLoginCourt', {})
     cy.login()
 
-    cy.task('stubAppointmentLocations', { agency: 'WWI', locations: [room1, room2, room3, room4] })
+    cy.task('stubGetRooms', {
+      agencyId: 'WWI',
+      rooms: [
+        { locationId: 100, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 110, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 120, description: 'Room 3', locationType: 'VIDE' },
+        { locationId: 130, description: 'Room 4', locationType: 'VIDE' },
+      ],
+    })
 
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'WWI',

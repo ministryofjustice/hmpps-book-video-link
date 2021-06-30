@@ -18,16 +18,17 @@ context('A user can view the video link home page', () => {
       courtId: '.*?',
     })
 
-    cy.task('stubAppointmentLocations', {
-      agency: '.*?',
-      locations: [],
+    cy.task('stubGetRooms', {
+      agencyId: '.*?',
+      rooms: [],
     })
-    cy.task('stubAppointmentLocations', {
-      agency: 'WWI',
-      locations: [
-        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
-        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
-        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
+
+    cy.task('stubGetRooms', {
+      agencyId: 'WWI',
+      rooms: [
+        { locationId: 100, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 110, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 120, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
   })

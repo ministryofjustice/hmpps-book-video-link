@@ -1,7 +1,7 @@
-import type { Location, Prison } from 'prisonApi'
+import type { Prison } from 'prisonApi'
 import type { Prisoner } from 'prisonerOffenderSearchApi'
 import moment from 'moment'
-import type { Appointment, VideoLinkBooking } from 'whereaboutsApi'
+import type { Appointment, Location, VideoLinkBooking } from 'whereaboutsApi'
 
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
@@ -36,13 +36,13 @@ export = class ViewBookingsService {
 
     return (booking: VideoLinkBooking, slot: Appointment, hearingType: HearingType) => {
       const location = locations.get(slot.locationId)
-      const prison = prisons.get(location?.agencyId)
+      const prison = prisons.get(booking.agencyId)
       return {
         locationId: slot.locationId,
         court: booking.court,
         offenderName: this.getOffenderName(prisoners, booking),
         prison: prison?.formattedDescription || '',
-        prisonLocation: location?.userDescription || '',
+        prisonLocation: location?.description || '',
         videoLinkBookingId: booking.videoLinkBookingId,
         hearingType,
         time: slot.endTime ? `${getTime(slot.startTime)} to ${getTime(slot.endTime)}` : getTime(booking.pre.startTime),
@@ -73,9 +73,7 @@ export = class ViewBookingsService {
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
       this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate, courtId)
     )
-    const locationRequests = app.videoLinkEnabledFor.map(prison =>
-      this.prisonApi.getLocationsForAppointments(context, prison)
-    )
+    const locationRequests = app.videoLinkEnabledFor.map(prison => this.whereaboutsApi.getRooms(context, prison))
 
     const [locations, bookings] = await Promise.all([
       flattenCalls(locationRequests).then(result => toMap(result, 'locationId')),

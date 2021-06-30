@@ -67,22 +67,6 @@ module.exports = {
     })
   },
 
-  stubAppointmentLocations: (agency, locations, status = 200) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        urlPattern: `/api/agencies/${agency}/locations\\?eventType=APP`,
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: locations || [],
-      },
-    })
-  },
-
   stubAgencyDetails: (agencyId, details, status = 200) => {
     return stubFor({
       request: {

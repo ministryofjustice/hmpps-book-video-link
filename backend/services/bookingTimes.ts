@@ -1,5 +1,4 @@
 import moment, { Moment } from 'moment'
-import { post } from 'superagent'
 import { Interval } from 'whereaboutsApi'
 import { MOMENT_TIME } from '../shared/dateHelpers'
 

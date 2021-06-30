@@ -29,17 +29,17 @@ context('A user can amend a booking', () => {
       bookings: [],
     })
 
-    cy.task('stubAppointmentLocations', {
-      agency: '.*?',
-      locations: [],
+    cy.task('stubGetRooms', {
+      agencyId: '.*?',
+      rooms: [],
     })
 
-    cy.task('stubAppointmentLocations', {
-      agency: 'WWI',
-      locations: [
-        { locationId: 100, userDescription: 'Room 1', locationType: 'VIDE' },
-        { locationId: 110, userDescription: 'Room 2', locationType: 'VIDE' },
-        { locationId: 120, userDescription: 'Room 3', locationType: 'VIDE' },
+    cy.task('stubGetRooms', {
+      agencyId: 'WWI',
+      rooms: [
+        { locationId: 100, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 110, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 120, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
 

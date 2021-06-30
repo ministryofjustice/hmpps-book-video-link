@@ -34,30 +34,13 @@ context('A user can add a video link', () => {
         offenderNo: 'A1234AA',
       },
     })
-    cy.task('stubAppointmentLocations', {
-      agency: 'MDI',
-      locations: [
-        {
-          locationId: 1,
-          locationType: 'VIDE',
-          description: 'Room 1',
-          userDescription: 'Room 1',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 2,
-          locationType: 'VIDE',
-          description: 'Room 2',
-          userDescription: 'Room 2',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 3,
-          locationType: 'VIDE',
-          description: 'Room 3',
-          userDescription: 'Room 3',
-          agencyId: 'MDI',
-        },
+
+    cy.task('stubGetRooms', {
+      agencyId: 'MDI',
+      rooms: [
+        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
   })
@@ -433,23 +416,13 @@ context('A user can add a video link', () => {
     cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.login()
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
-    cy.task('stubAppointmentLocations', {
-      agency: 'MDI',
-      locations: [
-        {
-          locationId: 1,
-          locationType: 'VIDE',
-          description: 'Room 1',
-          userDescription: 'Room 1',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 2,
-          locationType: 'VIDE',
-          description: 'Room 2',
-          userDescription: 'Room 2',
-          agencyId: 'MDI',
-        },
+
+    cy.task('stubGetRooms', {
+      agencyId: 'MDI',
+      rooms: [
+        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
     const tomorrow = moment().add(1, 'days')

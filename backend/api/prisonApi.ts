@@ -59,12 +59,4 @@ export default class PrisonApi {
   public getPrisonerDetails(context: Context, offenderNo: string, fullInfo = false): Promise<InmateDetail> {
     return this.get(context, `/api/bookings/offenderNo/${offenderNo}?fullInfo=${fullInfo}`)
   }
-
-  public getLocation(context: Context, locationId: number): Promise<Location> {
-    return this.get(context, `/api/locations/${locationId}`)
-  }
-
-  public getLocationsForAppointments(context: Context, agencyId: string): Promise<Location[]> {
-    return this.get(context, `/api/agencies/${agencyId}/locations?eventType=APP`)
-  }
 }
