@@ -23,7 +23,7 @@ describe('Validation middleware', () => {
     expect(next).toHaveBeenCalled()
   })
 
-  it('should add compose multiple validators', async () => {
+  it('should compose multiple validators', async () => {
     const alwaysFailsValidator: Validator = () => [error]
     const neverFailsValidator: Validator = () => []
 

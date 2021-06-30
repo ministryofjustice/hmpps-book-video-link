@@ -173,7 +173,7 @@ describe('Add court appointment', () => {
       bookingSlot.isAvailable = false
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/video-link-not-available')
+      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/video-link-not-available')
     })
   })
 })

@@ -68,11 +68,11 @@ export default class NewBookingController {
 
       setNewBooking(res, form)
 
-      if (!isAvailable) {
-        return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/video-link-not-available`)
-      }
-
-      return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/confirm-booking`)
+      return res.redirect(
+        isAvailable
+          ? `/${agencyId}/offenders/${offenderNo}/add-court-appointment/confirm-booking`
+          : `/${agencyId}/offenders/${offenderNo}/add-court-appointment/video-link-not-available`
+      )
     }
   }
 }
