@@ -1,12 +1,17 @@
 const moment = require('moment')
 const offenderBasicDetails = require('../../mockApis/responses/offenderBasicDetails.json')
 const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage')
-const StartPage = require('../../pages/createBooking/startPage')
-const SelectCourtPage = require('../../pages/createBooking/selectCourtPage')
-const SelectRoomsPage = require('../../pages/createBooking/selectRoomsPage')
+const NewBookingPage = require('../../pages/createBooking/newBookingPage')
+const ConfirmBookingPage = require('../../pages/createBooking/confirmBookingPage')
 const ConfirmationPage = require('../../pages/createBooking/confirmationPage')
 const NoAvailabilityPage = require('../../pages/createBooking/noAvailabilityPage')
 const NoLongerAvailablePage = require('../../pages/createBooking/noLongerAvailablePage')
+
+const allRooms = [
+  { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+  { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+  { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
+]
 
 context('A user can add a video link', () => {
   beforeEach(() => {
@@ -29,30 +34,13 @@ context('A user can add a video link', () => {
         offenderNo: 'A1234AA',
       },
     })
-    cy.task('stubAppointmentLocations', {
-      agency: 'MDI',
-      locations: [
-        {
-          locationId: 1,
-          locationType: 'VIDE',
-          description: 'Room 1',
-          userDescription: 'Room 1',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 2,
-          locationType: 'VIDE',
-          description: 'Room 2',
-          userDescription: 'Room 2',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 3,
-          locationType: 'VIDE',
-          description: 'Room 3',
-          userDescription: 'Room 3',
-          agencyId: 'MDI',
-        },
+
+    cy.task('stubGetRooms', {
+      agencyId: 'MDI',
+      rooms: [
+        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
   })
@@ -61,40 +49,46 @@ context('A user can add a video link', () => {
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
     cy.login()
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
+
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+
+    newBookingPage.activeDate().click()
+    newBookingForm.court().contains('Aberdare County Court')
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.preAppointmentRequiredYes().click()
+    newBookingForm.postAppointmentRequiredYes().click()
+    newBookingForm.selectPreAppointmentLocation().select('1')
+    newBookingForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.selectPostAppointmentLocation().select('3')
+
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
       post: [{ locationId: 3, description: 'Room 3', locationType: 'VIDE' }],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    newBookingForm.submitButton().click()
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredYes().click()
-    addAppointmentForm.postAppointmentRequiredYes().click()
-    addAppointmentForm.submitButton().click()
+    const confirmBookingPage = ConfirmBookingPage.verifyOnPage()
+    confirmBookingPage.offenderName().contains('John Smith')
+    confirmBookingPage.prison().contains('Moorland')
+    confirmBookingPage.startTime().contains('11:00')
+    confirmBookingPage.endTime().contains('11:30')
+    confirmBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmBookingPage.preTime().contains('10:45 to 11:00')
+    confirmBookingPage.postTime().contains('11:30 to 11:45')
+    confirmBookingPage.preRoom().contains('Room 1')
+    confirmBookingPage.postRoom().contains('Room 3')
+    confirmBookingPage.mainRoom().contains('Room 2')
+    confirmBookingPage.court().contains('Aberdare County Court')
 
-    const selectCourtPage = SelectCourtPage.verifyOnPage()
-    selectCourtPage.offenderName().contains('John Smith')
-    selectCourtPage.prison().contains('Moorland')
-    selectCourtPage.startTime().contains('11:00')
-    selectCourtPage.endTime().contains('11:30')
-    selectCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    selectCourtPage.preTime().contains('10:45 to 11:00')
-    selectCourtPage.postTime().contains('11:30 to 11:45')
-
-    const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().contains('Aberdare County Court')
-    selectCourtForm.submitButton().click()
-
-    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
     cy.task('getFindAvailabilityRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
@@ -105,10 +99,6 @@ context('A user can add a video link', () => {
         postInterval: { start: '11:30', end: '11:45' },
       })
     })
-    const selectRoomsForm = selectRoomsPage.form()
-    selectRoomsForm.selectPreAppointmentLocation().select('1')
-    selectRoomsForm.selectMainAppointmentLocation().select('2')
-    selectRoomsForm.selectPostAppointmentLocation().select('3')
 
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'MDI',
@@ -133,7 +123,7 @@ context('A user can add a video link', () => {
       },
     })
 
-    selectRoomsForm.submitButton().click()
+    confirmBookingPage.form().submitButton().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
     confirmationPage.offenderName().contains('John Doe')
@@ -174,6 +164,7 @@ context('A user can add a video link', () => {
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', { preferredCourts: ['ABDRCT', 'BANBCT'] })
     cy.login()
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
@@ -181,33 +172,32 @@ context('A user can add a video link', () => {
       post: [{ locationId: 3, description: 'Room 3', locationType: 'VIDE' }],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredYes().click()
-    addAppointmentForm.postAppointmentRequiredYes().click()
-    addAppointmentForm.submitButton().click()
+    newBookingForm.court().select('ABDRCT')
+    newBookingPage.activeDate().click()
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.preAppointmentRequiredYes().click()
+    newBookingForm.postAppointmentRequiredYes().click()
+    newBookingForm.selectPreAppointmentLocation().select('1')
+    newBookingForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.selectPostAppointmentLocation().select('3')
+    newBookingForm.submitButton().click()
 
-    const selectCourtPage = SelectCourtPage.verifyOnPage()
-    selectCourtPage.offenderName().contains('John Smith')
-    selectCourtPage.prison().contains('Moorland')
-    selectCourtPage.startTime().contains('11:00')
-    selectCourtPage.endTime().contains('11:30')
-    selectCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    selectCourtPage.preTime().contains('10:45 to 11:00')
-    selectCourtPage.postTime().contains('11:30 to 11:45')
+    const confirmBookingPage = ConfirmBookingPage.verifyOnPage()
+    confirmBookingPage.offenderName().contains('John Smith')
+    confirmBookingPage.prison().contains('Moorland')
+    confirmBookingPage.startTime().contains('11:00')
+    confirmBookingPage.endTime().contains('11:30')
+    confirmBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmBookingPage.preTime().contains('10:45 to 11:00')
+    confirmBookingPage.postTime().contains('11:30 to 11:45')
 
-    const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().select('ABDRCT')
-    selectCourtForm.submitButton().click()
-
-    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
     cy.task('getFindAvailabilityRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
@@ -218,10 +208,6 @@ context('A user can add a video link', () => {
         postInterval: { start: '11:30', end: '11:45' },
       })
     })
-    const selectRoomsForm = selectRoomsPage.form()
-    selectRoomsForm.selectPreAppointmentLocation().select('1')
-    selectRoomsForm.selectMainAppointmentLocation().select('2')
-    selectRoomsForm.selectPostAppointmentLocation().select('3')
 
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'MDI',
@@ -246,7 +232,7 @@ context('A user can add a video link', () => {
       },
     })
 
-    selectRoomsForm.submitButton().click()
+    confirmBookingPage.form().submitButton().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
     confirmationPage.offenderName().contains('John Doe')
@@ -287,6 +273,7 @@ context('A user can add a video link', () => {
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
     cy.login()
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubRoomAvailability', {
       pre: [],
@@ -294,33 +281,30 @@ context('A user can add a video link', () => {
       post: [],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredNo().click()
-    addAppointmentForm.postAppointmentRequiredNo().click()
-    addAppointmentForm.submitButton().click()
+    newBookingPage.activeDate().click()
+    newBookingForm.court().contains('Aberdare County Court')
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.preAppointmentRequiredNo().click()
+    newBookingForm.postAppointmentRequiredNo().click()
+    newBookingForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.submitButton().click()
 
-    const selectCourtPage = SelectCourtPage.verifyOnPage()
-    selectCourtPage.offenderName().contains('John Smith')
-    selectCourtPage.prison().contains('Moorland')
-    selectCourtPage.startTime().contains('11:00')
-    selectCourtPage.endTime().contains('11:30')
-    selectCourtPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
-    selectCourtPage.preTime().should('not.exist')
-    selectCourtPage.postTime().should('not.exist')
+    const confirmBookingPage = ConfirmBookingPage.verifyOnPage()
+    confirmBookingPage.offenderName().contains('John Smith')
+    confirmBookingPage.prison().contains('Moorland')
+    confirmBookingPage.startTime().contains('11:00')
+    confirmBookingPage.endTime().contains('11:30')
+    confirmBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmBookingPage.preTime().should('not.exist')
+    confirmBookingPage.postTime().should('not.exist')
 
-    const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().contains('Aberdare County Court')
-    selectCourtForm.submitButton().click()
-
-    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
     cy.task('getFindAvailabilityRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
@@ -331,8 +315,6 @@ context('A user can add a video link', () => {
         postInterval: null,
       })
     })
-    const selectRoomsForm = selectRoomsPage.form()
-    selectRoomsForm.selectMainAppointmentLocation().select('2')
 
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'MDI',
@@ -346,7 +328,8 @@ context('A user can add a video link', () => {
         endTime: moment().add(1, 'days').set({ hour: 11, minute: 30 }),
       },
     })
-    selectRoomsForm.submitButton().click()
+
+    confirmBookingPage.form().submitButton().click()
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
     confirmationPage.offenderName().contains('John Doe')
@@ -377,6 +360,7 @@ context('A user can add a video link', () => {
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
     cy.login()
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
     cy.task('stubRoomAvailability', {
@@ -385,27 +369,20 @@ context('A user can add a video link', () => {
       post: [],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredNo().click()
-    addAppointmentForm.postAppointmentRequiredNo().click()
-    addAppointmentForm.submitButton().click()
+    newBookingPage.activeDate().click()
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.selectMainAppointmentLocation().select('2')
 
-    const selectCourtPage = SelectCourtPage.verifyOnPage()
-    const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().contains('Aberdare County Court')
-    selectCourtForm.submitButton().click()
-
-    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
-    const selectRoomsForm = selectRoomsPage.form()
-    selectRoomsForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.preAppointmentRequiredNo().click()
+    newBookingForm.postAppointmentRequiredNo().click()
+    newBookingForm.submitButton().click()
 
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'MDI',
@@ -419,7 +396,8 @@ context('A user can add a video link', () => {
         endTime: moment().add(1, 'days').set({ hour: 11, minute: 30 }),
       },
     })
-    selectRoomsForm.submitButton().click()
+
+    ConfirmBookingPage.verifyOnPage().form().submitButton().click()
 
     ConfirmationPage.verifyOnPage()
 
@@ -427,11 +405,7 @@ context('A user can add a video link', () => {
 
     PrisonerSearchPage.verifyOnPage()
 
-    cy.visit(SelectCourtPage.url('WWI', 'A1234AA'))
-
-    PrisonerSearchPage.verifyOnPage()
-
-    cy.visit(SelectRoomsPage.url('WWI', 'A1234AA'))
+    cy.visit(ConfirmBookingPage.url('WWI', 'A1234AA'))
 
     PrisonerSearchPage.verifyOnPage()
   })
@@ -439,25 +413,16 @@ context('A user can add a video link', () => {
   it('A user is redirected to no availability for time page', () => {
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.login()
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
-    cy.task('stubAppointmentLocations', {
-      agency: 'MDI',
-      locations: [
-        {
-          locationId: 1,
-          locationType: 'VIDE',
-          description: 'Room 1',
-          userDescription: 'Room 1',
-          agencyId: 'MDI',
-        },
-        {
-          locationId: 2,
-          locationType: 'VIDE',
-          description: 'Room 2',
-          userDescription: 'Room 2',
-          agencyId: 'MDI',
-        },
+
+    cy.task('stubGetRooms', {
+      agencyId: 'MDI',
+      rooms: [
+        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
     const tomorrow = moment().add(1, 'days')
@@ -468,18 +433,21 @@ context('A user can add a video link', () => {
       post: [],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(tomorrow.format('DD/MM/YYYY'))
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(tomorrow.format('DD/MM/YYYY'))
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredYes().click()
-    addAppointmentForm.postAppointmentRequiredYes().click()
-    addAppointmentForm.submitButton().click()
+    newBookingPage.activeDate().click()
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.preAppointmentRequiredYes().click()
+    newBookingForm.postAppointmentRequiredYes().click()
+    newBookingForm.selectPreAppointmentLocation().select('1')
+    newBookingForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.selectPostAppointmentLocation().select('3')
+    newBookingForm.submitButton().click()
 
     const noAvailabilityPage = NoAvailabilityPage.verifyOnPage()
     noAvailabilityPage
@@ -487,11 +455,13 @@ context('A user can add a video link', () => {
       .contains(`There are no bookings available on ${tomorrow.format('dddd D MMMM YYYY')} between 10:45 and 11:45.`)
   })
 
-  it('User selects rooms but they become unavailable before confirmation', () => {
+  // TODO Re-add once availability check
+  xit('User selects rooms but they become unavailable before confirmation', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.login()
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubRoomAvailability', {
@@ -500,41 +470,31 @@ context('A user can add a video link', () => {
       post: [{ locationId: 3, description: 'Room 3', locationType: 'VIDE' }],
     })
 
-    const startPage = StartPage.verifyOnPage()
-    const addAppointmentForm = startPage.form()
-    addAppointmentForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    const newBookingForm = newBookingPage.form()
+    newBookingForm.date().type(moment().add(1, 'days').format('DD/MM/YYYY'))
 
-    startPage.activeDate().click()
-    addAppointmentForm.startTimeHours().select('11')
-    addAppointmentForm.startTimeMinutes().select('00')
-    addAppointmentForm.endTimeHours().select('11')
-    addAppointmentForm.endTimeMinutes().select('30')
-    addAppointmentForm.preAppointmentRequiredYes().click()
-    addAppointmentForm.postAppointmentRequiredYes().click()
-    addAppointmentForm.submitButton().click()
+    newBookingPage.activeDate().click()
+    newBookingForm.startTimeHours().select('11')
+    newBookingForm.startTimeMinutes().select('00')
+    newBookingForm.endTimeHours().select('11')
+    newBookingForm.endTimeMinutes().select('30')
+    newBookingForm.preAppointmentRequiredYes().click()
+    newBookingForm.postAppointmentRequiredYes().click()
+    newBookingForm.selectPreAppointmentLocation().select('1')
+    newBookingForm.selectMainAppointmentLocation().select('2')
+    newBookingForm.selectPostAppointmentLocation().select('3')
+    newBookingForm.submitButton().click()
 
-    const selectCourtPage = SelectCourtPage.verifyOnPage()
-    const selectCourtForm = selectCourtPage.form()
-    selectCourtForm.court().contains('Aberdare County Court')
-    selectCourtForm.submitButton().click()
-
-    const selectRoomsPage = SelectRoomsPage.verifyOnPage()
-    const selectRoomsForm = selectRoomsPage.form()
-    selectRoomsForm.selectPreAppointmentLocation().select('1')
-    selectRoomsForm.selectMainAppointmentLocation().select('2')
-    selectRoomsForm.selectPostAppointmentLocation().select('3')
-
+    const confirmBookingPage = ConfirmBookingPage.verifyOnPage()
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
       post: [{ locationId: 4, description: 'Room 4', locationType: 'VIDE' }],
     })
-
-    selectRoomsForm.submitButton().click()
+    confirmBookingPage.form().submitButton().click()
 
     const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
     noLongerAvailablePage.continue().click()
-
-    SelectRoomsPage.verifyOnPage()
   })
 })

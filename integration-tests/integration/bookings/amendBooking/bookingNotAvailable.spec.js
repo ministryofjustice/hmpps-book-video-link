@@ -10,9 +10,13 @@ context('Booking is not available', () => {
     cy.task('stubLoginCourt', {})
     cy.login()
 
-    cy.task('stubAppointmentLocations', {
-      agency: '.*?',
-      locations: [],
+    cy.task('stubGetRooms', {
+      agencyId: 'WWI',
+      rooms: [
+        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
+        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
+        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
+      ],
     })
 
     cy.task('stubGetVideoLinkBooking', {

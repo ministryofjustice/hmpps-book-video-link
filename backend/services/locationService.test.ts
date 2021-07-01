@@ -1,29 +1,28 @@
 import type { Location, PrisonContactDetail } from 'prisonApi'
 import LocationService from './locationService'
 import ManageCourtsService from './manageCourtsService'
-import PrisonApi from '../api/prisonApi'
+import { PrisonApi, WhereaboutsApi } from '../api'
 import { app } from '../config'
+import { roomFinderFactory } from './roomFinder'
 
-jest.mock('../api/prisonApi')
-jest.mock('../api/whereaboutsApi')
+jest.mock('../api')
 jest.mock('./manageCourtsService')
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
+const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const manageCourtsService = new ManageCourtsService(null, null) as jest.Mocked<ManageCourtsService>
 
-const room = (i, description = `VCC ROOM ${i}`, userDescription = `Vcc Room ${i}`, locationType) =>
+const room = (i, description = `VCC ROOM ${i}`) =>
   ({
     description,
     locationId: i,
-    locationType,
-    userDescription,
   } as Location)
 
 describe('Location service', () => {
   const userId = 'A_USER'
   const context = {}
   const agency = 'LEI'
-  const locations = [room(27187, 'RES-MCASU-MCASU', 'Adj', 'VIDE'), room(27188, 'RES-MCASU-MCASU', null, 'VIDE')]
+  const locations = [room(27187, 'RES-MCASU-ADJ'), room(27188, 'RES-MCASU-MCASU')]
   const prisons = [
     { agencyId: 'WWI', description: 'HMP WANDSWORTH', formattedDescription: 'HMP Wandsworth' },
     { agencyId: 'MDI', description: 'HMP MOORLAND', formattedDescription: 'HMP Moorland' },
@@ -32,7 +31,7 @@ describe('Location service', () => {
   let service: LocationService
 
   beforeEach(() => {
-    service = new LocationService(prisonApi, manageCourtsService)
+    service = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
   })
 
   afterEach(() => {
@@ -41,7 +40,7 @@ describe('Location service', () => {
 
   describe('Get rooms', () => {
     it('Should handle no rooms', async () => {
-      prisonApi.getLocationsForAppointments.mockResolvedValue([])
+      whereaboutsApi.getRooms.mockResolvedValue([])
 
       const response = await service.getRooms(context, agency)
 
@@ -49,13 +48,13 @@ describe('Location service', () => {
     })
 
     it('Should map rooms correctly', async () => {
-      prisonApi.getLocationsForAppointments.mockResolvedValue(locations)
+      whereaboutsApi.getRooms.mockResolvedValue(locations)
 
       const response = await service.getRooms(context, agency)
 
       expect(response).toEqual([
-        { value: 27187, text: 'Adj' },
-        { value: 27188, text: 'RES-MCASU-MCASU' },
+        { locationId: 27187, description: 'RES-MCASU-ADJ' },
+        { locationId: 27188, description: 'RES-MCASU-MCASU' },
       ])
     })
   })

@@ -6,12 +6,11 @@ const CourtVideoBookingsPage = require('../pages/viewBookings/courtVideoBookings
 const ManageCourtsPage = require('../pages/manageCourts/manageCourtsPage')
 
 context('A user can view the video link home page', () => {
-  before(() => {
+  beforeEach(() => {
     cy.clearCookies()
     cy.task('reset')
     cy.task('stubLoginCourt', {})
 
-    Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('stubUserEmail', 'ITAG_USER')
     cy.task('stubUser', 'ITAG_USER', 'WWI')
 
@@ -24,28 +23,15 @@ context('A user can view the video link home page', () => {
       bookings: [],
     })
 
-    cy.task('stubAppointmentLocations', {
-      agency: '.*?',
-      locations: [],
+    cy.task('stubGetRooms', {
+      agencyId: '.*?',
+      rooms: [],
     })
 
     cy.login()
   })
 
   it('should redirect a video court user to the video link home page', () => {
-    cy.task('stubLocationGroups')
-    cy.task('stubGroups', 'MDI')
-    cy.task('stubActivityLocations')
-
-    cy.visit('/')
-
-    HomePage.verifyOnPage()
-  })
-
-  it('should redirect a video court user to the video link home page', () => {
-    cy.task('stubLocationGroups')
-    cy.task('stubActivityLocations')
-
     cy.visit('/')
 
     HomePage.verifyOnPage()

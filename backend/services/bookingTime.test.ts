@@ -4,6 +4,8 @@ import {
   getPreAppointmentInterval,
   getPostAppointmentInterval,
   getTotalAppointmentInterval,
+  getPreDescription,
+  getPostDescription,
 } from './bookingTimes'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 
@@ -48,6 +50,26 @@ describe('bookingTimes', () => {
         start: '10:30',
         end: '11:15',
       })
+    })
+  })
+
+  describe('getPreDescription', () => {
+    test('When present', () => {
+      expect(getPreDescription(startTime, true)).toBe('10:15 to 10:30')
+    })
+
+    test('When absent', () => {
+      expect(getPreDescription(startTime, false)).toBe(undefined)
+    })
+  })
+
+  describe('getPostDescription', () => {
+    test('When present', () => {
+      expect(getPostDescription(endTime, true)).toBe('11:00 to 11:15')
+    })
+
+    test('When absent', () => {
+      expect(getPostDescription(endTime, false)).toBe(undefined)
     })
   })
 })

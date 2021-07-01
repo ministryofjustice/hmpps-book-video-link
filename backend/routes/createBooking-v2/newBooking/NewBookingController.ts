@@ -1,14 +1,16 @@
 import { RequestHandler, Request, Response } from 'express'
-import { formatName } from '../../utils'
-import type PrisonApi from '../../api/prisonApi'
-import type AvailabilityCheckService from '../../services/availabilityCheckService'
-import { ChangeDateAndTime } from './forms'
-import { clearNewBooking, DateAndTimeCodec, setNewBooking } from './state'
+import { formatName } from '../../../utils'
+import type PrisonApi from '../../../api/prisonApi'
+import type AvailabilityCheckService from '../../../services/availabilityCheckService'
+import type { LocationService } from '../../../services'
+import { NewBooking } from './form'
+import { clearNewBooking, setNewBooking } from '../state'
 
-export default class StartController {
+export default class NewBookingController {
   public constructor(
     private readonly prisonApi: PrisonApi,
-    private readonly availabilityCheckService: AvailabilityCheckService
+    private readonly availabilityCheckService: AvailabilityCheckService,
+    private readonly locationService: LocationService
   ) {}
 
   public start(): RequestHandler {
@@ -22,19 +24,25 @@ export default class StartController {
   public view(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { offenderNo, agencyId } = req.params
-      const [offenderDetails, agencyDetails] = await Promise.all([
+      const { username } = res.locals.user
+
+      const [offenderDetails, agencyDetails, courts, rooms] = await Promise.all([
         this.prisonApi.getPrisonerDetails(res.locals, offenderNo),
         this.prisonApi.getAgencyDetails(res.locals, agencyId),
+        this.locationService.getVideoLinkEnabledCourts(res.locals, username),
+        this.locationService.getRooms(res.locals, agencyId),
       ])
       const { firstName, lastName, bookingId } = offenderDetails
       const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
       const agencyDescription = agencyDetails.description
 
-      return res.render('createBooking-v2/start.njk', {
+      return res.render('createBooking-v2/newBooking.njk', {
+        rooms,
         offenderNo,
         offenderNameWithNumber,
         agencyDescription,
         bookingId,
+        courts,
         errors: req.flash('errors'),
         formValues: req.flash('formValues')[0],
       })
@@ -51,25 +59,20 @@ export default class StartController {
         return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment`)
       }
 
-      const form = ChangeDateAndTime(req.body)
+      const form = NewBooking(req.body)
 
-      const { isAvailable, totalInterval } = await this.availabilityCheckService.getAvailability(res.locals, {
+      const { isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
         agencyId,
         ...form,
       })
 
-      if (!isAvailable) {
-        return res.render('createBooking-v2/noAvailabilityForDateTime.njk', {
-          date: form.date.format('dddd D MMMM YYYY'),
-          startTime: totalInterval.start,
-          endTime: totalInterval.end,
-          continueLink: `/${agencyId}/offenders/${offenderNo}/add-court-appointment`,
-        })
-      }
+      setNewBooking(res, form)
 
-      setNewBooking(res, DateAndTimeCodec, form)
-
-      return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/select-court`)
+      return res.redirect(
+        isAvailable
+          ? `/${agencyId}/offenders/${offenderNo}/add-court-appointment/confirm-booking`
+          : `/${agencyId}/offenders/${offenderNo}/add-court-appointment/video-link-not-available`
+      )
     }
   }
 }

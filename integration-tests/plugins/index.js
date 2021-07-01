@@ -53,6 +53,7 @@ module.exports = on => {
     stubUpdateVideoLinkBooking: videoBookingId => whereabouts.stubUpdateVideoLinkBooking(videoBookingId),
     stubDeleteVideoLinkBooking: videoBookingId => whereabouts.stubDeleteVideoLinkBooking(videoBookingId),
     stubRoomAvailability: locations => whereabouts.stubRoomAvailability(locations),
+    stubGetRooms: ({ agencyId, rooms }) => whereabouts.stubGetRooms(agencyId, rooms),
 
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),
     stubLoginPage: auth.redirect,

@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express'
-import type { BookingService } from '../../services'
-import LocationService from '../../services/locationService'
+import type { BookingService } from '../../../services'
+import LocationService from '../../../services/locationService'
 
 export default class ConfirmationController {
   constructor(private readonly bookingService: BookingService, private readonly locationService: LocationService) {}

@@ -1,10 +1,10 @@
 import moment from 'moment'
-import type { BookingDetails } from '../../services/model'
+import type { BookingDetails } from '../../../services/model'
 import ConfirmationController from './confirmationController'
-import { BookingService, LocationService } from '../../services'
-import { mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { BookingService, LocationService } from '../../../services'
+import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
 
-jest.mock('../../services')
+jest.mock('../../../services')
 
 describe('Confirm appointments', () => {
   const req = mockRequest({ params: { videoBookingId: '123' } })
@@ -44,7 +44,7 @@ describe('Confirm appointments', () => {
 
   let controller: ConfirmationController
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
   beforeEach(() => {
     jest.resetAllMocks()
 

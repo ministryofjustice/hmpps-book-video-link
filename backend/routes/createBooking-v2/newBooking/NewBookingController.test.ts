@@ -1,17 +1,18 @@
 import { Request } from 'express'
 import { Agency, InmateDetail } from 'prisonApi'
 
-import StartController from './startController'
-import PrisonApi from '../../api/prisonApi'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
-import { RoomAvailability } from '../../services/model'
-import { mockRequest, mockResponse } from '../__test/requestTestUtils'
+import NewBookingController from './NewBookingController'
+import PrisonApi from '../../../api/prisonApi'
+import { RoomAvailability } from '../../../services/model'
+import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
+import { LocationService, AvailabilityCheckService } from '../../../services'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
-jest.mock('../../api/prisonApi')
-jest.mock('../../services/availabilityCheckService')
+jest.mock('../../../api/prisonApi')
+jest.mock('../../../services')
 
 describe('Add court appointment', () => {
   const bookingSlot = {
@@ -26,19 +27,22 @@ describe('Add court appointment', () => {
     },
     body: {
       bookingId: '123456',
+      courtId: 'COURT-1',
       date: '01/01/2021',
       startTimeHours: '01',
       startTimeMinutes: '00',
       endTimeHours: '02',
       endTimeMinutes: '00',
-      preAppointmentRequired: 'yes',
-      postAppointmentRequired: 'no',
+      mainLocation: '123',
+      preRequired: 'false',
+      postRequired: 'false',
     },
   })
 
-  const res = mockResponse({})
+  const context = { user: { username: 'USER-1' } }
+  const res = mockResponse({ locals: context })
 
-  let controller: StartController
+  let controller: NewBookingController
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -57,7 +61,7 @@ describe('Add court appointment', () => {
     prisonApi.getPrisonerDetails.mockResolvedValue(prisoner as InmateDetail)
     prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
     availabilityCheckService.getAvailability.mockResolvedValue(bookingSlot)
-    controller = new StartController(prisonApi, availabilityCheckService)
+    controller = new NewBookingController(prisonApi, availabilityCheckService, locationService)
   })
 
   describe('start', () => {
@@ -74,15 +78,17 @@ describe('Add court appointment', () => {
     it('should request user and agency details', async () => {
       await controller.view()(req, res, null)
 
-      expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith({ context: {} }, 'A12345')
-      expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith({ context: {} }, 'MDI')
+      expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith(context, 'A12345')
+      expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(context, 'MDI')
+      expect(locationService.getRooms).toHaveBeenCalledWith(context, 'MDI')
+      expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(context, 'USER-1')
     })
 
     it('should render template with default data', async () => {
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'createBooking-v2/start.njk',
+        'createBooking-v2/newBooking.njk',
         expect.objectContaining({
           offenderNo: 'A12345',
           offenderNameWithNumber: 'Firstname Lastname (A12345)',
@@ -117,13 +123,15 @@ describe('Add court appointment', () => {
           'formValues',
           {
             bookingId: '123456',
+            courtId: 'COURT-1',
             date: '01/01/2021',
             endTimeHours: '02',
             endTimeMinutes: '00',
-            postAppointmentRequired: 'no',
-            preAppointmentRequired: 'yes',
+            preRequired: 'false',
+            postRequired: 'false',
             startTimeHours: '01',
             startTimeMinutes: '00',
+            mainLocation: '123',
           },
         ],
       ])
@@ -141,11 +149,15 @@ describe('Add court appointment', () => {
         'booking-creation',
         {
           bookingId: '123456',
+          courtId: 'COURT-1',
           date: '2021-01-01T00:00:00',
           postRequired: 'false',
-          preRequired: 'true',
           endTime: '2021-01-01T02:00:00',
           startTime: '2021-01-01T01:00:00',
+          mainLocation: '123',
+          postLocation: undefined,
+          preLocation: undefined,
+          preRequired: 'false',
         },
         expect.any(Object)
       )
@@ -154,19 +166,14 @@ describe('Add court appointment', () => {
     it('should go to the court selection page if no errors', async () => {
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/select-court')
+      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/confirm-booking')
     })
 
     it('should go to the "no video link bookings available" page', async () => {
       bookingSlot.isAvailable = false
       await controller.submit()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('createBooking-v2/noAvailabilityForDateTime.njk', {
-        date: 'Friday 1 January 2021',
-        startTime: '01:00',
-        endTime: '02:00',
-        continueLink: '/MDI/offenders/A12345/add-court-appointment',
-      })
+      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/video-link-not-available')
     })
   })
 })

@@ -23,6 +23,16 @@ describe('Validation middleware', () => {
     expect(next).toHaveBeenCalled()
   })
 
+  it('should compose multiple validators', async () => {
+    const alwaysFailsValidator: Validator = () => [error]
+    const neverFailsValidator: Validator = () => []
+
+    validationMiddleware(alwaysFailsValidator, neverFailsValidator, alwaysFailsValidator)(req, res, next)
+
+    expect(req.errors).toEqual([error, error])
+    expect(next).toHaveBeenCalled()
+  })
+
   it('should not add any errors to request object when no errors are present', async () => {
     const neverFailsValidator: Validator = () => []
     validationMiddleware(neverFailsValidator)(req, res, next)

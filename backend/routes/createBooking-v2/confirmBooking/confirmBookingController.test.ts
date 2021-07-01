@@ -1,58 +1,65 @@
 import moment from 'moment'
 
-import SelectRoomsController from './selectRoomsController'
-import config from '../../config'
-import BookingService from '../../services/bookingService'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
-import { RoomAvailability } from '../../services/model'
-import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
-import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { Agency, InmateDetail } from 'prisonApi'
 
-jest.mock('../../api/prisonApi')
-jest.mock('../../services/bookingService')
-jest.mock('../../services/availabilityCheckService')
+import ConfirmBookingController from './confirmBookingController'
+import config from '../../../config'
+import { BookingService, LocationService } from '../../../services'
+import { DATE_TIME_FORMAT_SPEC } from '../../../shared/dateHelpers'
+import { mockNext, mockRequest, mockResponse } from '../../__test/requestTestUtils'
+import { PrisonApi } from '../../../api'
+import { RoomFinder } from '../../../services/roomFinder'
+
+jest.mock('../../../api/prisonApi')
+jest.mock('../../../services')
 
 describe('Select court appointment rooms', () => {
+  const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-  let controller: SelectRoomsController
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
-  const req = mockRequest({ params: { agencyId: 'WWI', offenderNo: 'A12345' } })
-  const res = mockResponse({})
+  let controller: ConfirmBookingController
+
+  let req
+  const res = mockResponse({ locals: { user: { username: 'USER-1' } } })
   const next = mockNext()
-
-  const availableLocations: RoomAvailability = {
-    isAvailable: true,
-    totalInterval: { start: '09:00', end: '10:00' },
-    rooms: {
-      main: [{ value: 1, text: 'Room 1' }],
-      pre: [{ value: 2, text: 'Room 2' }],
-      post: [{ value: 3, text: 'Room 3' }],
-    },
-  }
 
   beforeEach(() => {
     jest.resetAllMocks()
 
+    req = mockRequest({
+      params: { agencyId: 'WWI', offenderNo: 'A12345' },
+      signedCookies: {
+        'booking-creation': {
+          courtId: 'LEEMC',
+          bookingId: '123456',
+          date: '2017-11-10T00:00:00',
+          postRequired: 'true',
+          preRequired: 'true',
+          endTime: '2017-11-10T14:00:00',
+          startTime: '2017-11-10T11:00:00',
+          mainLocation: '2',
+          preLocation: '1',
+          postLocation: '3',
+        },
+      },
+    })
+
     req.flash.mockReturnValue([])
 
     bookingService.create.mockResolvedValue(123)
+    prisonApi.getPrisonerDetails.mockResolvedValue({ firstName: 'BOB', lastName: 'SMITH' } as InmateDetail)
+    prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Leeds' } as Agency)
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'LEEMC', text: 'LEEDS' })
+    locationService.createRoomFinder.mockResolvedValue(
+      new RoomFinder([
+        { locationId: 1, description: 'Room 1' },
+        { locationId: 2, description: 'Room 2' },
+        { locationId: 3, description: 'Room 3' },
+      ])
+    )
 
-    availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
-
-    controller = new SelectRoomsController(bookingService, availabilityCheckService)
-
-    req.signedCookies = {
-      'booking-creation': {
-        courtId: 'LEEMC',
-        bookingId: '123456',
-        date: '2017-11-10T00:00:00',
-        postRequired: 'true',
-        preRequired: 'true',
-        endTime: '2017-11-10T14:00:00',
-        startTime: '2017-11-10T11:00:00',
-      },
-    }
+    controller = new ConfirmBookingController(locationService, prisonApi, bookingService)
   })
 
   describe('view', () => {
@@ -61,43 +68,37 @@ describe('Select court appointment rooms', () => {
 
       await view(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'createBooking-v2/selectRooms.njk',
-        expect.objectContaining({
-          mainLocations: [{ text: 'Room 1', value: 1 }],
-          postLocations: [{ text: 'Room 3', value: 3 }],
-          preLocations: [{ text: 'Room 2', value: 2 }],
-        })
-      )
+      expect(res.render).toHaveBeenCalledWith('createBooking-v2/confirmBooking.njk', {
+        details: {
+          'Post-court hearing briefing': '14:00 to 14:15',
+          'Pre-court hearing briefing': '10:45 to 11:00',
+          'Prison room for post-court hearing briefing': 'Room 3',
+          'Prison room for pre-court hearing briefing': 'Room 1',
+          courtHearingEndTime: '14:00',
+          courtHearingStartTime: '11:00',
+          date: '10 November 2017',
+          prisonRoomForCourtHearing: 'Room 2',
+        },
+        errors: [],
+        form: {},
+        offender: { court: 'LEEDS', name: 'Bob Smith', prison: 'Leeds' },
+      })
     })
 
-    it('should call getAvailability with the correct parameters', async () => {
+    it('should call services correctly', async () => {
       const { view } = controller
 
       await view(req, res, next)
 
-      expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
-        bookingId: 123456,
-        courtId: 'LEEMC',
-        agencyId: 'WWI',
-        date: moment('2017-11-10T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-        startTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
-        endTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
-        postRequired: true,
-        preRequired: true,
-      })
+      expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(res.locals, 'WWI')
+      expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith(res.locals, 'A12345')
+      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(res.locals, 'LEEMC', 'USER-1')
+      expect(locationService.createRoomFinder).toHaveBeenCalledWith(res.locals, 'WWI')
     })
   })
 
   describe('submit', () => {
     beforeEach(() => {
-      req.body = {
-        preLocation: '1',
-        mainLocation: '2',
-        postLocation: '3',
-        comment: 'Test',
-      }
-
       res.redirect = jest.fn()
       config.notifications.emails.WWI.omu = 'omu@prison.com'
       config.notifications.emails.WWI.vlb = 'vlb@prison.com'
@@ -109,9 +110,6 @@ describe('Select court appointment rooms', () => {
       const reqWithErrors = mockRequest({
         params: { agencyId: 'WWI', offenderNo: 'A12345' },
         body: {
-          preLocation: '1',
-          mainLocation: '2',
-          postLocation: '3',
           comment: 'Test',
         },
         errors: [{ href: '#preLocation' }],
@@ -127,9 +125,6 @@ describe('Select court appointment rooms', () => {
       const { submit } = controller
 
       req.body = {
-        preLocation: '1',
-        mainLocation: '2',
-        postLocation: '3',
         comment: 'Test',
       }
 
@@ -142,7 +137,6 @@ describe('Select court appointment rooms', () => {
       const { submit } = controller
 
       req.body = {
-        mainLocation: '2',
         comment: 'Test',
       }
 
@@ -156,9 +150,6 @@ describe('Select court appointment rooms', () => {
         const { submit } = controller
 
         req.body = {
-          preLocation: '1',
-          mainLocation: '2',
-          postLocation: '3',
           comment: 'Test',
         }
 
@@ -180,32 +171,24 @@ describe('Select court appointment rooms', () => {
       it('with only mandatory fields ', async () => {
         const { submit } = controller
 
-        req.body = {
-          mainLocation: '2',
-        }
-
         await submit(req, res, next)
 
         expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
           courtId: 'LEEMC',
-          comment: null,
+          comment: undefined,
           mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
           mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
           offenderNo: 'A12345',
-          pre: null,
+          pre: 1,
           main: 2,
-          post: null,
+          post: 3,
         })
       })
     })
 
     it('cookie is cleared on successful submit ', async () => {
       const { submit } = controller
-
-      req.body = {
-        mainLocation: '2',
-      }
 
       await submit(req, res, next)
 

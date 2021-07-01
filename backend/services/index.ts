@@ -5,13 +5,14 @@ import NotificationService from './notificationService'
 import LocationService from './locationService'
 import AvailabilityCheckService from './availabilityCheckService'
 import ManageCourtsService from './manageCourtsService'
+import { roomFinderFactory } from './roomFinder'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi, userCourtPreferencesApi } = apis
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
-const locationService = new LocationService(prisonApi, manageCourtsService)
+const locationService = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
 const viewBookingsService = new ViewBookingsService(
   prisonApi,
   whereaboutsApi,

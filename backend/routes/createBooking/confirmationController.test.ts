@@ -44,7 +44,7 @@ describe('Confirm appointments', () => {
 
   let controller: ConfirmationController
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
   beforeEach(() => {
     jest.resetAllMocks()
 

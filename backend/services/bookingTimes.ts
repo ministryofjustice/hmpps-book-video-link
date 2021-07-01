@@ -37,3 +37,9 @@ export const getTotalAppointmentInterval = (
     postRequired ? postEndTime(endTime) : endTime,
   ])
 }
+
+export const getPreDescription = (startTime: Moment, preRequired: boolean): string | undefined =>
+  preRequired ? formatTimes(preAppointmentTimes(startTime)) : undefined
+
+export const getPostDescription = (endTime: Moment, postRequired: boolean): string | undefined =>
+  postRequired ? formatTimes(postAppointmentTimes(endTime)) : undefined

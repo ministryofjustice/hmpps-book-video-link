@@ -18,7 +18,7 @@ jest.mock('./locationService')
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 const prisonerOffenderSearchApi = new PrisonerOffenderSearchApi(null) as jest.Mocked<PrisonerOffenderSearchApi>
-const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
 describe('ViewBookingService', () => {
   let service: ViewBookingsService
@@ -55,13 +55,13 @@ describe('ViewBookingService', () => {
     jest.resetAllMocks()
     whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
     prisonApi.getAgencies.mockResolvedValue([])
-    prisonApi.getLocationsForAppointments.mockResolvedValue([])
+    whereaboutsApi.getRooms.mockResolvedValue([])
     service = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi, locationService)
     config.app.videoLinkEnabledFor = ['WWI', 'MDI']
   })
 
   describe('Get List', () => {
-    const preAppointment = {
+    const preAppointmentWWI = {
       court: 'Westminster Crown Court',
       endTime: '2020-12-23T10:00:00',
       hearingType: 'PRE',
@@ -73,7 +73,19 @@ describe('ViewBookingService', () => {
       time: '09:40 to 10:00',
       videoLinkBookingId: 10,
     }
-    const mainAppointment = {
+    const preAppointmentMDI = {
+      court: 'Westminster Crown Court',
+      endTime: '2020-12-23T10:00:00',
+      hearingType: 'PRE',
+      locationId: 100,
+      offenderName: 'Bob Smith',
+      prison: 'Moorland (HMP)',
+      prisonLocation: 'Room 1',
+      startTime: '2020-12-23T09:40:00',
+      time: '09:40 to 10:00',
+      videoLinkBookingId: 10,
+    }
+    const mainAppointmentWWI = {
       court: 'Westminster Crown Court',
       endTime: '2020-12-23T10:30:00',
       hearingType: 'MAIN',
@@ -85,13 +97,37 @@ describe('ViewBookingService', () => {
       time: '10:00 to 10:30',
       videoLinkBookingId: 10,
     }
-    const postAppointment = {
+    const mainAppointmentMDI = {
+      court: 'Westminster Crown Court',
+      endTime: '2020-12-23T10:30:00',
+      hearingType: 'MAIN',
+      locationId: 110,
+      offenderName: 'Bob Smith',
+      prison: 'Moorland (HMP)',
+      prisonLocation: 'Room 2',
+      startTime: '2020-12-23T10:00:00',
+      time: '10:00 to 10:30',
+      videoLinkBookingId: 10,
+    }
+    const postAppointmentWWI = {
       court: 'Westminster Crown Court',
       endTime: '2020-12-23T10:50:00',
       hearingType: 'POST',
       locationId: 120,
       offenderName: 'Bob Smith',
       prison: 'Wandsworth (HMP)',
+      prisonLocation: 'Room 3',
+      startTime: '2020-12-23T10:30:00',
+      time: '10:30 to 10:50',
+      videoLinkBookingId: 10,
+    }
+    const postAppointmentMDI = {
+      court: 'Westminster Crown Court',
+      endTime: '2020-12-23T10:50:00',
+      hearingType: 'POST',
+      locationId: 120,
+      offenderName: 'Bob Smith',
+      prison: 'Moorland (HMP)',
       prisonLocation: 'Room 3',
       startTime: '2020-12-23T10:30:00',
       time: '10:30 to 10:50',
@@ -107,10 +143,10 @@ describe('ViewBookingService', () => {
       prisonerOffenderSearchApi.getPrisoners.mockResolvedValue([
         { bookingId: '1', firstName: 'BOB', lastName: 'SMITH' } as Prisoner,
       ])
-      prisonApi.getLocationsForAppointments.mockResolvedValue([
-        { locationId: 100, userDescription: 'Room 1', agencyId: 'WWI' },
-        { locationId: 110, userDescription: 'Room 2', agencyId: 'WWI' },
-        { locationId: 120, userDescription: 'Room 3', agencyId: 'WWI' },
+      whereaboutsApi.getRooms.mockResolvedValue([
+        { locationId: 100, description: 'Room 1' },
+        { locationId: 110, description: 'Room 2' },
+        { locationId: 120, description: 'Room 3' },
       ] as Location[])
       prisonApi.getAgencies.mockResolvedValue([
         { agencyId: 'WWI', formattedDescription: 'Wandsworth (HMP)' },
@@ -126,7 +162,7 @@ describe('ViewBookingService', () => {
       const result = await service.getList(context, now, null, username)
 
       expect(result).toStrictEqual({
-        appointments: [preAppointment, mainAppointment, postAppointment],
+        appointments: [preAppointmentWWI, mainAppointmentWWI, postAppointmentWWI],
         courts,
       })
     })
@@ -142,8 +178,8 @@ describe('ViewBookingService', () => {
 
       expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(context, username)
       expect(prisonerOffenderSearchApi.getPrisoners).toHaveBeenCalledWith(context, [1, 2])
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'MDI')
       expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'WWI', now, 'WMRCN')
       expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
     })
@@ -155,8 +191,8 @@ describe('ViewBookingService', () => {
 
       expect(locationService.getVideoLinkEnabledCourts).toHaveBeenCalledWith(context, username)
       expect(prisonerOffenderSearchApi.getPrisoners).not.toHaveBeenCalled()
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'WWI')
-      expect(prisonApi.getLocationsForAppointments).toHaveBeenCalledWith(context, 'MDI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
+      expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'MDI')
       expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
     })
 
@@ -169,12 +205,12 @@ describe('ViewBookingService', () => {
 
       expect(result).toStrictEqual({
         appointments: [
-          preAppointment,
-          preAppointment,
-          mainAppointment,
-          mainAppointment,
-          postAppointment,
-          postAppointment,
+          preAppointmentWWI,
+          preAppointmentMDI,
+          mainAppointmentWWI,
+          mainAppointmentMDI,
+          postAppointmentWWI,
+          postAppointmentMDI,
         ],
         courts,
       })
@@ -187,32 +223,9 @@ describe('ViewBookingService', () => {
 
       expect(result).toStrictEqual({
         appointments: [
-          { ...preAppointment, offenderName: '' },
-          { ...mainAppointment, offenderName: '' },
-          { ...postAppointment, offenderName: '' },
-        ],
-        courts,
-      })
-    })
-
-    it('prison location not found', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([
-        booking({
-          pre: {
-            locationId: 10000,
-            startTime: '2020-12-23T09:40:00',
-            endTime: '2020-12-23T10:00:00',
-          },
-        }),
-      ])
-
-      const result = await service.getList(context, now, 'WMRCN', username)
-
-      expect(result).toStrictEqual({
-        appointments: [
-          { ...preAppointment, locationId: 10000, prison: '', prisonLocation: '' },
-          { ...mainAppointment },
-          { ...postAppointment },
+          { ...preAppointmentWWI, offenderName: '' },
+          { ...mainAppointmentWWI, offenderName: '' },
+          { ...postAppointmentWWI, offenderName: '' },
         ],
         courts,
       })

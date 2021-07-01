@@ -63,3 +63,5 @@ export const apis = {
 }
 
 export type Apis = typeof apis
+
+export { WhereaboutsApi, PrisonApi }

@@ -1,5 +1,5 @@
 const courts = require('./responses/courts.json')
-const { stubFor, verifyPosts, getMatchingRequests } = require('./wiremock')
+const { stubFor, getMatchingRequests } = require('./wiremock')
 
 module.exports = {
   stubHealth: (status = 200) => {
@@ -16,6 +16,7 @@ module.exports = {
       },
     })
   },
+
   stubCourts: (locations = courts, status = 200) => {
     return stubFor({
       request: {
@@ -33,6 +34,7 @@ module.exports = {
       },
     })
   },
+
   stubCreateVideoLinkBooking: (status = 200) => {
     return stubFor({
       request: {
@@ -79,6 +81,22 @@ module.exports = {
       request: {
         method: 'POST',
         url: `/whereabouts/court/vlb-appointment-location-finder`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response || [],
+      },
+    })
+  },
+
+  stubGetRooms: (agencyId, response) => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/whereabouts/video-link-rooms/${agencyId}`,
       },
       response: {
         status: 200,
@@ -178,147 +196,6 @@ module.exports = {
       },
     })
   },
-
-  verifyPostAttendance: () => {
-    return verifyPosts('/whereabouts/attendance')
-  },
-  stubGroups: (caseload, status = 200) => {
-    const json = [
-      {
-        name: '1',
-        key: '1',
-        children: [
-          {
-            name: 'A',
-            key: 'A',
-          },
-          {
-            name: 'B',
-            key: 'B',
-          },
-          {
-            name: 'C',
-            key: 'C',
-          },
-        ],
-      },
-      {
-        name: '2',
-        key: '2',
-        children: [
-          {
-            name: 'A',
-            key: 'A',
-          },
-          {
-            name: 'B',
-            key: 'B',
-          },
-          {
-            name: 'C',
-            key: 'C',
-          },
-        ],
-      },
-      {
-        name: '3',
-        key: '3',
-        children: [
-          {
-            name: 'A',
-            key: 'A',
-          },
-          {
-            name: 'B',
-            key: 'B',
-          },
-          {
-            name: 'C',
-            key: 'C',
-          },
-        ],
-      },
-    ]
-
-    const jsonSYI = [
-      {
-        name: 'block1',
-        key: 'block1',
-        children: [
-          {
-            name: 'A',
-            key: 'A',
-          },
-          {
-            name: 'B',
-            key: 'B',
-          },
-        ],
-      },
-      {
-        name: 'block2',
-        key: 'block2',
-        children: [
-          {
-            name: 'A',
-            key: 'A',
-          },
-          {
-            name: 'B',
-            key: 'B',
-          },
-          {
-            name: 'C',
-            key: 'C',
-          },
-        ],
-      },
-    ]
-
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/whereabouts/agencies/${caseload.id}/locations/groups`,
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: caseload.id === 'SYI' ? jsonSYI : json,
-      },
-    })
-  },
-
-  stubGetLocationPrefix: ({ agencyId, groupName, response }) =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `/whereabouts/locations/${agencyId}/${groupName}/location-prefix`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: response,
-      },
-    }),
-
-  stubLocationGroups: locationGroups =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPathPattern: '/whereabouts/agencies/.+?/locations/groups',
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: locationGroups || [],
-      },
-    }),
 
   stubGetEventsCsv: body =>
     stubFor({

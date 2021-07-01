@@ -13,7 +13,7 @@ jest.mock('../../services/locationService')
 describe('change video link booking controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-  const locationService = new LocationService(null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
   let controller: ChangeVideoLinkBookingController
   const req = mockRequest({
