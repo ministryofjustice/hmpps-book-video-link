@@ -53,7 +53,7 @@ describe('Confirm appointments', () => {
 
   it('should render page', async () => {
     bookingService.get.mockResolvedValue(bookingDetails)
-    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'City of London' })
 
     await controller.view(req, res, null)
 
@@ -80,7 +80,7 @@ describe('Confirm appointments', () => {
 
   it('Should call booking service with correct params', async () => {
     bookingService.get.mockResolvedValue(bookingDetails)
-    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'City of London' })
 
     await controller.view(req, res, null)
 
@@ -89,10 +89,10 @@ describe('Confirm appointments', () => {
 
   it('Should call location service with correct params', async () => {
     bookingService.get.mockResolvedValue(bookingDetails)
-    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'City of London' })
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'City of London' })
 
     await controller.view(req, res, null)
 
-    expect(locationService.getVideoLinkEnabledCourt).toBeCalledWith(res.locals, 'CLDN', 'A_USER')
+    expect(locationService.getVideoLinkEnabledCourt).toBeCalledWith(res.locals, 'CLDN')
   })
 })

@@ -19,7 +19,7 @@ describe('View court bookings', () => {
     res = mockResponse({ locals: { context: {}, user: { username: 'A_USER' } } })
 
     viewBookingsService.getList.mockResolvedValue({
-      courts: [{ text: 'Westminster Crown Court', value: 'WMRCN' }],
+      courts: [{ name: 'Westminster Crown Court', id: 'WMRCN' }],
       appointments: [{ videoLinkBookingId: 1 }],
     } as Bookings)
   })

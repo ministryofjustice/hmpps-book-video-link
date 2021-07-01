@@ -1,7 +1,7 @@
-import { Location } from 'whereaboutsApi'
+import { Location, Court } from 'whereaboutsApi'
 import type { PrisonApi } from '../api'
 import type ManageCourtsService from './manageCourtsService'
-import { Context, Prison, Court } from './model'
+import { Context, Prison } from './model'
 import { app } from '../config'
 import { RoomFinder, RoomFinderFactory } from './roomFinder'
 
@@ -39,14 +39,11 @@ export = class LocationService {
 
   public async getVideoLinkEnabledCourts(context: Context, userId: string): Promise<Court[]> {
     const courts = await this.manageCourtsService.getSelectedCourts(context, userId)
-    return courts.map(court => ({
-      value: court.courtId,
-      text: court.courtName,
-    }))
+    return courts
   }
 
-  public async getVideoLinkEnabledCourt(context: Context, courtId: string, userId: string): Promise<Court> {
-    const courts = await this.getVideoLinkEnabledCourts(context, userId)
-    return courts.find(c => c.value === courtId)
+  public async getVideoLinkEnabledCourt(context: Context, courtId: string): Promise<Court> {
+    const court = await this.manageCourtsService.getCourt(context, courtId)
+    return court
   }
 }

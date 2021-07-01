@@ -69,9 +69,9 @@ describe('change video link booking controller', () => {
     jest.resetAllMocks()
     controller = new ChangeVideoLinkBookingController(bookingService, availabilityCheckService, locationService)
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { text: 'Westminster Crown Court', value: 'WMRCN' },
-      { text: 'Wimbledon County Court', value: 'WLDCOU' },
-      { text: 'City of London', value: 'CLDN' },
+      { name: 'Westminster Crown Court', id: 'WMRCN' },
+      { name: 'Wimbledon County Court', id: 'WLDCOU' },
+      { name: 'City of London', id: 'CLDN' },
     ])
   })
 

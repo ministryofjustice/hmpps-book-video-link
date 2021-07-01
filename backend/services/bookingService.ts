@@ -88,11 +88,11 @@ export = class BookingService {
       ...(postAppointment ? { post: this.toNewAppointment(postAppointment) } : {}),
     })
 
-    const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId, currentUsername)
+    const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId)
 
     await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
       agencyId,
-      court: court.text,
+      court: court.name,
       prison: agencyDetails.description,
       offenderNo,
       prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
@@ -105,7 +105,7 @@ export = class BookingService {
 
     raiseAnalyticsEvent(
       'VLB Appointments',
-      `Video link booked for ${court.text}`,
+      `Video link booked for ${court.name}`,
       `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
     )
 

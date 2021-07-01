@@ -14,31 +14,16 @@ describe('court selection confirmation controller', () => {
 
   const courtList = [
     {
-      courtId: 'ABDRCT',
-      courtName: 'Aberdare County Court',
-      type: {
-        courtType: 'COU',
-        courtName: 'Aberdare County Court',
-      },
-      active: true,
+      id: 'ABDRCT',
+      name: 'Aberdare County Court',
     },
     {
-      courtId: 'ABDRMC',
-      courtName: 'Aberdare Mc',
-      type: {
-        courtType: 'MAG',
-        courtName: 'Aberdare Mc',
-      },
-      active: true,
+      id: 'ABDRMC',
+      name: 'Aberdare Mc',
     },
     {
-      courtId: 'ABDRYC',
-      courtName: 'Aberdare Youth Court',
-      type: {
-        courtType: 'YTH',
-        courtName: 'Aberdare Youth Court',
-      },
-      active: true,
+      id: 'ABDRYC',
+      name: 'Aberdare Youth Court',
     },
   ]
 

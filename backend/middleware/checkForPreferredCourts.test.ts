@@ -1,5 +1,5 @@
 import { mockRequest, mockResponse, mockNext } from '../routes/__test/requestTestUtils'
-import { UserPreferenceCourt } from '../services/manageCourtsService'
+import type { UserPreferenceCourt } from '../services/model'
 
 import checkForPreferredCourts from './checkForPreferredCourts'
 
@@ -7,7 +7,7 @@ describe('Preferred courts check middleware', () => {
   const req = mockRequest({})
   const next = mockNext()
 
-  const createCourt = (courtId: string, courtName: string): UserPreferenceCourt => ({ courtId, courtName })
+  const createCourt = (id: string, name: string): UserPreferenceCourt => ({ id, name })
 
   beforeEach(() => {
     jest.resetAllMocks()

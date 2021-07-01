@@ -29,9 +29,9 @@ describe('Select court appoinment court', () => {
     prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Moorland' } as Agency)
 
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { text: 'Westminster Crown Court', value: 'WMRCN' },
-      { text: 'Wimbledon County Court', value: 'WLDCOU' },
-      { text: 'City of London', value: 'CLDN' },
+      { name: 'Westminster Crown Court', id: 'WMRCN' },
+      { name: 'Wimbledon County Court', id: 'WLDCOU' },
+      { name: 'City of London', id: 'CLDN' },
     ])
     req.flash.mockReturnValue([])
 
@@ -57,9 +57,9 @@ describe('Select court appoinment court', () => {
         'createBooking/selectCourt.njk',
         expect.objectContaining({
           courts: [
-            { text: 'Westminster Crown Court', value: 'WMRCN' },
-            { text: 'Wimbledon County Court', value: 'WLDCOU' },
-            { text: 'City of London', value: 'CLDN' },
+            { name: 'Westminster Crown Court', id: 'WMRCN' },
+            { name: 'Wimbledon County Court', id: 'WLDCOU' },
+            { name: 'City of London', id: 'CLDN' },
           ],
           prePostData: {
             'post-court hearing briefing': '14:00 to 14:15',
@@ -97,13 +97,13 @@ describe('Select court appoinment court', () => {
     describe('when no court has been selected', () => {
       it('should return an error', async () => {
         await controller.submit(
-          { ...req, errors: [{ text: 'some error', href: '#courtId' }] } as unknown as Request,
+          { ...req, errors: [{ name: 'some error', href: '#courtId' }] } as unknown as Request,
           res,
           null
         )
 
         expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/select-court')
-        expect(req.flash).toHaveBeenCalledWith('errors', [{ href: '#courtId', text: 'some error' }])
+        expect(req.flash).toHaveBeenCalledWith('errors', [{ href: '#courtId', name: 'some error' }])
       })
     })
 
