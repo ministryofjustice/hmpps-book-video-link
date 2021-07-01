@@ -1,6 +1,6 @@
 import validator, { errorTypes } from './commentValidation'
 
-describe('commentValdiation', () => {
+describe('commentValidation', () => {
   const form = {
     comment: 'Some comment',
   } as Record<string, string>
