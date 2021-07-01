@@ -17,20 +17,18 @@ module.exports = {
     })
   },
 
-  stubCourts: (locations = courts, status = 200) => {
+  stubCourts: () => {
     return stubFor({
       request: {
         method: 'GET',
         url: '/whereabouts/court/courts',
       },
       response: {
-        status,
+        status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: locations || {
-          courtLocations: ['London', 'Sheffield', 'Leeds'],
-        },
+        jsonBody: courts,
       },
     })
   },
