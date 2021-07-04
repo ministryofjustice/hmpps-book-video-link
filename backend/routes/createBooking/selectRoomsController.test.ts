@@ -2,19 +2,17 @@ import moment from 'moment'
 
 import SelectRoomsController from './selectRoomsController'
 import config from '../../config'
-import BookingService from '../../services/bookingService'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { AvailabilityCheckServiceV1, BookingService } from '../../services'
 import { RoomAvailability } from '../../services/model'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../api/prisonApi')
-jest.mock('../../services/bookingService')
-jest.mock('../../services/availabilityCheckService')
+jest.mock('../../services')
 
 describe('Select court appointment rooms', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+  const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
   let controller: SelectRoomsController
 
   const req = mockRequest({ params: { agencyId: 'WWI', offenderNo: 'A12345' } })

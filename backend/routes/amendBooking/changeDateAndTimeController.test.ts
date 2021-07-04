@@ -1,16 +1,14 @@
 import moment from 'moment'
 import ChangeDateAndTimeController from './changeDateAndTimeController'
-import BookingService from '../../services/bookingService'
 import { BookingDetails, RoomAvailability } from '../../services/model'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { AvailabilityCheckServiceV1, BookingService } from '../../services'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
-jest.mock('../../services/bookingService')
-jest.mock('../../services/availabilityCheckService')
+jest.mock('../../services')
 
 describe('change date and time controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+  const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
 
   let controller: ChangeDateAndTimeController
   const req = mockRequest({

@@ -1,18 +1,16 @@
 import moment from 'moment'
 
 import SelectAvailableRoomsController from './selectAvailableRoomsController'
-import BookingService from '../../services/bookingService'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { BookingService, AvailabilityCheckServiceV1 } from '../../services'
 import { BookingDetails, RoomAvailability } from '../../services/model'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
-jest.mock('../../services/bookingService')
-jest.mock('../../services/availabilityCheckService')
+jest.mock('../../services')
 
 describe('Select available rooms controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+  const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
   let controller: SelectAvailableRoomsController
 
   const req = mockRequest({ params: { bookingId: '12' } })

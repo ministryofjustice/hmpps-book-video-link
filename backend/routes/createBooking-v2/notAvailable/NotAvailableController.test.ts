@@ -1,18 +1,19 @@
 import NotAvailableController from './NotAvailableController'
-import { RoomAvailability } from '../../../services/model'
+import { RoomAvailability, RoomAvailabilityV2 } from '../../../services/model'
 import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
-import { AvailabilityCheckService } from '../../../services'
+import { AvailabilityCheckServiceV2 } from '../../../services'
 import { NewBookingCodec } from '../state'
 
-const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
 
 jest.mock('../../../services')
 
 describe('Not available page', () => {
-  const bookingSlot = {
+  const availability: RoomAvailabilityV2 = {
     isAvailable: true,
+    alternatives: [],
     totalInterval: { start: '11:00', end: '14:00' },
-  } as RoomAvailability
+  }
 
   const req = mockRequest({
     params: {
@@ -46,7 +47,7 @@ describe('Not available page', () => {
 
     req.flash.mockReturnValue([])
 
-    availabilityCheckService.getAvailability.mockResolvedValue(bookingSlot)
+    availabilityCheckService.getAvailability.mockResolvedValue(availability)
     controller = new NotAvailableController(availabilityCheckService)
   })
 

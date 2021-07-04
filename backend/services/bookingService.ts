@@ -4,8 +4,8 @@ import type { Appointment, NewAppointment } from 'whereaboutsApi'
 import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 import type NotificationService from './notificationService'
-import type AvailabilityCheckService from './availabilityCheckService'
 import type LocationService from './locationService'
+import type AvailabilityStatusChecker from './availabilityStatusChecker'
 
 import type {
   BookingDetails,
@@ -33,7 +33,7 @@ export = class BookingService {
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService,
-    private readonly availabilityCheckService: AvailabilityCheckService,
+    private readonly availabilityStatusChecker: AvailabilityStatusChecker,
     private readonly locationService: LocationService
   ) {}
 
@@ -192,7 +192,7 @@ export = class BookingService {
     videoBookingId: number,
     update: BookingUpdate
   ): Promise<AvailabilityStatus> {
-    const status = await this.availabilityCheckService.getAvailabilityStatus(
+    const status = await this.availabilityStatusChecker.getAvailabilityStatus(
       context,
       { videoBookingId, ...update },
       { pre: update.preLocation, main: update.mainLocation, post: update.postLocation }

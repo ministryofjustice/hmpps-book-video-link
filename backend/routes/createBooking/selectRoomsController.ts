@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express'
 
 import { RoomAndComment } from './forms'
-import type { AvailabilityCheckService, BookingService } from '../../services'
+import type { AvailabilityCheckServiceV1, BookingService } from '../../services'
 import { getNewBooking, DateAndTimeAndCourtCodec, clearNewBooking } from './state'
 
 export default class SelectRoomsController {
   constructor(
     private readonly bookingService: BookingService,
-    private readonly availabilityCheckService: AvailabilityCheckService
+    private readonly availabilityCheckService: AvailabilityCheckServiceV1
   ) {}
 
   public view: RequestHandler = async (req, res) => {

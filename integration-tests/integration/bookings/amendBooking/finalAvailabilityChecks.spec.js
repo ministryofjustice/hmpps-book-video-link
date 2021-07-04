@@ -3,7 +3,6 @@ const BookingDetailsPage = require('../../../pages/viewBookings/bookingDetailsPa
 const ChangeVideoLinkBookingPage = require('../../../pages/amendBooking/changeVideoLinkBookingPage')
 const VideoLinkIsAvailablePage = require('../../../pages/amendBooking/videoLinkIsAvailablePage')
 const SelectAvailableRoomsPage = require('../../../pages/amendBooking/selectAvailableRoomsPage')
-const NoLongerAvailablePage = require('../../../pages/amendBooking/noLongerAvailablePage')
 const VideoLinkNotAvailablePage = require('../../../pages/amendBooking/videoLinkNotAvailablePage')
 
 const room1 = { locationId: 100, description: 'Room 1', locationType: 'VIDE' }
@@ -16,7 +15,7 @@ context('Final availability checks before submitting update', () => {
     cy.task('reset')
     cy.task('stubLoginCourt', {})
     cy.login()
-
+    cy.task('stubAvailabilityCheck', { matched: false })
     cy.task('stubGetRooms', {
       agencyId: 'WWI',
       rooms: [
@@ -64,48 +63,6 @@ context('Final availability checks before submitting update', () => {
       agencyId: 'WWI',
       details: { agencyId: 'WWI', description: 'Wandsworth', agencyType: 'INST' },
     })
-  })
-
-  it('Room no longer available', () => {
-    cy.task('stubLoginCourt', {})
-    cy.task('stubUpdateVideoLinkBooking', 10)
-
-    const tomorrow = moment().add(1, 'days')
-
-    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
-    bookingDetailsPage.changeDateAndTime().click()
-
-    const changeVideoLinkBookingPage = ChangeVideoLinkBookingPage.verifyOnPage()
-    changeVideoLinkBookingPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
-    changeVideoLinkBookingPage.activeDate().click()
-    changeVideoLinkBookingPage.form.startTimeHours().select('11')
-    changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
-    changeVideoLinkBookingPage.form.endTimeHours().select('11')
-    changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
-    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
-    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
-
-    cy.task('stubRoomAvailability', { pre: [room1, room4], main: [room2], post: [room3] })
-
-    changeVideoLinkBookingPage.form.continue().click()
-
-    VideoLinkIsAvailablePage.verifyOnPage().continue().click()
-
-    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
-
-    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.preLocation().select('100')
-    selectAvailableRoomsForm.mainLocation().select('110')
-    selectAvailableRoomsForm.postLocation().select('120')
-
-    cy.task('stubRoomAvailability', { pre: [room4], main: [room2], post: [room3] })
-
-    selectAvailableRoomsPage.updateVideoLink().click()
-
-    const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
-    noLongerAvailablePage.continue().click()
-
-    SelectAvailableRoomsPage.verifyOnPage()
   })
 
   it('Last room taken leading to no longer having any availability', () => {

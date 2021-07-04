@@ -74,6 +74,22 @@ module.exports = {
     })
   },
 
+  stubAvailabilityCheck: response => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        url: `/whereabouts/court/video-link-booking-check`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: response || [],
+      },
+    })
+  },
+
   stubRoomAvailability: response => {
     return stubFor({
       request: {
@@ -90,6 +106,24 @@ module.exports = {
     })
   },
 
+  getAvailabilityCheckRequests: () =>
+    getMatchingRequests({
+      method: 'POST',
+      urlPath: '/whereabouts/court/video-link-booking-check',
+    }).then(data => {
+      const { requests } = data.body
+      return requests.map(request => JSON.parse(request.body))
+    }),
+
+  getFindAvailabilityRequests: () =>
+    getMatchingRequests({
+      method: 'POST',
+      urlPath: '/whereabouts/court/vlb-appointment-location-finder',
+    }).then(data => {
+      const { requests } = data.body
+      return requests.map(request => JSON.parse(request.body))
+    }),
+
   stubGetRooms: (agencyId, response) => {
     return stubFor({
       request: {
@@ -105,15 +139,6 @@ module.exports = {
       },
     })
   },
-
-  getFindAvailabilityRequests: () =>
-    getMatchingRequests({
-      method: 'POST',
-      urlPath: '/whereabouts/court/vlb-appointment-location-finder',
-    }).then(data => {
-      const { requests } = data.body
-      return requests.map(request => JSON.parse(request.body))
-    }),
 
   stubGetVideoLinkBooking: booking => {
     return stubFor({

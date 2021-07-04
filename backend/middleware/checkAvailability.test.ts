@@ -1,13 +1,13 @@
 import moment from 'moment'
 
-import AvailabilityCheckService from '../services/availabilityCheckService'
+import AvailabilityCheckService from '../services/availabilityCheckServiceV1'
 import checkAvailability from './checkAvailability'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import { Room } from '../services/model'
 import { Services } from '../services'
 import { mockRequest, mockResponse } from '../routes/__test/requestTestUtils'
 
-jest.mock('../services/availabilityCheckService')
+jest.mock('../services/availabilityCheckServiceV1')
 
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
@@ -26,7 +26,7 @@ describe('check availability middleware', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    middleware = checkAvailability({ availabilityCheckService } as unknown as Services)
+    middleware = checkAvailability({ availabilityCheckServiceV1: availabilityCheckService } as unknown as Services)
     req.signedCookies = {
       'booking-creation': {
         bookingId: '123456',

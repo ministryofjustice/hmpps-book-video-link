@@ -43,7 +43,6 @@ module.exports = on => {
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),
-    getFindAvailabilityRequests: () => whereabouts.getFindAvailabilityRequests(),
     stubGetVideoLinkBookings: ({ agencyId, date, bookings, courtId }) =>
       whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings, courtId),
     stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
@@ -52,7 +51,10 @@ module.exports = on => {
     getUpdateBookingRequest: () => whereabouts.getUpdateBookingRequest(),
     stubUpdateVideoLinkBooking: videoBookingId => whereabouts.stubUpdateVideoLinkBooking(videoBookingId),
     stubDeleteVideoLinkBooking: videoBookingId => whereabouts.stubDeleteVideoLinkBooking(videoBookingId),
+    stubAvailabilityCheck: result => whereabouts.stubAvailabilityCheck(result),
+    getAvailabilityCheckRequests: () => whereabouts.getAvailabilityCheckRequests(),
     stubRoomAvailability: locations => whereabouts.stubRoomAvailability(locations),
+    getFindAvailabilityRequests: () => whereabouts.getFindAvailabilityRequests(),
     stubGetRooms: ({ agencyId, rooms }) => whereabouts.stubGetRooms(agencyId, rooms),
 
     stubVerifyToken: (active = true) => tokenverification.stubVerifyToken(active),

@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
 
 import { DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import type CheckAvailabilityService from '../../services/availabilityCheckService'
+import type CheckAvailabilityService from '../../services/availabilityCheckServiceV1'
 import { ChangeDateAndTime } from './forms'
 import { clearUpdate, setUpdate } from './state'
 
