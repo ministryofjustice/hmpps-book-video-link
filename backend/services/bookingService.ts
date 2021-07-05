@@ -164,6 +164,7 @@ export = class BookingService {
     const existing = await this.get(context, videoBookingId)
 
     await this.whereaboutsApi.updateVideoLinkBooking(context, videoBookingId, {
+      courtId: update.courtId,
       comment: update.comment,
       pre: update.preLocation && this.toAppointment(update.preLocation, preAppointmentTimes(update.startTime)),
       main: this.toAppointment(update.mainLocation, [update.startTime, update.endTime]),
