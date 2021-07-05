@@ -3,7 +3,8 @@ import { Court } from 'whereaboutsApi'
 
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
-import ManageCourtsService, { UserPreferenceCourt } from './manageCourtsService'
+import ManageCourtsService from './manageCourtsService'
+import type { UserPreferenceCourt } from './model'
 
 jest.mock('../api/whereaboutsApi')
 jest.mock('../api/userCourtPreferencesApi')
@@ -13,9 +14,9 @@ const userCourtPreferencesApi = new UserCourtPreferencesApi(null) as jest.Mocked
 
 const createCourt = (id: string, name: string): Court => ({ id, name })
 
-const createSeletedCourt = (courtId: string, courtName: string, isSelected?: boolean): UserPreferenceCourt => ({
-  courtId,
-  courtName,
+const createSeletedCourt = (id: string, name: string, isSelected?: boolean): UserPreferenceCourt => ({
+  id,
+  name,
   isSelected,
 })
 

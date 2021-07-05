@@ -11,7 +11,7 @@ export = (viewBookingsService: ViewBookingsService): RequestHandler =>
     const { appointments, courts } = await viewBookingsService.getList(res.locals, searchDate, courtId, username)
 
     return res.render('viewBookings/index.njk', {
-      courts: courts.map(court => ({ value: court.value, text: court.text })),
+      courts: courts.map(court => ({ value: court.id, text: court.name })),
       courtId,
       appointments,
       date: searchDate,

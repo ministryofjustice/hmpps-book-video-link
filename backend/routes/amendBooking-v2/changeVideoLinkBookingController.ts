@@ -34,7 +34,7 @@ export default class ChangeVideoLinkBookingController {
 
       return res.render('amendBooking-v2/changeVideoLinkBooking.njk', {
         errors,
-        courts,
+        courts: courts.map(c => ({ value: c.id, text: c.name })),
         bookingId,
         agencyId: bookingDetails.agencyId,
         prisoner: {

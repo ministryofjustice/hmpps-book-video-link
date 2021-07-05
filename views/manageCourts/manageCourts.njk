@@ -57,16 +57,16 @@
                       {% for item in courtList %}
                         <div class="govuk-checkboxes__item">
                           <input  class="govuk-checkboxes__input" 
-                                  id="court-{{item.courtId}}" 
+                                  id="court-{{item.id}}" 
                                   name="courts[]" 
                                   type="checkbox" 
-                                  value="{{item.courtId}}"
+                                  value="{{item.id}}"
                                   {% if item.isSelected %}
                                     checked
                                   {% endif %}
                                   >
-                          <label class="govuk-label govuk-checkboxes__label" for="court-{{item.courtId}}">
-                            {{ item.courtName }}
+                          <label class="govuk-label govuk-checkboxes__label" for="court-{{item.id}}">
+                            {{ item.name }}
                           </label>
                         </div>
                       {% endfor %}

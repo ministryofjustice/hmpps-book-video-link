@@ -16,14 +16,13 @@ export default class ConfirmBookingController {
 
   public view: RequestHandler = async (req, res) => {
     const { agencyId, offenderNo } = req.params
-    const { username } = res.locals.user
 
     const newBooking = getNewBooking(req)
 
     const [offenderDetails, agencyDetails, court, roomFinder] = await Promise.all([
       this.prisonApi.getPrisonerDetails(res.locals, offenderNo),
       this.prisonApi.getAgencyDetails(res.locals, agencyId),
-      this.locationService.getVideoLinkEnabledCourt(res.locals, newBooking.courtId, username),
+      this.locationService.getVideoLinkEnabledCourt(res.locals, newBooking.courtId),
       this.locationService.createRoomFinder(res.locals, agencyId),
     ])
 
@@ -37,7 +36,7 @@ export default class ConfirmBookingController {
       offender: {
         name: offenderNameWithNumber,
         prison: agencyDetails.description,
-        court: court.text,
+        court: court.name,
       },
       details: {
         date: newBooking.date.format(DATE_ONLY_LONG_FORMAT_SPEC),

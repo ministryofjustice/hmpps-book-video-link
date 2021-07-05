@@ -50,7 +50,7 @@ describe('Select court appointment rooms', () => {
     bookingService.create.mockResolvedValue(123)
     prisonApi.getPrisonerDetails.mockResolvedValue({ firstName: 'BOB', lastName: 'SMITH' } as InmateDetail)
     prisonApi.getAgencyDetails.mockResolvedValue({ description: 'Leeds' } as Agency)
-    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'LEEMC', text: 'LEEDS' })
+    locationService.getVideoLinkEnabledCourt.mockResolvedValue({ id: 'LEEMC', name: 'LEEDS' })
     locationService.createRoomFinder.mockResolvedValue(
       new RoomFinder([
         { locationId: 1, description: 'Room 1' },
@@ -92,7 +92,7 @@ describe('Select court appointment rooms', () => {
 
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(res.locals, 'WWI')
       expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith(res.locals, 'A12345')
-      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(res.locals, 'LEEMC', 'USER-1')
+      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(res.locals, 'LEEMC')
       expect(locationService.createRoomFinder).toHaveBeenCalledWith(res.locals, 'WWI')
     })
   })

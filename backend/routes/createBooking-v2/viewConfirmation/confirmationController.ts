@@ -7,10 +7,9 @@ export default class ConfirmationController {
 
   public view: RequestHandler = async (req, res) => {
     const { videoBookingId } = req.params
-    const { username } = res.locals.user
 
     const details = await this.bookingService.get(res.locals, Number(videoBookingId))
-    const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, details.courtId, username)
+    const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, details.courtId)
 
     res.render('createBooking-v2/confirmation.njk', {
       videolinkPrisonerSearchLink: '/prisoner-search',
@@ -30,7 +29,7 @@ export default class ConfirmationController {
         'post-court hearing briefing': details.postDetails?.description,
       },
       court: {
-        courtLocation: court.text,
+        courtLocation: court.name,
       },
     })
   }

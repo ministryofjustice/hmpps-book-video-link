@@ -135,8 +135,8 @@ describe('ViewBookingService', () => {
     }
 
     const courts = [
-      { text: 'Westminster Crown Court', value: 'WMRCN' },
-      { text: 'Wimbledon County Court', value: 'WLDCOU' },
+      { name: 'Westminster Crown Court', id: 'WMRCN' },
+      { name: 'Wimbledon County Court', id: 'WLDCOU' },
     ]
 
     beforeEach(() => {

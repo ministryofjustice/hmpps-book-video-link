@@ -24,8 +24,8 @@ describe('Select court controller', () => {
     })
 
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
-      { value: 'LDNCOU', text: 'London County Court' },
-      { value: 'YKCRN', text: 'York Crown Court' },
+      { id: 'LDNCOU', name: 'London County Court' },
+      { id: 'YKCRN', name: 'York Crown Court' },
     ])
 
     controller = new SelectCourtController(locationService)
@@ -142,7 +142,7 @@ describe('Select court controller', () => {
   describe('Submit', () => {
     it('should stash hearing location into flash and redirect to enter offender details', async () => {
       req.body = { courtId: 'LDNCOU' }
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ value: 'LDNCOU', text: 'London County Court' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ id: 'LDNCOU', name: 'London County Court' })
       mockFlashState({
         errors: [],
         requestBooking: [

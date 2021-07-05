@@ -17,7 +17,7 @@
             <p class = "govuk-!-margin-top-8">You can now create video link bookings and view existing bookings for the following courts:</p>
             <ul class="govuk-list govuk-list--bullet">
                 {% for item in courts %}
-                    <li data-qa="court">{{item.courtName}}</li>
+                    <li data-qa="court">{{item.name}}</li>
                 {% endfor %}
             </ul>
         </div>

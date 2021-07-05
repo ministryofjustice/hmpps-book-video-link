@@ -1,17 +1,13 @@
 import type { PreferencesDTO } from 'userPreferences'
-import { Context } from './model'
+import type { Court } from 'whereaboutsApi'
+
+import { Context, UserPreferenceCourt } from './model'
 
 import UserCourtPreferencesApi from '../api/userCourtPreferencesApi'
 import { groupBy } from '../utils'
 import WhereaboutsApi from '../api/whereaboutsApi'
 
 export type CourtsByLetter = Map<string, UserPreferenceCourt[]>
-
-export type UserPreferenceCourt = {
-  courtName: string
-  courtId: string
-  isSelected?: boolean
-}
 
 export default class ManageCourtsService {
   constructor(
@@ -20,7 +16,7 @@ export default class ManageCourtsService {
   ) {}
 
   private sortAlphabetically(courts: UserPreferenceCourt[]): UserPreferenceCourt[] {
-    return courts.sort((a, b) => a.courtName.localeCompare(b.courtName))
+    return courts.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   public async getSortedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {
@@ -28,8 +24,7 @@ export default class ManageCourtsService {
     const preferredCourts = await this.userCourtPreferencesApi.getUserPreferredCourts(context, userId)
     return this.sortAlphabetically(
       courtsList.map(court => ({
-        courtId: court.id,
-        courtName: court.name,
+        ...court,
         isSelected: preferredCourts.items.includes(court.id),
       }))
     )
@@ -37,12 +32,17 @@ export default class ManageCourtsService {
 
   public async getCourtsByLetter(context: Context, userId: string): Promise<CourtsByLetter> {
     const courts = await this.getSortedCourts(context, userId)
-    return groupBy(courts, (court: UserPreferenceCourt) => court.courtName.charAt(0).toUpperCase())
+    return groupBy(courts, (court: UserPreferenceCourt) => court.name.charAt(0).toUpperCase())
   }
 
   public async getSelectedCourts(context: Context, userId: string): Promise<UserPreferenceCourt[]> {
     const courts = await this.getSortedCourts(context, userId)
     return courts.filter(court => court.isSelected)
+  }
+
+  public async getCourt(context: Context, courtId: string): Promise<Court> {
+    const courts = await this.whereaboutsApi.getCourts(context)
+    return courts.find(c => c.id === courtId)
   }
 
   public async updateUserPreferredCourts(

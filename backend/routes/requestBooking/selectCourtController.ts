@@ -71,7 +71,7 @@ export default class SelectCourtController {
           'pre-court hearing briefing': preHearingStartAndEndTime,
           'post-court hearing briefing': postHearingStartAndEndTime,
         },
-        hearingLocations: courtLocations,
+        hearingLocations: courtLocations.map(c => ({ value: c.id, text: c.name })),
         errors,
       })
     }
@@ -80,16 +80,16 @@ export default class SelectCourtController {
   public submit(): RequestHandler {
     return async (req, res) => {
       const { courtId } = req.body
-      const { username } = res.locals.user
+
       if (req.errors) {
         req.flash('errors', req.errors)
         return res.redirect('/request-booking/select-court')
       }
-      const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, courtId, username)
+      const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, courtId)
       const bookingDetails = this.getBookingDetails(req)
       this.packBookingDetails(req, {
         ...bookingDetails,
-        hearingLocation: court.text,
+        hearingLocation: court.name,
       })
       return res.redirect('/request-booking/enter-offender-details')
     }

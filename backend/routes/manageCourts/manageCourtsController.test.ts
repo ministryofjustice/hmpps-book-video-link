@@ -1,6 +1,7 @@
 import ManageCourtsController from './manageCourtsController'
-import ManageCourtsService, { UserPreferenceCourt } from '../../services/manageCourtsService'
+import ManageCourtsService from '../../services/manageCourtsService'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { UserPreferenceCourt } from '../../services/model'
 
 jest.mock('../../services/manageCourtsService')
 

@@ -1,13 +1,13 @@
 import type { Prison } from 'prisonApi'
 import type { Prisoner } from 'prisonerOffenderSearchApi'
 import moment from 'moment'
-import type { Appointment, Location, VideoLinkBooking } from 'whereaboutsApi'
+import type { Appointment, Location, VideoLinkBooking, Court } from 'whereaboutsApi'
 
 import PrisonApi from '../api/prisonApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { formatName, getTime, flattenCalls, toMap } from '../utils'
 import { app } from '../config'
-import { Context, HearingType, Bookings, Court } from './model'
+import { Context, HearingType, Bookings } from './model'
 import PrisonerOffenderSearchApi from '../api/prisonerOffenderSearchApi'
 import LocationService from './locationService'
 
@@ -53,7 +53,7 @@ export = class ViewBookingsService {
   }
 
   private sortAlphabetically(courts: Court[]): Court[] {
-    return courts.sort((a, b) => a.text.localeCompare(b.text))
+    return courts.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   public async getList(
@@ -68,7 +68,7 @@ export = class ViewBookingsService {
     ])
 
     const sortedCourts = this.sortAlphabetically(courts)
-    const courtId = courtIdFilter || sortedCourts[0].value
+    const courtId = courtIdFilter || sortedCourts[0].id
 
     const bookingRequests = app.videoLinkEnabledFor.map(prison =>
       this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate, courtId)

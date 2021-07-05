@@ -85,26 +85,24 @@ describe('Location service', () => {
   describe('Get video link court locations', () => {
     it('Should map video link court locations correctly', async () => {
       const courtLocations = [
-        { courtName: 'London County Court', courtId: 'LDNCOU' },
-        { courtName: 'York Crown Court', courtId: 'YKCRN' },
+        { name: 'London County Court', id: 'LDNCOU' },
+        { name: 'York Crown Court', id: 'YKCRN' },
       ]
       manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
       const response = await service.getVideoLinkEnabledCourts(context, userId)
       expect(response).toEqual([
-        { value: 'LDNCOU', text: 'London County Court' },
-        { value: 'YKCRN', text: 'York Crown Court' },
+        { id: 'LDNCOU', name: 'London County Court' },
+        { id: 'YKCRN', name: 'York Crown Court' },
       ])
     })
+  })
 
+  describe('getVideolinkEnabledCourt', () => {
     it('Should find single matching court from courtId ', async () => {
-      const courtId = 'LDNCOU'
-      const courtLocations = [
-        { courtName: 'London County Court', courtId: 'LDNCOU' },
-        { courtName: 'York Crown Court', courtId: 'YKCRN' },
-      ]
-      manageCourtsService.getSelectedCourts.mockResolvedValue(courtLocations)
-      const response = await service.getVideoLinkEnabledCourt(context, courtId, userId)
-      expect(response).toEqual({ text: 'London County Court', value: 'LDNCOU' })
+      manageCourtsService.getCourt.mockResolvedValue({ name: 'London County Court', id: 'LDNCOU' })
+      const response = await service.getVideoLinkEnabledCourt(context, 'LDNCOU')
+      expect(response).toEqual({ name: 'London County Court', id: 'LDNCOU' })
+      expect(manageCourtsService.getCourt).toBeCalledWith(context, 'LDNCOU')
     })
   })
 })

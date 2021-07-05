@@ -60,6 +60,7 @@ describe('Add court appointment', () => {
 
     prisonApi.getPrisonerDetails.mockResolvedValue(prisoner as InmateDetail)
     prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
+    locationService.getVideoLinkEnabledCourts.mockResolvedValue([])
     availabilityCheckService.getAvailability.mockResolvedValue(bookingSlot)
     controller = new NewBookingController(prisonApi, availabilityCheckService, locationService)
   })

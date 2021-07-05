@@ -1,4 +1,4 @@
-import { Interval } from 'whereaboutsApi'
+import { Interval, Court } from 'whereaboutsApi'
 import { Moment } from 'moment'
 
 export type Context = unknown
@@ -13,9 +13,8 @@ export type Room = {
   text: string
 }
 
-export type Court = {
-  value: string
-  text: string
+export type UserPreferenceCourt = Court & {
+  isSelected?: boolean
 }
 
 export type AvailabilityRequest = {

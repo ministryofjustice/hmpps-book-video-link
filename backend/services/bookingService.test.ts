@@ -166,7 +166,7 @@ describe('Booking service', () => {
 
     describe('Creating a booking with all fields', () => {
       it('booking with all fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -206,7 +206,7 @@ describe('Booking service', () => {
       })
 
       it('email sent when all fields provided', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -239,8 +239,8 @@ describe('Booking service', () => {
       describe('Event raising', () => {
         it('should raise event when both pre and post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            text: 'City of London',
-            value: 'CLDN',
+            name: 'City of London',
+            id: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
@@ -264,8 +264,8 @@ describe('Booking service', () => {
 
         it('should raise event when neither pre and post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            text: 'City of London',
-            value: 'CLDN',
+            name: 'City of London',
+            id: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
@@ -289,8 +289,8 @@ describe('Booking service', () => {
 
         it('should raise event when only pre and not post', async () => {
           locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            text: 'City of London',
-            value: 'CLDN',
+            name: 'City of London',
+            id: 'CLDN',
           })
 
           await service.create(context, 'USER-1', {
@@ -316,7 +316,7 @@ describe('Booking service', () => {
 
     describe('Creating a booking with only mandatory fields', () => {
       it('booking with only mandatory fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -344,7 +344,7 @@ describe('Booking service', () => {
     })
 
     it('email sent when only mandatory fields provided', async () => {
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
       await service.create(context, 'USER-1', {
         offenderNo: 'AA1234AA',
@@ -421,7 +421,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
       await service.updateComments(context, 'A_USER', 1234, 'another comment')
 
@@ -444,7 +444,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
@@ -488,7 +488,7 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ text: 'City of London', value: 'CLDN' })
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
 
       await service.update(context, 'A_USER', 1234, {
         agencyId: 'WWI',
