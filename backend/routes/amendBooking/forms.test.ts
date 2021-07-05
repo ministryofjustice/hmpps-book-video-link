@@ -1,11 +1,12 @@
 import moment from 'moment'
 import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import { ChangeDateAndTime, RoomAndComment } from './forms'
+import { ChangeVideoLinkBooking, RoomAndComment } from './forms'
 
-describe('ChangeDateAndTime', () => {
+describe('ChangeVideoLinkBooking', () => {
   test('check parse', () => {
-    const result = ChangeDateAndTime({
+    const result = ChangeVideoLinkBooking({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: '22/01/2020',
       startTimeHours: '10',
       startTimeMinutes: '30',
@@ -17,6 +18,7 @@ describe('ChangeDateAndTime', () => {
 
     expect(result).toStrictEqual({
       agencyId: 'WWI',
+      courtId: 'CLDN',
       date: moment('22/01/2020', DAY_MONTH_YEAR),
       startTime: buildDate('22/01/2020', '10', '30'),
       endTime: buildDate('22/01/2020', '11', '00'),
@@ -27,8 +29,9 @@ describe('ChangeDateAndTime', () => {
 
   test('fails on missing field', () => {
     expect(() =>
-      ChangeDateAndTime({
+      ChangeVideoLinkBooking({
         agencyId: 'WWI',
+        courtId: 'CLDN',
         date: '22/01/2020',
         startTimeHours: '10',
         startTimeMinutes: '30',
@@ -41,8 +44,9 @@ describe('ChangeDateAndTime', () => {
 
   test('fails on incorrect data type', () => {
     expect(() =>
-      ChangeDateAndTime({
+      ChangeVideoLinkBooking({
         agencyId: 'WWI',
+        courtId: 'CLDN',
         date: '22/01/2020',
         startTimeHours: ['10'],
         startTimeMinutes: '30',

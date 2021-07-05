@@ -14,22 +14,16 @@
   </div>
 </div>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-three-quarters">
-    {{ govukButton({
-      text: "Delete video link",
-      href: '/delete-booking/' + bookingDetails.videoBookingId,
-      classes: "govuk-button--warning", 
-      attributes: {'data-qa': 'delete-button'}
-    }) }}
-    {{
-      govukSummaryList({
-        classes: 'govuk-summary-list--no-border',
-        rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
-      })
-    }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
+        })
+      }}
+    </div>
   </div>
-</div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-three-quarters">
@@ -38,28 +32,18 @@
     {% else %}
       {% set actionText = "Add comments" %}
     {% endif %}
-    {{
-      govukSummaryList({
-        classes: 'govuk-summary-list--no-border',
-        rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
-          'Date': { 
-            text: 'Change date',
-            href: '/start-change-date/' + bookingDetails.videoBookingId,
-            attributes: { "data-qa": "change-date" }
-          }, 
-          'Court hearing start time': { 
-            text: 'Change time',
-            href: '/start-change-date/' + bookingDetails.videoBookingId + '?changeTime=true',
-            attributes: { "data-qa": "change-time" }
-          },
-          'Comments': { 
-            text: actionText,
-            href: '/change-comments/' + bookingDetails.videoBookingId,
-            attributes: { "data-qa": "change-comments" }
-          }
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom | addActions({
+            'Comments': { 
+              text: actionText,
+              href: '/change-comments/' + bookingDetails.videoBookingId,
+              attributes: { "data-qa": "change-comments" }
+            }
+          })
         })
-      })
-    }}
+      }}
   </div>
 </div>
 
@@ -83,6 +67,21 @@
       })
     }}
   </div>
+</div>
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Change date and time",
+    href: '/change-video-link-date-and-time/' + bookingDetails.videoBookingId,
+    attributes: { "data-qa": "change-date-and-time" }
+  }) }}
+
+  {{ govukButton({
+        text: "Delete video link",
+        href: '/delete-booking/' + bookingDetails.videoBookingId,
+        classes: "govuk-button--secondary",
+        attributes: {'data-qa': 'delete-button'}
+  }) }}
 </div>
 
 <p class="govuk-body govuk-!-margin-top-8">

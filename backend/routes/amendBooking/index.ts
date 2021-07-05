@@ -3,7 +3,7 @@ import { Services } from '../../services'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
-import ChangeDateAndTimeController from './changeDateAndTimeController'
+import ChangeVideoLinkBookingController from './changeVideoLinkBookingController'
 import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
 import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
@@ -13,8 +13,16 @@ import ConfirmationController from './confirmationController'
 import ChangeCommentsController from './changeCommentsController'
 import changeCommentsValidation from './changeCommentsValidation'
 
-export default function createRoutes({ bookingService, availabilityCheckServiceV1 }: Services): Router {
-  const changeDateAndTime = new ChangeDateAndTimeController(bookingService, availabilityCheckServiceV1)
+export default function createRoutes({
+  bookingService,
+  availabilityCheckServiceV1,
+  locationService,
+}: Services): Router {
+  const changeVideoLinkBooking = new ChangeVideoLinkBookingController(
+    bookingService,
+    availabilityCheckServiceV1,
+    locationService
+  )
   const videoLinkIsAvailable = new VideoLinkIsAvailableController(bookingService)
   const videoLinkNotAvailable = new VideoLinkNotAvailableController()
   const selectAvailableRooms = new SelectAvailableRoomsController(bookingService, availabilityCheckServiceV1)
@@ -23,20 +31,12 @@ export default function createRoutes({ bookingService, availabilityCheckServiceV
 
   const router = express.Router({ mergeParams: true })
 
-  router.get('/start-change-date/:bookingId', asyncMiddleware(changeDateAndTime.start()))
-
-  router.get('/change-date-and-time/:bookingId', asyncMiddleware(changeDateAndTime.view(false)))
+  router.get('/start-change-date/:bookingId', asyncMiddleware(changeVideoLinkBooking.start()))
+  router.get('/change-video-link-date-and-time/:bookingId', asyncMiddleware(changeVideoLinkBooking.view()))
   router.post(
-    '/change-date-and-time/:bookingId',
+    '/change-video-link-date-and-time/:bookingId',
     validationMiddleware(dateAndTimeValidation),
-    asyncMiddleware(changeDateAndTime.submit(false))
-  )
-
-  router.get('/change-time/:bookingId', asyncMiddleware(changeDateAndTime.view(true)))
-  router.post(
-    '/change-time/:bookingId',
-    validationMiddleware(dateAndTimeValidation),
-    asyncMiddleware(changeDateAndTime.submit(true))
+    asyncMiddleware(changeVideoLinkBooking.submit())
   )
 
   router.get('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.view()))

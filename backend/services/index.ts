@@ -7,16 +7,14 @@ import AvailabilityCheckServiceV1 from './availabilityCheckServiceV1'
 import ManageCourtsService from './manageCourtsService'
 import { roomFinderFactory } from './roomFinder'
 import AvailabilityCheckServiceV2 from './availabilityCheckServiceV2'
-import config from '../config'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi, userCourtPreferencesApi } = apis
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
 const availabilityCheckServiceV1 = new AvailabilityCheckServiceV1(whereaboutsApi)
 const availabilityCheckServiceV2 = new AvailabilityCheckServiceV2(whereaboutsApi)
-const availabilityStatusChecker = config.app.newAvailabilityCheckEnabled
-  ? availabilityCheckServiceV2
-  : availabilityCheckServiceV1
+const availabilityStatusChecker = availabilityCheckServiceV2
+
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
 const locationService = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
 const viewBookingsService = new ViewBookingsService(

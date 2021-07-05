@@ -49,7 +49,7 @@ export default class VideoLinkNotAvailableController {
         postAppointmentRequired: update.postRequired ? 'yes' : 'no',
       })
 
-      return res.redirect(`/change-date-and-time/${bookingId}`)
+      return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
     }
   }
 
