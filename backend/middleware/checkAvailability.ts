@@ -3,13 +3,13 @@ import { RequestHandler } from 'express'
 import type { Services } from '../services'
 import { DateAndTimeCodec, getNewBooking } from '../routes/createBooking/state'
 
-export default function createCheckAvailability({ availabilityCheckService }: Services): RequestHandler {
+export default function createCheckAvailability({ availabilityCheckServiceV1 }: Services): RequestHandler {
   return async (req, res, next) => {
     const { offenderNo, agencyId } = req.params
     const { preLocation, mainLocation, postLocation } = req.body
     const newBooking = getNewBooking(req, DateAndTimeCodec)
 
-    const { isAvailable, rooms, totalInterval } = await availabilityCheckService.getAvailability(res.locals, {
+    const { isAvailable, rooms, totalInterval } = await availabilityCheckServiceV1.getAvailability(res.locals, {
       agencyId,
       ...newBooking,
     })
@@ -24,7 +24,7 @@ export default function createCheckAvailability({ availabilityCheckService }: Se
     }
 
     if (
-      !availabilityCheckService.isStillAvailable(
+      !availabilityCheckServiceV1.isStillAvailable(
         { pre: Number(preLocation), main: Number(mainLocation), post: Number(postLocation) },
         rooms
       )

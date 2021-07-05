@@ -3,14 +3,20 @@ import BookingService from './bookingService'
 import ViewBookingsService from './viewBookingsService'
 import NotificationService from './notificationService'
 import LocationService from './locationService'
-import AvailabilityCheckService from './availabilityCheckService'
+import AvailabilityCheckServiceV1 from './availabilityCheckServiceV1'
 import ManageCourtsService from './manageCourtsService'
 import { roomFinderFactory } from './roomFinder'
+import AvailabilityCheckServiceV2 from './availabilityCheckServiceV2'
+import config from '../config'
 
 const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi, userCourtPreferencesApi } = apis
 
 const notificationService = new NotificationService(oauthApi, notifyApi)
-const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
+const availabilityCheckServiceV1 = new AvailabilityCheckServiceV1(whereaboutsApi)
+const availabilityCheckServiceV2 = new AvailabilityCheckServiceV2(whereaboutsApi)
+const availabilityStatusChecker = config.app.newAvailabilityCheckEnabled
+  ? availabilityCheckServiceV2
+  : availabilityCheckServiceV1
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
 const locationService = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
 const viewBookingsService = new ViewBookingsService(
@@ -24,7 +30,7 @@ const bookingService = new BookingService(
   prisonApi,
   whereaboutsApi,
   notificationService,
-  availabilityCheckService,
+  availabilityStatusChecker,
   locationService
 )
 
@@ -33,7 +39,8 @@ export const services = {
   notificationService,
   locationService,
   viewBookingsService,
-  availabilityCheckService,
+  availabilityCheckServiceV1,
+  availabilityCheckServiceV2,
   manageCourtsService,
 
   // Have to expose these as lots of routes require these directly
@@ -42,4 +49,4 @@ export const services = {
 
 export type Services = typeof services
 
-export { NotificationService, AvailabilityCheckService, BookingService, LocationService }
+export { NotificationService, AvailabilityCheckServiceV1, AvailabilityCheckServiceV2, BookingService, LocationService }

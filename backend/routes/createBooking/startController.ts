@@ -1,14 +1,14 @@
 import { RequestHandler, Request, Response } from 'express'
 import { formatName } from '../../utils'
 import type PrisonApi from '../../api/prisonApi'
-import type AvailabilityCheckService from '../../services/availabilityCheckService'
+import type { AvailabilityCheckServiceV1 } from '../../services'
 import { ChangeDateAndTime } from './forms'
 import { clearNewBooking, DateAndTimeCodec, setNewBooking } from './state'
 
 export default class StartController {
   public constructor(
     private readonly prisonApi: PrisonApi,
-    private readonly availabilityCheckService: AvailabilityCheckService
+    private readonly availabilityCheckService: AvailabilityCheckServiceV1
   ) {}
 
   public start(): RequestHandler {

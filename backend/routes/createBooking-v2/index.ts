@@ -8,7 +8,6 @@ import ConfirmationController from './viewConfirmation/confirmationController'
 
 import withRetryLink from '../../middleware/withRetryLink'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
-import checkAvailability from '../../middleware/checkAvailability'
 
 import { Services } from '../../services'
 import { ensureNewBookingPresentMiddleware } from './state'
@@ -16,7 +15,6 @@ import { ensureNewBookingPresentMiddleware } from './state'
 export default function createRoutes(services: Services): Router {
   const router = express.Router({ mergeParams: true })
 
-  const checkRooms = asyncMiddleware(checkAvailability(services))
   const checkNewBookingPresent = ensureNewBookingPresentMiddleware('/prisoner-search')
 
   router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch(services)))
@@ -24,7 +22,7 @@ export default function createRoutes(services: Services): Router {
   {
     const newBookingController = new NewBookingController(
       services.prisonApi,
-      services.availabilityCheckService,
+      services.availabilityCheckServiceV2,
       services.locationService
     )
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
@@ -34,7 +32,7 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const { view } = new VideoLinkNotAvailableController(services.availabilityCheckService)
+    const { view } = new VideoLinkNotAvailableController(services.availabilityCheckServiceV2)
     router.get('/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-not-available', asyncMiddleware(view))
   }
 
@@ -46,7 +44,7 @@ export default function createRoutes(services: Services): Router {
     )
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/confirm-booking'
     router.get(path, checkNewBookingPresent, asyncMiddleware(view))
-    router.post(path, checkNewBookingPresent, confirmBookingValidation, checkRooms, asyncMiddleware(submit))
+    router.post(path, checkNewBookingPresent, confirmBookingValidation, asyncMiddleware(submit))
   }
 
   const { view } = new ConfirmationController(services.bookingService, services.locationService)

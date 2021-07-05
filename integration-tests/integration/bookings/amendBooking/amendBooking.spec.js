@@ -42,7 +42,7 @@ context('A user can amend a booking', () => {
         { locationId: 120, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
-
+    cy.task('stubAvailabilityCheck', { matched: true })
     cy.task('stubRoomAvailability', {
       pre: [{ locationId: 100, description: 'Room 1', locationType: 'VIDE' }],
       main: [{ locationId: 110, description: 'Room 2', locationType: 'VIDE' }],
@@ -261,15 +261,6 @@ context('A user can amend a booking', () => {
           mainInterval: { start: '11:00', end: '11:30' },
           postInterval: { start: '11:30', end: '11:45' },
         },
-        // To retrieve available rooms
-        {
-          agencyId: 'WWI',
-          date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [10],
-          preInterval: { start: '10:45', end: '11:00' },
-          mainInterval: { start: '11:00', end: '11:30' },
-          postInterval: { start: '11:30', end: '11:45' },
-        },
         // Final check, just before submitting
         {
           agencyId: 'WWI',
@@ -340,15 +331,6 @@ context('A user can amend a booking', () => {
     cy.task('getFindAvailabilityRequests').then(request => {
       expect(request).to.deep.equal([
         // Initial availability check
-        {
-          agencyId: 'WWI',
-          date: tomorrow.format('YYYY-MM-DD'),
-          vlbIdsToExclude: [10],
-          preInterval: { start: '10:45', end: '11:00' },
-          mainInterval: { start: '11:00', end: '11:30' },
-          postInterval: { start: '11:30', end: '11:45' },
-        },
-        // To retrieve available rooms
         {
           agencyId: 'WWI',
           date: tomorrow.format('YYYY-MM-DD'),

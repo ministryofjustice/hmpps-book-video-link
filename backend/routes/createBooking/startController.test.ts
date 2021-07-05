@@ -3,15 +3,15 @@ import { Agency, InmateDetail } from 'prisonApi'
 
 import StartController from './startController'
 import PrisonApi from '../../api/prisonApi'
-import AvailabilityCheckService from '../../services/availabilityCheckService'
+import { AvailabilityCheckServiceV1 } from '../../services'
 import { RoomAvailability } from '../../services/model'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
-const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
 
 jest.mock('../../api/prisonApi')
-jest.mock('../../services/availabilityCheckService')
+jest.mock('../../services')
 
 describe('Add court appointment', () => {
   const bookingSlot = {

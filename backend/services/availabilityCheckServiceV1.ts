@@ -1,6 +1,7 @@
 import { Location } from 'whereaboutsApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
+import AvailabilityStatusChecker from './availabilityStatusChecker'
 import {
   createInterval,
   getPostAppointmentInterval,
@@ -17,7 +18,7 @@ import type {
   AvailabilityStatus,
 } from './model'
 
-export default class AvailabilityCheckService {
+export default class AvailabilityCheckServiceV1 implements AvailabilityStatusChecker {
   constructor(private readonly whereaboutsApi: WhereaboutsApi) {}
 
   private locationToRoom(location: Location): Room {
