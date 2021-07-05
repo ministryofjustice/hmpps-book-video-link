@@ -117,6 +117,7 @@ export type NewBooking = {
 
 export type BookingUpdate = {
   date: Moment
+  courtId?: string
   agencyId: string
   comment: string
   startTime: Moment

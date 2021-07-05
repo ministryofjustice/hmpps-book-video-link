@@ -272,6 +272,17 @@ context('A user can amend a booking', () => {
         },
       ])
     })
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+    cy.task('getUpdateBookingRequest').then(request =>
+      expect(request).to.deep.equal({
+        courtId: 'ABDRCT',
+        comment: 'A comment',
+        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
+      })
+    )
   })
 
   it('A user with multiple preferred courts can successfully amend a booking', () => {
@@ -354,6 +365,7 @@ context('A user can amend a booking', () => {
     const tomorrowDate = tomorrow.format('YYYY-MM-DD')
     cy.task('getUpdateBookingRequest').then(request =>
       expect(request).to.deep.equal({
+        courtId: 'ABDRCT',
         comment: 'A comment',
         pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
         main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },

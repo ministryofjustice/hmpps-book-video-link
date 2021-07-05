@@ -61,6 +61,7 @@ declare module 'whereaboutsApi' {
   }
 
   export type UpdateVideoLinkBooking = {
+    courtId?: string
     comment: string
     pre?: Appointment
     main: Appointment
