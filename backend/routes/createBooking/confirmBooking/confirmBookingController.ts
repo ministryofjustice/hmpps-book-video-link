@@ -32,7 +32,7 @@ export default class ConfirmBookingController {
     const [input] = req.flash('input')
     const form = input || {}
 
-    return res.render('createBooking-v2/confirmBooking.njk', {
+    return res.render('createBooking/confirmBooking.njk', {
       offender: {
         name: offenderNameWithNumber,
         prison: agencyDetails.description,

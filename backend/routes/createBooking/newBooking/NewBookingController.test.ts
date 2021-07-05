@@ -90,7 +90,7 @@ describe('Add court appointment', () => {
       await controller.view()(req, res, null)
 
       expect(res.render).toHaveBeenCalledWith(
-        'createBooking-v2/newBooking.njk',
+        'createBooking/newBooking.njk',
         expect.objectContaining({
           offenderNo: 'A12345',
           offenderNameWithNumber: 'Firstname Lastname (A12345)',

@@ -55,7 +55,7 @@ describe('Booking details', () => {
 
       await controller.viewDetails()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('viewBookings-v2/bookingDetails.njk', {
+      expect(res.render).toHaveBeenCalledWith('viewBookings/bookingDetails.njk', {
         prisonerName: 'John Doe',
         commentExists: false,
         bookingDetails: {
@@ -86,7 +86,7 @@ describe('Booking details', () => {
 
       await controller.viewDetails()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('viewBookings-v2/bookingDetails.njk', {
+      expect(res.render).toHaveBeenCalledWith('viewBookings/bookingDetails.njk', {
         prisonerName: 'John Doe',
         commentExists: true,
         bookingDetails: {

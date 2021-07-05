@@ -57,7 +57,7 @@ describe('Confirm appointments', () => {
 
     await controller.view(req, res, null)
 
-    expect(res.render).toHaveBeenCalledWith('createBooking-v2/confirmation.njk', {
+    expect(res.render).toHaveBeenCalledWith('createBooking/confirmation.njk', {
       videolinkPrisonerSearchLink: '/prisoner-search',
       offender: {
         name: 'John Doe',

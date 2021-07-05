@@ -15,7 +15,7 @@ export default class NotAvailableController {
       ...newBooking,
     })
 
-    return res.render('createBooking-v2/notAvailable.njk', {
+    return res.render('createBooking/notAvailable.njk', {
       date: newBooking.date.format('dddd D MMMM YYYY'),
       startTime: totalInterval.start,
       endTime: totalInterval.end,

@@ -11,7 +11,7 @@ export default class ConfirmationController {
     const details = await this.bookingService.get(res.locals, Number(videoBookingId))
     const court = await this.locationService.getVideoLinkEnabledCourt(res.locals, details.courtId)
 
-    res.render('createBooking-v2/confirmation.njk', {
+    res.render('createBooking/confirmation.njk', {
       videolinkPrisonerSearchLink: '/prisoner-search',
       offender: {
         name: details.prisonerName,

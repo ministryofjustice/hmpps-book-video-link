@@ -64,7 +64,7 @@ describe('Not available page', () => {
     it('should render template with data', async () => {
       await controller.view(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('createBooking-v2/notAvailable.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/notAvailable.njk', {
         continueLink: '/MDI/offenders/A12345/add-court-appointment',
         date: 'Friday 10 November 2017',
         endTime: '14:00',

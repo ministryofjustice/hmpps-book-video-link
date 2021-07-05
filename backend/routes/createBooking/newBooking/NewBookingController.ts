@@ -35,7 +35,7 @@ export default class NewBookingController {
       const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
       const agencyDescription = agencyDetails.description
 
-      return res.render('createBooking-v2/newBooking.njk', {
+      return res.render('createBooking/newBooking.njk', {
         rooms,
         offenderNo,
         offenderNameWithNumber,

@@ -32,7 +32,7 @@ export default class ChangeVideoLinkBookingController {
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
       const courts = await this.locationService.getVideoLinkEnabledCourts(res.locals, username)
 
-      return res.render('amendBooking-v2/changeVideoLinkBooking.njk', {
+      return res.render('amendBooking/changeVideoLinkBooking.njk', {
         errors,
         courts: courts.map(c => ({ value: c.id, text: c.name })),
         bookingId,

@@ -8,7 +8,7 @@ export = class BookingDetailsController {
     return async (req, res) => {
       const { bookingId } = req.params
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      res.render('viewBookings-v2/bookingDetails.njk', {
+      res.render('viewBookings/bookingDetails.njk', {
         prisonerName: bookingDetails.prisonerName,
         commentExists: !!bookingDetails.comments,
         bookingDetails: {

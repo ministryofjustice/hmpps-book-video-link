@@ -68,7 +68,7 @@ describe('Select court appointment rooms', () => {
 
       await view(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('createBooking-v2/confirmBooking.njk', {
+      expect(res.render).toHaveBeenCalledWith('createBooking/confirmBooking.njk', {
         details: {
           'Post-court hearing briefing': '14:00 to 14:15',
           'Pre-court hearing briefing': '10:45 to 11:00',

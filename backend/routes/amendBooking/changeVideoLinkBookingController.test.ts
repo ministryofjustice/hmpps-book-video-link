@@ -93,7 +93,7 @@ describe('change video link booking controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
         courts: [
@@ -137,7 +137,7 @@ describe('change video link booking controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
         courts: [
@@ -169,7 +169,7 @@ describe('change video link booking controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(res.render).toHaveBeenCalledWith('amendBooking-v2/changeVideoLinkBooking.njk', {
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
         bookingId: '123',
         agencyId: 'WWI',
         courts: [
