@@ -3,14 +3,14 @@ import type BookingService from '../../services/bookingService'
 import LocationService from '../../services/locationService'
 
 import { DAY_MONTH_YEAR, Hours, Minutes } from '../../shared/dateHelpers'
-import type CheckAvailabilityService from '../../services/availabilityCheckService'
 import { ChangeVideoLinkBooking } from './forms'
 import { clearUpdate, setUpdate } from './state'
+import { AvailabilityCheckServiceV1 } from '../../services'
 
 export default class ChangeVideoLinkBookingController {
   public constructor(
     private readonly bookingService: BookingService,
-    private readonly availabilityCheckService: CheckAvailabilityService,
+    private readonly availabilityCheckService: AvailabilityCheckServiceV1,
     private readonly locationService: LocationService
   ) {}
 

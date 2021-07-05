@@ -2,20 +2,20 @@ import moment from 'moment'
 import { Location } from 'whereaboutsApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../shared/dateHelpers'
-import AvailabilityCheckService from './availabilityCheckService'
+import AvailabilityCheckServiceV1 from './availabilityCheckServiceV1'
 import { Room } from './model'
 
 jest.mock('../api/whereaboutsApi')
 
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
-describe('AvailabilityCheckService', () => {
+describe('AvailabilityCheckServiceV1', () => {
   const context = {}
-  let service: AvailabilityCheckService
+  let service: AvailabilityCheckServiceV1
 
   beforeEach(() => {
     jest.resetAllMocks()
-    service = new AvailabilityCheckService(whereaboutsApi)
+    service = new AvailabilityCheckServiceV1(whereaboutsApi)
   })
 
   const preInterval = { start: '13:45', end: '14:00' }

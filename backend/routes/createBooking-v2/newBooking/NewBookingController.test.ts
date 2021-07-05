@@ -3,22 +3,23 @@ import { Agency, InmateDetail } from 'prisonApi'
 
 import NewBookingController from './NewBookingController'
 import PrisonApi from '../../../api/prisonApi'
-import { RoomAvailability } from '../../../services/model'
+import { RoomAvailabilityV2 } from '../../../services/model'
 import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
-import { LocationService, AvailabilityCheckService } from '../../../services'
+import { LocationService, AvailabilityCheckServiceV2 } from '../../../services'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
-const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
+const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
 const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
 jest.mock('../../../api/prisonApi')
 jest.mock('../../../services')
 
 describe('Add court appointment', () => {
-  const bookingSlot = {
+  const roomAvailability: RoomAvailabilityV2 = {
     isAvailable: true,
+    alternatives: [],
     totalInterval: { start: '01:00', end: '02:00' },
-  } as RoomAvailability
+  }
 
   const req = mockRequest({
     params: {
@@ -61,7 +62,7 @@ describe('Add court appointment', () => {
     prisonApi.getPrisonerDetails.mockResolvedValue(prisoner as InmateDetail)
     prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([])
-    availabilityCheckService.getAvailability.mockResolvedValue(bookingSlot)
+    availabilityCheckService.getAvailability.mockResolvedValue(roomAvailability)
     controller = new NewBookingController(prisonApi, availabilityCheckService, locationService)
   })
 
@@ -171,7 +172,7 @@ describe('Add court appointment', () => {
     })
 
     it('should go to the "no video link bookings available" page', async () => {
-      bookingSlot.isAvailable = false
+      roomAvailability.isAvailable = false
       await controller.submit()(req, res, null)
 
       expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment/video-link-not-available')

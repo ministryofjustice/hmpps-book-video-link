@@ -60,6 +60,8 @@ export const groupBy = <T, K>(items: T[] = [], groupingFunction: (T) => K): Map<
   }, new Map<K, T[]>())
 }
 
+export const isNullOrUndefined = (value: unknown): boolean => value === null || value === undefined
+
 export const pascalToString = (value: string): string =>
   value &&
   value.substring(0, 1) +

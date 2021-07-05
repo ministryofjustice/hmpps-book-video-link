@@ -68,11 +68,7 @@ context('A user can add a video link', () => {
     newBookingForm.selectMainAppointmentLocation().select('2')
     newBookingForm.selectPostAppointmentLocation().select('3')
 
-    cy.task('stubRoomAvailability', {
-      pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
-      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
-      post: [{ locationId: 3, description: 'Room 3', locationType: 'VIDE' }],
-    })
+    cy.task('stubAvailabilityCheck', { matched: true })
 
     newBookingForm.submitButton().click()
 
@@ -89,14 +85,22 @@ context('A user can add a video link', () => {
     confirmBookingPage.mainRoom().contains('Room 2')
     confirmBookingPage.court().contains('Aberdare County Court')
 
-    cy.task('getFindAvailabilityRequests').then(request => {
+    cy.task('getAvailabilityCheckRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
         date: moment().add(1, 'days').format('YYYY-MM-DD'),
-        vlbIdsToExclude: [],
-        preInterval: { start: '10:45', end: '11:00' },
-        mainInterval: { start: '11:00', end: '11:30' },
-        postInterval: { start: '11:30', end: '11:45' },
+        preAppointment: {
+          interval: { start: '10:45', end: '11:00' },
+          locationId: 1,
+        },
+        mainAppointment: {
+          interval: { start: '11:00', end: '11:30' },
+          locationId: 2,
+        },
+        postAppointment: {
+          interval: { start: '11:30', end: '11:45' },
+          locationId: 3,
+        },
       })
     })
 
@@ -166,11 +170,7 @@ context('A user can add a video link', () => {
     cy.login()
     cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
-    cy.task('stubRoomAvailability', {
-      pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
-      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
-      post: [{ locationId: 3, description: 'Room 3', locationType: 'VIDE' }],
-    })
+    cy.task('stubAvailabilityCheck', { matched: true })
 
     const newBookingPage = NewBookingPage.verifyOnPage()
     const newBookingForm = newBookingPage.form()
@@ -198,14 +198,22 @@ context('A user can add a video link', () => {
     confirmBookingPage.preTime().contains('10:45 to 11:00')
     confirmBookingPage.postTime().contains('11:30 to 11:45')
 
-    cy.task('getFindAvailabilityRequests').then(request => {
+    cy.task('getAvailabilityCheckRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
         date: moment().add(1, 'days').format('YYYY-MM-DD'),
-        vlbIdsToExclude: [],
-        preInterval: { start: '10:45', end: '11:00' },
-        mainInterval: { start: '11:00', end: '11:30' },
-        postInterval: { start: '11:30', end: '11:45' },
+        preAppointment: {
+          interval: { start: '10:45', end: '11:00' },
+          locationId: 1,
+        },
+        mainAppointment: {
+          interval: { start: '11:00', end: '11:30' },
+          locationId: 2,
+        },
+        postAppointment: {
+          interval: { start: '11:30', end: '11:45' },
+          locationId: 3,
+        },
       })
     })
 
@@ -275,11 +283,7 @@ context('A user can add a video link', () => {
     cy.login()
     cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
-    cy.task('stubRoomAvailability', {
-      pre: [],
-      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
-      post: [],
-    })
+    cy.task('stubAvailabilityCheck', { matched: true })
 
     const newBookingPage = NewBookingPage.verifyOnPage()
     const newBookingForm = newBookingPage.form()
@@ -305,14 +309,14 @@ context('A user can add a video link', () => {
     confirmBookingPage.preTime().should('not.exist')
     confirmBookingPage.postTime().should('not.exist')
 
-    cy.task('getFindAvailabilityRequests').then(request => {
+    cy.task('getAvailabilityCheckRequests').then(request => {
       expect(request[0]).to.deep.equal({
         agencyId: 'MDI',
         date: moment().add(1, 'days').format('YYYY-MM-DD'),
-        vlbIdsToExclude: [],
-        preInterval: null,
-        mainInterval: { start: '11:00', end: '11:30' },
-        postInterval: null,
+        mainAppointment: {
+          interval: { start: '11:00', end: '11:30' },
+          locationId: 2,
+        },
       })
     })
 
@@ -363,11 +367,7 @@ context('A user can add a video link', () => {
     cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
     cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
-    cy.task('stubRoomAvailability', {
-      pre: [],
-      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
-      post: [],
-    })
+    cy.task('stubAvailabilityCheck', { matched: true })
 
     const newBookingPage = NewBookingPage.verifyOnPage()
     const newBookingForm = newBookingPage.form()
@@ -417,21 +417,8 @@ context('A user can add a video link', () => {
     cy.login()
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
 
-    cy.task('stubGetRooms', {
-      agencyId: 'MDI',
-      rooms: [
-        { locationId: 1, description: 'Room 1', locationType: 'VIDE' },
-        { locationId: 2, description: 'Room 2', locationType: 'VIDE' },
-        { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
-      ],
-    })
+    cy.task('stubAvailabilityCheck', { matched: false })
     const tomorrow = moment().add(1, 'days')
-
-    cy.task('stubRoomAvailability', {
-      pre: [{ locationId: 1, description: 'Room 1', locationType: 'VIDE' }],
-      main: [{ locationId: 2, description: 'Room 2', locationType: 'VIDE' }],
-      post: [],
-    })
 
     const newBookingPage = NewBookingPage.verifyOnPage()
     const newBookingForm = newBookingPage.form()

@@ -1,9 +1,9 @@
 import type { RequestHandler } from 'express'
-import type { AvailabilityCheckService } from '../../../services'
+import type { AvailabilityCheckServiceV2 } from '../../../services'
 import { getNewBooking } from '../state'
 
 export default class NotAvailableController {
-  constructor(private readonly availabilityCheckService: AvailabilityCheckService) {}
+  constructor(private readonly availabilityCheckService: AvailabilityCheckServiceV2) {}
 
   public view: RequestHandler = async (req, res) => {
     const { offenderNo, agencyId } = req.params

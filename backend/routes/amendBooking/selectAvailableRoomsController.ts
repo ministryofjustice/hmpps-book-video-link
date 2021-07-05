@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import type AvailabilityCheckService from '../../services/availabilityCheckService'
+import type AvailabilityCheckService from '../../services/availabilityCheckServiceV1'
 import type BookingService from '../../services/bookingService'
 import { RoomAndComment } from './forms'
 import { getUpdate, clearUpdate } from './state'

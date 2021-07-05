@@ -26,7 +26,7 @@ export default function createRoutes(services: Services): Router {
   router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch(services)))
 
   {
-    const startController = new StartController(services.prisonApi, services.availabilityCheckService)
+    const startController = new StartController(services.prisonApi, services.availabilityCheckServiceV1)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
     router.get('/:agencyId/offenders/:offenderNo/new-court-appointment', startController.start())
     router.get(path, asyncMiddleware(startController.view()))
@@ -41,7 +41,7 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const { view, submit } = new SelectRoomController(services.bookingService, services.availabilityCheckService)
+    const { view, submit } = new SelectRoomController(services.bookingService, services.availabilityCheckServiceV1)
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment/select-rooms'
     router.get(path, checkNewBookingPresent, asyncMiddleware(view))
     router.post(
