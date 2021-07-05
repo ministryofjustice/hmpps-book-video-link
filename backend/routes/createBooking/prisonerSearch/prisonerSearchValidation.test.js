@@ -19,6 +19,18 @@ describe('prisoner search validation', () => {
     ])
   })
 
+  it('should error if prison number has 7 charcters including some are whitespaces ', async () => {
+    expect(videolinkPrisonerSearchValidation({ prisonNumber: ' A12  ' })).toEqual([
+      { text: 'Enter a prison number using 7 characters in the format A1234AA', href: '#prisonNumber' },
+    ])
+  })
+
+  it('should error if prison number has more than 7 characters including whitespaces', async () => {
+    expect(videolinkPrisonerSearchValidation({ prisonNumber: '  A1234A   ' })).toEqual([
+      { text: 'Enter a prison number using 7 characters in the format A1234AA', href: '#prisonNumber' },
+    ])
+  })
+
   it('should error if prison number does not start with a letter', async () => {
     expect(videolinkPrisonerSearchValidation({ prisonNumber: '12345AA' })).toEqual([
       { text: 'Enter a prison number starting with a letter in the format A1234AA', href: '#prisonNumber' },

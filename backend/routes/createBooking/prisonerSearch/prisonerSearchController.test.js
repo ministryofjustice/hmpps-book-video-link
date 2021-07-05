@@ -87,8 +87,8 @@ describe('Video link prisoner search', () => {
           ])
         })
 
-        describe('with a prison number', () => {
-          const prisonNumber = 'G0011GX'
+        describe('with a prison number that is surrounded by whitespaces', () => {
+          const prisonNumber = ' G0011GX '
 
           it('should make the correct search', async () => {
             req.query = { prisonNumber }
@@ -98,7 +98,7 @@ describe('Video link prisoner search', () => {
             expect(prisonApi.globalSearch).toHaveBeenCalledWith(
               res.locals,
               {
-                offenderNo: prisonNumber,
+                offenderNo: 'G0011GX',
                 location: 'IN',
               },
               1000
@@ -113,11 +113,12 @@ describe('Video link prisoner search', () => {
           })
         })
 
-        describe('with a name', () => {
-          const lastName = 'Offender'
+        describe('with firstName and lastNames surrounded by whitespaces', () => {
+          const firstName = ' Test '
+          const lastName = ' Offender '
 
           beforeEach(() => {
-            req.query = { lastName }
+            req.query = { firstName, lastName }
           })
 
           it('should make the correct search', async () => {
@@ -126,7 +127,8 @@ describe('Video link prisoner search', () => {
             expect(prisonApi.globalSearch).toHaveBeenCalledWith(
               res.locals,
               {
-                lastName,
+                lastName: 'Offender',
+                firstName: 'Test',
                 location: 'IN',
               },
               1000
@@ -134,7 +136,7 @@ describe('Video link prisoner search', () => {
             expect(res.render).toHaveBeenCalledWith(
               'createBooking/prisonerSearch.njk',
               expect.objectContaining({
-                formValues: { lastName },
+                formValues: { firstName, lastName },
                 hasSearched: true,
               })
             )
@@ -146,7 +148,7 @@ describe('Video link prisoner search', () => {
             expect(res.render).toHaveBeenCalledWith(
               'createBooking/prisonerSearch.njk',
               expect.objectContaining({
-                formValues: { lastName },
+                formValues: { firstName, lastName },
                 hasSearched: true,
                 results: [
                   {

@@ -1,16 +1,16 @@
 const dobValidation = require('../../../shared/dobValidation')
 
 module.exports = formValues => {
-  const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear } = formValues
+  const { firstName = '', lastName = '', prisonNumber = '', dobDay, dobMonth, dobYear } = formValues
   const { dobErrors } = dobValidation(dobDay, dobMonth, dobYear)
   const videolinkPrisonerSearchErrors = [...dobErrors]
 
-  if (!lastName && !prisonNumber) {
-    if (firstName) {
+  if (!lastName.trim() && !prisonNumber.trim()) {
+    if (firstName.trim()) {
       videolinkPrisonerSearchErrors.push({ text: 'Enter a last name', href: '#lastName' })
     }
 
-    if (!firstName) {
+    if (!firstName.trim()) {
       videolinkPrisonerSearchErrors.push({
         text: "You must search using either the prisoner's last name or prison number",
         href: '#lastName',
@@ -18,8 +18,8 @@ module.exports = formValues => {
     }
   }
 
-  if (prisonNumber) {
-    if (prisonNumber.length !== 7) {
+  if (prisonNumber.trim()) {
+    if (prisonNumber.trim().length !== 7) {
       videolinkPrisonerSearchErrors.push({
         text: 'Enter a prison number using 7 characters in the format A1234AA',
         href: '#prisonNumber',
@@ -28,7 +28,7 @@ module.exports = formValues => {
 
     const startsWithLetter = /^[a-zA-Z]/
 
-    if (!startsWithLetter.test(prisonNumber)) {
+    if (!startsWithLetter.test(prisonNumber.trim())) {
       videolinkPrisonerSearchErrors.push({
         text: 'Enter a prison number starting with a letter in the format A1234AA',
         href: '#prisonNumber',

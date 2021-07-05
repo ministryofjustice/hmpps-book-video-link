@@ -19,9 +19,9 @@ module.exports =
       searchResults = await prisonApi.globalSearch(
         res.locals,
         {
-          offenderNo: prisonNumber,
-          lastName,
-          firstName,
+          offenderNo: prisonNumber && prisonNumber.trim(),
+          lastName: lastName && lastName.trim(),
+          firstName: firstName && firstName.trim(),
           dateOfBirth: dobIsValid ? dateOfBirth.format('YYYY-MM-DD') : undefined,
           location: 'IN',
         },
