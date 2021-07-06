@@ -1,0 +1,52 @@
+import dobValidation from '../../../shared/dobValidation'
+
+import type { ValidationError } from '../../../middleware/validationMiddleware'
+
+type FormValues = {
+  firstName?: string
+  lastName?: string
+  prisonNumber?: string
+  dobDay?: string
+  dobMonth?: string
+  dobYear?: string
+}
+export default class PrisonerSearchValidation {
+  public validate(formValues: FormValues): ValidationError[] {
+    const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear } = formValues
+    const { dobErrors } = dobValidation(dobDay, dobMonth, dobYear)
+    const videolinkPrisonerSearchErrors = [...dobErrors]
+
+    if (!lastName?.trim() && !prisonNumber?.trim?.()) {
+      if (firstName?.trim()) {
+        videolinkPrisonerSearchErrors.push({ text: 'Enter a last name', href: '#lastName' })
+      }
+
+      if (!firstName?.trim()) {
+        videolinkPrisonerSearchErrors.push({
+          text: "You must search using either the prisoner's last name or prison number",
+          href: '#lastName',
+        })
+      }
+    }
+
+    if (prisonNumber?.trim()) {
+      if (prisonNumber?.trim().length !== 7) {
+        videolinkPrisonerSearchErrors.push({
+          text: 'Enter a prison number using 7 characters in the format A1234AA',
+          href: '#prisonNumber',
+        })
+      }
+
+      const startsWithLetter = /^[a-zA-Z]/
+
+      if (!startsWithLetter.test(prisonNumber?.trim())) {
+        videolinkPrisonerSearchErrors.push({
+          text: 'Enter a prison number starting with a letter in the format A1234AA',
+          href: '#prisonNumber',
+        })
+      }
+    }
+
+    return videolinkPrisonerSearchErrors
+  }
+}

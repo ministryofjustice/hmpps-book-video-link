@@ -1,24 +1,18 @@
-const prisonerSearchController = require('./prisonerSearchController')
-const config = require('../../../config')
+import PrisonerSearchController from './prisonerSearchController'
+import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
+import config from '../../../config'
+import PrisonApi from '../../../api/prisonApi'
 
+const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
+jest.mock('../../../api/prisonApi')
 config.app.videoLinkEnabledFor = ['MDI']
 
 describe('Video link prisoner search', () => {
-  const prisonApi = {}
-  const oauthApi = {}
-
-  let req
-  let res
-  let controller
+  let controller: PrisonerSearchController
+  const req = mockRequest({})
+  const res = mockResponse({})
 
   beforeEach(() => {
-    req = {
-      originalUrl: 'http://localhost',
-      query: {},
-    }
-    res = { locals: {}, render: jest.fn(), redirect: jest.fn() }
-
-    oauthApi.userRoles = jest.fn()
     prisonApi.getAgencies = jest.fn().mockReturnValue([
       {
         agencyId: 'PRISON2',
@@ -33,7 +27,7 @@ describe('Video link prisoner search', () => {
     ])
     prisonApi.globalSearch = jest.fn()
 
-    controller = prisonerSearchController({ prisonApi })
+    controller = new PrisonerSearchController(prisonApi)
   })
 
   const agencyOptions = [
@@ -48,9 +42,10 @@ describe('Video link prisoner search', () => {
   ]
   describe('when a search has not been made', () => {
     it('should render the prisoner search template', async () => {
-      await controller(req, res)
+      await controller.submit()(req, res, null)
 
       expect(prisonApi.getAgencies).toHaveBeenCalled()
+
       expect(res.render).toHaveBeenCalledWith('createBooking/prisonerSearch.njk', {
         agencyOptions,
         errors: [],
@@ -84,7 +79,7 @@ describe('Video link prisoner search', () => {
               latestLocationId: 'MDI',
               latestLocation: 'Moorlands',
             },
-          ])
+          ] as never)
         })
 
         describe('with a prison number that is surrounded by whitespaces', () => {
@@ -93,7 +88,7 @@ describe('Video link prisoner search', () => {
           it('should make the correct search', async () => {
             req.query = { prisonNumber }
 
-            await controller(req, res)
+            await controller.submit()(req, res, null)
 
             expect(prisonApi.globalSearch).toHaveBeenCalledWith(
               res.locals,
@@ -122,7 +117,7 @@ describe('Video link prisoner search', () => {
           })
 
           it('should make the correct search', async () => {
-            await controller(req, res)
+            await controller.submit()(req, res, null)
 
             expect(prisonApi.globalSearch).toHaveBeenCalledWith(
               res.locals,
@@ -143,7 +138,7 @@ describe('Video link prisoner search', () => {
           })
 
           it('should return the correctly formatted results', async () => {
-            await controller(req, res)
+            await controller.submit()(req, res, null)
 
             expect(res.render).toHaveBeenCalledWith(
               'createBooking/prisonerSearch.njk',
@@ -181,7 +176,7 @@ describe('Video link prisoner search', () => {
             it('should make the correct search and return less results', async () => {
               req.query = { lastName, prison }
 
-              await controller(req, res)
+              await controller.submit()(req, res, null)
 
               expect(res.render).toHaveBeenCalledWith(
                 'createBooking/prisonerSearch.njk',
@@ -208,16 +203,14 @@ describe('Video link prisoner search', () => {
 
     describe('when there are API errors', () => {
       it('should render the error template if there is an error retrieving agencies', async () => {
-        oauthApi.userRoles.mockReturnValue([{ roleCode: 'VIDEO_LINK_COURT_USER' }])
-        prisonApi.getAgencies.mockImplementation(() => Promise.reject(new Error('Network error')))
-        await expect(controller(req, res)).rejects.toThrow('Network error')
+        prisonApi.getAgencies.mockRejectedValue(new Error('Network error'))
+        await expect(controller.submit()(req, res, null)).rejects.toThrow('Network error')
       })
 
       it('should render the error template if there is an error with global search', async () => {
-        oauthApi.userRoles.mockReturnValue([{ roleCode: 'VIDEO_LINK_COURT_USER' }])
-        prisonApi.globalSearch.mockImplementation(() => Promise.reject(new Error('Network error')))
+        prisonApi.globalSearch.mockRejectedValue(new Error('Network error'))
         req.query = { lastName: 'Offender' }
-        await expect(controller(req, res)).rejects.toThrow('Network error')
+        await expect(controller.submit()(req, res, null)).rejects.toThrow('Network error')
       })
     })
   })
