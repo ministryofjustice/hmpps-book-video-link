@@ -4,8 +4,22 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
-{% from "components/dateTimeAndCourtBriefingPicker/dateTimeAndCourtBriefingPicker.njk" import dateTimeAndCourtBriefingPicker %}
+{% from "components/timePicker/timePicker.njk" import timePicker %}
+{% from "components/datePicker/datePicker.njk" import datePicker %}
+
 {% set title = "Change video link booking" %}
+
+{% macro roomSelect(params) %}
+    {{ govukSelect({
+        name: params.name,
+        id: params.name,
+        label: {
+            text: params.description
+        },
+        items: params.locations | toSelect('locationId', 'description', params.location),
+        errorMessage: errors | findError(params.name)
+    }) }}
+{% endmacro %}
 
 {% block content %}
 
@@ -58,23 +72,133 @@
             <form method="POST" novalidate="novalidate">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <input type="hidden" name="agencyId" value="{{ agencyId }}"/>
-            {% if courts.length === 1 %}
-                <input type="hidden" name="courtId" value="{{ courts | first | showValue }}" />
-            {% endif %} 
-            {% if courts.length > 1 %}
-                {{ govukSelect({
-                    name: "courtId",
-                    id: "courtId",
-                    classes: "qa-court-value",
-                    label: {
-                        text: "Which court is the hearing for?",
-                        classes: "govuk-!-margin-top-8"
-                        },
-                    items: courts | setSelected(form.courtId),
-                    errorMessage: errors | findError("courtId")
+                {% if courts.length === 1 %}
+                    <input type="hidden" name="courtId" value="{{ courts | first | showValue }}" />
+                {% endif %} 
+                {% if courts.length > 1 %}
+                    {{ govukSelect({
+                        name: "courtId",
+                        id: "courtId",
+                        classes: "qa-court-value",
+                        label: {
+                            text: "Which court is the hearing for?",
+                            classes: "govuk-!-margin-top-8"
+                            },
+                        items: courts | setSelected(form.courtId),
+                        errorMessage: errors | findError("courtId")
+                    }) }}
+                {% endif %}
+                {{ datePicker({
+                    id: 'date',
+                    label: 'Date',
+                    name: 'date',
+                    date: form.date,
+                    errorMessage: errors | findError('date'),
+                    attributes: {'data-disable-past-date':'true', 'data-add-appointment-date': 'true'},
+                    classes: 'govuk-\!-width-one-fifth',
+                    containerClass: 'govuk-\!-width-two-thirds'
                 }) }}
-            {% endif %}
-                {{ dateTimeAndCourtBriefingPicker(form, errors) }}
+
+                {{ timePicker({
+                    id: 'start-time',
+                    label: 'Court hearing start time',
+                    name: 'startTime',
+                    hour: form.startTimeHours,
+                    minute: form.startTimeMinutes,
+                    errorMessage: errors | findError('start-time-hours')
+                }) }}
+
+                {{ timePicker({
+                    id: 'end-time',
+                    label: 'Court hearing end time',
+                    name: 'endTime',
+                    hour: form.endTimeHours,
+                    minute: form.endTimeMinutes,
+                    errorMessage: errors | findError('end-time-hours')
+                }) }}
+
+                {{ roomSelect({
+                    description: "Prison room for court hearing", 
+                    name:"mainLocation",
+                    locations: rooms, 
+                    location: form.mainLocation
+                    }) 
+                }}
+                {% set preLocationsHtml %}
+                    {{ roomSelect({
+                        description: "Prison room for pre-court hearing briefing", 
+                        name: "preLocation",
+                        locations: rooms, 
+                        location: form.preLocation 
+                    }) 
+                }}
+                {% endset -%}
+                
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    idPrefix: "pre-appointment-required",
+                    name: "preRequired",
+                    errorMessage: errors | findError('pre-appointment-required'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to add a pre-court hearing briefing?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "true",
+                            text: "Yes",
+                            checked: form.preRequired == 'true',
+                            conditional: {
+                                html: preLocationsHtml
+                            }
+                        },
+                        {
+                            value: "false",
+                            text: "No",
+                            checked: form.preRequired == 'false'
+                        }
+                    ]
+                }) }}
+
+                {% set postLocationsHtml %}
+                    {{ roomSelect({
+                        description: "Prison room for post-court hearing briefing", 
+                        name:"postLocation",
+                        locations: rooms, 
+                        location: form.postLocation 
+                        }) 
+                    }}
+                {% endset -%}
+
+                {{ govukRadios({
+                    classes: "govuk-radios--inline",
+                    idPrefix: "post-appointment-required",
+                    name: "postRequired",
+                    errorMessage: errors | findError('post-appointment-required'),
+                    fieldset: {
+                        legend: {
+                            text: "Do you want to add a post-court hearing briefing?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "true",
+                            text: "Yes",
+                            checked: form.postRequired == 'true',
+                            conditional: {
+                                html: postLocationsHtml
+                            }
+                        },
+                        {
+                            value: "false",
+                            text: "No",
+                            checked: form.postRequired == 'false'
+                        }
+                    ]
+                }) }}
 
                 {{ govukButton({ 
                     text: "Continue",

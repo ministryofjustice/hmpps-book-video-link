@@ -27,6 +27,9 @@ describe('video link is not available controller', () => {
           date: '2020-11-20T18:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
+          preLocation: '2',
+          mainLocation: '1',
+          postLocation: '3',
           preRequired: 'true',
           postRequired: 'true',
         },
@@ -53,6 +56,8 @@ describe('video link is not available controller', () => {
           date: '2020-11-20T18:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
+          preLocation: '2',
+          mainLocation: '1',
           preRequired: 'true',
           postRequired: 'false',
         },
@@ -66,8 +71,8 @@ describe('video link is not available controller', () => {
         startTimeMinutes: '00',
         endTimeHours: '19',
         endTimeMinutes: '00',
-        preAppointmentRequired: 'yes',
-        postAppointmentRequired: 'no',
+        preRequired: 'true',
+        postRequired: 'false',
       })
     })
   })

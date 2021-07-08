@@ -170,7 +170,7 @@ module.exports = (app, path) => {
     const items = array.map(item => ({
       value: item[valueKey],
       text: item[textKey],
-      selected: item[valueKey].toString() === value,
+      selected: item[valueKey] === parseInt(value, 10),
     }))
     return [emptyOption, ...items]
   })

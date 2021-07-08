@@ -81,22 +81,12 @@ const validateDate = (date): ValidationError[] => {
 }
 
 export default function validate(form: Record<string, unknown>): ValidationError[] {
-  const {
-    date,
-    startTimeHours,
-    startTimeMinutes,
-    endTimeHours,
-    endTimeMinutes,
-    preAppointmentRequired,
-    postAppointmentRequired,
-    preRequired,
-    postRequired,
-  } = form
+  const { date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes, preRequired, postRequired } = form
 
   const errors: ValidationError[] = []
 
-  if (!preAppointmentRequired && !preRequired) errors.push(errorTypes.missingPreCourt)
-  if (!postAppointmentRequired && !postRequired) errors.push(errorTypes.missingPostCourt)
+  if (!preRequired) errors.push(errorTypes.missingPreCourt)
+  if (!postRequired) errors.push(errorTypes.missingPostCourt)
 
   errors.push(...validateDate(date))
   errors.push(...validateTime(date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes))
