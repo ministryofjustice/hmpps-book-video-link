@@ -8,10 +8,10 @@ type GlobalSearchRequest = {
   offenderNo: string
   lastName: string
   firstName: string
-  gender: 'F' | 'M' | 'NK' | 'NS'
+  gender?: 'F' | 'M' | 'NK' | 'NS'
   location: 'IN' | 'OUT' | 'ALL'
   dateOfBirth: string
-  includeAliases: boolean
+  includeAliases?: boolean
 }
 
 export default class PrisonApi {

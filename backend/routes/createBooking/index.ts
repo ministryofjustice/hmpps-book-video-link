@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 
-import prisonerSearch from './prisonerSearch/prisonerSearchController'
+import PrisonerSearchController from './prisonerSearch/prisonerSearchController'
 import { NewBookingController, newBookingValidation } from './newBooking'
 import VideoLinkNotAvailableController from './notAvailable/NotAvailableController'
 import { ConfirmBookingController, confirmBookingValidation } from './confirmBooking'
@@ -17,7 +17,8 @@ export default function createRoutes(services: Services): Router {
 
   const checkNewBookingPresent = ensureNewBookingPresentMiddleware('/prisoner-search')
 
-  router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch(services)))
+  const prisonerSearch = new PrisonerSearchController(services.prisonApi)
+  router.get('/prisoner-search', withRetryLink('/'), asyncMiddleware(prisonerSearch.submit()))
 
   {
     const newBookingController = new NewBookingController(

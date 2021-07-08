@@ -11,6 +11,7 @@ import {
   assertHasStringValues,
   assertHasOptionalStringValues,
   forenameToInitial,
+  trimObjectValues,
 } from './utils'
 
 describe('capitalize()', () => {
@@ -315,5 +316,25 @@ describe('Forename to initial', () => {
   })
   it('should change forename to initial hypenated last name', () => {
     expect(forenameToInitial('Robert Smith-Jones')).toEqual('R. Smith-Jones')
+  })
+})
+
+describe('trimObjectValues', () => {
+  it('Should trim single value', () => {
+    expect(trimObjectValues({ name: '   bob ' })).toEqual({ name: 'bob' })
+  })
+  it('Should trim multiple values', () => {
+    expect(trimObjectValues({ firstName: '   bob ', lastName: 'Smith' })).toEqual({
+      firstName: 'bob',
+      lastName: 'Smith',
+    })
+  })
+
+  it('Should throw if input is not an object', () => {
+    expect(() => trimObjectValues(123)).toThrowError('Not a record')
+  })
+
+  it('Should throw if object contains non-strings', () => {
+    expect(() => trimObjectValues({ name: 'Bob', age: 10 })).toThrowError('Not all strings')
   })
 })
