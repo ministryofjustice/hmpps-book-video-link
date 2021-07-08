@@ -4,8 +4,9 @@ import PrisonerSearchController from './prisonerSearchController'
 import config from '../../../config'
 import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
 
-const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 jest.mock('../../../api/prisonApi')
+
+const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 config.app.videoLinkEnabledFor = ['MDI']
 
 describe('Video link prisoner search', () => {
