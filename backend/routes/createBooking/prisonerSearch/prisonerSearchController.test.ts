@@ -1,7 +1,8 @@
-import PrisonerSearchController from './prisonerSearchController'
-import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
-import config from '../../../config'
+import { PrisonerDetail } from 'prisonApi'
 import PrisonApi from '../../../api/prisonApi'
+import PrisonerSearchController from './prisonerSearchController'
+import config from '../../../config'
+import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 jest.mock('../../../api/prisonApi')
@@ -56,10 +57,10 @@ describe('Video link prisoner search', () => {
     })
   })
   describe('index', () => {
-    describe('when the user does have the correct roles', () => {
+    describe('when the user has the correct roles', () => {
       describe('when a search has been made', () => {
         beforeEach(() => {
-          prisonApi.globalSearch.mockReturnValue([
+          prisonApi.globalSearch.mockResolvedValue([
             {
               offenderNo: 'G0011GX',
               firstName: 'TEST',
@@ -79,11 +80,11 @@ describe('Video link prisoner search', () => {
               latestLocationId: 'MDI',
               latestLocation: 'Moorlands',
             },
-          ] as never)
+          ] as PrisonerDetail[])
         })
 
-        describe('with a prison number that is surrounded by whitespaces', () => {
-          const prisonNumber = ' G0011GX '
+        describe('with a prison number only', () => {
+          const prisonNumber = 'G0011GX'
 
           it('should make the correct search', async () => {
             req.query = { prisonNumber }
@@ -108,9 +109,9 @@ describe('Video link prisoner search', () => {
           })
         })
 
-        describe('with firstName and lastNames surrounded by whitespaces', () => {
-          const firstName = ' Test '
-          const lastName = ' Offender '
+        describe('with firstName and lastName only', () => {
+          const firstName = 'Test'
+          const lastName = 'Offender'
 
           beforeEach(() => {
             req.query = { firstName, lastName }
@@ -173,7 +174,7 @@ describe('Video link prisoner search', () => {
           describe('and also with a prison', () => {
             const prison = 'MDI'
 
-            it('should make the correct search and return less results', async () => {
+            it('should make the correct search and return fewer results', async () => {
               req.query = { lastName, prison }
 
               await controller.submit()(req, res, null)

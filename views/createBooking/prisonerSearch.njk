@@ -28,7 +28,7 @@
   <input type="hidden" name="_csrf" value="{{ csrfToken }}"/> {{ govukInput({
       id: "firstName",
       name: "firstName",
-      value: formValues.firstName | trimWhitespace,
+      value: formValues.firstName,
       errorMessage: errors | findError('firstName'),
       label: {
           text: "First name"
@@ -38,7 +38,7 @@
   {{ govukInput({
       id: "lastName",
       name: "lastName",
-      value: formValues.lastName | trimWhitespace,
+      value: formValues.lastName,
       errorMessage: errors | findError('lastName'),
       label: {
           text: "Last name"
@@ -53,7 +53,7 @@
         hint: {
           text: "Enter in the format 'A1234AA'"
         },
-        value: formValues.prisonNumber | trimWhitespace,
+        value: formValues.prisonNumber,
         errorMessage: errors | findError('prisonNumber'),
         label: {
             text: "Prison number"

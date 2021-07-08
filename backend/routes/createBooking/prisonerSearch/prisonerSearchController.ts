@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { RequestHandler, Request, Response } from 'express'
-import { formatName } from '../../../utils'
+import { formatName, trimObjectValues } from '../../../utils'
 import config from '../../../config'
 import PrisonerSearchValidation from './prisonerSearchValidation'
 import dobValidation from '../../../shared/dobValidation'
@@ -16,11 +16,9 @@ export default class PrisonerSearchController {
       const prisons = await this.prisonApi.getAgencies(res.locals)
       let searchResults = []
       const hasSearched = Boolean(Object.keys(req.query).length)
-      const errors = hasSearched ? videolinkPrisonerSearchValidation.validate(req.query) : []
-      const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear, prison } = req.query as Record<
-        string,
-        string
-      >
+      const formValues = trimObjectValues(req.query)
+      const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear, prison } = formValues
+      const errors = hasSearched ? videolinkPrisonerSearchValidation.validate(formValues) : []
 
       if (hasSearched && !errors.length) {
         const { dobIsValid, dateOfBirth } = dobValidation(dobDay, dobMonth, dobYear)
@@ -28,9 +26,9 @@ export default class PrisonerSearchController {
         searchResults = await this.prisonApi.globalSearch(
           res.locals,
           {
-            offenderNo: prisonNumber?.trim?.(),
-            lastName: lastName?.trim?.(),
-            firstName: firstName?.trim?.(),
+            offenderNo: prisonNumber,
+            lastName,
+            firstName,
             dateOfBirth: dobIsValid ? dateOfBirth.format('YYYY-MM-DD') : undefined,
             location: 'IN',
           },
@@ -43,7 +41,7 @@ export default class PrisonerSearchController {
           .map(agency => ({ value: agency.agencyId, text: agency.formattedDescription || agency.description }))
           .sort((a, b) => a.text.localeCompare(b.text)),
         errors,
-        formValues: req.query,
+        formValues,
         results: searchResults
           .filter(result => (prison ? prison === result.latestLocationId : result))
           .map(result => {
