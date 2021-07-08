@@ -1,4 +1,5 @@
-const { buildDate, DATE_TIME_FORMAT_SPEC } = require('./dateHelpers')
+import moment from 'moment'
+import { buildDate, buildDateWithTime, DATE_TIME_FORMAT_SPEC, DATE_ONLY_FORMAT_SPEC } from './dateHelpers'
 
 describe('Date helpers', () => {
   describe('buildDate', () => {
@@ -50,6 +51,13 @@ describe('Date helpers', () => {
     it('should handle invalid date', () => {
       const dateTime = buildDate('Wat?', '01', '02')
       expect(dateTime).toEqual(undefined)
+    })
+  })
+
+  describe('buildDateWithTime', () => {
+    it('should build date', () => {
+      const dateTime = buildDateWithTime(moment('2017-01-02', DATE_ONLY_FORMAT_SPEC), '12:13:14')
+      expect(dateTime.format(DATE_TIME_FORMAT_SPEC)).toEqual('2017-01-02T12:13:14')
     })
   })
 })

@@ -7,6 +7,7 @@ export const DATE_ONLY_EXTRA_LONG_FORMAT_SPEC = 'dddd D MMMM YYYY'
 export const DAY_MONTH_YEAR = 'DD/MM/YYYY'
 export const MOMENT_DAY_OF_THE_WEEK = 'dddd'
 export const MOMENT_TIME = 'HH:mm'
+export const MOMENT_TIME_SECONDS = 'HH:mm:ss'
 export const HOURS_TIME = 'HH'
 export const MINUTES_TIME = 'mm'
 
@@ -30,4 +31,20 @@ export const buildDate = (
     moment(date, dateFormat)
 
   return dateTime && dateTime.isValid() ? dateTime.hour(Number(hours)).minutes(Number(minutes)) : undefined
+}
+
+/**
+ * Creates a date from a moment at a specific time
+ * @param dateTime {Moment}
+ * @param time {string} in HH:mm:ss format
+ * @returns dateTime
+ */
+export const buildDateWithTime = (dateTime: Moment, time: string): Moment => {
+  const duration = moment.duration(time)
+  const result = moment(dateTime).set({
+    hours: duration.hours(),
+    minutes: duration.minutes(),
+    seconds: duration.seconds(),
+  })
+  return result
 }
