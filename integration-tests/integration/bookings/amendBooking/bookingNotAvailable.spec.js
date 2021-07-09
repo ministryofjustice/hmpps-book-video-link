@@ -76,8 +76,11 @@ context('Booking is not available', () => {
     changeVideoLinkBookingPage.form.startTimeMinutes().select('30')
     changeVideoLinkBookingPage.form.endTimeHours().select('11')
     changeVideoLinkBookingPage.form.endTimeMinutes().select('00')
+    changeVideoLinkBookingPage.form.mainLocation().select('2')
     changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.preLocation().select('1')
     changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postLocation().select('3')
     changeVideoLinkBookingPage.form.continue().click()
 
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
@@ -97,8 +100,11 @@ context('Booking is not available', () => {
     changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
     changeVideoLinkBookingPage.form.endTimeHours().select('11')
     changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
+    changeVideoLinkBookingPage.form.mainLocation().select('2')
     changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.preLocation().select('1')
     changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postLocation().select('3')
     changeVideoLinkBookingPage.form.continue().click()
 
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
@@ -110,8 +116,8 @@ context('Booking is not available', () => {
     changeVideoLinkBookingPage.form.startTimeMinutes().contains('45')
     changeVideoLinkBookingPage.form.endTimeHours().contains('11')
     changeVideoLinkBookingPage.form.startTimeMinutes().contains('45')
-    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().should('have.value', 'yes')
-    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().should('have.value', 'yes')
+    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().should('have.value', 'true')
+    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().should('have.value', 'true')
   })
 
   it('Cancellation should redirect to details page', () => {
@@ -125,8 +131,11 @@ context('Booking is not available', () => {
     changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
     changeVideoLinkBookingPage.form.endTimeHours().select('11')
     changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
+    changeVideoLinkBookingPage.form.mainLocation().select('2')
     changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.preLocation().select('1')
     changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postLocation().select('3')
     changeVideoLinkBookingPage.form.continue().click()
 
     const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()

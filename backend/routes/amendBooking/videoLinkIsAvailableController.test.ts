@@ -31,18 +31,21 @@ describe('video link is available controller', () => {
       startTime: '17:45',
       endTime: '18:00',
       description: 'vcc room 2 - 17:45 to 18:00',
+      locationId: 2,
     },
     mainDetails: {
       prisonRoom: 'vcc room 1',
       startTime: '18:00',
       endTime: '19:00',
       description: 'vcc room 1 - 18:00 to 19:00',
+      locationId: 1,
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
       startTime: '19:00',
       endTime: '19:15',
       description: 'vcc room 3 - 19:00 to 19:15',
+      locationId: 3,
     },
   }
 
@@ -67,6 +70,9 @@ describe('video link is available controller', () => {
           date: '2020-11-20T18:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
+          preLocation: '2',
+          mainLocation: '1',
+          postLocation: '3',
           preRequired: 'true',
           postRequired: 'true',
         },

@@ -81,8 +81,11 @@ context('Final availability checks before submitting update', () => {
     changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
     changeVideoLinkBookingPage.form.endTimeHours().select('11')
     changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
+    changeVideoLinkBookingPage.form.mainLocation().select('110')
     changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.preLocation().select('100')
     changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkBookingPage.form.postLocation().select('120')
 
     cy.task('stubRoomAvailability', { pre: [room1, room4], main: [room2], post: [room3] })
 

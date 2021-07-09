@@ -13,8 +13,8 @@ describe('NewBooking', () => {
       endTimeHours: '11',
       endTimeMinutes: '00',
       mainLocation: '13',
-      preRequired: 'no',
-      postRequired: 'no',
+      preRequired: 'false',
+      postRequired: 'false',
     })
 
     expect(result).toStrictEqual({
@@ -72,7 +72,7 @@ describe('NewBooking', () => {
         endTimeHours: '11',
         endTimeMinutes: '00',
         mainLocation: '23',
-        postRequired: 'no',
+        postRequired: 'false',
       })
     ).toThrowError('Missing or invalid keys: preRequired')
   })
@@ -88,8 +88,8 @@ describe('NewBooking', () => {
         endTimeHours: 11,
         endTimeMinutes: '00',
         mainLocation: '12',
-        preRequired: 'no',
-        postRequired: 'no',
+        preRequired: 'false',
+        postRequired: 'false',
       })
     ).toThrowError('Missing or invalid keys: startTimeHours,endTimeHours')
   })

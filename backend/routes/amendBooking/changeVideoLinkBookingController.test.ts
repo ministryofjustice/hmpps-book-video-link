@@ -23,8 +23,11 @@ describe('change video link booking controller', () => {
       startTimeMinutes: '40',
       endTimeHours: '19',
       endTimeMinutes: '20',
-      preAppointmentRequired: 'yes',
-      postAppointmentRequired: 'yes',
+      preLocation: '2',
+      mainLocation: '1',
+      postLocation: '3',
+      preRequired: 'true',
+      postRequired: 'true',
     },
   })
 
@@ -47,18 +50,21 @@ describe('change video link booking controller', () => {
       startTime: '17:40',
       endTime: '18:00',
       description: 'vcc room 2 - 17:40 to 18:00',
+      locationId: 2,
     },
     mainDetails: {
       prisonRoom: 'vcc room 1',
       startTime: '18:00',
       endTime: '19:00',
       description: 'vcc room 1 - 18:00 to 19:00',
+      locationId: 1,
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
       startTime: '19:00',
       endTime: '19:20',
       description: 'vcc room 3 - 19:00 to 19:20',
+      locationId: 3,
     },
   }
 
@@ -111,9 +117,11 @@ describe('change video link booking controller', () => {
           startTimeMinutes: '00',
           endTimeHours: '19',
           endTimeMinutes: '00',
-          mainLocation: 'vcc room 1',
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
+          preLocation: 2,
+          mainLocation: 1,
+          postLocation: 3,
+          preRequired: 'true',
+          postRequired: 'true',
         },
       })
     })
@@ -129,8 +137,8 @@ describe('change video link booking controller', () => {
             startTimeMinutes: '20',
             endTimeHours: '11',
             endTimeMinutes: '40',
-            postAppointmentRequired: 'yes',
-            preAppointmentRequired: 'yes',
+            preRequired: 'true',
+            postRequired: 'true',
           },
         ],
       })
@@ -154,42 +162,8 @@ describe('change video link booking controller', () => {
           startTimeMinutes: '20',
           endTimeHours: '11',
           endTimeMinutes: '40',
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
-        },
-      })
-    })
-
-    it('When there is no user input', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      mockFlashState({
-        errors: [{ text: 'error message', href: 'error' }],
-        input: [],
-      })
-
-      await controller.view()(req, res, null)
-
-      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
-        bookingId: '123',
-        agencyId: 'WWI',
-        courts: [
-          { text: 'Westminster Crown Court', value: 'WMRCN' },
-          { text: 'Wimbledon County Court', value: 'WLDCOU' },
-          { text: 'City of London', value: 'CLDN' },
-        ],
-        locations: { prison: 'some prison' },
-        prisoner: { name: 'John Doe' },
-        errors: [{ text: 'error message', href: 'error' }],
-        form: {
-          date: '20/11/2020',
-          courtId: 'CLDN',
-          startTimeHours: '18',
-          startTimeMinutes: '00',
-          endTimeHours: '19',
-          endTimeMinutes: '00',
-          mainLocation: 'vcc room 1',
-          postAppointmentRequired: 'yes',
-          preAppointmentRequired: 'yes',
+          preRequired: 'true',
+          postRequired: 'true',
         },
       })
     })
@@ -248,6 +222,9 @@ describe('change video link booking controller', () => {
           courtId: 'CLDN',
           date: '2020-11-20T00:00:00',
           endTime: '2020-11-20T19:20:00',
+          preLocation: '2',
+          mainLocation: '1',
+          postLocation: '3',
           postRequired: 'true',
           preRequired: 'true',
           startTime: '2020-11-20T17:40:00',
@@ -274,7 +251,7 @@ describe('change video link booking controller', () => {
         req.body = { date: 'blah' }
 
         await controller.submit()(req, res, null)
-        expect(req.flash).toHaveBeenCalledWith('input', [req.body])
+        expect(req.flash).toHaveBeenCalledWith('input', req.body)
       })
 
       it('should redirect to same page', async () => {

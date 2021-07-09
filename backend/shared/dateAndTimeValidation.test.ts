@@ -10,8 +10,8 @@ describe('DateAndTimeValidation', () => {
     startTimeMinutes: '20',
     endTimeHours: '13',
     endTimeMinutes: '50',
-    preAppointmentRequired: 'yes',
-    postAppointmentRequired: 'yes',
+    preRequired: 'true',
+    postRequired: 'true',
   } as Record<string, unknown>
 
   beforeEach(() => {
@@ -171,11 +171,11 @@ describe('DateAndTimeValidation', () => {
     })
 
     it('should return an error when no pre court option is selected', () => {
-      expect(validator({ ...form, preAppointmentRequired: '' })).toStrictEqual([errorTypes.missingPreCourt])
+      expect(validator({ ...form, preRequired: '' })).toStrictEqual([errorTypes.missingPreCourt])
     })
 
     it('should return an error when no post court option is selected', () => {
-      expect(validator({ ...form, postAppointmentRequired: '' })).toStrictEqual([errorTypes.missingPostCourt])
+      expect(validator({ ...form, postRequired: '' })).toStrictEqual([errorTypes.missingPostCourt])
     })
 
     it('should return multiply errors when many form values are missing', () => {
@@ -187,8 +187,8 @@ describe('DateAndTimeValidation', () => {
           startTimeMinutes: '',
           endTimeHours: '',
           endTimeMinutes: '',
-          preAppointmentRequired: '',
-          postAppointmentRequired: '',
+          preRequired: '',
+          postRequired: '',
         })
       ).toStrictEqual([
         errorTypes.missingPreCourt,

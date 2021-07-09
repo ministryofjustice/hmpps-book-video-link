@@ -45,8 +45,8 @@ export default class VideoLinkNotAvailableController {
         startTimeMinutes: update.startTime.format('mm'),
         endTimeHours: update.endTime.format('HH'),
         endTimeMinutes: update.endTime.format('mm'),
-        preAppointmentRequired: update.preRequired ? 'yes' : 'no',
-        postAppointmentRequired: update.postRequired ? 'yes' : 'no',
+        preRequired: update.preRequired ? 'true' : 'false',
+        postRequired: update.postRequired ? 'true' : 'false',
       })
 
       return res.redirect(`/change-video-link-date-and-time/${bookingId}`)

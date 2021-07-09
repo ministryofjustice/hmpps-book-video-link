@@ -26,21 +26,21 @@ export const errorTypes = {
 
 export default function validate(form: Record<string, unknown>): ValidationError[] {
   assertHasOptionalStringValues(form, [
-    'preAppointmentRequired',
-    'postAppointmentRequired',
+    'preRequired',
+    'postRequired',
     'preLocation',
     'postLocation',
     'mainLocation',
     'comment',
   ])
 
-  const { preAppointmentRequired, postAppointmentRequired, preLocation, postLocation, mainLocation, comment } = form
+  const { preRequired, postRequired, preLocation, postLocation, mainLocation, comment } = form
 
   const errors: ValidationError[] = []
 
-  if (preAppointmentRequired === 'true' && !preLocation) errors.push(errorTypes.preLocation.missing)
+  if (preRequired === 'true' && !preLocation) errors.push(errorTypes.preLocation.missing)
   if (!mainLocation) errors.push(errorTypes.missingMainLocation)
-  if (postAppointmentRequired === 'true' && !postLocation) errors.push(errorTypes.postLocation.missing)
+  if (postRequired === 'true' && !postLocation) errors.push(errorTypes.postLocation.missing)
   if (comment && comment.length > 3600) errors.push(errorTypes.commentLength)
 
   return errors

@@ -67,18 +67,21 @@ const bookingDetail: BookingDetails = {
     endTime: '18:00',
     prisonRoom: 'Vcc Room 3',
     startTime: '17:45',
+    locationId: 3,
   },
   mainDetails: {
     description: 'Vcc Room 1 - 18:00 to 19:00',
     endTime: '19:00',
     prisonRoom: 'Vcc Room 1',
     startTime: '18:00',
+    locationId: 1,
   },
   postDetails: {
     description: 'Vcc Room 2 - 19:00 to 19:15',
     endTime: '19:15',
     prisonRoom: 'Vcc Room 2',
     startTime: '19:00',
+    locationId: 2,
   },
 }
 

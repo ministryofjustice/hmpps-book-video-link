@@ -36,8 +36,8 @@ export default class SelectAvailableRoomsController {
         mainLocations: rooms.main,
         preLocations: rooms.pre,
         postLocations: rooms.post,
-        preAppointmentRequired: update.preRequired,
-        postAppointmentRequired: update.postRequired,
+        preRequired: update.preRequired,
+        postRequired: update.postRequired,
       })
     }
   }
