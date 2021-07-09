@@ -2,8 +2,8 @@ import validator, { errorTypes } from './selectAvailableRoomsValidation'
 
 describe('SelectAvailableRoomsValidation', () => {
   const form = {
-    preAppointmentRequired: 'true',
-    postAppointmentRequired: 'true',
+    preRequired: 'true',
+    postRequired: 'true',
     preLocation: '2',
     mainLocation: '1',
     postLocation: '3',

@@ -29,12 +29,18 @@ export default class ChangeVideoLinkBookingController {
 
       const errors = req.flash('errors') || []
       const [input] = req.flash('input')
-      const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
-      const courts = await this.locationService.getVideoLinkEnabledCourts(res.locals, username)
+
+      const [bookingDetails, courts] = await Promise.all([
+        this.bookingService.get(res.locals, parseInt(bookingId, 10)),
+        this.locationService.getVideoLinkEnabledCourts(res.locals, username),
+      ])
+
+      const rooms = await this.locationService.getRooms(res.locals, bookingDetails.agencyId)
 
       return res.render('amendBooking/changeVideoLinkBooking.njk', {
         errors,
         courts: courts.map(c => ({ value: c.id, text: c.name })),
+        rooms,
         bookingId,
         agencyId: bookingDetails.agencyId,
         prisoner: {
@@ -50,9 +56,11 @@ export default class ChangeVideoLinkBookingController {
           startTimeMinutes: Minutes(bookingDetails.mainDetails.startTime),
           endTimeHours: Hours(bookingDetails.mainDetails.endTime),
           endTimeMinutes: Minutes(bookingDetails.mainDetails.endTime),
-          mainLocation: bookingDetails.mainDetails.prisonRoom,
-          preAppointmentRequired: bookingDetails.preDetails ? 'yes' : 'no',
-          postAppointmentRequired: bookingDetails.postDetails ? 'yes' : 'no',
+          preLocation: bookingDetails.preDetails?.locationId,
+          mainLocation: bookingDetails.mainDetails.locationId,
+          postLocation: bookingDetails.postDetails?.locationId,
+          preRequired: bookingDetails.preDetails ? 'true' : 'false',
+          postRequired: bookingDetails.postDetails ? 'true' : 'false',
         },
       })
     }
@@ -63,7 +71,7 @@ export default class ChangeVideoLinkBookingController {
       const { bookingId } = req.params
       if (req.errors) {
         req.flash('errors', req.errors)
-        req.flash('input', [req.body])
+        req.flash('input', req.body)
         return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
       }
 

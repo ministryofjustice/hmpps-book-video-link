@@ -35,7 +35,7 @@ export default function createRoutes({
   router.get('/change-video-link-date-and-time/:bookingId', asyncMiddleware(changeVideoLinkBooking.view()))
   router.post(
     '/change-video-link-date-and-time/:bookingId',
-    validationMiddleware(dateAndTimeValidation),
+    validationMiddleware(dateAndTimeValidation, selectAvailableRoomsValidation),
     asyncMiddleware(changeVideoLinkBooking.submit())
   )
 

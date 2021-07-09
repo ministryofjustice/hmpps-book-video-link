@@ -4,11 +4,11 @@ import type { Services } from '../services'
 
 import manageCourtsRoutes from './manageCourts'
 import requestBookingRoutes from './requestBooking'
-import createBookingRoutesV2 from './createBooking'
+import createBookingRoutes from './createBooking'
 import deleteBookingRoutes from './deleteBooking'
-import viewBookingsRoutesV2 from './viewBookings'
+import viewBookingsRoutes from './viewBookings'
 import eventRoutes from './events'
-import amendBookingsRoutesV2 from './amendBooking'
+import amendBookingsRoutes from './amendBooking'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
 
@@ -28,9 +28,9 @@ export = function createRoutes(services: Services): Router {
   router.use(deleteBookingRoutes(services))
   router.use(requestBookingRoutes(services))
 
-  router.use(createBookingRoutesV2(services))
-  router.use(amendBookingsRoutesV2(services))
-  router.use(viewBookingsRoutesV2(services))
+  router.use(createBookingRoutes(services))
+  router.use(amendBookingsRoutes(services))
+  router.use(viewBookingsRoutes(services))
 
   router.use(eventRoutes(services))
 

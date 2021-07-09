@@ -33,18 +33,21 @@ describe('Select available rooms controller', () => {
       startTime: '17:40',
       endTime: '18:00',
       description: 'vcc room 2 - 17:40 to 18:00',
+      locationId: 2,
     },
     mainDetails: {
       prisonRoom: 'vcc room 1',
       startTime: '18:00',
       endTime: '19:00',
       description: 'vcc room 1 - 18:00 to 19:00',
+      locationId: 1,
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
       startTime: '17:40',
       endTime: '18:00',
       description: 'vcc room 3 - 19:00 to 19:20',
+      locationId: 3,
     },
   }
 
@@ -69,6 +72,9 @@ describe('Select available rooms controller', () => {
         date: '2020-11-20T00:00:00',
         startTime: '2020-11-20T18:00:00',
         endTime: '2020-11-20T19:00:00',
+        preLocation: '9',
+        mainLocation: '10',
+        postLocation: '11',
         preRequired: 'true',
         postRequired: 'true',
       },
@@ -97,8 +103,8 @@ describe('Select available rooms controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
           bookingId: '12',
-          preAppointmentRequired: true,
-          postAppointmentRequired: true,
+          preRequired: true,
+          postRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
@@ -123,6 +129,9 @@ describe('Select available rooms controller', () => {
           date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
           startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
           endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+          preLocation: 9,
+          mainLocation: 10,
+          postLocation: 11,
           postRequired: true,
           preRequired: true,
         })
@@ -149,8 +158,8 @@ describe('Select available rooms controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
           bookingId: '12',
-          preAppointmentRequired: true,
-          postAppointmentRequired: true,
+          preRequired: true,
+          postRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
@@ -176,8 +185,8 @@ describe('Select available rooms controller', () => {
 
         expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
           bookingId: '12',
-          preAppointmentRequired: true,
-          postAppointmentRequired: true,
+          preRequired: true,
+          postRequired: true,
           mainLocations: [{ value: 1, text: 'Room 1' }],
           preLocations: [{ value: 2, text: 'Room 2' }],
           postLocations: [{ value: 3, text: 'Room 3' }],
@@ -252,6 +261,7 @@ describe('Select available rooms controller', () => {
           date: '2020-11-20T00:00:00',
           startTime: '2020-11-20T18:00:00',
           endTime: '2020-11-20T19:00:00',
+          mainLocation: '10',
           preRequired: 'false',
           postRequired: 'false',
         },

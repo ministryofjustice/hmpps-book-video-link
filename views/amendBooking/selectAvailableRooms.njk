@@ -36,10 +36,10 @@
 
         <form method="post">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <input type="hidden" name="preAppointmentRequired" value="{{ preAppointmentRequired }}"/>
-            <input type="hidden" name="postAppointmentRequired" value="{{ postAppointmentRequired }}"/>
+            <input type="hidden" name="preRequired" value="{{ preRequired }}"/>
+            <input type="hidden" name="postRequired" value="{{ postRequired }}"/>
 
-            {% if preAppointmentRequired %}
+            {% if preRequired %}
                 {{ appointment({
                     description: "Prison room for pre-court hearing briefing", 
                     name: "preLocation",
@@ -57,7 +57,7 @@
                 }, 
                 errors) }}
 
-            {% if postAppointmentRequired %}
+            {% if postRequired %}
                 {{ appointment({
                     description: "Prison room for post-court hearing briefing", 
                     name: "postLocation",

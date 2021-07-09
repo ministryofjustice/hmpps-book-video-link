@@ -128,6 +128,7 @@ export = class BookingService {
         description: roomFinder.bookingDescription(appointment.locationId, [startTime, endTime]),
         startTime: Time(appointment.startTime),
         endTime: Time(appointment.endTime),
+        locationId: appointment.locationId,
       }
     }
 

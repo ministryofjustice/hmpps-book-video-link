@@ -61,6 +61,7 @@ export type AppointmentDetail = {
   endTime: string
   prisonRoom: string
   description: string
+  locationId: number
 }
 
 export type BookingDetails = {
