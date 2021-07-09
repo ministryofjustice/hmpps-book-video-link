@@ -2,7 +2,7 @@ import express, { Router } from 'express'
 
 import PrisonerSearchController from './prisonerSearch/prisonerSearchController'
 import { NewBookingController, newBookingValidation } from './newBooking'
-import VideoLinkNotAvailableController from './notAvailable/NotAvailableController'
+import NotAvailableController from './notAvailable/NotAvailableController'
 import { ConfirmBookingController, confirmBookingValidation } from './confirmBooking'
 import ConfirmationController from './viewConfirmation/confirmationController'
 
@@ -33,8 +33,17 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const { view } = new VideoLinkNotAvailableController(services.availabilityCheckServiceV2)
-    router.get('/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-not-available', asyncMiddleware(view))
+    const { view, submit } = new NotAvailableController(services.availabilityCheckServiceV2)
+    router.get(
+      '/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-not-available',
+      checkNewBookingPresent,
+      asyncMiddleware(view)
+    )
+    router.post(
+      '/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-not-available',
+      checkNewBookingPresent,
+      asyncMiddleware(submit)
+    )
   }
 
   {
