@@ -142,3 +142,19 @@ export function forenameToInitial(name: string): string {
   if (!name) return null
   return `${name.charAt(0)}. ${name.split(' ').pop()}`
 }
+
+export function trimObjectValues(obj: unknown): Record<string, string> {
+  const isObject = obj && typeof obj === 'object'
+
+  if (!isObject) {
+    throw Error('Not a record')
+  }
+
+  if (Object.values(obj).some(s => typeof s !== 'string')) {
+    throw Error('Not all strings')
+  }
+  return Object.keys(obj).reduce((acc, curr) => {
+    acc[curr] = obj[curr].trim()
+    return acc
+  }, {})
+}
