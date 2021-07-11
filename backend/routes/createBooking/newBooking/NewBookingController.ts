@@ -41,7 +41,7 @@ export default class NewBookingController {
         offenderNameWithNumber,
         agencyDescription,
         bookingId,
-        courts: courts.map(c => ({ value: c.id, text: c.name })),
+        courts,
         errors: req.flash('errors'),
         formValues: req.flash('formValues')[0],
       })

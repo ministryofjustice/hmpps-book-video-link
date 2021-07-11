@@ -30,7 +30,7 @@ describe('SelectAvailableRoomsValidation', () => {
           mainLocation: '',
           postLocation: '',
         })
-      ).toStrictEqual([errorTypes.preLocation.missing, errorTypes.missingMainLocation, errorTypes.postLocation.missing])
+      ).toStrictEqual([errorTypes.missingMainLocation, errorTypes.preLocation.missing, errorTypes.postLocation.missing])
     })
   })
 })

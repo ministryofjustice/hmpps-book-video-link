@@ -27,8 +27,8 @@ export default function validate(form: Record<string, unknown>): ValidationError
 
   const errors: ValidationError[] = []
 
-  if (preRequired === 'true' && !preLocation) errors.push(errorTypes.preLocation.missing)
   if (!mainLocation) errors.push(errorTypes.missingMainLocation)
+  if (preRequired === 'true' && !preLocation) errors.push(errorTypes.preLocation.missing)
   if (postRequired === 'true' && !postLocation) errors.push(errorTypes.postLocation.missing)
 
   return errors

@@ -191,11 +191,11 @@ describe('DateAndTimeValidation', () => {
           postRequired: '',
         })
       ).toStrictEqual([
-        errorTypes.missingPreCourt,
-        errorTypes.missingPostCourt,
         errorTypes.date.missing,
         errorTypes.startTime.missing,
         errorTypes.endTime.missing,
+        errorTypes.missingPreCourt,
+        errorTypes.missingPostCourt,
       ])
     })
   })
