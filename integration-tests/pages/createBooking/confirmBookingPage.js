@@ -16,6 +16,7 @@ const confirmBookingPage = () =>
     mainRoom: () => cy.get('.qa-prisonRoomForCourtHearing-value'),
     preRoom: () => cy.get('.qa-PrisonRoomForPreCourtHearingBriefing-value'),
     postRoom: () => cy.get('.qa-PrisonRoomForPostCourtHearingBriefing-value'),
+    changeBooking: () => cy.get('[data-qa="change-booking"]'),
   })
 
 export default {
