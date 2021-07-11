@@ -33,6 +33,8 @@ export default class ConfirmBookingController {
     const form = input || {}
 
     return res.render('createBooking/confirmBooking.njk', {
+      agencyId,
+      offenderNo,
       offender: {
         name: offenderNameWithNumber,
         prison: agencyDetails.description,
