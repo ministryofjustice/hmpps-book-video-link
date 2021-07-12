@@ -85,11 +85,11 @@ export default function validate(form: Record<string, unknown>): ValidationError
 
   const errors: ValidationError[] = []
 
-  if (!preRequired) errors.push(errorTypes.missingPreCourt)
-  if (!postRequired) errors.push(errorTypes.missingPostCourt)
-
   errors.push(...validateDate(date))
   errors.push(...validateTime(date, startTimeHours, startTimeMinutes, endTimeHours, endTimeMinutes))
+
+  if (!preRequired) errors.push(errorTypes.missingPreCourt)
+  if (!postRequired) errors.push(errorTypes.missingPostCourt)
 
   return errors
 }

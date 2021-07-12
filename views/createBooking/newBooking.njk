@@ -67,7 +67,7 @@
                 <input type="hidden" name="bookingId" value="{{ bookingId }}">
 
                 {% if courts.length === 1 %}
-                    <input type="hidden" name="courtId" value="{{ courts | first | showValue }}" />
+                    <input type="hidden" name="courtId" value="{{ courts[0].id }}" />
                     {{ govukSummaryList({
                         classes: "govuk-summary-list--no-border",
                         rows: [{
@@ -76,7 +76,7 @@
                                 classes: "govuk-summary-list__key qa-court-key govuk-!-padding-bottom-0 govuk-!-width-one-half"
                                 },
                             value: {
-                                text: courts | first | showText,
+                                text: courts[0].name,
                                 classes: "govuk-summary-list__value qa-court-value govuk-!-padding-bottom-0 govuk-!-width-one-half"
                                 }
                             }]
@@ -89,7 +89,7 @@
                         label: {
                             text: "Which court is the hearing for?"
                         },
-                        items: courts | addDefaultSelectedVale('Select'),
+                        items: courts | toSelect('id', 'name', formValues.courtId),
                         errorMessage: errors | findError("courtId")
                     }) }}
                 {% endif %}    

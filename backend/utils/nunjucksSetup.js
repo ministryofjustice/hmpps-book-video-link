@@ -170,7 +170,8 @@ module.exports = (app, path) => {
     const items = array.map(item => ({
       value: item[valueKey],
       text: item[textKey],
-      selected: item[valueKey] === parseInt(value, 10),
+      // eslint-disable-next-line eqeqeq
+      selected: item[valueKey] == value,
     }))
     return [emptyOption, ...items]
   })

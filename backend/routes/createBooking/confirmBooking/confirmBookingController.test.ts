@@ -64,11 +64,11 @@ describe('Select court appointment rooms', () => {
 
   describe('view', () => {
     it('should return locations', async () => {
-      const { view } = controller
-
-      await view(req, res, next)
+      await controller.view(req, res, next)
 
       expect(res.render).toHaveBeenCalledWith('createBooking/confirmBooking.njk', {
+        agencyId: 'WWI',
+        offenderNo: 'A12345',
         details: {
           'Post-court hearing briefing': '14:00 to 14:15',
           'Pre-court hearing briefing': '10:45 to 11:00',
@@ -86,9 +86,7 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should call services correctly', async () => {
-      const { view } = controller
-
-      await view(req, res, next)
+      await controller.view(req, res, next)
 
       expect(prisonApi.getAgencyDetails).toHaveBeenCalledWith(res.locals, 'WWI')
       expect(prisonApi.getPrisonerDetails).toHaveBeenCalledWith(res.locals, 'A12345')
@@ -105,8 +103,6 @@ describe('Select court appointment rooms', () => {
     })
 
     it('should redirect back when errors in request', async () => {
-      const { submit } = controller
-
       const reqWithErrors = mockRequest({
         params: { agencyId: 'WWI', offenderNo: 'A12345' },
         body: {
@@ -115,45 +111,39 @@ describe('Select court appointment rooms', () => {
         errors: [{ href: '#preLocation' }],
       })
 
-      await submit(reqWithErrors, res, next)
+      await controller.submit(reqWithErrors, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/WWI/offenders/A12345/add-court-appointment/select-rooms')
       expect(bookingService.create).not.toHaveBeenCalled()
     })
 
     it('should redirect to confirmation page', async () => {
-      const { submit } = controller
-
       req.body = {
         comment: 'Test',
       }
 
-      await submit(req, res, next)
+      await controller.submit(req, res, next)
 
       expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment/123')
     })
 
-    it('should redirect to confirmation page if no pre or post rooms are required', async () => {
-      const { submit } = controller
+    it('should redirect to room no longer available page', async () => {
+      bookingService.create.mockResolvedValue(false)
 
-      req.body = {
-        comment: 'Test',
-      }
+      await controller.submit(req, res, next)
 
-      await submit(req, res, next)
-
-      expect(res.redirect).toHaveBeenCalledWith('/offenders/A12345/confirm-appointment/123')
+      expect(res.redirect).toHaveBeenCalledWith(
+        '/WWI/offenders/A12345/add-court-appointment/video-link-no-longer-available'
+      )
     })
 
     describe('should call the booking service with correct details', () => {
       it('with all fields ', async () => {
-        const { submit } = controller
-
         req.body = {
           comment: 'Test',
         }
 
-        await submit(req, res, next)
+        await controller.submit(req, res, next)
 
         expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
           agencyId: 'WWI',
@@ -171,6 +161,22 @@ describe('Select court appointment rooms', () => {
       it('with only mandatory fields ', async () => {
         const { submit } = controller
 
+        req = mockRequest({
+          params: { agencyId: 'WWI', offenderNo: 'A12345' },
+          signedCookies: {
+            'booking-creation': {
+              courtId: 'LEEMC',
+              bookingId: '123456',
+              date: '2017-11-10T00:00:00',
+              postRequired: 'false',
+              preRequired: 'false',
+              endTime: '2017-11-10T14:00:00',
+              startTime: '2017-11-10T11:00:00',
+              mainLocation: '2',
+            },
+          },
+        })
+
         await submit(req, res, next)
 
         expect(bookingService.create).toBeCalledWith(res.locals, 'COURT_USER', {
@@ -180,9 +186,9 @@ describe('Select court appointment rooms', () => {
           mainEndTime: moment('2017-11-10T14:00:00', DATE_TIME_FORMAT_SPEC, true),
           mainStartTime: moment('2017-11-10T11:00:00', DATE_TIME_FORMAT_SPEC, true),
           offenderNo: 'A12345',
-          pre: 1,
+          pre: undefined,
           main: 2,
-          post: 3,
+          post: undefined,
         })
       })
     })

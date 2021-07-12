@@ -14,7 +14,7 @@ const locationService = new LocationService(null, null, null) as jest.Mocked<Loc
 jest.mock('../../../api/prisonApi')
 jest.mock('../../../services')
 
-describe('Add court appointment', () => {
+describe('New booking controller', () => {
   const roomAvailability: RoomAvailabilityV2 = {
     isAvailable: true,
     alternatives: [],
@@ -63,6 +63,7 @@ describe('Add court appointment', () => {
     prisonApi.getAgencyDetails.mockResolvedValue(agencyDetails as Agency)
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([])
     availabilityCheckService.getAvailability.mockResolvedValue(roomAvailability)
+    locationService.getRooms.mockResolvedValue([])
     controller = new NewBookingController(prisonApi, availabilityCheckService, locationService)
   })
 
@@ -100,10 +101,97 @@ describe('Add court appointment', () => {
       )
     })
 
-    it('should render view error template', async () => {
-      prisonApi.getPrisonerDetails.mockImplementation(() => Promise.reject(new Error('Network error')))
+    it('should just throw errors', async () => {
+      prisonApi.getPrisonerDetails.mockRejectedValue(new Error('Network error'))
 
       await expect(controller.view()(req, res, null)).rejects.toThrow('Network error')
+    })
+
+    it('should render cookie data if present', async () => {
+      await controller.view()(
+        {
+          ...req,
+          signedCookies: {
+            'booking-creation': {
+              courtId: 'LEEMC',
+              bookingId: '123456',
+              date: '2017-11-10T00:00:00',
+              postRequired: 'true',
+              preRequired: 'true',
+              endTime: '2017-11-10T14:00:00',
+              startTime: '2017-11-10T11:00:00',
+              mainLocation: '2',
+              preLocation: '1',
+              postLocation: '3',
+            },
+          },
+        },
+        res,
+        null
+      )
+
+      expect(res.render).toHaveBeenCalledWith('createBooking/newBooking.njk', {
+        offenderNo: 'A12345',
+        offenderNameWithNumber: 'Firstname Lastname (A12345)',
+        agencyDescription: 'Moorland',
+        bookingId: 1,
+        courts: [],
+        errors: [],
+        rooms: [],
+        formValues: {
+          bookingId: '123456',
+          courtId: 'LEEMC',
+          date: '10/11/2017',
+          endTimeHours: '14',
+          endTimeMinutes: '00',
+          mainLocation: '2',
+          postLocation: '3',
+          postRequired: 'true',
+          preLocation: '1',
+          preRequired: 'true',
+          startTimeHours: '11',
+          startTimeMinutes: '00',
+        },
+      })
+    })
+
+    it('flash data should take priority over cookie data if present', async () => {
+      req.flash.mockReturnValueOnce([]).mockReturnValue([{ bookingId: '9999', postRequired: 'false' }])
+      await controller.view()(
+        {
+          ...req,
+          signedCookies: {
+            'booking-creation': {
+              courtId: 'LEEMC',
+              bookingId: '123456',
+              date: '2017-11-10T00:00:00',
+              postRequired: 'true',
+              preRequired: 'true',
+              endTime: '2017-11-10T14:00:00',
+              startTime: '2017-11-10T11:00:00',
+              mainLocation: '2',
+              preLocation: '1',
+              postLocation: '3',
+            },
+          },
+        },
+        res,
+        null
+      )
+
+      expect(res.render).toHaveBeenCalledWith('createBooking/newBooking.njk', {
+        offenderNo: 'A12345',
+        offenderNameWithNumber: 'Firstname Lastname (A12345)',
+        agencyDescription: 'Moorland',
+        bookingId: 1,
+        courts: [],
+        errors: [],
+        rooms: [],
+        formValues: {
+          bookingId: '9999',
+          postRequired: 'false',
+        },
+      })
     })
   })
 

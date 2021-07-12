@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { buildDate, DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../../shared/dateHelpers'
-import { NewBooking, SelectAlternative } from './form'
+import { NewBooking, SelectAlternative, toFormValues } from './form'
 
 describe('NewBooking', () => {
   test('check parse required fields', () => {
@@ -92,6 +92,40 @@ describe('NewBooking', () => {
         postRequired: 'false',
       })
     ).toThrowError('Missing or invalid keys: startTimeHours,endTimeHours')
+  })
+})
+
+describe('toFormValues', () => {
+  test('all values', () => {
+    expect(
+      toFormValues(
+        NewBooking({
+          bookingId: '123456',
+          courtId: 'COURT-1',
+          date: '22/01/2020',
+          startTimeHours: '10',
+          startTimeMinutes: '30',
+          endTimeHours: '11',
+          endTimeMinutes: '00',
+          mainLocation: '12',
+          preRequired: 'false',
+          postRequired: 'false',
+        })
+      )
+    ).toStrictEqual({
+      bookingId: '123456',
+      courtId: 'COURT-1',
+      date: '22/01/2020',
+      endTimeHours: '11',
+      endTimeMinutes: '00',
+      mainLocation: '12',
+      postLocation: undefined,
+      postRequired: 'false',
+      preLocation: undefined,
+      preRequired: 'false',
+      startTimeHours: '10',
+      startTimeMinutes: '30',
+    })
   })
 })
 

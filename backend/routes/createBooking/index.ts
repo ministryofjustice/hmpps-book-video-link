@@ -11,6 +11,7 @@ import asyncMiddleware from '../../middleware/asyncMiddleware'
 
 import { Services } from '../../services'
 import { ensureNewBookingPresentMiddleware } from './state'
+import RoomNoLongerAvailableController from './roomNoLongerAvailable/RoomNoLongerAvailableController'
 
 export default function createRoutes(services: Services): Router {
   const router = express.Router({ mergeParams: true })
@@ -57,12 +58,22 @@ export default function createRoutes(services: Services): Router {
     router.post(path, checkNewBookingPresent, confirmBookingValidation, asyncMiddleware(submit))
   }
 
-  const { view } = new ConfirmationController(services.bookingService, services.locationService)
-  router.get(
-    '/offenders/:offenderNo/confirm-appointment/:videoBookingId',
-    withRetryLink('/prisoner-search'),
-    asyncMiddleware(view)
-  )
+  {
+    const { view } = new ConfirmationController(services.bookingService, services.locationService)
+    router.get(
+      '/offenders/:offenderNo/confirm-appointment/:videoBookingId',
+      withRetryLink('/prisoner-search'),
+      asyncMiddleware(view)
+    )
+  }
+
+  {
+    const { view } = new RoomNoLongerAvailableController()
+    router.get(
+      '/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-no-longer-available',
+      asyncMiddleware(view)
+    )
+  }
 
   return router
 }

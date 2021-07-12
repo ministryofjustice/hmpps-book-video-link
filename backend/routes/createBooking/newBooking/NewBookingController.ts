@@ -2,8 +2,8 @@ import { RequestHandler, Request, Response } from 'express'
 import { formatName } from '../../../utils'
 import type PrisonApi from '../../../api/prisonApi'
 import type { LocationService, AvailabilityCheckServiceV2 } from '../../../services'
-import { NewBooking } from './form'
-import { clearNewBooking, setNewBooking } from '../state'
+import { NewBooking, toFormValues } from './form'
+import { clearNewBooking, getNewBooking, setNewBooking } from '../state'
 
 export default class NewBookingController {
   public constructor(
@@ -35,15 +35,17 @@ export default class NewBookingController {
       const offenderNameWithNumber = `${formatName(firstName, lastName)} (${offenderNo})`
       const agencyDescription = agencyDetails.description
 
+      const newBooking = getNewBooking(req)
+
       return res.render('createBooking/newBooking.njk', {
         rooms,
         offenderNo,
         offenderNameWithNumber,
         agencyDescription,
         bookingId,
-        courts: courts.map(c => ({ value: c.id, text: c.name })),
+        courts,
         errors: req.flash('errors'),
-        formValues: req.flash('formValues')[0],
+        formValues: req.flash('formValues')[0] || (newBooking && toFormValues(newBooking)),
       })
     }
   }

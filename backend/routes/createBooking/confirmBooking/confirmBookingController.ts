@@ -33,6 +33,8 @@ export default class ConfirmBookingController {
     const form = input || {}
 
     return res.render('createBooking/confirmBooking.njk', {
+      agencyId,
+      offenderNo,
       offender: {
         name: offenderNameWithNumber,
         prison: agencyDetails.description,
@@ -67,7 +69,7 @@ export default class ConfirmBookingController {
 
     const { username } = req.session.userDetails
 
-    const videoBookingId = await this.bookingService.create(res.locals, username, {
+    const success = await this.bookingService.create(res.locals, username, {
       offenderNo,
       agencyId,
       courtId: newBooking.courtId,
@@ -79,8 +81,13 @@ export default class ConfirmBookingController {
       comment: form.comment,
     })
 
+    if (success === false) {
+      return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment/video-link-no-longer-available`)
+    }
+
     clearNewBooking(res)
 
+    const videoBookingId = success
     return res.redirect(`/offenders/${offenderNo}/confirm-appointment/${videoBookingId}`)
   }
 }
