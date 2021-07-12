@@ -165,12 +165,12 @@ describe('Booking service', () => {
         lastName: 'Bob',
       } as InmateDetail)
       whereaboutsApi.createVideoLinkBooking.mockResolvedValue(11)
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
     })
 
     describe('Creating a booking with all fields', () => {
       it('booking with all fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
-
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
@@ -209,8 +209,6 @@ describe('Booking service', () => {
       })
 
       it('email sent when all fields provided', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
-
         const videoBookingId = await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
@@ -238,89 +236,122 @@ describe('Booking service', () => {
           postDetails: 'Vcc Room 3 - 19:00 to 19:15',
         })
       })
+      it('availability check service called correctly', async () => {
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
+        })
 
-      describe('Event raising', () => {
-        it('should raise event when both pre and post', async () => {
-          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            name: 'City of London',
-            id: 'CLDN',
-          })
-
-          await service.create(context, 'USER-1', {
-            offenderNo: 'AA1234AA',
+        expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(
+          context,
+          {
             agencyId: 'MDI',
-            courtId: 'CLDN',
-            comment: 'some comment',
-            mainStartTime: moment('2020-11-20T18:00:00'),
-            mainEndTime: moment('2020-11-20T19:00:00'),
+            date: moment('2020-11-20T18:00:00'),
+            endTime: moment('2020-11-20T19:00:00'),
+            postRequired: true,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00'),
+          },
+          {
             pre: 1,
             main: 2,
             post: 3,
-          })
+          }
+        )
+      })
 
-          expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-            'VLB Appointments',
-            'Video link booked for City of London',
-            'Pre: Yes | Post: Yes'
-          )
+      it('when rooms no longer available', async () => {
+        availabilityCheckService.getAvailabilityStatus.mockResolvedValue('NOT_AVAILABLE')
+
+        const result = await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
         })
 
-        it('should raise event when neither pre and post', async () => {
-          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            name: 'City of London',
-            id: 'CLDN',
-          })
+        expect(result).toBe(false)
+        expect(whereaboutsApi.createVideoLinkBooking).not.toHaveBeenCalled()
+        expect(notificationService.sendBookingCreationEmails).not.toHaveBeenCalled()
+      })
+    })
 
-          await service.create(context, 'USER-1', {
-            offenderNo: 'AA1234AA',
-            agencyId: 'MDI',
-            courtId: 'CLDN',
-            comment: 'some comment',
-            mainStartTime: moment('2020-11-20T18:00:00'),
-            mainEndTime: moment('2020-11-20T19:00:00'),
-            pre: undefined,
-            main: 2,
-            post: undefined,
-          })
-
-          expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-            'VLB Appointments',
-            'Video link booked for City of London',
-            'Pre: No | Post: No'
-          )
+    describe('Event raising', () => {
+      it('should raise event when both pre and post', async () => {
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
         })
 
-        it('should raise event when only pre and not post', async () => {
-          locationService.getVideoLinkEnabledCourt.mockResolvedValue({
-            name: 'City of London',
-            id: 'CLDN',
-          })
+        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
+          'VLB Appointments',
+          'Video link booked for City of London',
+          'Pre: Yes | Post: Yes'
+        )
+      })
 
-          await service.create(context, 'USER-1', {
-            offenderNo: 'AA1234AA',
-            agencyId: 'MDI',
-            courtId: 'CLDN',
-            comment: 'some comment',
-            mainStartTime: moment('2020-11-20T18:00:00'),
-            mainEndTime: moment('2020-11-20T19:00:00'),
-            pre: 1,
-            main: 2,
-            post: undefined,
-          })
-
-          expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-            'VLB Appointments',
-            'Video link booked for City of London',
-            'Pre: Yes | Post: No'
-          )
+      it('should raise event when neither pre and post', async () => {
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: undefined,
+          main: 2,
+          post: undefined,
         })
+
+        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
+          'VLB Appointments',
+          'Video link booked for City of London',
+          'Pre: No | Post: No'
+        )
+      })
+
+      it('should raise event when only pre and not post', async () => {
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: undefined,
+        })
+
+        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
+          'VLB Appointments',
+          'Video link booked for City of London',
+          'Pre: Yes | Post: No'
+        )
       })
     })
 
     describe('Creating a booking with only mandatory fields', () => {
       it('booking with only mandatory fields created', async () => {
-        locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
-
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',
@@ -347,8 +378,6 @@ describe('Booking service', () => {
     })
 
     it('email sent when only mandatory fields provided', async () => {
-      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
-
       await service.create(context, 'USER-1', {
         offenderNo: 'AA1234AA',
         agencyId: 'MDI',
@@ -373,6 +402,57 @@ describe('Booking service', () => {
         mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
         preDetails: undefined,
       })
+    })
+
+    it('availability check service called correctly', async () => {
+      await service.create(context, 'USER-1', {
+        offenderNo: 'AA1234AA',
+        agencyId: 'MDI',
+        courtId: 'CLDN',
+        comment: undefined,
+        mainStartTime: moment('2020-11-20T18:00:00'),
+        mainEndTime: moment('2020-11-20T19:00:00'),
+        pre: undefined,
+        main: 2,
+        post: undefined,
+      })
+
+      expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(
+        context,
+        {
+          agencyId: 'MDI',
+          date: moment('2020-11-20T18:00:00'),
+          endTime: moment('2020-11-20T19:00:00'),
+          postRequired: false,
+          preRequired: false,
+          startTime: moment('2020-11-20T18:00:00'),
+        },
+        {
+          main: 2,
+          post: undefined,
+          pre: undefined,
+        }
+      )
+    })
+
+    it('when rooms no longer available', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('NOT_AVAILABLE')
+
+      const result = await service.create(context, 'USER-1', {
+        offenderNo: 'AA1234AA',
+        agencyId: 'MDI',
+        courtId: 'CLDN',
+        comment: undefined,
+        mainStartTime: moment('2020-11-20T18:00:00'),
+        mainEndTime: moment('2020-11-20T19:00:00'),
+        pre: undefined,
+        main: 2,
+        post: undefined,
+      })
+
+      expect(result).toBe(false)
+      expect(whereaboutsApi.createVideoLinkBooking).not.toHaveBeenCalled()
+      expect(notificationService.sendBookingCreationEmails).not.toHaveBeenCalled()
     })
   })
 

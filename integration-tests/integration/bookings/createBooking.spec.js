@@ -487,7 +487,7 @@ context('A user can add a video link', () => {
     confirmBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
     confirmBookingPage.preTime().contains('11:45 to 12:00')
     confirmBookingPage.postTime().contains('12:30 to 12:45')
-
+    cy.task('stubAvailabilityCheck', { matched: true, alternatives: [] })
     cy.task('stubGetVideoLinkBooking', {
       agencyId: 'MDI',
       bookingId: 1,
@@ -632,13 +632,13 @@ context('A user can add a video link', () => {
     })
   })
 
-  // TODO Re-add once availability check
-  xit('User selects rooms but they become unavailable before confirmation', () => {
+  it('User selects rooms but they become unavailable before confirmation', () => {
     // This is a bit of a cheat, as we only check the user role.
     // Saves dealing with logging out and logging back in in the setup.
     const offenderNo = 'A12345'
     cy.task('stubLoginCourt', {})
     cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
+    cy.task('stubAvailabilityCheck', { matched: true, alternatives: [] })
     cy.login()
     cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
 
@@ -659,9 +659,23 @@ context('A user can add a video link', () => {
     newBookingForm.submitButton().click()
 
     const confirmBookingPage = ConfirmBookingPage.verifyOnPage()
+    cy.task('stubAvailabilityCheck', { matched: false, alternatives: [] })
     confirmBookingPage.form().submitButton().click()
 
     const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
     noLongerAvailablePage.continue().click()
+
+    {
+      const newBookingPage = NewBookingPage.verifyOnPage()
+      const newBookingForm = newBookingPage.form()
+      newBookingForm.date().should('have.value', moment().add(1, 'days').format('DD/MM/YYYY'))
+      newBookingForm.startTimeHours().contains('11')
+      newBookingForm.startTimeMinutes().contains('00')
+      newBookingForm.endTimeHours().contains('11')
+      newBookingForm.endTimeMinutes().contains('30')
+      newBookingForm.selectPreAppointmentLocation().should('have.value', '1')
+      newBookingForm.selectMainAppointmentLocation().should('have.value', '2')
+      newBookingForm.selectPostAppointmentLocation().should('have.value', '3')
+    }
   })
 })

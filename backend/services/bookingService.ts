@@ -17,7 +17,7 @@ import type {
 } from './model'
 
 import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
-import { formatName } from '../utils'
+import { formatName, isNullOrUndefined } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 
@@ -56,7 +56,30 @@ export = class BookingService {
     }
   }
 
-  public async create(
+  public async create(context: Context, currentUsername: string, newBooking: NewBooking): Promise<number | false> {
+    const { agencyId, mainStartTime, mainEndTime, pre, main, post } = newBooking
+
+    const status = await this.availabilityStatusChecker.getAvailabilityStatus(
+      context,
+      {
+        agencyId,
+        date: mainStartTime,
+        startTime: mainStartTime,
+        endTime: mainEndTime,
+        preRequired: !isNullOrUndefined(pre),
+        postRequired: !isNullOrUndefined(post),
+      },
+      { pre, main, post }
+    )
+
+    if (status === 'AVAILABLE') {
+      const newBookingId = await this.createBooking(context, currentUsername, newBooking)
+      return newBookingId
+    }
+    return false
+  }
+
+  private async createBooking(
     context: Context,
     currentUsername: string,
     { offenderNo, agencyId, courtId, comment, mainStartTime, mainEndTime, main, pre, post }: NewBooking
