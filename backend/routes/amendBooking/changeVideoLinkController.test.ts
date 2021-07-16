@@ -1,18 +1,18 @@
 import moment from 'moment'
-import ChangeVideoLinkBookingController from './changeVideoLinkBookingController'
-import { BookingService, LocationService, AvailabilityCheckServiceV1 } from '../../services'
+import ChangeVideoLinkController from './changeVideoLinkController'
+import { BookingService, LocationService, AvailabilityCheckServiceV2 } from '../../services'
 
-import { BookingDetails, RoomAvailability } from '../../services/model'
+import { BookingDetails, RoomAvailabilityV2 } from '../../services/model'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services')
 
 describe('change video link booking controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
+  const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
   const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
-  let controller: ChangeVideoLinkBookingController
+  let controller: ChangeVideoLinkController
   const req = mockRequest({
     params: { bookingId: '123' },
     body: {
@@ -70,11 +70,16 @@ describe('change video link booking controller', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    controller = new ChangeVideoLinkBookingController(bookingService, availabilityCheckService, locationService)
+    controller = new ChangeVideoLinkController(bookingService, availabilityCheckService, locationService)
     locationService.getVideoLinkEnabledCourts.mockResolvedValue([
       { name: 'Westminster Crown Court', id: 'WMRCN' },
       { name: 'Wimbledon County Court', id: 'WLDCOU' },
       { name: 'City of London', id: 'CLDN' },
+    ])
+    locationService.getRooms.mockResolvedValue([
+      { locationId: 1, description: 'Room 1' },
+      { locationId: 2, description: 'Room 2' },
+      { locationId: 3, description: 'Room 3' },
     ])
   })
 
@@ -86,7 +91,7 @@ describe('change video link booking controller', () => {
 
       expect(res.clearCookie).toHaveBeenCalledWith('booking-update', expect.anything())
 
-      expect(res.redirect).toHaveBeenCalledWith('/change-video-link-date-and-time/123')
+      expect(res.redirect).toHaveBeenCalledWith('/change-video-link/123')
     })
   })
 
@@ -106,6 +111,11 @@ describe('change video link booking controller', () => {
           { text: 'Westminster Crown Court', value: 'WMRCN' },
           { text: 'Wimbledon County Court', value: 'WLDCOU' },
           { text: 'City of London', value: 'CLDN' },
+        ],
+        rooms: [
+          { locationId: 1, description: 'Room 1' },
+          { locationId: 2, description: 'Room 2' },
+          { locationId: 3, description: 'Room 3' },
         ],
         locations: { prison: 'some prison' },
         prisoner: { name: 'John Doe' },
@@ -153,6 +163,11 @@ describe('change video link booking controller', () => {
           { text: 'Wimbledon County Court', value: 'WLDCOU' },
           { text: 'City of London', value: 'CLDN' },
         ],
+        rooms: [
+          { locationId: 1, description: 'Room 1' },
+          { locationId: 2, description: 'Room 2' },
+          { locationId: 3, description: 'Room 3' },
+        ],
         locations: { prison: 'some prison' },
         prisoner: { name: 'John Doe' },
         errors: [{ text: 'error message', href: 'error' }],
@@ -173,9 +188,9 @@ describe('change video link booking controller', () => {
     it('should redirect to the available page on submit when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailability = {
+      const availability: RoomAvailabilityV2 = {
         isAvailable: true,
-        rooms: null,
+        alternatives: [],
         totalInterval: null,
       }
       availabilityCheckService.getAvailability.mockResolvedValue(availability)
@@ -183,15 +198,15 @@ describe('change video link booking controller', () => {
 
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-available/12`)
+      expect(res.redirect).toHaveBeenCalledWith(`/confirm-updated-booking/12`)
     })
 
     it("should redirect to '/video-link-not-available' when no availability for selected date/time", async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailability = {
+      const availability: RoomAvailabilityV2 = {
         isAvailable: false,
-        rooms: null,
+        alternatives: [],
         totalInterval: null,
       }
       availabilityCheckService.getAvailability.mockResolvedValue(availability)
@@ -205,9 +220,9 @@ describe('change video link booking controller', () => {
     it('should set state in cookie', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailability = {
+      const availability: RoomAvailabilityV2 = {
         isAvailable: false,
-        rooms: null,
+        alternatives: [],
         totalInterval: null,
       }
       availabilityCheckService.getAvailability.mockResolvedValue(availability)
@@ -258,7 +273,7 @@ describe('change video link booking controller', () => {
         bookingService.get.mockResolvedValue(bookingDetails)
 
         await controller.submit()(req, res, null)
-        expect(res.redirect).toHaveBeenCalledWith(`/change-video-link-date-and-time/12`)
+        expect(res.redirect).toHaveBeenCalledWith(`/change-video-link/12`)
       })
     })
   })

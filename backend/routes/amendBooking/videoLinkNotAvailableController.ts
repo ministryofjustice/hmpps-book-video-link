@@ -49,14 +49,7 @@ export default class VideoLinkNotAvailableController {
         postRequired: update.postRequired ? 'true' : 'false',
       })
 
-      return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
-    }
-  }
-
-  public roomNoLongerAvailable(): RequestHandler {
-    return async (req, res) => {
-      const { bookingId } = req.params
-      return res.render('amendBooking/roomNoLongerAvailable.njk', { bookingId })
+      return res.redirect(`/change-video-link/${bookingId}`)
     }
   }
 }

@@ -7,7 +7,7 @@ import NotificationService from './notificationService'
 import { BookingDetails } from './model'
 import BookingService from './bookingService'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
-import AvailabilityCheckService from './availabilityCheckServiceV1'
+import AvailabilityCheckService from './availabilityCheckServiceV2'
 import LocationService from './locationService'
 
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
@@ -16,7 +16,7 @@ import { RoomFinder } from './roomFinder'
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
 jest.mock('./notificationService')
-jest.mock('./availabilityCheckServiceV1')
+jest.mock('./availabilityCheckServiceV2')
 jest.mock('./locationService')
 
 jest.mock('../raiseAnalyticsEvent', () => ({
@@ -249,22 +249,15 @@ describe('Booking service', () => {
           post: 3,
         })
 
-        expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(
-          context,
-          {
-            agencyId: 'MDI',
-            date: moment('2020-11-20T18:00:00'),
-            endTime: moment('2020-11-20T19:00:00'),
-            postRequired: true,
-            preRequired: true,
-            startTime: moment('2020-11-20T18:00:00'),
-          },
-          {
-            pre: 1,
-            main: 2,
-            post: 3,
-          }
-        )
+        expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(context, {
+          agencyId: 'MDI',
+          date: moment('2020-11-20T18:00:00'),
+          endTime: moment('2020-11-20T19:00:00'),
+          mainLocation: 2,
+          postLocation: 3,
+          preLocation: 1,
+          startTime: moment('2020-11-20T18:00:00'),
+        })
       })
 
       it('when rooms no longer available', async () => {
@@ -417,22 +410,15 @@ describe('Booking service', () => {
         post: undefined,
       })
 
-      expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(
-        context,
-        {
-          agencyId: 'MDI',
-          date: moment('2020-11-20T18:00:00'),
-          endTime: moment('2020-11-20T19:00:00'),
-          postRequired: false,
-          preRequired: false,
-          startTime: moment('2020-11-20T18:00:00'),
-        },
-        {
-          main: 2,
-          post: undefined,
-          pre: undefined,
-        }
-      )
+      expect(availabilityCheckService.getAvailabilityStatus).toHaveBeenCalledWith(context, {
+        agencyId: 'MDI',
+        date: moment('2020-11-20T18:00:00'),
+        endTime: moment('2020-11-20T19:00:00'),
+        mainLocation: 2,
+        postLocation: undefined,
+        preLocation: undefined,
+        startTime: moment('2020-11-20T18:00:00'),
+      })
     })
 
     it('when rooms no longer available', async () => {
@@ -627,28 +613,6 @@ describe('Booking service', () => {
         mainLocation: 2,
         preRequired: false,
         postRequired: false,
-      })
-
-      expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()
-    })
-
-    it('does not perform update when no long available availability', async () => {
-      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('NO_LONGER_AVAILABLE')
-      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
-      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
-      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
-      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
-
-      await service.update(context, 'A_USER', 1234, {
-        agencyId: 'WWI',
-        courtId: 'CLDN',
-        comment: 'A comment',
-        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
-        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
-        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
-        preRequired: false,
-        postRequired: false,
-        mainLocation: 2,
       })
 
       expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()

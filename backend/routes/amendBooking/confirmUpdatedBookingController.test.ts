@@ -1,17 +1,18 @@
 import moment from 'moment'
-
-import SelectAvailableRoomsController from './selectAvailableRoomsController'
-import { BookingService, AvailabilityCheckServiceV1 } from '../../services'
-import { BookingDetails, RoomAvailability } from '../../services/model'
+import { Court } from 'whereaboutsApi'
+import CheckAndConfirmYourBookingController from './confirmUpdatedBookingController'
+import { BookingService, LocationService } from '../../services'
+import { BookingDetails } from '../../services/model'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { RoomFinder } from '../../services/roomFinder'
 
 jest.mock('../../services')
 
 describe('Select available rooms controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckServiceV1(null) as jest.Mocked<AvailabilityCheckServiceV1>
-  let controller: SelectAvailableRoomsController
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
+  let controller: CheckAndConfirmYourBookingController
 
   const req = mockRequest({ params: { bookingId: '12' } })
   const res = mockResponse({})
@@ -30,7 +31,7 @@ describe('Select available rooms controller', () => {
     comments: 'some comment',
     preDetails: {
       prisonRoom: 'vcc room 2',
-      startTime: '17:40',
+      startTime: '17:45',
       endTime: '18:00',
       description: 'vcc room 2 - 17:40 to 18:00',
       locationId: 2,
@@ -44,26 +45,28 @@ describe('Select available rooms controller', () => {
     },
     postDetails: {
       prisonRoom: 'vcc room 3',
-      startTime: '17:40',
-      endTime: '18:00',
+      startTime: '19:00',
+      endTime: '19:15',
       description: 'vcc room 3 - 19:00 to 19:20',
       locationId: 3,
     },
   }
 
-  const availableLocations: RoomAvailability = {
-    isAvailable: true,
-    totalInterval: { start: '09:00', end: '10:00' },
-    rooms: {
-      main: [{ value: 1, text: 'Room 1' }],
-      pre: [{ value: 2, text: 'Room 2' }],
-      post: [{ value: 3, text: 'Room 3' }],
-    },
+  const court: Court = {
+    id: 'CLDN',
+    name: 'City of London',
   }
 
   beforeEach(() => {
     jest.resetAllMocks()
-    controller = new SelectAvailableRoomsController(bookingService, availabilityCheckService)
+    locationService.createRoomFinder.mockResolvedValue(
+      new RoomFinder([
+        { locationId: 1, description: 'vcc room 1' },
+        { locationId: 2, description: 'vcc room 2' },
+        { locationId: 3, description: 'vcc room 3' },
+      ])
+    )
+    controller = new CheckAndConfirmYourBookingController(bookingService, locationService)
 
     req.signedCookies = {
       'booking-update': {
@@ -72,9 +75,9 @@ describe('Select available rooms controller', () => {
         date: '2020-11-20T00:00:00',
         startTime: '2020-11-20T18:00:00',
         endTime: '2020-11-20T19:00:00',
-        preLocation: '9',
-        mainLocation: '10',
-        postLocation: '11',
+        preLocation: '2',
+        mainLocation: '1',
+        postLocation: '3',
         preRequired: 'true',
         postRequired: 'true',
       },
@@ -83,6 +86,17 @@ describe('Select available rooms controller', () => {
 
   describe('view', () => {
     const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
+
+    it('should call services correctly', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
+      mockFlashState({ errors: [], input: [] })
+
+      await controller.view()(req, res, null)
+      expect(bookingService.get).toHaveBeenCalledWith(res.locals, 12)
+      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(res.locals, 'CLDN')
+      expect(locationService.createRoomFinder).toHaveBeenCalledWith(res.locals, 'WWI')
+    })
 
     it('should redirect when no stored state', async () => {
       mockFlashState({ errors: [], input: [] })
@@ -96,44 +110,44 @@ describe('Select available rooms controller', () => {
     describe('View page with no errors', () => {
       it('should display booking details', async () => {
         bookingService.get.mockResolvedValue(bookingDetails)
-        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
         mockFlashState({ errors: [], input: [] })
 
         await controller.view()(req, res, null)
 
-        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+        expect(res.render).toHaveBeenCalledWith('amendBooking/confirmUpdatedBooking.njk', {
           bookingId: '12',
-          preRequired: true,
-          postRequired: true,
-          mainLocations: [{ value: 1, text: 'Room 1' }],
-          preLocations: [{ value: 2, text: 'Room 2' }],
-          postLocations: [{ value: 3, text: 'Room 3' }],
-          form: {
-            comment: 'some comment',
+          update: {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+            mainLocation: 1,
+            postLocation: 3,
+            postRequired: true,
+            preLocation: 2,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
           },
+          bookingDetails: {
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              courtLocation: 'City of London',
+            },
+            hearingDetails: {
+              date: '20 November 2020',
+              mainCourtHearingTime: '18:00 to 19:00',
+              prisonRoomForCourtHearing: 'vcc room 1',
+              'pre-court hearing briefing': '17:45 to 18:00',
+              'prison room for pre-court hearing briefing': 'vcc room 2',
+              'post-court hearing briefing': '19:00 to 19:15',
+              'prison room for post-court hearing briefing': 'vcc room 3',
+            },
+          },
+          changeBookingLink: '/change-video-link/12',
+          comment: 'some comment',
           errors: [],
-        })
-      })
-
-      it('should call the existingEventsService with correct video link booking details', async () => {
-        bookingService.get.mockResolvedValue(bookingDetails)
-        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
-        mockFlashState({ errors: [], input: [] })
-
-        await controller.view()(req, res, null)
-
-        expect(availabilityCheckService.getAvailability).toHaveBeenCalledWith(res.locals, {
-          agencyId: 'WWI',
-          courtId: 'CLDN',
-          videoBookingId: 12,
-          date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-          startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-          endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-          preLocation: 9,
-          mainLocation: 10,
-          postLocation: 11,
-          postRequired: true,
-          preRequired: true,
         })
       })
     })
@@ -141,14 +155,11 @@ describe('Select available rooms controller', () => {
     describe('View page with errors present', () => {
       it('should display validation for errors', async () => {
         bookingService.get.mockResolvedValue(bookingDetails)
-        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
         mockFlashState({
           errors: [{ text: 'error message', href: 'error' }],
           input: [
             {
-              preLocation: '2',
-              mainLocation: '1',
-              postLocation: '3',
               comment: 'another comment',
             },
           ],
@@ -156,26 +167,45 @@ describe('Select available rooms controller', () => {
 
         await controller.view()(req, res, null)
 
-        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+        expect(res.render).toHaveBeenCalledWith('amendBooking/confirmUpdatedBooking.njk', {
           bookingId: '12',
-          preRequired: true,
-          postRequired: true,
-          mainLocations: [{ value: 1, text: 'Room 1' }],
-          preLocations: [{ value: 2, text: 'Room 2' }],
-          postLocations: [{ value: 3, text: 'Room 3' }],
-          form: {
-            preLocation: 2,
+          update: {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
             mainLocation: 1,
             postLocation: 3,
-            comment: 'another comment',
+            postRequired: true,
+            preLocation: 2,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
           },
+          bookingDetails: {
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              courtLocation: 'City of London',
+            },
+            hearingDetails: {
+              date: '20 November 2020',
+              mainCourtHearingTime: '18:00 to 19:00',
+              prisonRoomForCourtHearing: 'vcc room 1',
+              'pre-court hearing briefing': '17:45 to 18:00',
+              'prison room for pre-court hearing briefing': 'vcc room 2',
+              'post-court hearing briefing': '19:00 to 19:15',
+              'prison room for post-court hearing briefing': 'vcc room 3',
+            },
+          },
+          changeBookingLink: '/change-video-link/12',
+          comment: 'another comment',
           errors: [{ text: 'error message', href: 'error' }],
         })
       })
 
       it('When there is no user input', async () => {
         bookingService.get.mockResolvedValue(bookingDetails)
-        availabilityCheckService.getAvailability.mockResolvedValue(availableLocations)
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
         mockFlashState({
           errors: [{ text: 'error message', href: 'error' }],
           input: [],
@@ -183,16 +213,38 @@ describe('Select available rooms controller', () => {
 
         await controller.view()(req, res, null)
 
-        expect(res.render).toHaveBeenCalledWith('amendBooking/selectAvailableRooms.njk', {
+        expect(res.render).toHaveBeenCalledWith('amendBooking/confirmUpdatedBooking.njk', {
           bookingId: '12',
-          preRequired: true,
-          postRequired: true,
-          mainLocations: [{ value: 1, text: 'Room 1' }],
-          preLocations: [{ value: 2, text: 'Room 2' }],
-          postLocations: [{ value: 3, text: 'Room 3' }],
-          form: {
-            comment: 'some comment',
+          update: {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+            mainLocation: 1,
+            postLocation: 3,
+            postRequired: true,
+            preLocation: 2,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
           },
+          bookingDetails: {
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              courtLocation: 'City of London',
+            },
+            hearingDetails: {
+              date: '20 November 2020',
+              mainCourtHearingTime: '18:00 to 19:00',
+              prisonRoomForCourtHearing: 'vcc room 1',
+              'pre-court hearing briefing': '17:45 to 18:00',
+              'prison room for pre-court hearing briefing': 'vcc room 2',
+              'post-court hearing briefing': '19:00 to 19:15',
+              'prison room for post-court hearing briefing': 'vcc room 3',
+            },
+          },
+          changeBookingLink: '/change-video-link/12',
+          comment: 'some comment',
           errors: [{ text: 'error message', href: 'error' }],
         })
       })
@@ -209,29 +261,20 @@ describe('Select available rooms controller', () => {
       expect(res.redirect).toHaveBeenCalledWith(`/video-link-change-confirmed/12`)
     })
 
-    it('Redirect when room is no longer available', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      bookingService.update.mockResolvedValue('NO_LONGER_AVAILABLE')
-
-      await controller.submit()(req, res, null)
-
-      expect(res.redirect).toHaveBeenCalledWith(`/room-no-longer-available/12`)
-    })
-
     it('Redirect when no longer any availability for date/time', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       bookingService.update.mockResolvedValue('NOT_AVAILABLE')
 
       await controller.submit()(req, res, null)
 
-      expect(res.redirect).toHaveBeenCalledWith(`/video-link-not-available/12`)
+      expect(res.redirect).toHaveBeenCalledWith(`/room-no-longer-available/12`)
     })
 
     it('should submit perform an update', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       bookingService.update.mockResolvedValue('AVAILABLE')
 
-      req.body = { preLocation: '9', mainLocation: '10', postLocation: '11', comment: 'A comment' }
+      req.body = { comment: 'A comment' }
 
       await controller.submit()(req, res, null)
 
@@ -242,46 +285,11 @@ describe('Select available rooms controller', () => {
         date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
         startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
         endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-        preLocation: 9,
-        mainLocation: 10,
-        postLocation: 11,
+        preLocation: 2,
+        mainLocation: 1,
+        postLocation: 3,
         preRequired: true,
         postRequired: true,
-      })
-    })
-
-    it('should submit perform an update with optional fields', async () => {
-      bookingService.get.mockResolvedValue(bookingDetails)
-      bookingService.update.mockResolvedValue('AVAILABLE')
-
-      req.signedCookies = {
-        'booking-update': {
-          agencyId: 'WWI',
-          courtId: 'CLDN',
-          date: '2020-11-20T00:00:00',
-          startTime: '2020-11-20T18:00:00',
-          endTime: '2020-11-20T19:00:00',
-          mainLocation: '10',
-          preRequired: 'false',
-          postRequired: 'false',
-        },
-      }
-      req.body = { mainLocation: '10' }
-
-      await controller.submit()(req, res, null)
-
-      expect(bookingService.update).toHaveBeenCalledWith(res.locals, 'COURT_USER', 12, {
-        comment: undefined,
-        agencyId: 'WWI',
-        courtId: 'CLDN',
-        date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
-        startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
-        endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
-        preLocation: null,
-        mainLocation: 10,
-        postLocation: null,
-        preRequired: false,
-        postRequired: false,
       })
     })
 
@@ -317,7 +325,7 @@ describe('Select available rooms controller', () => {
         bookingService.get.mockResolvedValue(bookingDetails)
 
         await controller.submit()(req, res, null)
-        expect(res.redirect).toHaveBeenCalledWith(`/select-available-rooms/12`)
+        expect(res.redirect).toHaveBeenCalledWith(`/confirm-updated-booking/12`)
       })
     })
   })

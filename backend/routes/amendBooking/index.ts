@@ -3,11 +3,11 @@ import { Services } from '../../services'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
-import ChangeVideoLinkBookingController from './changeVideoLinkBookingController'
+import ChangeVideoLinkController from './changeVideoLinkController'
 import dateAndTimeValidation from '../../shared/dateAndTimeValidation'
-import VideoLinkIsAvailableController from './videoLinkIsAvailableController'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
-import SelectAvailableRoomsController from './selectAvailableRoomsController'
+import RoomNoLongerAvailableController from './roomNoLongerAvailableController'
+import ConfirmUpdatedBookingController from './confirmUpdatedBookingController'
 import selectAvailableRoomsValidation from './selectAvailableRoomsValidation'
 import ConfirmationController from './confirmationController'
 import ChangeCommentsController from './changeCommentsController'
@@ -15,41 +15,36 @@ import changeCommentsValidation from './changeCommentsValidation'
 
 export default function createRoutes({
   bookingService,
-  availabilityCheckServiceV1,
+  availabilityCheckServiceV2,
   locationService,
 }: Services): Router {
-  const changeVideoLinkBooking = new ChangeVideoLinkBookingController(
-    bookingService,
-    availabilityCheckServiceV1,
-    locationService
-  )
-  const videoLinkIsAvailable = new VideoLinkIsAvailableController(bookingService)
+  const changeVideoLink = new ChangeVideoLinkController(bookingService, availabilityCheckServiceV2, locationService)
   const videoLinkNotAvailable = new VideoLinkNotAvailableController()
-  const selectAvailableRooms = new SelectAvailableRoomsController(bookingService, availabilityCheckServiceV1)
+  const roomNoLongerAvailable = new RoomNoLongerAvailableController()
+  const confirmUpdatedBooking = new ConfirmUpdatedBookingController(bookingService, locationService)
   const confirmation = new ConfirmationController(bookingService)
   const changeComments = new ChangeCommentsController(bookingService)
 
   const router = express.Router({ mergeParams: true })
 
-  router.get('/start-change-date/:bookingId', asyncMiddleware(changeVideoLinkBooking.start()))
-  router.get('/change-video-link-date-and-time/:bookingId', asyncMiddleware(changeVideoLinkBooking.view()))
+  router.get('/start-change-booking/:bookingId', asyncMiddleware(changeVideoLink.start()))
+  router.get('/change-video-link/:bookingId', asyncMiddleware(changeVideoLink.view()))
   router.post(
-    '/change-video-link-date-and-time/:bookingId',
+    '/change-video-link/:bookingId',
     validationMiddleware(dateAndTimeValidation, selectAvailableRoomsValidation),
-    asyncMiddleware(changeVideoLinkBooking.submit())
+    asyncMiddleware(changeVideoLink.submit())
   )
 
   router.get('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.view()))
   router.post('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.submit()))
-  router.get('/room-no-longer-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.roomNoLongerAvailable()))
 
-  router.get('/video-link-available/:bookingId', asyncMiddleware(videoLinkIsAvailable.view()))
+  router.get('/room-no-longer-available/:bookingId', asyncMiddleware(roomNoLongerAvailable.view()))
 
-  router.get('/select-available-rooms/:bookingId', asyncMiddleware(selectAvailableRooms.view()))
+  router.get('/confirm-updated-booking/:bookingId', asyncMiddleware(confirmUpdatedBooking.view()))
   router.post(
-    '/select-available-rooms/:bookingId',
-    validationMiddleware(selectAvailableRoomsValidation),
-    asyncMiddleware(selectAvailableRooms.submit())
+    '/confirm-updated-booking/:bookingId',
+    validationMiddleware(changeCommentsValidation),
+    asyncMiddleware(confirmUpdatedBooking.submit())
   )
 
   router.get('/video-link-change-confirmed/:bookingId', asyncMiddleware(confirmation.view(false)))

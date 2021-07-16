@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import { ChangeVideoLinkBooking, RoomAndComment } from './forms'
+import { ChangeVideoLinkBooking } from './forms'
 
 describe('ChangeVideoLinkBooking', () => {
   test('check parse required fields', () => {
@@ -92,47 +92,5 @@ describe('ChangeVideoLinkBooking', () => {
         postRequired: 'false',
       })
     ).toThrowError('Missing or invalid keys: startTimeHours,endTimeHours')
-  })
-})
-
-describe('RoomAndComment', () => {
-  test('check parse', () => {
-    const result = RoomAndComment({
-      preLocation: '20',
-      mainLocation: '10',
-      postLocation: '30',
-      comment: 'A comment',
-    })
-
-    expect(result).toStrictEqual({
-      preLocation: 20,
-      mainLocation: 10,
-      postLocation: 30,
-      comment: 'A comment',
-    })
-  })
-
-  test('check optional fields', () => {
-    const result = RoomAndComment({
-      mainLocation: '10',
-      postLocation: '30',
-    })
-
-    expect(result).toStrictEqual({
-      preLocation: null,
-      mainLocation: 10,
-      postLocation: 30,
-      comment: undefined,
-    })
-  })
-
-  test('check valid types', () => {
-    expect(() =>
-      RoomAndComment({
-        mainLocation: ['10'],
-        postLocation: '30',
-        comment: [],
-      })
-    ).toThrowError('Non string keys: mainLocation,comment')
   })
 })

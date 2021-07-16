@@ -7,20 +7,7 @@
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
-{% set title = "Select an available room in the prison" %}
-
-{% macro appointment(params, errors) %}
-
-    {{ govukSelect({
-        name: params.name,
-        id: params.name,
-        label: {
-            text: params.description
-        },
-        items: params.locations | addDefaultSelectedVale('Select') | setSelected(params.location),
-        errorMessage: errors | findError(params.name)
-    }) }}
-{% endmacro %}
+{% set title = "Check and confirm your booking" %}
 
 {% block content %}
     <div class="govuk-width-container">
@@ -34,43 +21,31 @@
 
         <h1 class="govuk-heading-l">{{title}}</h1>
 
-        <form method="post">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                {{
+                govukSummaryList({
+                    classes: 'govuk-summary-list--no-border govuk-body govuk-!-margin-bottom-2',
+                    rows: bookingDetails.details | toSummaryViewModel | removePaddingBottom
+                })
+                }}
+
+                {{
+                govukSummaryList({
+                    classes: 'govuk-summary-list--no-border govuk-body govuk-!-margin-bottom-2',
+                    rows: bookingDetails.hearingDetails | toSummaryViewModel | removePaddingBottom
+                })
+                }}
+            </div>
+         </div>
+
+        <form method="post" class="govuk-!-margin-top-6">
             <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
-            <input type="hidden" name="preRequired" value="{{ preRequired }}"/>
-            <input type="hidden" name="postRequired" value="{{ postRequired }}"/>
-
-            {% if preRequired %}
-                {{ appointment({
-                    description: "Prison room for pre-court hearing briefing", 
-                    name: "preLocation",
-                    location: form.preLocation,
-                    locations: preLocations
-                    }, 
-                    errors) }}
-            {% endif %}
-
-            {{ appointment({
-                description: "Prison room for court hearing", 
-                name: "mainLocation",
-                location: form.mainLocation, 
-                locations: mainLocations
-                }, 
-                errors) }}
-
-            {% if postRequired %}
-                {{ appointment({
-                    description: "Prison room for post-court hearing briefing", 
-                    name: "postLocation",
-                    location: form.postLocation,
-                    locations: postLocations
-                    }, 
-                    errors) }}
-            {% endif %}
 
             {{ govukTextarea({
                 name: "comment",
                 id: "comment",
-                value: form.comment,
+                value: comment,
                 errorMessage: errors | findError('comment'),
                 classes: 'govuk-!-width-one-half',
                 label: {
@@ -88,5 +63,8 @@
                 }) }}
 
         </form>
+        <p class="govuk-body">
+            <a href='{{ changeBookingLink }}' class="govuk-body govuk-link govuk-link--no-visited-state" data-qa="change-booking">Change booking</a>
+        </p>
     </div>
 {% endblock %}

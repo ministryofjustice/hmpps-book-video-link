@@ -1,9 +1,8 @@
 const moment = require('moment')
 const BookingDetailsPage = require('../../../pages/viewBookings/bookingDetailsPage')
-const ChangeVideoLinkBookingPage = require('../../../pages/amendBooking/changeVideoLinkBookingPage')
-const VideoLinkIsAvailablePage = require('../../../pages/amendBooking/videoLinkIsAvailablePage')
-const SelectAvailableRoomsPage = require('../../../pages/amendBooking/selectAvailableRoomsPage')
-const VideoLinkNotAvailablePage = require('../../../pages/amendBooking/videoLinkNotAvailablePage')
+const ChangeVideoLinkPage = require('../../../pages/amendBooking/changeVideoLinkPage')
+const ConfirmUpdatedBookingPage = require('../../../pages/amendBooking/confirmUpdatedBookingPage')
+const NoLongerAvailablePage = require('../../../pages/amendBooking/noLongerAvailablePage')
 
 const room1 = { locationId: 100, description: 'Room 1', locationType: 'VIDE' }
 const room2 = { locationId: 110, description: 'Room 2', locationType: 'VIDE' }
@@ -15,7 +14,6 @@ context('Final availability checks before submitting update', () => {
     cy.task('reset')
     cy.task('stubLoginCourt', {})
     cy.login()
-    cy.task('stubAvailabilityCheck', { matched: false })
     cy.task('stubGetRooms', {
       agencyId: 'WWI',
       rooms: [
@@ -72,41 +70,36 @@ context('Final availability checks before submitting update', () => {
     const tomorrow = moment().add(1, 'days')
 
     const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
-    bookingDetailsPage.changeDateAndTime().click()
+    bookingDetailsPage.changeBooking().click()
 
-    const changeVideoLinkBookingPage = ChangeVideoLinkBookingPage.verifyOnPage()
-    changeVideoLinkBookingPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
-    changeVideoLinkBookingPage.activeDate().click()
-    changeVideoLinkBookingPage.form.startTimeHours().select('11')
-    changeVideoLinkBookingPage.form.startTimeMinutes().select('00')
-    changeVideoLinkBookingPage.form.endTimeHours().select('11')
-    changeVideoLinkBookingPage.form.endTimeMinutes().select('30')
-    changeVideoLinkBookingPage.form.mainLocation().select('110')
-    changeVideoLinkBookingPage.form.preAppointmentRequiredYes().click()
-    changeVideoLinkBookingPage.form.preLocation().select('100')
-    changeVideoLinkBookingPage.form.postAppointmentRequiredYes().click()
-    changeVideoLinkBookingPage.form.postLocation().select('120')
+    const changeVideoLinkPage = ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.activeDate().click()
+    changeVideoLinkPage.form.startTimeHours().select('11')
+    changeVideoLinkPage.form.startTimeMinutes().select('00')
+    changeVideoLinkPage.form.endTimeHours().select('11')
+    changeVideoLinkPage.form.endTimeMinutes().select('30')
+    changeVideoLinkPage.form.mainLocation().select('110')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.preLocation().select('100')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.postLocation().select('120')
 
+    cy.task('stubAvailabilityCheck', { matched: true, alternatives: [] })
     cy.task('stubRoomAvailability', { pre: [room1, room4], main: [room2], post: [room3] })
 
-    changeVideoLinkBookingPage.form.continue().click()
+    changeVideoLinkPage.form.continue().click()
 
-    VideoLinkIsAvailablePage.verifyOnPage().continue().click()
+    const confirmUpdatedBookingPage = ConfirmUpdatedBookingPage.verifyOnPage()
 
-    const selectAvailableRoomsPage = SelectAvailableRoomsPage.verifyOnPage()
-
-    const selectAvailableRoomsForm = selectAvailableRoomsPage.form()
-    selectAvailableRoomsForm.preLocation().select('100')
-    selectAvailableRoomsForm.mainLocation().select('110')
-    selectAvailableRoomsForm.postLocation().select('120')
-
+    cy.task('stubAvailabilityCheck', { matched: false, alternatives: [] })
     cy.task('stubRoomAvailability', { pre: [], main: [room2], post: [room3] })
 
-    selectAvailableRoomsPage.updateVideoLink().click()
+    confirmUpdatedBookingPage.updateVideoLink().click()
 
-    const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
-    videoLinkNotAvailablePage.continue().click()
+    const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
+    noLongerAvailablePage.continue().click()
 
-    ChangeVideoLinkBookingPage.verifyOnPage()
+    ChangeVideoLinkPage.verifyOnPage()
   })
 })

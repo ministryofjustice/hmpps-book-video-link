@@ -1,6 +1,6 @@
 const page = require('../page')
 
-const changeVideoLinkBookingPage = () =>
+const changeVideoLinkPage = () =>
   page('Change video link booking', {
     form: {
       inlineError: () => cy.get('.govuk-error-message'),
@@ -28,9 +28,9 @@ const changeVideoLinkBookingPage = () =>
   })
 
 export default {
-  verifyOnPage: changeVideoLinkBookingPage,
+  verifyOnPage: changeVideoLinkPage,
   goTo: id => {
-    cy.visit(`/change-video-link-date-and-time/${id}`)
-    return changeVideoLinkBookingPage()
+    cy.visit(`/change-video-link/${id}`)
+    return changeVideoLinkPage()
   },
 }

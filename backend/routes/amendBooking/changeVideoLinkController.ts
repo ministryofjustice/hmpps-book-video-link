@@ -5,12 +5,12 @@ import LocationService from '../../services/locationService'
 import { DAY_MONTH_YEAR, Hours, Minutes } from '../../shared/dateHelpers'
 import { ChangeVideoLinkBooking } from './forms'
 import { clearUpdate, setUpdate } from './state'
-import { AvailabilityCheckServiceV1 } from '../../services'
+import { AvailabilityCheckServiceV2 } from '../../services'
 
-export default class ChangeVideoLinkBookingController {
+export default class ChangeVideoLinkController {
   public constructor(
     private readonly bookingService: BookingService,
-    private readonly availabilityCheckService: AvailabilityCheckServiceV1,
+    private readonly availabilityCheckService: AvailabilityCheckServiceV2,
     private readonly locationService: LocationService
   ) {}
 
@@ -18,7 +18,7 @@ export default class ChangeVideoLinkBookingController {
     return (req, res) => {
       const { bookingId } = req.params
       clearUpdate(res)
-      return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
+      return res.redirect(`/change-video-link/${bookingId}`)
     }
   }
 
@@ -72,7 +72,7 @@ export default class ChangeVideoLinkBookingController {
       if (req.errors) {
         req.flash('errors', req.errors)
         req.flash('input', req.body)
-        return res.redirect(`/change-video-link-date-and-time/${bookingId}`)
+        return res.redirect(`/change-video-link/${bookingId}`)
       }
 
       const form = ChangeVideoLinkBooking(req.body)
@@ -84,7 +84,9 @@ export default class ChangeVideoLinkBookingController {
 
       setUpdate(res, form)
 
-      return res.redirect(isAvailable ? `/video-link-available/${bookingId}` : `/video-link-not-available/${bookingId}`)
+      return res.redirect(
+        isAvailable ? `/confirm-updated-booking/${bookingId}` : `/video-link-not-available/${bookingId}`
+      )
     }
   }
 }

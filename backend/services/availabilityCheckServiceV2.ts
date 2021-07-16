@@ -2,23 +2,15 @@ import { LocationAndInterval } from 'whereaboutsApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
 import { isNullOrUndefined } from '../utils'
-import AvailabilityStatusChecker from './availabilityStatusChecker'
 import {
   createInterval,
   getPostAppointmentInterval,
   getPreAppointmentInterval,
   getTotalAppointmentInterval,
 } from './bookingTimes'
-import type {
-  Context,
-  SelectedRooms,
-  AvailabilityStatus,
-  AvailabilityRequestV2,
-  RoomAvailabilityV2,
-  AvailabilityRequest,
-} from './model'
+import type { Context, AvailabilityStatus, AvailabilityRequestV2, RoomAvailabilityV2 } from './model'
 
-export default class AvailabilityCheckServiceV2 implements AvailabilityStatusChecker {
+export default class AvailabilityCheckServiceV2 {
   constructor(private readonly whereaboutsApi: WhereaboutsApi) {}
 
   private toAppointment = (locationId, interval): LocationAndInterval => ({ locationId, interval })
@@ -46,17 +38,8 @@ export default class AvailabilityCheckServiceV2 implements AvailabilityStatusChe
     }
   }
 
-  public async getAvailabilityStatus(
-    context: Context,
-    request: AvailabilityRequest,
-    selectedRooms: SelectedRooms
-  ): Promise<AvailabilityStatus> {
-    const { isAvailable } = await this.getAvailability(context, {
-      ...request,
-      mainLocation: selectedRooms.main,
-      preLocation: selectedRooms.pre,
-      postLocation: selectedRooms.post,
-    })
+  public async getAvailabilityStatus(context: Context, request: AvailabilityRequestV2): Promise<AvailabilityStatus> {
+    const { isAvailable } = await this.getAvailability(context, request)
     return isAvailable ? 'AVAILABLE' : 'NOT_AVAILABLE'
   }
 }

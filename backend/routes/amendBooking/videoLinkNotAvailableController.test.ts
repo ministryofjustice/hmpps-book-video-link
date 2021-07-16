@@ -64,7 +64,7 @@ describe('video link is not available controller', () => {
       }
 
       await controller.submit()(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith(`/change-video-link-date-and-time/123`)
+      expect(res.redirect).toHaveBeenCalledWith(`/change-video-link/123`)
       expect(req.flash).toBeCalledWith('input', {
         date: '20/11/2020',
         startTimeHours: '18',
@@ -74,13 +74,6 @@ describe('video link is not available controller', () => {
         preRequired: 'true',
         postRequired: 'false',
       })
-    })
-  })
-
-  describe('roomNoLongerAvailable', () => {
-    it('should render the page', async () => {
-      await controller.roomNoLongerAvailable()(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('amendBooking/roomNoLongerAvailable.njk', { bookingId: '123' })
     })
   })
 })

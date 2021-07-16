@@ -5,7 +5,7 @@ import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 import type NotificationService from './notificationService'
 import type LocationService from './locationService'
-import type AvailabilityStatusChecker from './availabilityStatusChecker'
+import type AvailabilityCheckServiceV2 from './availabilityCheckServiceV2'
 
 import type {
   BookingDetails,
@@ -33,7 +33,7 @@ export = class BookingService {
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService,
-    private readonly availabilityStatusChecker: AvailabilityStatusChecker,
+    private readonly availabilityCheckServiceV2: AvailabilityCheckServiceV2,
     private readonly locationService: LocationService
   ) {}
 
@@ -59,18 +59,15 @@ export = class BookingService {
   public async create(context: Context, currentUsername: string, newBooking: NewBooking): Promise<number | false> {
     const { agencyId, mainStartTime, mainEndTime, pre, main, post } = newBooking
 
-    const status = await this.availabilityStatusChecker.getAvailabilityStatus(
-      context,
-      {
-        agencyId,
-        date: mainStartTime,
-        startTime: mainStartTime,
-        endTime: mainEndTime,
-        preRequired: !isNullOrUndefined(pre),
-        postRequired: !isNullOrUndefined(post),
-      },
-      { pre, main, post }
-    )
+    const status = await this.availabilityCheckServiceV2.getAvailabilityStatus(context, {
+      agencyId,
+      date: mainStartTime,
+      startTime: mainStartTime,
+      endTime: mainEndTime,
+      preLocation: pre,
+      mainLocation: main,
+      postLocation: post,
+    })
 
     if (status === 'AVAILABLE') {
       const newBookingId = await this.createBooking(context, currentUsername, newBooking)
@@ -217,11 +214,7 @@ export = class BookingService {
     videoBookingId: number,
     update: BookingUpdate
   ): Promise<AvailabilityStatus> {
-    const status = await this.availabilityStatusChecker.getAvailabilityStatus(
-      context,
-      { videoBookingId, ...update },
-      { pre: update.preLocation, main: update.mainLocation, post: update.postLocation }
-    )
+    const status = await this.availabilityCheckServiceV2.getAvailabilityStatus(context, { videoBookingId, ...update })
 
     if (status === 'AVAILABLE') {
       await this.updateBooking(context, currentUsername, videoBookingId, update)

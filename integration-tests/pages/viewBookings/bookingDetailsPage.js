@@ -3,7 +3,7 @@ const page = require('../page')
 const bookingDetailsPage = prisonerName =>
   page(`${prisonerName} video link details`, {
     changeComment: () => cy.get('[data-qa="change-comments"]'),
-    changeDateAndTime: () => cy.get('[data-qa="change-date-and-time"]'),
+    changeBooking: () => cy.get('[data-qa="change-booking"]'),
     deleteButton: () => cy.get('[data-qa="delete-button"]'),
   })
 
