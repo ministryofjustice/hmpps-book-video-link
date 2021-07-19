@@ -98,7 +98,7 @@ describe('change video link booking controller', () => {
   describe('view', () => {
     const mockFlashState = ({ errors, input }) => req.flash.mockReturnValueOnce(errors).mockReturnValueOnce(input)
 
-    it('View page with no errors', async () => {
+    it('View page with no errors, show booking details from database if neither flash or cookie data present', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
       mockFlashState({ errors: [], input: [] })
 
@@ -179,6 +179,131 @@ describe('change video link booking controller', () => {
           endTimeMinutes: '40',
           preRequired: 'true',
           postRequired: 'true',
+        },
+      })
+    })
+
+    it('flash data should take priority over cookie data if present', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      mockFlashState({
+        errors: [{ text: 'error message', href: 'error' }],
+        input: [
+          {
+            date: '21/11/2020',
+            startTimeHours: '11',
+            startTimeMinutes: '20',
+            endTimeHours: '11',
+            endTimeMinutes: '40',
+            preRequired: 'true',
+            postRequired: 'true',
+          },
+        ],
+      })
+
+      await controller.view()(
+        {
+          ...req,
+          signedCookies: {
+            'booking-update': {
+              agencyId: 'WWI',
+              courtId: 'CLDN',
+              date: '2020-11-20T00:00:00',
+              postRequired: 'true',
+              preRequired: 'true',
+              endTime: '2020-11-20T19:00:00',
+              startTime: '2020-11-20T18:00:00',
+              mainLocation: '1',
+              preLocation: '2',
+              postLocation: '3',
+            },
+          },
+        },
+        res,
+        null
+      )
+
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
+        bookingId: '123',
+        agencyId: 'WWI',
+        courts: [
+          { text: 'Westminster Crown Court', value: 'WMRCN' },
+          { text: 'Wimbledon County Court', value: 'WLDCOU' },
+          { text: 'City of London', value: 'CLDN' },
+        ],
+        rooms: [
+          { locationId: 1, description: 'Room 1' },
+          { locationId: 2, description: 'Room 2' },
+          { locationId: 3, description: 'Room 3' },
+        ],
+        locations: { prison: 'some prison' },
+        prisoner: { name: 'John Doe' },
+        errors: [{ text: 'error message', href: 'error' }],
+        form: {
+          date: '21/11/2020',
+          startTimeHours: '11',
+          startTimeMinutes: '20',
+          endTimeHours: '11',
+          endTimeMinutes: '40',
+          preRequired: 'true',
+          postRequired: 'true',
+        },
+      })
+    })
+
+    it('should render cookie data if present', async () => {
+      bookingService.get.mockResolvedValue(bookingDetails)
+      mockFlashState({ errors: [], input: [] })
+
+      await controller.view()(
+        {
+          ...req,
+          signedCookies: {
+            'booking-update': {
+              agencyId: 'WWI',
+              courtId: 'CLDN',
+              date: '2020-11-20T00:00:00',
+              postRequired: 'true',
+              preRequired: 'true',
+              endTime: '2020-11-20T19:00:00',
+              startTime: '2020-11-20T18:00:00',
+              mainLocation: '1',
+              preLocation: '2',
+              postLocation: '3',
+            },
+          },
+        },
+        res,
+        null
+      )
+
+      expect(res.render).toHaveBeenCalledWith('amendBooking/changeVideoLinkBooking.njk', {
+        bookingId: '123',
+        agencyId: 'WWI',
+        courts: [
+          { text: 'Westminster Crown Court', value: 'WMRCN' },
+          { text: 'Wimbledon County Court', value: 'WLDCOU' },
+          { text: 'City of London', value: 'CLDN' },
+        ],
+        rooms: [
+          { locationId: 1, description: 'Room 1' },
+          { locationId: 2, description: 'Room 2' },
+          { locationId: 3, description: 'Room 3' },
+        ],
+        locations: { prison: 'some prison' },
+        prisoner: { name: 'John Doe' },
+        errors: [],
+        form: {
+          date: '20/11/2020',
+          courtId: 'CLDN',
+          startTimeHours: '18',
+          startTimeMinutes: '00',
+          endTimeHours: '19',
+          endTimeMinutes: '00',
+          preRequired: 'true',
+          postRequired: 'true',
+          mainLocation: 1,
+          preLocation: 2,
+          postLocation: 3,
         },
       })
     })

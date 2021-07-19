@@ -1,5 +1,5 @@
 import moment, { Moment } from 'moment'
-import { buildDate, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
+import { buildDate, DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { assertHasStringValues, assertHasOptionalStringValues } from '../../utils'
 
 export type ChangeVideoLinkBooking = {
@@ -44,5 +44,18 @@ export function ChangeVideoLinkBooking(form: unknown): ChangeVideoLinkBooking {
     mainLocation: parseInt(form.mainLocation, 10),
     preLocation: preRequired ? parseInt(form.preLocation, 10) : null,
     postLocation: postRequired ? parseInt(form.postLocation, 10) : null,
+  }
+}
+
+export type SelectAlternative = {
+  startTime: Moment
+  endTime: Moment
+}
+
+export function SelectAlternative(form: unknown): SelectAlternative {
+  assertHasStringValues(form, ['startTime', 'endTime'])
+  return {
+    startTime: moment(form.startTime, DATE_TIME_FORMAT_SPEC),
+    endTime: moment(form.endTime, DATE_TIME_FORMAT_SPEC),
   }
 }

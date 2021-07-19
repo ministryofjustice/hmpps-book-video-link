@@ -4,6 +4,8 @@ const ChangeVideoLinkPage = require('../../../pages/amendBooking/changeVideoLink
 const ConfirmUpdatedBookingPage = require('../../../pages/amendBooking/confirmUpdatedBookingPage')
 const ConfirmationPage = require('../../../pages/amendBooking/confirmationPage')
 const CourtVideoLinkBookingsPage = require('../../../pages/viewBookings/courtVideoBookingsPage')
+const VideoLinkNotAvailablePage = require('../../../pages/amendBooking/videoLinkNotAvailablePage')
+const NoLongerAvailablePage = require('../../../pages/amendBooking/noLongerAvailablePage')
 
 context('A user can amend a booking', () => {
   beforeEach(() => {
@@ -234,18 +236,42 @@ context('A user can amend a booking', () => {
     confirmUpdatedBookingPage.form.comment().contains('A comment')
     cy.task('stubAvailabilityCheck', { matched: true })
     cy.task('stubUpdateVideoLinkBooking', 10)
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
+      videoLinkBookingId: 10,
+      pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+      main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+      post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
+    })
+
     confirmUpdatedBookingPage.updateVideoLink().click()
+
+    cy.task('getUpdateBookingRequest').then(request =>
+      expect(request).to.deep.equal({
+        courtId: 'ABDRCT',
+        comment: 'A comment',
+        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
+      })
+    )
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
     confirmationPage.offenderName().contains('John Doe')
     confirmationPage.prison().contains('Wandsworth')
     confirmationPage.room().contains('Room 2')
-    confirmationPage.date().contains('2 January 2020')
-    confirmationPage.startTime().contains('13:00')
-    confirmationPage.endTime().contains('13:30')
+    confirmationPage.date().contains(tomorrow.format('D MMMM YYYY'))
+    confirmationPage.startTime().contains('11:00')
+    confirmationPage.endTime().contains('11:30')
     confirmationPage.comments().contains('A comment')
-    confirmationPage.legalBriefingBefore().contains('Room 1 - 12:45 to 13:00')
-    confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:45')
+    confirmationPage.legalBriefingBefore().contains('Room 1 - 10:45 to 11:00')
+    confirmationPage.legalBriefingAfter().contains('Room 3 - 11:30 to 11:45')
     confirmationPage.courtLocation().contains('Aberdare County Court')
     confirmationPage.exitToAllBookings().click()
 
@@ -291,17 +317,6 @@ context('A user can amend a booking', () => {
         },
       ])
     })
-
-    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
-    cy.task('getUpdateBookingRequest').then(request =>
-      expect(request).to.deep.equal({
-        courtId: 'ABDRCT',
-        comment: 'A comment',
-        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
-        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
-        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
-      })
-    )
   })
 
   it('A user with multiple preferred courts can successfully amend a booking', () => {
@@ -324,6 +339,7 @@ context('A user can amend a booking', () => {
     changeVideoLinkPage.form.preLocation().select('100')
     changeVideoLinkPage.form.postAppointmentRequiredYes().click()
     changeVideoLinkPage.form.postLocation().select('120')
+    cy.task('stubAvailabilityCheck', { matched: true })
     changeVideoLinkPage.form.continue().click()
 
     const confirmUpdatedBookingPage = ConfirmUpdatedBookingPage.verifyOnPage()
@@ -338,19 +354,44 @@ context('A user can amend a booking', () => {
     confirmUpdatedBookingPage.legalBriefingAfterTimes().contains('11:30 to 11:45')
     confirmUpdatedBookingPage.legalBriefingAfterRoom().contains('Room 3')
     confirmUpdatedBookingPage.form.comment().contains('A comment')
+    cy.task('stubAvailabilityCheck', { matched: true })
     cy.task('stubUpdateVideoLinkBooking', 10)
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
+      videoLinkBookingId: 10,
+      pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+      main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+      post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
+    })
+
     confirmUpdatedBookingPage.updateVideoLink().click()
+
+    cy.task('getUpdateBookingRequest').then(request =>
+      expect(request).to.deep.equal({
+        courtId: 'ABDRCT',
+        comment: 'A comment',
+        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
+      })
+    )
 
     const confirmationPage = ConfirmationPage.verifyOnPage()
     confirmationPage.offenderName().contains('John Doe')
     confirmationPage.prison().contains('Wandsworth')
     confirmationPage.room().contains('Room 2')
-    confirmationPage.date().contains('2 January 2020')
-    confirmationPage.startTime().contains('13:00')
-    confirmationPage.endTime().contains('13:30')
+    confirmationPage.date().contains(tomorrow.format('D MMMM YYYY'))
+    confirmationPage.startTime().contains('11:00')
+    confirmationPage.endTime().contains('11:30')
     confirmationPage.comments().contains('A comment')
-    confirmationPage.legalBriefingBefore().contains('Room 1 - 12:45 to 13:00')
-    confirmationPage.legalBriefingAfter().contains('Room 3 - 13:30 to 13:45')
+    confirmationPage.legalBriefingBefore().contains('Room 1 - 10:45 to 11:00')
+    confirmationPage.legalBriefingAfter().contains('Room 3 - 11:30 to 11:45')
     confirmationPage.courtLocation().contains('Aberdare County Court')
     confirmationPage.exitToAllBookings().click()
 
@@ -396,17 +437,6 @@ context('A user can amend a booking', () => {
         },
       ])
     })
-
-    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
-    cy.task('getUpdateBookingRequest').then(request =>
-      expect(request).to.deep.equal({
-        courtId: 'ABDRCT',
-        comment: 'A comment',
-        pre: { locationId: 100, startTime: `${tomorrowDate}T10:45:00`, endTime: `${tomorrowDate}T11:00:00` },
-        main: { locationId: 110, startTime: `${tomorrowDate}T11:00:00`, endTime: `${tomorrowDate}T11:30:00` },
-        post: { locationId: 120, startTime: `${tomorrowDate}T11:30:00`, endTime: `${tomorrowDate}T11:45:00` },
-      })
-    )
   })
 
   it('A user will be shown a validation message when a past date is provided', () => {
@@ -443,6 +473,217 @@ context('A user can amend a booking', () => {
     changeVideoLinkPage.errorSummaryTitle().contains('There is a problem')
     changeVideoLinkPage.errorSummaryBody().contains('Select a date that is not in the past')
     changeVideoLinkPage.form.inlineError().contains('Select a date that is not in the past')
+  })
+
+  it('A user is redirected when option not available and then chooses alternative', () => {
+    cy.task('stubAvailabilityCheck', {
+      matched: false,
+      alternatives: [
+        {
+          pre: { locationId: 1, interval: { start: '11:45', end: '12:00' } },
+          main: { locationId: 2, interval: { start: '12:00', end: '12:30' } },
+          post: { locationId: 3, interval: { start: '12:30', end: '12:45' } },
+        },
+      ],
+    })
+    const tomorrow = moment().add(1, 'days')
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeBooking().click()
+
+    const changeVideoLinkPage = ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.form.court().contains('Aberdare County Court')
+    changeVideoLinkPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.form.date().type('{esc}')
+    changeVideoLinkPage.form.startTimeHours().select('11')
+    changeVideoLinkPage.form.startTimeMinutes().select('00')
+    changeVideoLinkPage.form.endTimeHours().select('11')
+    changeVideoLinkPage.form.endTimeMinutes().select('30')
+    changeVideoLinkPage.form.mainLocation().select('110')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.preLocation().select('100')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.postLocation().select('120')
+    changeVideoLinkPage.form.continue().click()
+
+    const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
+    videoLinkNotAvailablePage
+      .info()
+      .contains(`There are no video link bookings available at that time in the rooms selected.`)
+    videoLinkNotAvailablePage.selectAlternative(1)
+
+    const confirmUpdatedBookingPage = ConfirmUpdatedBookingPage.verifyOnPage()
+    confirmUpdatedBookingPage.offenderName().contains('John Doe')
+    confirmUpdatedBookingPage.prison().contains('Wandsworth')
+    confirmUpdatedBookingPage.mainTimes().contains('12:00 to 12:30')
+    confirmUpdatedBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmUpdatedBookingPage.legalBriefingBeforeTimes().contains('11:45 to 12:00')
+    confirmUpdatedBookingPage.legalBriefingAfterTimes().contains('12:30 to 12:45')
+    confirmUpdatedBookingPage.form.comment().contains('A comment')
+    cy.task('stubAvailabilityCheck', { matched: true })
+    cy.task('stubUpdateVideoLinkBooking', 10)
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
+      videoLinkBookingId: 10,
+      pre: { locationId: 100, startTime: `${tomorrowDate}T11:45:00`, endTime: `${tomorrowDate}T12:00:00` },
+      main: {
+        locationId: 110,
+        startTime: `${tomorrowDate}T12:00:00`,
+        endTime: `${tomorrowDate}T12:30:00`,
+      },
+      post: { locationId: 120, startTime: `${tomorrowDate}T12:30:00`, endTime: `${tomorrowDate}T12:45:00` },
+    })
+
+    confirmUpdatedBookingPage.updateVideoLink().click()
+
+    cy.task('getUpdateBookingRequest').then(request =>
+      expect(request).to.deep.equal({
+        courtId: 'ABDRCT',
+        comment: 'A comment',
+        pre: { locationId: 100, startTime: `${tomorrowDate}T11:45:00`, endTime: `${tomorrowDate}T12:00:00` },
+        main: { locationId: 110, startTime: `${tomorrowDate}T12:00:00`, endTime: `${tomorrowDate}T12:30:00` },
+        post: { locationId: 120, startTime: `${tomorrowDate}T12:30:00`, endTime: `${tomorrowDate}T12:45:00` },
+      })
+    )
+
+    const confirmationPage = ConfirmationPage.verifyOnPage()
+    confirmationPage.offenderName().contains('John Doe')
+    confirmationPage.prison().contains('Wandsworth')
+    confirmationPage.room().contains('Room 2')
+    confirmationPage.date().contains(tomorrow.format('D MMMM YYYY'))
+    confirmationPage.startTime().contains('12:00')
+    confirmationPage.endTime().contains('12:30')
+    confirmationPage.comments().contains('A comment')
+    confirmationPage.legalBriefingBefore().contains('Room 1 - 11:45 to 12:00')
+    confirmationPage.legalBriefingAfter().contains('Room 3 - 12:30 to 12:45')
+    confirmationPage.courtLocation().contains('Aberdare County Court')
+  })
+
+  it('A user is redirected when option not available but decides to search again with previous request pre-populated', () => {
+    cy.task('stubAvailabilityCheck', {
+      matched: false,
+      alternatives: [
+        {
+          pre: { locationId: 1, interval: { start: '11:45', end: '12:00' } },
+          main: { locationId: 2, interval: { start: '12:00', end: '12:30' } },
+          post: { locationId: 3, interval: { start: '12:30', end: '12:45' } },
+        },
+      ],
+    })
+    const tomorrow = moment().add(1, 'days')
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeBooking().click()
+
+    const changeVideoLinkPage = ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.form.court().contains('Aberdare County Court')
+    changeVideoLinkPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.form.date().type('{esc}')
+    changeVideoLinkPage.form.startTimeHours().select('11')
+    changeVideoLinkPage.form.startTimeMinutes().select('00')
+    changeVideoLinkPage.form.endTimeHours().select('11')
+    changeVideoLinkPage.form.endTimeMinutes().select('30')
+    changeVideoLinkPage.form.mainLocation().select('110')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.preLocation().select('100')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.postLocation().select('120')
+    changeVideoLinkPage.form.continue().click()
+
+    const videoLinkNotAvailablePage = VideoLinkNotAvailablePage.verifyOnPage()
+    videoLinkNotAvailablePage
+      .info()
+      .contains(`There are no video link bookings available at that time in the rooms selected.`)
+
+    const tomorrowDate = tomorrow.format('YYYY-MM-DD')
+
+    cy.task('stubGetVideoLinkBooking', {
+      agencyId: 'WWI',
+      bookingId: 1,
+      comment: 'A comment',
+      court: 'Aberdare County Court',
+      courtId: 'ABDRCT',
+      videoLinkBookingId: 10,
+      pre: { locationId: 100, startTime: `${tomorrowDate}T11:45:00`, endTime: `${tomorrowDate}T12:00:00` },
+      main: {
+        locationId: 110,
+        startTime: `${tomorrowDate}T12:00:00`,
+        endTime: `${tomorrowDate}T12:30:00`,
+      },
+      post: { locationId: 120, startTime: `${tomorrowDate}T12:30:00`, endTime: `${tomorrowDate}T12:45:00` },
+    })
+
+    videoLinkNotAvailablePage.searchAgainButton().click()
+
+    ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.summaryListCourt().contains('Aberdare County Court')
+    changeVideoLinkPage.form.date().should('have.value', tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.form.startTimeHours().should('have.value', '11')
+    changeVideoLinkPage.form.startTimeMinutes().should('have.value', '00')
+    changeVideoLinkPage.form.endTimeHours().should('have.value', '11')
+    changeVideoLinkPage.form.endTimeMinutes().should('have.value', '30')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().should('be.checked').and('have.value', 'true')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().should('be.checked').and('have.value', 'true')
+    changeVideoLinkPage.form.preLocation().should('have.value', '100')
+    changeVideoLinkPage.form.mainLocation().should('have.value', '110')
+    changeVideoLinkPage.form.postLocation().should('have.value', '120')
+  })
+
+  it('A user selects rooms but they become unavailable before confirmation', () => {
+    const tomorrow = moment().add(1, 'days')
+
+    const bookingDetailsPage = BookingDetailsPage.goTo(10, 'John Doe’s')
+    bookingDetailsPage.changeBooking().click()
+
+    const changeVideoLinkPage = ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.form.court().contains('Aberdare County Court')
+    changeVideoLinkPage.form.date().clear().type(tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.form.date().type('{esc}')
+    changeVideoLinkPage.form.startTimeHours().select('11')
+    changeVideoLinkPage.form.startTimeMinutes().select('00')
+    changeVideoLinkPage.form.endTimeHours().select('11')
+    changeVideoLinkPage.form.endTimeMinutes().select('30')
+    changeVideoLinkPage.form.mainLocation().select('110')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.preLocation().select('100')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().click()
+    changeVideoLinkPage.form.postLocation().select('120')
+    cy.task('stubAvailabilityCheck', { matched: true })
+    changeVideoLinkPage.form.continue().click()
+
+    const confirmUpdatedBookingPage = ConfirmUpdatedBookingPage.verifyOnPage()
+    confirmUpdatedBookingPage.offenderName().contains('John Doe')
+    confirmUpdatedBookingPage.prison().contains('Wandsworth')
+    confirmUpdatedBookingPage.mainTimes().contains('11:00 to 11:30')
+    confirmUpdatedBookingPage.date().contains(moment().add(1, 'days').format('D MMMM YYYY'))
+    confirmUpdatedBookingPage.legalBriefingBeforeTimes().contains('10:45 to 11:00')
+    confirmUpdatedBookingPage.legalBriefingAfterTimes().contains('11:30 to 11:45')
+    confirmUpdatedBookingPage.form.comment().contains('A comment')
+    cy.task('stubAvailabilityCheck', { matched: false, alternatives: [] })
+    confirmUpdatedBookingPage.updateVideoLink().click()
+
+    const noLongerAvailablePage = NoLongerAvailablePage.verifyOnPage()
+    noLongerAvailablePage.continue().click()
+
+    ChangeVideoLinkPage.verifyOnPage()
+    changeVideoLinkPage.summaryListCourt().contains('Aberdare County Court')
+    changeVideoLinkPage.form.date().should('have.value', tomorrow.format('DD/MM/YYYY'))
+    changeVideoLinkPage.form.startTimeHours().should('have.value', '11')
+    changeVideoLinkPage.form.startTimeMinutes().should('have.value', '00')
+    changeVideoLinkPage.form.endTimeHours().should('have.value', '11')
+    changeVideoLinkPage.form.endTimeMinutes().should('have.value', '30')
+    changeVideoLinkPage.form.preAppointmentRequiredYes().should('be.checked').and('have.value', 'true')
+    changeVideoLinkPage.form.postAppointmentRequiredYes().should('be.checked').and('have.value', 'true')
+    changeVideoLinkPage.form.preLocation().should('have.value', '100')
+    changeVideoLinkPage.form.mainLocation().should('have.value', '110')
+    changeVideoLinkPage.form.postLocation().should('have.value', '120')
   })
 
   it('A user will be navigated back to the booking-details page', () => {

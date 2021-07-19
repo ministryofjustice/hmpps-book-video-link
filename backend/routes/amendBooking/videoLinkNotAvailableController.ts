@@ -1,9 +1,18 @@
 import { RequestHandler } from 'express'
-import { getTotalAppointmentInterval } from '../../services/bookingTimes'
-import { DATE_ONLY_EXTRA_LONG_FORMAT_SPEC, DAY_MONTH_YEAR } from '../../shared/dateHelpers'
-import { getUpdate } from './state'
+import type { AvailabilityCheckServiceV2 } from '../../services'
+import { getPostDescription, getPreDescription } from '../../services/bookingTimes'
+import {
+  buildDateWithTime,
+  DATE_TIME_FORMAT_SPEC,
+  DATE_ONLY_LONG_FORMAT_SPEC,
+  MOMENT_TIME,
+} from '../../shared/dateHelpers'
+import { SelectAlternative } from './forms'
+import { getUpdate, setUpdate } from './state'
 
 export default class VideoLinkNotAvailableController {
+  constructor(private readonly availabilityCheckService: AvailabilityCheckServiceV2) {}
+
   public view(): RequestHandler {
     return async (req, res) => {
       const { bookingId } = req.params
@@ -12,20 +21,33 @@ export default class VideoLinkNotAvailableController {
         return res.redirect(`/booking-details/${bookingId}`)
       }
 
-      const totalInterval = getTotalAppointmentInterval(
-        update.startTime,
-        update.endTime,
-        update.preRequired,
-        update.postRequired
-      )
+      const { alternatives } = await this.availabilityCheckService.getAvailability(res.locals, {
+        videoBookingId: parseInt(bookingId, 10),
+        ...update,
+      })
 
       return res.render('amendBooking/videoLinkNotAvailable.njk', {
-        data: {
-          date: update.date.format(DATE_ONLY_EXTRA_LONG_FORMAT_SPEC),
-          startTime: totalInterval.start,
-          endTime: totalInterval.end,
-        },
-        bookingId,
+        alternatives: alternatives.map(a => {
+          const startDate = buildDateWithTime(update.date, a.main.interval.start)
+          const endDate = buildDateWithTime(update.date, a.main.interval.end)
+          const pre = getPreDescription(startDate, update.preRequired)
+          const post = getPostDescription(endDate, update.postRequired)
+
+          return {
+            values: {
+              startTime: startDate.format(DATE_TIME_FORMAT_SPEC),
+              endTime: endDate.format(DATE_TIME_FORMAT_SPEC),
+            },
+            rows: [
+              { name: 'Date', value: update.date.format(DATE_ONLY_LONG_FORMAT_SPEC) },
+              { name: 'Court hearing start time', value: startDate.format(MOMENT_TIME) },
+              { name: 'Court hearing end time', value: endDate.format(MOMENT_TIME) },
+              pre ? { name: 'Pre-court hearing briefing', value: pre } : {},
+              post ? { name: 'Post-court hearing briefing', value: post } : {},
+            ],
+          }
+        }),
+        continueLink: `/change-video-link/${bookingId}`,
       })
     }
   }
@@ -34,22 +56,15 @@ export default class VideoLinkNotAvailableController {
     return async (req, res) => {
       const { bookingId } = req.params
 
+      const form = SelectAlternative(req.body)
       const update = getUpdate(req)
       if (!update) {
         return res.redirect(`/booking-details/${bookingId}`)
       }
 
-      req.flash('input', {
-        date: update.date.format(DAY_MONTH_YEAR),
-        startTimeHours: update.startTime.format('HH'),
-        startTimeMinutes: update.startTime.format('mm'),
-        endTimeHours: update.endTime.format('HH'),
-        endTimeMinutes: update.endTime.format('mm'),
-        preRequired: update.preRequired ? 'true' : 'false',
-        postRequired: update.postRequired ? 'true' : 'false',
-      })
+      setUpdate(res, { ...update, ...form })
 
-      return res.redirect(`/change-video-link/${bookingId}`)
+      return res.redirect(`/confirm-updated-booking/${bookingId}`)
     }
   }
 }

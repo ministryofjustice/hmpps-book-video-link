@@ -2,9 +2,9 @@ import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
 import LocationService from '../../services/locationService'
 
-import { DAY_MONTH_YEAR, Hours, Minutes } from '../../shared/dateHelpers'
+import { DAY_MONTH_YEAR, Hours, Minutes, HOURS_TIME, MINUTES_TIME } from '../../shared/dateHelpers'
 import { ChangeVideoLinkBooking } from './forms'
-import { clearUpdate, setUpdate } from './state'
+import { clearUpdate, setUpdate, getUpdate } from './state'
 import { AvailabilityCheckServiceV2 } from '../../services'
 
 export default class ChangeVideoLinkController {
@@ -30,12 +30,42 @@ export default class ChangeVideoLinkController {
       const errors = req.flash('errors') || []
       const [input] = req.flash('input')
 
+      const update = getUpdate(req)
+
       const [bookingDetails, courts] = await Promise.all([
         this.bookingService.get(res.locals, parseInt(bookingId, 10)),
         this.locationService.getVideoLinkEnabledCourts(res.locals, username),
       ])
 
       const rooms = await this.locationService.getRooms(res.locals, bookingDetails.agencyId)
+
+      const currentBookingDetails = update
+        ? {
+            date: update.date.format(DAY_MONTH_YEAR),
+            courtId: update.courtId,
+            startTimeHours: update.startTime.format(HOURS_TIME),
+            startTimeMinutes: update.startTime.format(MINUTES_TIME),
+            endTimeHours: update.endTime.format(HOURS_TIME),
+            endTimeMinutes: update.endTime.format(MINUTES_TIME),
+            preLocation: update.preLocation,
+            mainLocation: update.mainLocation,
+            postLocation: update.postLocation,
+            preRequired: update.preRequired ? 'true' : 'false',
+            postRequired: update.postRequired ? 'true' : 'false',
+          }
+        : {
+            date: bookingDetails.date.format(DAY_MONTH_YEAR),
+            courtId: bookingDetails.courtId,
+            startTimeHours: Hours(bookingDetails.mainDetails.startTime),
+            startTimeMinutes: Minutes(bookingDetails.mainDetails.startTime),
+            endTimeHours: Hours(bookingDetails.mainDetails.endTime),
+            endTimeMinutes: Minutes(bookingDetails.mainDetails.endTime),
+            preLocation: bookingDetails.preDetails?.locationId,
+            mainLocation: bookingDetails.mainDetails.locationId,
+            postLocation: bookingDetails.postDetails?.locationId,
+            preRequired: bookingDetails.preDetails ? 'true' : 'false',
+            postRequired: bookingDetails.postDetails ? 'true' : 'false',
+          }
 
       return res.render('amendBooking/changeVideoLinkBooking.njk', {
         errors,
@@ -49,19 +79,7 @@ export default class ChangeVideoLinkController {
         locations: {
           prison: bookingDetails.prisonName,
         },
-        form: input || {
-          date: bookingDetails.date.format(DAY_MONTH_YEAR),
-          courtId: bookingDetails.courtId,
-          startTimeHours: Hours(bookingDetails.mainDetails.startTime),
-          startTimeMinutes: Minutes(bookingDetails.mainDetails.startTime),
-          endTimeHours: Hours(bookingDetails.mainDetails.endTime),
-          endTimeMinutes: Minutes(bookingDetails.mainDetails.endTime),
-          preLocation: bookingDetails.preDetails?.locationId,
-          mainLocation: bookingDetails.mainDetails.locationId,
-          postLocation: bookingDetails.postDetails?.locationId,
-          preRequired: bookingDetails.preDetails ? 'true' : 'false',
-          postRequired: bookingDetails.postDetails ? 'true' : 'false',
-        },
+        form: input || currentBookingDetails,
       })
     }
   }

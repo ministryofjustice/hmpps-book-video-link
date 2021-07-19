@@ -19,7 +19,7 @@ export default function createRoutes({
   locationService,
 }: Services): Router {
   const changeVideoLink = new ChangeVideoLinkController(bookingService, availabilityCheckServiceV2, locationService)
-  const videoLinkNotAvailable = new VideoLinkNotAvailableController()
+  const videoLinkNotAvailable = new VideoLinkNotAvailableController(availabilityCheckServiceV2)
   const roomNoLongerAvailable = new RoomNoLongerAvailableController()
   const confirmUpdatedBooking = new ConfirmUpdatedBookingController(bookingService, locationService)
   const confirmation = new ConfirmationController(bookingService)
