@@ -1,14 +1,14 @@
 import { RequestHandler, Request, Response } from 'express'
 import { formatName } from '../../../utils'
 import type PrisonApi from '../../../api/prisonApi'
-import type { LocationService, AvailabilityCheckServiceV2 } from '../../../services'
+import type { LocationService, AvailabilityCheckService } from '../../../services'
 import { NewBooking, toFormValues } from './form'
 import { clearNewBooking, getNewBooking, setNewBooking } from '../state'
 
 export default class NewBookingController {
   public constructor(
     private readonly prisonApi: PrisonApi,
-    private readonly availabilityCheckService: AvailabilityCheckServiceV2,
+    private readonly availabilityCheckService: AvailabilityCheckService,
     private readonly locationService: LocationService
   ) {}
 

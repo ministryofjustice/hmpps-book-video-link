@@ -17,7 +17,7 @@ export type UserPreferenceCourt = Court & {
   isSelected?: boolean
 }
 
-export type AvailabilityRequestV2 = {
+export type AvailabilityRequest = {
   agencyId: string
   videoBookingId?: number
   date: Moment
@@ -32,7 +32,7 @@ export type AvailabilityStatus = 'AVAILABLE' | 'NOT_AVAILABLE'
 
 export type Rooms = { main: Room[]; pre: Room[]; post: Room[] }
 
-export type RoomAvailabilityV2 = {
+export type RoomAvailability = {
   isAvailable: boolean
   alternatives: VideoLinkBookingOption[]
   totalInterval: Interval

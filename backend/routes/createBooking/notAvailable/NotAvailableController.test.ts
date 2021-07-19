@@ -1,10 +1,10 @@
 import NotAvailableController from './NotAvailableController'
-import { RoomAvailabilityV2 } from '../../../services/model'
+import { RoomAvailability } from '../../../services/model'
 import { mockRequest, mockResponse } from '../../__test/requestTestUtils'
-import { AvailabilityCheckServiceV2 } from '../../../services'
+import { AvailabilityCheckService } from '../../../services'
 import { NewBookingCodec } from '../state'
 
-const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
+const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
 jest.mock('../../../services')
 
@@ -17,7 +17,7 @@ describe('Not available page', () => {
     },
   ]
 
-  const availability: RoomAvailabilityV2 = {
+  const availability: RoomAvailability = {
     isAvailable: false,
     alternatives,
     totalInterval: { start: '11:00', end: '14:00' },

@@ -7,7 +7,7 @@ import NotificationService from './notificationService'
 import { BookingDetails } from './model'
 import BookingService from './bookingService'
 import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
-import AvailabilityCheckService from './availabilityCheckServiceV2'
+import AvailabilityCheckService from './availabilityCheckService'
 import LocationService from './locationService'
 
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
@@ -16,7 +16,7 @@ import { RoomFinder } from './roomFinder'
 jest.mock('../api/prisonApi')
 jest.mock('../api/whereaboutsApi')
 jest.mock('./notificationService')
-jest.mock('./availabilityCheckServiceV2')
+jest.mock('./availabilityCheckService')
 jest.mock('./locationService')
 
 jest.mock('../raiseAnalyticsEvent', () => ({

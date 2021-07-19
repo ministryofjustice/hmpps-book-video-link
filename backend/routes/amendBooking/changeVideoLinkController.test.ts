@@ -1,15 +1,15 @@
 import moment from 'moment'
 import ChangeVideoLinkController from './changeVideoLinkController'
-import { BookingService, LocationService, AvailabilityCheckServiceV2 } from '../../services'
+import { BookingService, LocationService, AvailabilityCheckService } from '../../services'
 
-import { BookingDetails, RoomAvailabilityV2 } from '../../services/model'
+import { BookingDetails, RoomAvailability } from '../../services/model'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services')
 
 describe('change video link booking controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
+  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
   const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
   let controller: ChangeVideoLinkController
@@ -313,7 +313,7 @@ describe('change video link booking controller', () => {
     it('should redirect to the available page on submit when no errors exist', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailabilityV2 = {
+      const availability: RoomAvailability = {
         isAvailable: true,
         alternatives: [],
         totalInterval: null,
@@ -329,7 +329,7 @@ describe('change video link booking controller', () => {
     it("should redirect to '/video-link-not-available' when no availability for selected date/time", async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailabilityV2 = {
+      const availability: RoomAvailability = {
         isAvailable: false,
         alternatives: [],
         totalInterval: null,
@@ -345,7 +345,7 @@ describe('change video link booking controller', () => {
     it('should set state in cookie', async () => {
       bookingService.get.mockResolvedValue(bookingDetails)
 
-      const availability: RoomAvailabilityV2 = {
+      const availability: RoomAvailability = {
         isAvailable: false,
         alternatives: [],
         totalInterval: null,

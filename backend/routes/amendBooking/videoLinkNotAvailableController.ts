@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import type { AvailabilityCheckServiceV2 } from '../../services'
+import type { AvailabilityCheckService } from '../../services'
 import { getPostDescription, getPreDescription } from '../../services/bookingTimes'
 import {
   buildDateWithTime,
@@ -11,7 +11,7 @@ import { SelectAlternative } from './forms'
 import { getUpdate, setUpdate } from './state'
 
 export default class VideoLinkNotAvailableController {
-  constructor(private readonly availabilityCheckService: AvailabilityCheckServiceV2) {}
+  constructor(private readonly availabilityCheckService: AvailabilityCheckService) {}
 
   public view(): RequestHandler {
     return async (req, res) => {

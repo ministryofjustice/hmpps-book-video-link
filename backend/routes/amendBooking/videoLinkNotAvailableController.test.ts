@@ -1,13 +1,13 @@
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
-import { AvailabilityCheckServiceV2 } from '../../services'
-import { RoomAvailabilityV2 } from '../../services/model'
+import { AvailabilityCheckService } from '../../services'
+import { RoomAvailability } from '../../services/model'
 import VideoLinkNotAvailableController from './videoLinkNotAvailableController'
 import { ChangeVideoLinkBookingCodec } from './state'
 
 jest.mock('../../services')
 
 describe('video link is not available controller', () => {
-  const availabilityCheckService = new AvailabilityCheckServiceV2(null) as jest.Mocked<AvailabilityCheckServiceV2>
+  const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 
   const alternatives = [
     {
@@ -17,7 +17,7 @@ describe('video link is not available controller', () => {
     },
   ]
 
-  const availability: RoomAvailabilityV2 = {
+  const availability: RoomAvailability = {
     isAvailable: false,
     alternatives,
     totalInterval: { start: '11:00', end: '14:00' },

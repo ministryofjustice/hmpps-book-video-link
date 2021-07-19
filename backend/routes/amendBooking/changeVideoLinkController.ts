@@ -5,12 +5,12 @@ import LocationService from '../../services/locationService'
 import { DAY_MONTH_YEAR, Hours, Minutes, HOURS_TIME, MINUTES_TIME } from '../../shared/dateHelpers'
 import { ChangeVideoLinkBooking } from './forms'
 import { clearUpdate, setUpdate, getUpdate } from './state'
-import { AvailabilityCheckServiceV2 } from '../../services'
+import { AvailabilityCheckService } from '../../services'
 
 export default class ChangeVideoLinkController {
   public constructor(
     private readonly bookingService: BookingService,
-    private readonly availabilityCheckService: AvailabilityCheckServiceV2,
+    private readonly availabilityCheckService: AvailabilityCheckService,
     private readonly locationService: LocationService
   ) {}
 

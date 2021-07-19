@@ -2,19 +2,19 @@ import moment from 'moment'
 import { VideoLinkBookingOptions } from 'whereaboutsApi'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import { DATE_TIME_FORMAT_SPEC, DAY_MONTH_YEAR } from '../shared/dateHelpers'
-import AvailabilityCheckServiceV2 from './availabilityCheckServiceV2'
+import AvailabilityCheckService from './availabilityCheckService'
 
 jest.mock('../api/whereaboutsApi')
 
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
-describe('AvailabilityCheckServiceV2', () => {
+describe('AvailabilityCheckService', () => {
   const context = {}
-  let service: AvailabilityCheckServiceV2
+  let service: AvailabilityCheckService
 
   beforeEach(() => {
     jest.resetAllMocks()
-    service = new AvailabilityCheckServiceV2(whereaboutsApi)
+    service = new AvailabilityCheckService(whereaboutsApi)
   })
 
   const result: VideoLinkBookingOptions = {

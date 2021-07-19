@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express'
-import type { AvailabilityCheckServiceV2 } from '../../../services'
+import type { AvailabilityCheckService } from '../../../services'
 import { getPostDescription, getPreDescription } from '../../../services/bookingTimes'
 import {
   buildDateWithTime,
@@ -11,7 +11,7 @@ import { SelectAlternative } from '../newBooking/form'
 import { getNewBooking, setNewBooking } from '../state'
 
 export default class NotAvailableController {
-  constructor(private readonly availabilityCheckService: AvailabilityCheckServiceV2) {}
+  constructor(private readonly availabilityCheckService: AvailabilityCheckService) {}
 
   public view: RequestHandler = async (req, res) => {
     const { offenderNo, agencyId } = req.params
