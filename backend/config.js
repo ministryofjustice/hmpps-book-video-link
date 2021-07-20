@@ -58,6 +58,9 @@ module.exports = {
       url: process.env.API_HMPPS_USER_PREFERENCE_ENDPOINT_URL || 'http://localhost:8085/',
       timeoutSeconds: toInt(process.env.API_HMPPS_USER_PREFERENCE_TIMEOUT_SECONDS, 30),
     },
+    googleApi: {
+      serviceAccountKey: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
+    },
   },
 
   notifications: {
@@ -105,6 +108,12 @@ module.exports = {
         omu: process.env.BULLINGDON_OMU_EMAIL,
         vlb: process.env.BULLINGDON_VLB_EMAIL,
       },
+    },
+  },
+
+  jobs: {
+    videoLinkBookingEventsExport: {
+      spreadsheetId: process.env.VLBEVENT_EXPORT_SPREADSHEET_ID,
     },
   },
 }
