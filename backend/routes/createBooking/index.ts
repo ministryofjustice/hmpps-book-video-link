@@ -24,7 +24,7 @@ export default function createRoutes(services: Services): Router {
   {
     const newBookingController = new NewBookingController(
       services.prisonApi,
-      services.availabilityCheckServiceV2,
+      services.availabilityCheckService,
       services.locationService
     )
     const path = '/:agencyId/offenders/:offenderNo/add-court-appointment'
@@ -34,7 +34,7 @@ export default function createRoutes(services: Services): Router {
   }
 
   {
-    const { view, submit } = new NotAvailableController(services.availabilityCheckServiceV2)
+    const { view, submit } = new NotAvailableController(services.availabilityCheckService)
     router.get(
       '/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-not-available',
       checkNewBookingPresent,

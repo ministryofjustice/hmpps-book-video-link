@@ -5,7 +5,7 @@ import type WhereaboutsApi from '../api/whereaboutsApi'
 import type PrisonApi from '../api/prisonApi'
 import type NotificationService from './notificationService'
 import type LocationService from './locationService'
-import type AvailabilityCheckServiceV2 from './availabilityCheckServiceV2'
+import type AvailabilityCheckService from './availabilityCheckService'
 
 import type {
   BookingDetails,
@@ -33,7 +33,7 @@ export = class BookingService {
     private readonly prisonApi: PrisonApi,
     private readonly whereaboutsApi: WhereaboutsApi,
     private readonly notificationService: NotificationService,
-    private readonly availabilityCheckServiceV2: AvailabilityCheckServiceV2,
+    private readonly availabilityCheckService: AvailabilityCheckService,
     private readonly locationService: LocationService
   ) {}
 
@@ -59,7 +59,7 @@ export = class BookingService {
   public async create(context: Context, currentUsername: string, newBooking: NewBooking): Promise<number | false> {
     const { agencyId, mainStartTime, mainEndTime, pre, main, post } = newBooking
 
-    const status = await this.availabilityCheckServiceV2.getAvailabilityStatus(context, {
+    const status = await this.availabilityCheckService.getAvailabilityStatus(context, {
       agencyId,
       date: mainStartTime,
       startTime: mainStartTime,
@@ -214,7 +214,7 @@ export = class BookingService {
     videoBookingId: number,
     update: BookingUpdate
   ): Promise<AvailabilityStatus> {
-    const status = await this.availabilityCheckServiceV2.getAvailabilityStatus(context, { videoBookingId, ...update })
+    const status = await this.availabilityCheckService.getAvailabilityStatus(context, { videoBookingId, ...update })
 
     if (status === 'AVAILABLE') {
       await this.updateBooking(context, currentUsername, videoBookingId, update)

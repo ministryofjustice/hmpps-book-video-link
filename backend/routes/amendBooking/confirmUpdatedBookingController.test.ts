@@ -9,7 +9,7 @@ import { RoomFinder } from '../../services/roomFinder'
 
 jest.mock('../../services')
 
-describe('Select available rooms controller', () => {
+describe('Confirm updated booking controller', () => {
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
   const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
   let controller: CheckAndConfirmYourBookingController

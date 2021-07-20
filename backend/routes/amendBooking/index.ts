@@ -13,13 +13,9 @@ import ConfirmationController from './confirmationController'
 import ChangeCommentsController from './changeCommentsController'
 import changeCommentsValidation from './changeCommentsValidation'
 
-export default function createRoutes({
-  bookingService,
-  availabilityCheckServiceV2,
-  locationService,
-}: Services): Router {
-  const changeVideoLink = new ChangeVideoLinkController(bookingService, availabilityCheckServiceV2, locationService)
-  const videoLinkNotAvailable = new VideoLinkNotAvailableController()
+export default function createRoutes({ bookingService, availabilityCheckService, locationService }: Services): Router {
+  const changeVideoLink = new ChangeVideoLinkController(bookingService, availabilityCheckService, locationService)
+  const videoLinkNotAvailable = new VideoLinkNotAvailableController(availabilityCheckService)
   const roomNoLongerAvailable = new RoomNoLongerAvailableController()
   const confirmUpdatedBooking = new ConfirmUpdatedBookingController(bookingService, locationService)
   const confirmation = new ConfirmationController(bookingService)

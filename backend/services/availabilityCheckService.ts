@@ -8,14 +8,14 @@ import {
   getPreAppointmentInterval,
   getTotalAppointmentInterval,
 } from './bookingTimes'
-import type { Context, AvailabilityStatus, AvailabilityRequestV2, RoomAvailabilityV2 } from './model'
+import type { Context, AvailabilityStatus, AvailabilityRequest, RoomAvailability } from './model'
 
-export default class AvailabilityCheckServiceV2 {
+export default class AvailabilityCheckService {
   constructor(private readonly whereaboutsApi: WhereaboutsApi) {}
 
   private toAppointment = (locationId, interval): LocationAndInterval => ({ locationId, interval })
 
-  public async getAvailability(context: Context, request: AvailabilityRequestV2): Promise<RoomAvailabilityV2> {
+  public async getAvailability(context: Context, request: AvailabilityRequest): Promise<RoomAvailability> {
     const { agencyId, videoBookingId, date, startTime, endTime, preLocation, mainLocation, postLocation } = request
 
     const { matched, alternatives } = await this.whereaboutsApi.checkAvailability(context, {
@@ -38,7 +38,7 @@ export default class AvailabilityCheckServiceV2 {
     }
   }
 
-  public async getAvailabilityStatus(context: Context, request: AvailabilityRequestV2): Promise<AvailabilityStatus> {
+  public async getAvailabilityStatus(context: Context, request: AvailabilityRequest): Promise<AvailabilityStatus> {
     const { isAvailable } = await this.getAvailability(context, request)
     return isAvailable ? 'AVAILABLE' : 'NOT_AVAILABLE'
   }
