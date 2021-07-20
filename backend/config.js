@@ -101,6 +101,10 @@ module.exports = {
         omu: process.env.ELMLEY_OMU_EMAIL,
         vlb: process.env.ELMLEY_VLB_EMAIL,
       },
+      BNI: {
+        omu: process.env.BULLINGDON_OMU_EMAIL,
+        vlb: process.env.BULLINGDON_VLB_EMAIL,
+      },
     },
   },
 }

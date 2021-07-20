@@ -112,6 +112,18 @@ env:
         name: {{ template "app.name" . }}
         key: ELMLEY_VLB_EMAIL
 
+  - name: BULLINGDON_OMU_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: BULLINGDON_OMU_EMAIL
+
+  - name: BULLINGDON_VLB_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: BULLINGDON_VLB_EMAIL
+
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
