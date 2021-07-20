@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { buildDate, DAY_MONTH_YEAR, DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
-import { ChangeVideoLinkBooking, SelectAlternative } from './forms'
+import { ChangeVideoLinkBooking, SelectAlternative, toFormValues } from './forms'
 
 describe('ChangeVideoLinkBooking', () => {
   test('check parse required fields', () => {
@@ -92,6 +92,41 @@ describe('ChangeVideoLinkBooking', () => {
         postRequired: 'false',
       })
     ).toThrowError('Missing or invalid keys: startTimeHours,endTimeHours')
+  })
+})
+
+describe('toFormValues', () => {
+  test('all values', () => {
+    expect(
+      toFormValues(
+        ChangeVideoLinkBooking({
+          agencyId: 'WWI',
+          courtId: 'CLDN',
+          date: '22/01/2020',
+          startTimeHours: '10',
+          startTimeMinutes: '30',
+          endTimeHours: '11',
+          endTimeMinutes: '00',
+          mainLocation: '10',
+          preLocation: '20',
+          postLocation: '30',
+          preRequired: 'true',
+          postRequired: 'true',
+        })
+      )
+    ).toStrictEqual({
+      courtId: 'CLDN',
+      date: '22/01/2020',
+      startTimeHours: '10',
+      startTimeMinutes: '30',
+      endTimeHours: '11',
+      endTimeMinutes: '00',
+      mainLocation: 10,
+      preLocation: 20,
+      postLocation: 30,
+      preRequired: 'true',
+      postRequired: 'true',
+    })
   })
 })
 

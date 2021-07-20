@@ -3,7 +3,7 @@ import type BookingService from '../../services/bookingService'
 import LocationService from '../../services/locationService'
 
 import { DAY_MONTH_YEAR, Hours, Minutes, HOURS_TIME, MINUTES_TIME } from '../../shared/dateHelpers'
-import { ChangeVideoLinkBooking } from './forms'
+import { ChangeVideoLinkBooking, toFormValues } from './forms'
 import { clearUpdate, setUpdate, getUpdate } from './state'
 import { AvailabilityCheckService } from '../../services'
 
@@ -40,19 +40,7 @@ export default class ChangeVideoLinkController {
       const rooms = await this.locationService.getRooms(res.locals, bookingDetails.agencyId)
 
       const currentBookingDetails = update
-        ? {
-            date: update.date.format(DAY_MONTH_YEAR),
-            courtId: update.courtId,
-            startTimeHours: update.startTime.format(HOURS_TIME),
-            startTimeMinutes: update.startTime.format(MINUTES_TIME),
-            endTimeHours: update.endTime.format(HOURS_TIME),
-            endTimeMinutes: update.endTime.format(MINUTES_TIME),
-            preLocation: update.preLocation,
-            mainLocation: update.mainLocation,
-            postLocation: update.postLocation,
-            preRequired: update.preRequired ? 'true' : 'false',
-            postRequired: update.postRequired ? 'true' : 'false',
-          }
+        ? toFormValues(update)
         : {
             date: bookingDetails.date.format(DAY_MONTH_YEAR),
             courtId: bookingDetails.courtId,
