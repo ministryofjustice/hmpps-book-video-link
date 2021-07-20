@@ -1,31 +1,72 @@
 import moment from 'moment'
+import parse from 'csv-parse'
+import { Readable } from 'stream'
 import EventsRetriever from './eventsRetriever'
-import doesNothing from './configLoader'
-import config from '../config'
 import WhereaboutsApi from '../api/whereaboutsApi'
-import Client from '../api/oauthEnabledClient'
 import TokenSource from './tokenSource'
 
-doesNothing()
+jest.mock('../api/whereaboutsApi')
+jest.mock('./tokenSource')
 
-const { oauth2 } = config.apis
+const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
+const tokenSource = new TokenSource(null) as jest.Mocked<TokenSource>
+
+let eventsRetriever: EventsRetriever
 
 describe('test', () => {
-  it('happy flow', async () => {
-    const whereaboutsApi = new WhereaboutsApi(
-      new Client({
-        baseUrl: config.apis.whereabouts.url,
-        timeout: config.apis.whereabouts.timeoutSeconds * 1000,
-      })
-    )
+  beforeEach(() => {
+    jest.resetAllMocks()
+    eventsRetriever = new EventsRetriever(tokenSource, whereaboutsApi)
+  })
 
-    const tokenSource = new TokenSource(oauth2)
-    const er = new EventsRetriever(tokenSource, whereaboutsApi)
-    const records = await er.retrieveEventsForDay(moment())
+  it('parser test', async () => {
+    const readable = Readable.from('a,b,c\n1,2,3\n')
+    const parser = parse({ delimiter: ',' })
+    readable.pipe(parser)
+    const records = []
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const record of parser) {
+      records.push(record)
+    }
+    expect(records).toStrictEqual([
+      ['a', 'b', 'c'],
+      ['1', '2', '3'],
+    ])
+  })
 
-    records.forEach(record => {
-      record.forEach(col => process.stdout.write(`${col}, `))
-      process.stdout.write('\n')
+  it('Retrieves events as nested arrays', async () => {
+    const tokens = { access_token: 'at', refresh_token: 'rt' }
+    tokenSource.getTokens.mockResolvedValue(tokens)
+    whereaboutsApi.getVideoLinkBookingEvents.mockImplementation((c, writable, m, d) => {
+      Readable.from('a,b,c\n1,2,3\n4,5,6').pipe(writable)
+      return Promise.resolve()
     })
+
+    const events = await eventsRetriever.retrieveEventsForDay(moment('2021-07-01 09:01:01'))
+
+    expect(events).toStrictEqual([
+      ['1', '2', '3'],
+      ['4', '5', '6'],
+    ])
+
+    const call = whereaboutsApi.getVideoLinkBookingEvents.mock.calls[0]
+    expect(call[0]).toStrictEqual(tokens)
+
+    expect(
+      moment({ year: 2021, month: 6, day: 1, hour: 0, minute: 0, seconds: 0, milliseconds: 0 }).isSame(call[2])
+    ).toBe(true)
+    expect(call[3]).toBe(1)
+  })
+
+  it('handles no events', async () => {
+    const tokens = { access_token: 'at', refresh_token: 'rt' }
+    tokenSource.getTokens.mockResolvedValue(tokens)
+    whereaboutsApi.getVideoLinkBookingEvents.mockImplementation((c, writable, m, d) => {
+      Readable.from('a,b,c\n').pipe(writable)
+      return Promise.resolve()
+    })
+
+    const events = await eventsRetriever.retrieveEventsForDay(moment('2021-07-01'))
+    expect(events).toStrictEqual([])
   })
 })

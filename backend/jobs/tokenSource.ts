@@ -28,8 +28,8 @@ export default class TokenSource {
   }
 
   // eslint-disable-next-line camelcase
-  getTokens: () => Promise<{ access_token: string; refresh_token: string }> = () =>
-    this.axiosInstance
+  getTokens(): Promise<{ access_token: string; refresh_token: string }> {
+    return this.axiosInstance
       .post(`${this.url}oauth/token?grant_type=client_credentials`)
       .then(response => {
         logger.debug(
@@ -50,4 +50,5 @@ export default class TokenSource {
         logger.error(`EventsRetriever ${error.config.method} ${error.config.url} ${status} ${error.message}`)
         throw error
       })
+  }
 }
