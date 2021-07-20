@@ -1,5 +1,4 @@
 import moment from 'moment'
-import parse from 'csv-parse'
 import { Readable } from 'stream'
 import EventsRetriever from './eventsRetriever'
 import WhereaboutsApi from '../api/whereaboutsApi'
@@ -17,21 +16,6 @@ describe('test', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     eventsRetriever = new EventsRetriever(tokenSource, whereaboutsApi)
-  })
-
-  it('parser test', async () => {
-    const readable = Readable.from('a,b,c\n1,2,3\n')
-    const parser = parse({ delimiter: ',' })
-    readable.pipe(parser)
-    const records = []
-    // eslint-disable-next-line no-restricted-syntax
-    for await (const record of parser) {
-      records.push(record)
-    }
-    expect(records).toStrictEqual([
-      ['a', 'b', 'c'],
-      ['1', '2', '3'],
-    ])
   })
 
   it('Retrieves events as nested arrays', async () => {
@@ -58,7 +42,7 @@ describe('test', () => {
     expect(call[3]).toBe(1)
   })
 
-  it('handles no events', async () => {
+  it('Handles no events', async () => {
     const tokens = { access_token: 'at', refresh_token: 'rt' }
     tokenSource.getTokens.mockResolvedValue(tokens)
     whereaboutsApi.getVideoLinkBookingEvents.mockImplementation((c, writable, m, d) => {

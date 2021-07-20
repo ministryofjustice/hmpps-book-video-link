@@ -22,6 +22,7 @@ export default class TokenSource {
       timeout: oauth2Config.timeoutSeconds * 1000,
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
         authorization: `Basic ${apiClientCredentials(oauth2Config.clientId, oauth2Config.clientSecret)}`,
       },
     })
