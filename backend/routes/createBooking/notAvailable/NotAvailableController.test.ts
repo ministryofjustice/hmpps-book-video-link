@@ -69,6 +69,27 @@ describe('Not available page', () => {
       })
     })
 
+    it('should redirect back to booking search page if have since selected an available option', async () => {
+      const req = mockRequest({
+        params: {
+          offenderNo: 'A12345',
+          agencyId: 'MDI',
+        },
+        body: {},
+        signedCookies,
+      })
+
+      availabilityCheckService.getAvailability.mockResolvedValue({
+        isAvailable: true,
+        alternatives: [],
+        totalInterval: { start: '11:00', end: '14:00' },
+      })
+
+      await controller.view(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/MDI/offenders/A12345/add-court-appointment')
+    })
+
     it('should render template with data', async () => {
       const req = mockRequest({
         params: {
