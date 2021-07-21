@@ -638,6 +638,7 @@ describe('Booking service', () => {
         postRequired: false,
       })
 
+      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(context, 'WMRCN')
       expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
         courtId: 'WMRCN',
         comment: 'A comment',
