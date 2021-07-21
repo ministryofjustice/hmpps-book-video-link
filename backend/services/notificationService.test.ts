@@ -294,6 +294,7 @@ describe('Notification service', () => {
         {
           personalisation: {
             comments: 'some comment',
+            court: 'City of London',
             date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',

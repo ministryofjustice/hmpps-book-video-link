@@ -67,8 +67,8 @@ module.exports = {
     bookingCreationConfirmationCourt: 'a1ef2e8c-4bc7-41c9-8f5c-ae2b6eda916d',
     bookingCreationConfirmationPrison: 'ca1eaae4-4061-4c6d-93e4-8807b6183e6c',
 
-    bookingUpdateConfirmationCourt: 'cd55c74a-12d2-4999-8a41-9eece7a2e81f',
-    bookingUpdateConfirmationPrison: 'bb534d9d-a512-4d77-96b4-ccf8fb4f6c37',
+    bookingUpdateConfirmationCourt: 'a9d69cd4-0775-4902-87ae-4891c5ccaf11',
+    bookingUpdateConfirmationPrison: 'ed299559-7e58-4e60-b5aa-b5f0eababeb1',
 
     bookingCancellationCourt: 'ba3d526c-e16a-427c-9997-1b4bf8e5e04a',
     bookingCancellationPrison: 'e21a2d16-7574-47e7-a231-ebee5668a598',
