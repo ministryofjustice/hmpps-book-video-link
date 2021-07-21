@@ -617,6 +617,45 @@ describe('Booking service', () => {
 
       expect(whereaboutsApi.updateVideoLinkBooking).not.toHaveBeenCalled()
     })
+
+    it('Should pass updated court to notification service when updating the court of a booking', async () => {
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'Westminster Crown Court', id: 'WMRCN' })
+
+      await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
+        courtId: 'WMRCN',
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        mainLocation: 2,
+        preRequired: false,
+        postRequired: false,
+      })
+
+      expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
+        courtId: 'WMRCN',
+        comment: 'A comment',
+        main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
+      })
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        agencyId: 'WWI',
+        courtLocation: 'Westminster Crown Court',
+        dateDescription: '20 November 2020',
+        offenderNo: 'A1234AA',
+        comments: 'A comment',
+        prisonName: 'some prison',
+        prisonerName: 'John Doe',
+        preDescription: undefined,
+        mainDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDescription: undefined,
+      })
+    })
   })
 
   describe('Delete Booking', () => {
