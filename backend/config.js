@@ -64,8 +64,8 @@ module.exports = {
     enabled: process.env.NOTIFY_ENABLED ? process.env.NOTIFY_ENABLED === 'true' : true,
     notifyKey: process.env.NOTIFY_API_KEY || '',
 
-    bookingCreationConfirmationCourt: 'a1ef2e8c-4bc7-41c9-8f5c-ae2b6eda916d',
-    bookingCreationConfirmationPrison: 'ca1eaae4-4061-4c6d-93e4-8807b6183e6c',
+    bookingCreationConfirmationCourt: '47cfc1c3-ad56-47c4-98e7-0e41c0e2c9b4',
+    bookingCreationConfirmationPrison: '05456200-846b-446e-81cb-e003611bfea6',
 
     bookingUpdateConfirmationCourt: 'a9d69cd4-0775-4902-87ae-4891c5ccaf11',
     bookingUpdateConfirmationPrison: 'ed299559-7e58-4e60-b5aa-b5f0eababeb1',
