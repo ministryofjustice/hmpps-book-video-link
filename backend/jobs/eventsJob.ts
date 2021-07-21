@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import moment from 'moment'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import Client from '../api/oauthEnabledClient'
@@ -5,12 +6,7 @@ import EventsRetriever from './eventsRetriever'
 import TokenSource from './tokenSource'
 import EventsPusher from './eventsPusher'
 import logger from '../log'
-import doesNothing from './configLoader'
-// config import must come after configLoader import
 import config from '../config'
-
-// Need a call that does nothing to prevent ts from eliding the import.
-doesNothing()
 
 const retriever = new EventsRetriever(
   new TokenSource(config.apis.oauth2),
