@@ -37,12 +37,8 @@ describe('TokenSource tests', () => {
       .reply((uri, requestBody, cb) => {
         setTimeout(() => cb(null, [200, tokens]), 1050)
       })
-    try {
-      await tokenSource.getTokens()
-      fail('Should have timed out.')
-    } catch (error) {
-      expect(error.message).toEqual('timeout of 1000ms exceeded')
-    }
+
+    await expect(tokenSource.getTokens()).rejects.toThrow('timeout of 1000ms exceeded')
   })
 
   it('client error', async () => {
