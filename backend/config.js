@@ -73,8 +73,8 @@ module.exports = {
     bookingCancellationCourt: '544fc4a2-d04a-4e97-aa12-1516f30dc11a',
     bookingCancellationPrison: '41063a6b-66a5-4a1a-b9ef-a78fd3c137cc',
 
-    requestBookingCourtTemplateVLBAdminId: 'c1008f55-c228-4cad-b6fd-fe931c993855',
-    requestBookingCourtTemplateRequesterId: '02da54de-a564-4af8-8e6b-b141a85acf87',
+    requestBookingCourtTemplateVLBAdminId: 'fab3084c-49bc-444e-acd7-030291978562',
+    requestBookingCourtTemplateRequesterId: 'bc5f77eb-792b-4ae0-8216-3f9012bca220',
 
     emails: {
       WWI: {
