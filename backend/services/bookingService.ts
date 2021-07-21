@@ -192,6 +192,7 @@ export = class BookingService {
       post: update.postLocation && this.toAppointment(update.postLocation, postAppointmentTimes(update.endTime)),
     })
 
+    const court = await this.locationService.getVideoLinkEnabledCourt(context, update.courtId)
     const { bookingDescription: description } = await this.locationService.createRoomFinder(context, existing.agencyId)
 
     await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
@@ -199,7 +200,7 @@ export = class BookingService {
       agencyId: existing.agencyId,
       prisonName: existing.prisonName,
       prisonerName: existing.prisonerName,
-      courtLocation: existing.courtLocation,
+      courtLocation: court.name,
       comments: update.comment,
       dateDescription: update.startTime.format(DATE_ONLY_LONG_FORMAT_SPEC),
       preDescription: update.preLocation && description(update.preLocation, preAppointmentTimes(update.startTime)),

@@ -5,6 +5,7 @@ import { DATE_ONLY_LONG_FORMAT_SPEC } from '../../shared/dateHelpers'
 export default function BookingCreation(details: CreateEmail): EmailSpec {
   const personalisation = {
     comments: details.comment || 'None entered',
+    court: details.court,
     prisonerName: details.prisonerName,
     offenderNo: details.offenderNo,
     preAppointmentInfo: details.preDetails || 'Not required',
@@ -21,12 +22,12 @@ export default function BookingCreation(details: CreateEmail): EmailSpec {
       {
         recipient: 'vlb',
         template: notifications.bookingCreationConfirmationPrison,
-        personalisation: () => ({ court: details.court, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'omu',
         template: notifications.bookingCreationConfirmationPrison,
-        personalisation: () => ({ court: details.court, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'user',

@@ -64,17 +64,17 @@ module.exports = {
     enabled: process.env.NOTIFY_ENABLED ? process.env.NOTIFY_ENABLED === 'true' : true,
     notifyKey: process.env.NOTIFY_API_KEY || '',
 
-    bookingCreationConfirmationCourt: 'a1ef2e8c-4bc7-41c9-8f5c-ae2b6eda916d',
-    bookingCreationConfirmationPrison: 'ca1eaae4-4061-4c6d-93e4-8807b6183e6c',
+    bookingCreationConfirmationCourt: '47cfc1c3-ad56-47c4-98e7-0e41c0e2c9b4',
+    bookingCreationConfirmationPrison: '05456200-846b-446e-81cb-e003611bfea6',
 
-    bookingUpdateConfirmationCourt: 'cd55c74a-12d2-4999-8a41-9eece7a2e81f',
-    bookingUpdateConfirmationPrison: 'bb534d9d-a512-4d77-96b4-ccf8fb4f6c37',
+    bookingUpdateConfirmationCourt: 'a9d69cd4-0775-4902-87ae-4891c5ccaf11',
+    bookingUpdateConfirmationPrison: 'ed299559-7e58-4e60-b5aa-b5f0eababeb1',
 
-    bookingCancellationCourt: 'ba3d526c-e16a-427c-9997-1b4bf8e5e04a',
-    bookingCancellationPrison: 'e21a2d16-7574-47e7-a231-ebee5668a598',
+    bookingCancellationCourt: '544fc4a2-d04a-4e97-aa12-1516f30dc11a',
+    bookingCancellationPrison: '41063a6b-66a5-4a1a-b9ef-a78fd3c137cc',
 
-    requestBookingCourtTemplateVLBAdminId: 'c1008f55-c228-4cad-b6fd-fe931c993855',
-    requestBookingCourtTemplateRequesterId: '02da54de-a564-4af8-8e6b-b141a85acf87',
+    requestBookingCourtTemplateVLBAdminId: 'fab3084c-49bc-444e-acd7-030291978562',
+    requestBookingCourtTemplateRequesterId: 'bc5f77eb-792b-4ae0-8216-3f9012bca220',
 
     emails: {
       WWI: {

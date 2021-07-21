@@ -6,6 +6,7 @@ export default function BookingCancellation(details: BookingDetails): EmailSpec 
     prisonerName: details.prisonerName,
     offenderNo: details.offenderNo,
     prison: details.prisonName,
+    court: details.courtLocation,
     date: details.dateDescription,
     preAppointmentInfo: details.preDetails?.description || 'Not required',
     mainAppointmentInfo: details.mainDetails.description,
@@ -20,12 +21,12 @@ export default function BookingCancellation(details: BookingDetails): EmailSpec 
       {
         recipient: 'vlb',
         template: notifications.bookingCancellationPrison,
-        personalisation: () => ({ court: details.courtLocation, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'omu',
         template: notifications.bookingCancellationPrison,
-        personalisation: () => ({ court: details.courtLocation, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'user',
