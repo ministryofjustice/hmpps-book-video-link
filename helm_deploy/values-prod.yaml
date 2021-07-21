@@ -31,6 +31,9 @@ env:
   REDIS_ENABLED: true
   VLBEVENT_EXPORT_SPREADSHEET_ID: "1AsW6GH8pM3GYQthcLY-L5hi9Lf3RYvN9QNnpdGx9weM"
 
+jobs:
+  suspend: true
+
 whitelist:
   cloudplatform-live1-1: 35.178.209.113/32
   cloudplatform-live1-2: 3.8.51.207/32
