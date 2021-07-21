@@ -6,6 +6,7 @@ export default function BookingUpdate(details: UpdateEmail): EmailSpec {
     prisonerName: details.prisonerName,
     offenderNo: details.offenderNo,
     prison: details.prisonName,
+    court: details.courtLocation,
     date: details.dateDescription,
     preAppointmentInfo: details.preDescription || 'Not required',
     mainAppointmentInfo: details.mainDescription,
@@ -20,12 +21,12 @@ export default function BookingUpdate(details: UpdateEmail): EmailSpec {
       {
         recipient: 'vlb',
         template: notifications.bookingUpdateConfirmationPrison,
-        personalisation: () => ({ court: details.courtLocation, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'omu',
         template: notifications.bookingUpdateConfirmationPrison,
-        personalisation: () => ({ court: details.courtLocation, ...personalisation }),
+        personalisation: () => personalisation,
       },
       {
         recipient: 'user',
