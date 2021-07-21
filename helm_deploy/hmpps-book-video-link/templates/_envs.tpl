@@ -185,4 +185,12 @@ env:
   - name: REDIS_ENABLED
     value: {{ .Values.env.REDIS_ENABLED | quote }}
 
+  - name: GOOGLE_SERVICE_ACCOUNT_KEY
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: GOOGLE_SERVICE_ACCOUNT_KEY
+
+  - name: VLBEVENT_EXPORT_SPREADSHEET_ID
+    value: {{ .Values.env.VLBEVENT_EXPORT_SPREADSHEET_ID }}
 {{- end -}}
