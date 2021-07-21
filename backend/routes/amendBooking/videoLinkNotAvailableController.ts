@@ -21,10 +21,14 @@ export default class VideoLinkNotAvailableController {
         return res.redirect(`/booking-details/${bookingId}`)
       }
 
-      const { alternatives } = await this.availabilityCheckService.getAvailability(res.locals, {
+      const { alternatives, isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
         videoBookingId: parseInt(bookingId, 10),
         ...update,
       })
+
+      if (isAvailable) {
+        return res.redirect(`/change-video-link/${bookingId}`)
+      }
 
       return res.render('amendBooking/videoLinkNotAvailable.njk', {
         alternatives: alternatives.map(a => {

@@ -18,10 +18,14 @@ export default class NotAvailableController {
 
     const newBooking = getNewBooking(req)
 
-    const { alternatives } = await this.availabilityCheckService.getAvailability(res.locals, {
+    const { alternatives, isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
       agencyId,
       ...newBooking,
     })
+
+    if (isAvailable) {
+      return res.redirect(`/${agencyId}/offenders/${offenderNo}/add-court-appointment`)
+    }
 
     return res.render('createBooking/notAvailable.njk', {
       alternatives: alternatives.map(a => {

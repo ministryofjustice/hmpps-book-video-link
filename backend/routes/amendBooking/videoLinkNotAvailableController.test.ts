@@ -67,6 +67,37 @@ describe('video link is not available controller', () => {
       expect(res.redirect).toHaveBeenCalledWith('/booking-details/123')
     })
 
+    it('should redirect back to booking search page if have since selected an available option', async () => {
+      const req = mockRequest({
+        params: { bookingId: '123' },
+        body: {},
+        signedCookies: {
+          'booking-update': {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: '2020-11-20T00:00:00',
+            startTime: '2020-11-20T11:00:00',
+            endTime: '2020-11-20T14:00:00',
+            preLocation: '2',
+            mainLocation: '1',
+            postLocation: '3',
+            preRequired: 'true',
+            postRequired: 'true',
+          },
+        },
+      })
+
+      availabilityCheckService.getAvailability.mockResolvedValue({
+        isAvailable: true,
+        alternatives: [],
+        totalInterval: { start: '11:00', end: '14:00' },
+      })
+
+      await controller.view()(req, res, null)
+
+      expect(res.redirect).toHaveBeenCalledWith('/change-video-link/123')
+    })
+
     it('should render the page', async () => {
       const req = mockRequest({
         params: { bookingId: '123' },
