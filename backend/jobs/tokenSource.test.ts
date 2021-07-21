@@ -43,21 +43,13 @@ describe('TokenSource tests', () => {
 
   it('client error', async () => {
     nock(host).post(path).reply(400, {})
-    try {
-      await tokenSource.getTokens()
-      fail('Should have timed out.')
-    } catch (error) {
-      expect(error.message).toEqual('Request failed with status code 400')
-    }
+
+    await expect(tokenSource.getTokens()).rejects.toThrow('Request failed with status code 400')
   })
 
   it('server error', async () => {
     nock(host).post(path).reply(500, null)
-    try {
-      await tokenSource.getTokens()
-      fail('Should have timed out.')
-    } catch (error) {
-      expect(error.message).toEqual('Request failed with status code 500')
-    }
+
+    await expect(tokenSource.getTokens()).rejects.toThrow('Request failed with status code 500')
   })
 })
