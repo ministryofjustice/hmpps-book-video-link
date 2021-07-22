@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
-import { ChangeVideoLinkBookingCodec } from './state'
+import { mockNext, mockRequest, mockResponse } from '../__test/requestTestUtils'
+import { ChangeVideoLinkBookingCodec, ensureUpdatePresentMiddleware } from './state'
 
 describe('ChangeVideoLinkBookingCodec', () => {
   test('read optional', () => {
@@ -108,5 +109,46 @@ describe('ChangeVideoLinkBookingCodec', () => {
       preRequired: 'true',
       postRequired: 'true',
     })
+  })
+})
+
+describe('ensureUpdatePresentMiddleware', () => {
+  test('when present', () => {
+    const req = mockRequest({ params: { bookingId: '123' } })
+    const res = mockResponse({})
+    const next = mockNext()
+
+    req.signedCookies = { 'booking-update': 'some content' }
+
+    ensureUpdatePresentMiddleware('/redirect/')(req, res, next)
+
+    expect(res.redirect).not.toHaveBeenCalled()
+    expect(next).toHaveBeenCalled()
+  })
+
+  test('when empty', () => {
+    const req = mockRequest({ params: { bookingId: '123' } })
+    const res = mockResponse({})
+    const next = mockNext()
+
+    req.signedCookies = { 'booking-update': '' }
+
+    ensureUpdatePresentMiddleware('/redirect/')(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/redirect/123')
+    expect(next).not.toHaveBeenCalled()
+  })
+
+  test('when absent', () => {
+    const req = mockRequest({ params: { bookingId: '123' } })
+    const res = mockResponse({})
+    const next = mockNext()
+
+    req.signedCookies = {}
+
+    ensureUpdatePresentMiddleware('/redirect/')(req, res, next)
+
+    expect(res.redirect).toHaveBeenCalledWith('/redirect/123')
+    expect(next).not.toHaveBeenCalled()
   })
 })

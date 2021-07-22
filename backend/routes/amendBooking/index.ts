@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
 import { Services } from '../../services'
+import { ensureUpdatePresentMiddleware } from './state'
 import asyncMiddleware from '../../middleware/asyncMiddleware'
 import validationMiddleware from '../../middleware/validationMiddleware'
 
@@ -23,6 +24,8 @@ export default function createRoutes({ bookingService, availabilityCheckService,
 
   const router = express.Router({ mergeParams: true })
 
+  const checkUpdatePresent = ensureUpdatePresentMiddleware('/booking-details/')
+
   router.get('/start-change-booking/:bookingId', asyncMiddleware(changeVideoLink.start()))
   router.get('/change-video-link/:bookingId', asyncMiddleware(changeVideoLink.view()))
   router.post(
@@ -31,14 +34,19 @@ export default function createRoutes({ bookingService, availabilityCheckService,
     asyncMiddleware(changeVideoLink.submit())
   )
 
-  router.get('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.view()))
-  router.post('/video-link-not-available/:bookingId', asyncMiddleware(videoLinkNotAvailable.submit()))
+  router.get('/video-link-not-available/:bookingId', checkUpdatePresent, asyncMiddleware(videoLinkNotAvailable.view()))
+  router.post(
+    '/video-link-not-available/:bookingId',
+    checkUpdatePresent,
+    asyncMiddleware(videoLinkNotAvailable.submit())
+  )
 
-  router.get('/room-no-longer-available/:bookingId', asyncMiddleware(roomNoLongerAvailable.view()))
+  router.get('/room-no-longer-available/:bookingId', checkUpdatePresent, asyncMiddleware(roomNoLongerAvailable.view()))
 
-  router.get('/confirm-updated-booking/:bookingId', asyncMiddleware(confirmUpdatedBooking.view()))
+  router.get('/confirm-updated-booking/:bookingId', checkUpdatePresent, asyncMiddleware(confirmUpdatedBooking.view()))
   router.post(
     '/confirm-updated-booking/:bookingId',
+    checkUpdatePresent,
     validationMiddleware(changeCommentsValidation),
     asyncMiddleware(confirmUpdatedBooking.submit())
   )
