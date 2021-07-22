@@ -4,8 +4,8 @@ import logger from '../log'
 import errorStatusCode from '../error-status-code'
 
 interface OAuth2Config {
-  clientId: string
-  clientSecret: string
+  systemId: string
+  systemSecret: string
   url: string
   timeoutSeconds: number
   [propName: string]: any
@@ -23,7 +23,7 @@ export default class TokenSource {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        authorization: `Basic ${apiClientCredentials(oauth2Config.clientId, oauth2Config.clientSecret)}`,
+        authorization: `Basic ${apiClientCredentials(oauth2Config.systemId, oauth2Config.systemSecret)}`,
       },
     })
   }

@@ -5,8 +5,8 @@ const host = 'http://localhost'
 const path = '/oauth/token?grant_type=client_credentials'
 const tokens = { access_token: 'at', refresh_token: 'rt' }
 const tokenSource = new TokenSource({
-  clientId: 'a',
-  clientSecret: 'b',
+  systemId: 'a',
+  systemSecret: 'b',
   url: 'http://localhost/',
   timeoutSeconds: 1,
 })
