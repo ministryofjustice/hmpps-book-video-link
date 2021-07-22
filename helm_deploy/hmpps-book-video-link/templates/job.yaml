@@ -5,14 +5,13 @@ metadata:
   labels:
   {{- include "app.labels" . | nindent 4 }}
 spec:
-  schedule: "59 * * * *"
+  schedule: {{ .Values.jobs.cronspec }}
   concurrencyPolicy: Replace
   failedJobsHistoryLimit: 3
   startingDeadlineSeconds: 300
   successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:
-      suspend: {{ .Values.jobs.suspend }}
       template:
         spec:
           containers:
