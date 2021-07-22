@@ -60,13 +60,6 @@ describe('video link is not available controller', () => {
       })
     })
 
-    it('should redirect if no state', async () => {
-      const req = mockRequest({ params: { bookingId: '123' } })
-      req.signedCookies = {}
-      await controller.view()(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith('/booking-details/123')
-    })
-
     it('should redirect back to booking search page if have since selected an available option', async () => {
       const req = mockRequest({
         params: { bookingId: '123' },

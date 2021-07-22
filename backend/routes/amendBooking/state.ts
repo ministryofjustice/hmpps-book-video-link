@@ -1,7 +1,8 @@
+import { NextFunction, Request, RequestHandler, Response } from 'express'
 import moment from 'moment'
 import { DATE_TIME_FORMAT_SPEC } from '../../shared/dateHelpers'
 import { assertHasOptionalStringValues, assertHasStringValues } from '../../utils'
-import { clearState, Codec, getState, setState } from '../../utils/state'
+import { clearState, Codec, getState, setState, isStatePresent } from '../../utils/state'
 import { ChangeVideoLinkBooking } from './forms'
 
 export const ChangeVideoLinkBookingCodec: Codec<ChangeVideoLinkBooking> = {
@@ -51,6 +52,18 @@ export const ChangeVideoLinkBookingCodec: Codec<ChangeVideoLinkBooking> = {
   },
 }
 
-export const clearUpdate = clearState('booking-update')
-export const setUpdate = setState('booking-update', ChangeVideoLinkBookingCodec)
-export const getUpdate = getState('booking-update', ChangeVideoLinkBookingCodec)
+const COOKIE_NAME = 'booking-update'
+
+export const clearUpdate = clearState(COOKIE_NAME)
+
+export const setUpdate = (res: Response, data: ChangeVideoLinkBooking): void =>
+  setState(COOKIE_NAME, ChangeVideoLinkBookingCodec)(res, data)
+
+export const getUpdate = (req: Request): ChangeVideoLinkBooking | undefined =>
+  getState(COOKIE_NAME, ChangeVideoLinkBookingCodec)(req)
+
+export const ensureUpdatePresentMiddleware =
+  (redirectUrl: string): RequestHandler =>
+  (req: Request, res: Response, next: NextFunction) => {
+    return isStatePresent(COOKIE_NAME)(req) ? next() : res.redirect(redirectUrl + req.params.bookingId)
+  }

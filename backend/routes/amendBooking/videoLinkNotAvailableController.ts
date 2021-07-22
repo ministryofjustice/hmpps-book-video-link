@@ -17,9 +17,6 @@ export default class VideoLinkNotAvailableController {
     return async (req, res) => {
       const { bookingId } = req.params
       const update = getUpdate(req)
-      if (!update) {
-        return res.redirect(`/booking-details/${bookingId}`)
-      }
 
       const { alternatives, isAvailable } = await this.availabilityCheckService.getAvailability(res.locals, {
         videoBookingId: parseInt(bookingId, 10),
@@ -62,9 +59,6 @@ export default class VideoLinkNotAvailableController {
 
       const form = SelectAlternative(req.body)
       const update = getUpdate(req)
-      if (!update) {
-        return res.redirect(`/booking-details/${bookingId}`)
-      }
 
       setUpdate(res, { ...update, ...form })
 

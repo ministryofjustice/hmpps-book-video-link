@@ -98,15 +98,6 @@ describe('Confirm updated booking controller', () => {
       expect(locationService.createRoomFinder).toHaveBeenCalledWith(res.locals, 'WWI')
     })
 
-    it('should redirect when no stored state', async () => {
-      mockFlashState({ errors: [], input: [] })
-      req.signedCookies = {}
-
-      await controller.view()(req, res, null)
-
-      expect(res.redirect).toHaveBeenCalledWith('/booking-details/12')
-    })
-
     describe('View page with no errors', () => {
       it('should display booking details', async () => {
         bookingService.get.mockResolvedValue(bookingDetails)

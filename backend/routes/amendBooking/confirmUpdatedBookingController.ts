@@ -17,9 +17,6 @@ export default class CheckAndConfirmYourBookingController {
       const [input] = req.flash('input')
 
       const update = getUpdate(req)
-      if (!update) {
-        return res.redirect(`/booking-details/${bookingId}`)
-      }
 
       const bookingDetails = await this.bookingService.get(res.locals, parseInt(bookingId, 10))
 
