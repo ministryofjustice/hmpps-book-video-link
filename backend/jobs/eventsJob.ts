@@ -1,4 +1,10 @@
+/* eslint-disable import/first */
+/* eslint-disable import/order */
 import 'dotenv/config'
+import { initialiseAppInsights } from '../azure-appinsights'
+
+initialiseAppInsights()
+
 import moment from 'moment'
 import WhereaboutsApi from '../api/whereaboutsApi'
 import Client from '../api/oauthEnabledClient'
