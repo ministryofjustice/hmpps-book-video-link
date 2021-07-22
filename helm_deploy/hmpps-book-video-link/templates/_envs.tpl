@@ -16,6 +16,18 @@ env:
         name: {{ template "app.name" . }}
         key: API_CLIENT_SECRET
 
+  - name: API_SYSTEM_ID
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: API_SYSTEM_ID
+
+  - name: API_SYSTEM_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: API_SYSTEM_SECRET
+
   - name: APPINSIGHTS_INSTRUMENTATIONKEY
     valueFrom:
       secretKeyRef:
@@ -185,4 +197,12 @@ env:
   - name: REDIS_ENABLED
     value: {{ .Values.env.REDIS_ENABLED | quote }}
 
+  - name: GOOGLE_SERVICE_ACCOUNT_KEY
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: GOOGLE_SERVICE_ACCOUNT_KEY
+
+  - name: VLBEVENT_EXPORT_SPREADSHEET_ID
+    value: {{ .Values.env.VLBEVENT_EXPORT_SPREADSHEET_ID }}
 {{- end -}}

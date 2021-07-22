@@ -36,6 +36,8 @@ module.exports = {
       timeoutSeconds: toInt(process.env.API_ENDPOINT_TIMEOUT_SECONDS, 10),
       clientId: process.env.API_CLIENT_ID || 'book-video-link-client',
       clientSecret: process.env.API_CLIENT_SECRET || 'clientsecret',
+      systemId: process.env.API_SYSTEM_ID || 'book-video-link-system',
+      systemSecret: process.env.API_SYSTEM_SECRET || 'systemsecret',
     },
     prison: {
       url: process.env.API_ENDPOINT_URL || 'http://localhost:8080/',
@@ -57,6 +59,9 @@ module.exports = {
     userPreferences: {
       url: process.env.API_HMPPS_USER_PREFERENCE_ENDPOINT_URL || 'http://localhost:8085/',
       timeoutSeconds: toInt(process.env.API_HMPPS_USER_PREFERENCE_TIMEOUT_SECONDS, 30),
+    },
+    googleApi: {
+      serviceAccountKey: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
     },
   },
 
@@ -105,6 +110,12 @@ module.exports = {
         omu: process.env.BULLINGDON_OMU_EMAIL,
         vlb: process.env.BULLINGDON_VLB_EMAIL,
       },
+    },
+  },
+
+  jobs: {
+    videoLinkBookingEventsExport: {
+      spreadsheetId: process.env.VLBEVENT_EXPORT_SPREADSHEET_ID,
     },
   },
 }
