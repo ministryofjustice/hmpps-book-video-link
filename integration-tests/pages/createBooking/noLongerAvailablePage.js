@@ -1,7 +1,7 @@
 const page = require('../page')
 
 const noLongerAvailablePage = () =>
-  page('The room in the prison is no longer available', {
+  page('Rooms you have selected are no longer available', {
     continue: () => cy.get('.govuk-button'),
   })
 
