@@ -678,4 +678,17 @@ context('A user can add a video link', () => {
       newBookingForm.selectPostAppointmentLocation().should('have.value', '3')
     }
   })
+
+  it('A user will be navigated back to the prisoner search page', () => {
+    const offenderNo = 'A12345'
+    cy.task('stubLoginCourt', { preferredCourts: ['ABDRCT', 'BANBCT'] })
+    cy.login()
+    cy.task('stubGetRooms', { agencyId: 'MDI', rooms: allRooms })
+    cy.visit(`/MDI/offenders/${offenderNo}/new-court-appointment`)
+    cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
+
+    const newBookingPage = NewBookingPage.verifyOnPage()
+    newBookingPage.returnToPrisonerSearch().click()
+    PrisonerSearchPage.verifyOnPage()
+  })
 })
