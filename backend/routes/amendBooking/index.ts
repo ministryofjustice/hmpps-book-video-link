@@ -41,7 +41,7 @@ export default function createRoutes({ bookingService, availabilityCheckService,
     asyncMiddleware(videoLinkNotAvailable.submit())
   )
 
-  router.get('/room-no-longer-available/:bookingId', asyncMiddleware(roomNoLongerAvailable.view()))
+  router.get('/room-no-longer-available/:bookingId', checkUpdatePresent, asyncMiddleware(roomNoLongerAvailable.view()))
 
   router.get('/confirm-updated-booking/:bookingId', checkUpdatePresent, asyncMiddleware(confirmUpdatedBooking.view()))
   router.post(

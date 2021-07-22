@@ -71,6 +71,7 @@ export default function createRoutes(services: Services): Router {
     const { view } = new RoomNoLongerAvailableController()
     router.get(
       '/:agencyId/offenders/:offenderNo/add-court-appointment/video-link-no-longer-available',
+      checkNewBookingPresent,
       asyncMiddleware(view)
     )
   }
