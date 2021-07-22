@@ -117,10 +117,10 @@ workflows:
           name: helm_lint
       - hmpps/build_docker:
           name: build_docker
-#          filters:
-#            branches:
-#              only:
-#                - main
+          filters:
+            branches:
+              only:
+                - main
       - hmpps/deploy_env:
           name: deploy_dev
           env: 'dev'
@@ -131,19 +131,15 @@ workflows:
             - unit_test
             - integration_test
             - build_docker
-#          filters:
-#            branches:
-#              only:
-#                - main
+          filters:
+            branches:
+              only:
+                - main
 
       - request-preprod-approval:
           type: approval
           requires:
             - deploy_dev
-          filters:
-            branches:
-              only:
-                - main
       - hmpps/deploy_env:
           name: deploy_preprod
           env: 'preprod'
