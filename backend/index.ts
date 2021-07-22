@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 /* eslint-disable import/order */
+import 'dotenv/config'
 import { initialiseAppInsights } from './azure-appinsights'
 
 initialiseAppInsights()
