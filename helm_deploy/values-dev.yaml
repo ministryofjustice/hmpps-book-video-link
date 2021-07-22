@@ -32,4 +32,4 @@ env:
   VLBEVENT_EXPORT_SPREADSHEET_ID: "18BcOjlGlVfK8Qr3V3fhqdfYj4XEUfQGRIcJwzJ3BB-Y"
 
 jobs:
-  suspend: false
+  cronspec: "59 * * * *"

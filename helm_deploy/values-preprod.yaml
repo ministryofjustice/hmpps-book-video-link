@@ -32,7 +32,7 @@ env:
   VLBEVENT_EXPORT_SPREADSHEET_ID: "1QkmfjkUYmx2tGxyHHWGzfCQfRVph3Sa6e0vF5XDnBqA"
 
 jobs:
-  suspend: false
+  cronspec: "59 * * * *"
 
 whitelist:
   cloudplatform-live1-1: 35.178.209.113/32
