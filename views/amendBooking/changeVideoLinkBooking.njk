@@ -23,7 +23,7 @@
 
 {% block content %}
 
-    <div class="govuk-grid-row govuk-!-padding-left-6">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             {% if errors.length > 0 %}
@@ -40,13 +40,13 @@
             {{
                 govukSummaryList({
                 classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
-                rows: prisoner | toSummaryViewModel | removePaddingBottom
+                rows: prisoner | toSummaryViewModel
                 })
             }}
             {{
                 govukSummaryList({
                 classes: 'govuk-summary-list--no-border govuk-!-margin-bottom-0',
-                rows: locations | toSummaryViewModel | removePaddingBottom
+                rows: locations | toSummaryViewModel 
                 })
             }}
             {% if courts.length === 1 %}
@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <div class="govuk-grid-row govuk-!-padding-left-6">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <form method="POST" novalidate="novalidate">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -82,7 +82,7 @@
                         classes: "qa-court-value",
                         label: {
                             text: "Which court is the hearing for?",
-                            classes: "govuk-!-margin-top-8"
+                            classes: "govuk-!-margin-top-6"
                             },
                         items: courts | setSelected(form.courtId),
                         errorMessage: errors | findError("courtId")
