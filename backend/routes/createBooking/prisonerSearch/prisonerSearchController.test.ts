@@ -159,7 +159,7 @@ describe('Video link prisoner search', () => {
                   },
                   {
                     addAppointmentHTML:
-                      '<a href="/MDI/offenders/A0011GZ/new-court-appointment" class="govuk-link" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for Test Offender, prison number A0011GZ</span></a>',
+                      '<a href="/MDI/offenders/A0011GZ/new-court-appointment" class="govuk-link govuk-link--no-visited-state" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for Test Offender, prison number A0011GZ</span></a>',
                     dob: '17 July 1981',
                     name: 'Test Offender',
                     offenderNo: 'A0011GZ',
@@ -192,7 +192,7 @@ describe('Video link prisoner search', () => {
                       pncNumber: '--',
                       prisonId: 'MDI',
                       addAppointmentHTML:
-                        '<a href="/MDI/offenders/A0011GZ/new-court-appointment" class="govuk-link" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for Test Offender, prison number A0011GZ</span></a>',
+                        '<a href="/MDI/offenders/A0011GZ/new-court-appointment" class="govuk-link govuk-link--no-visited-state" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for Test Offender, prison number A0011GZ</span></a>',
                     },
                   ],
                 })
