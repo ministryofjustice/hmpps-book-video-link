@@ -51,7 +51,7 @@ export default class EventsPusher {
               values: events,
             },
           ],
-          valueInputOption: 'RAW',
+          valueInputOption: 'USER_ENTERED',
         },
       })
       logger.info(result?.data?.responses || 'EventsPusher: Finished. No response from sheets API')
