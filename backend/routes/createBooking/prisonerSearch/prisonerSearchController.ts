@@ -17,7 +17,7 @@ export default class PrisonerSearchController {
       let searchResults = []
       const hasSearched = Boolean(Object.keys(req.query).length)
       const formValues = trimObjectValues(req.query)
-      const { firstName, lastName, prisonNumber, dobDay, dobMonth, dobYear, prison } = formValues
+      const { firstName, lastName, prisonNumber, pncNumber, dobDay, dobMonth, dobYear, prison } = formValues
       const errors = hasSearched ? videolinkPrisonerSearchValidation.validate(formValues) : []
 
       if (hasSearched && !errors.length) {
@@ -27,10 +27,12 @@ export default class PrisonerSearchController {
           res.locals,
           {
             offenderNo: prisonNumber,
+            pncNumber,
             lastName,
             firstName,
             dateOfBirth: dobIsValid ? dateOfBirth.format('YYYY-MM-DD') : undefined,
             location: 'IN',
+            prioritisedMatch: true,
           },
           1000
         )
@@ -45,7 +47,7 @@ export default class PrisonerSearchController {
         results: searchResults
           .filter(result => (prison ? prison === result.latestLocationId : result))
           .map(result => {
-            const { offenderNo, latestLocationId, pncNumber } = result
+            const { offenderNo, latestLocationId } = result
             const name = formatName(result.firstName, result.lastName)
 
             return {
@@ -54,7 +56,7 @@ export default class PrisonerSearchController {
               dob: result.dateOfBirth ? moment(result.dateOfBirth).format('D MMMM YYYY') : undefined,
               prison: result.latestLocation,
               prisonId: latestLocationId,
-              pncNumber: pncNumber || '--',
+              pncNumber: result.pncNumber || '--',
               addAppointmentHTML: config.app.videoLinkEnabledFor.includes(latestLocationId)
                 ? `<a href="/${latestLocationId}/offenders/${offenderNo}/new-court-appointment" class="govuk-link govuk-link--no-visited-state" data-qa="book-vlb-link">Book video link<span class="govuk-visually-hidden"> for ${name}, prison number ${offenderNo}</span></a>`
                 : '',

@@ -36,7 +36,9 @@ context('A user can search for an offender', () => {
     cy.task('stubPrisonApiGlobalSearch')
     cy.visit('/prisoner-search')
     cy.get('button').click()
-    cy.get('.govuk-error-summary').contains("You must search using either the prisoner's last name or prison number")
+    cy.get('.govuk-error-summary').contains(
+      "You must search using either the prisoner's last name, prison number or PNC Number"
+    )
   })
 
   it('should handle missing dob fields', () => {

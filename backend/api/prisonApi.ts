@@ -6,12 +6,14 @@ import Client, { Context } from './oauthEnabledClient'
 
 type GlobalSearchRequest = {
   offenderNo: string
+  pncNumber: string
   lastName: string
   firstName: string
   gender?: 'F' | 'M' | 'NK' | 'NS'
   location: 'IN' | 'OUT' | 'ALL'
   dateOfBirth: string
   includeAliases?: boolean
+  prioritisedMatch: boolean
 }
 
 export default class PrisonApi {
@@ -41,10 +43,21 @@ export default class PrisonApi {
   }
 
   public globalSearch(context: Context, params: GlobalSearchRequest, resultsLimit: number): Promise<PrisonerDetail[]> {
-    const { offenderNo, lastName, firstName, gender, location, dateOfBirth, includeAliases } = params
+    const {
+      offenderNo,
+      pncNumber,
+      lastName,
+      firstName,
+      gender,
+      location,
+      dateOfBirth,
+      includeAliases,
+      prioritisedMatch,
+    } = params
 
     const searchParams = mapToQueryString({
       offenderNo,
+      pncNumber,
       lastName,
       firstName,
       gender,
@@ -52,6 +65,7 @@ export default class PrisonApi {
       dob: dateOfBirth,
       partialNameMatch: false,
       includeAliases,
+      prioritisedMatch,
     })
     return this.get(context, `/api/prisoners?${searchParams}`, resultsLimit)
   }
