@@ -8,16 +8,16 @@ import type LocationService from './locationService'
 import type AvailabilityCheckService from './availabilityCheckService'
 
 import type {
+  AvailabilityStatus,
   BookingDetails,
-  OffenderIdentifiers,
+  BookingUpdate,
   Context,
   NewBooking,
-  BookingUpdate,
-  AvailabilityStatus,
+  OffenderIdentifiers,
 } from './model'
 
-import { DATE_TIME_FORMAT_SPEC, DATE_ONLY_LONG_FORMAT_SPEC, Time } from '../shared/dateHelpers'
-import { formatName, isNullOrUndefined } from '../utils'
+import { DATE_ONLY_LONG_FORMAT_SPEC, DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
+import { formatName } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 

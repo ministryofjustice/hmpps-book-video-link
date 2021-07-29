@@ -1,22 +1,40 @@
-import { notifications } from '../config'
 import log from '../log'
-import { Context, BookingDetails, UpdateEmail, RequestEmail, Recipient, EmailSpec, CreateEmail } from './model'
+import {
+  BookingDetails,
+  Context,
+  CreateEmail,
+  EmailSpec,
+  Recipient,
+  RecipientEmailSpec,
+  RequestEmail,
+  UpdateEmail,
+} from './model'
 import BookingRequest from './emails/BookingRequest'
 import BookingUpdated from './emails/BookingUpdate'
 import BookingCancellation from './emails/BookingCancellation'
 import BookingCreation from './emails/BookingCreation'
+import type PrisonRegisterApi from '../api/prisonRegisterApi'
+
+interface UserDetails {
+  email: string
+  name: string
+}
 
 export default class NotificationService {
-  constructor(private readonly oauthApi: any, private readonly notifyApi: any) {}
+  constructor(
+    private readonly oauthApi: any,
+    private readonly notifyApi: any,
+    private readonly prisonRegisterApi: PrisonRegisterApi
+  ) {}
 
-  private sendEmail({ templateId, email, personalisation }): Promise<void> {
-    return this.notifyApi.sendEmail(templateId, email, {
+  private async sendEmail({ templateId, emailAddress, personalisation }): Promise<void> {
+    return this.notifyApi.sendEmail(templateId, emailAddress, {
       personalisation,
       reference: null,
     })
   }
 
-  private async getUserDetails(context: Context, username: string) {
+  private async getUserDetails(context: Context, username: string): Promise<UserDetails> {
     const [{ email }, { name }] = await Promise.all([
       this.oauthApi.userEmail(context, username),
       this.oauthApi.userDetails(context, username),
@@ -24,37 +42,61 @@ export default class NotificationService {
     return { email, name }
   }
 
-  private getEmailAddress(recipient: Recipient, agencyId: string, userEmail: string): string {
+  private async getEmailAddress(
+    context: Context,
+    recipient: Recipient,
+    agencyId: string,
+    userEmail: string
+  ): Promise<string> {
     switch (recipient) {
       case 'user':
         return userEmail
       case 'omu':
-        return notifications.emails[agencyId]?.omu
+        return this.prisonRegisterApi.getOffenderManagementUnitEmailAddress(context, agencyId)
       case 'vlb':
-        return notifications.emails[agencyId]?.vlb
+        return this.prisonRegisterApi.getVideoLinkConferencingCentreEmailAddress(context, agencyId)
       default:
         throw new Error(`could not send email to ${recipient}`)
     }
   }
 
-  private async sendEmails(context: Context, username: string, spec: EmailSpec): Promise<void> {
-    const { email: userEmail, name: usersName } = await this.getUserDetails(context, username)
+  private async sendEmails(context: Context, username: string, emailSpec: EmailSpec): Promise<void> {
+    const userDetails = await this.getUserDetails(context, username)
+    const recipientEmailer = recipientEmailSpec =>
+      this.emailToRecipient(context, recipientEmailSpec, userDetails, emailSpec)
+    await Promise.all(emailSpec.recipients.map(recipientEmailer))
+  }
 
-    spec.recipients.forEach(email => {
-      const emailAddress = this.getEmailAddress(email.recipient, spec.agencyId, userEmail)
-      if (emailAddress) {
-        this.sendEmail({
-          templateId: email.template,
-          email: emailAddress,
-          personalisation: email.personalisation(usersName),
-        }).catch(error => {
-          log.error(
-            `Failed to email the ${email.recipient} a ${spec.name}: ${error.message}`,
-            error.response?.data?.errors
-          )
-        })
+  private async emailToRecipient(
+    context: Context,
+    recipientEmailSpec: RecipientEmailSpec,
+    userDetails: UserDetails,
+    emailSpec: EmailSpec
+  ): Promise<void> {
+    try {
+      const emailAddress = await this.getEmailAddress(
+        context,
+        recipientEmailSpec.recipient,
+        emailSpec.agencyId,
+        userDetails.email
+      )
+
+      if (!emailAddress) {
+        return Promise.resolve()
       }
-    })
+
+      return this.sendEmail({
+        templateId: recipientEmailSpec.template,
+        emailAddress,
+        personalisation: recipientEmailSpec.personalisation(userDetails.name),
+      })
+    } catch (error) {
+      log.error(
+        `Failed to email the ${recipientEmailSpec.recipient} a ${emailSpec.name}: ${error.message}`,
+        error.response?.data?.errors
+      )
+      return Promise.resolve()
+    }
   }
 
   public async sendBookingCreationEmails(context: Context, username: string, details: CreateEmail): Promise<void> {

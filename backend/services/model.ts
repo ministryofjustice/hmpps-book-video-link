@@ -155,12 +155,14 @@ export type RequestEmail = {
 
 export type Recipient = 'omu' | 'vlb' | 'user'
 
+export type RecipientEmailSpec = {
+  recipient: Recipient
+  template: string
+  personalisation: (usersName: string) => Record<string, unknown>
+}
+
 export type EmailSpec = {
   name: string
   agencyId: string
-  recipients: {
-    recipient: Recipient
-    template: string
-    personalisation: (usersName: string) => Record<string, unknown>
-  }[]
+  recipients: RecipientEmailSpec[]
 }
