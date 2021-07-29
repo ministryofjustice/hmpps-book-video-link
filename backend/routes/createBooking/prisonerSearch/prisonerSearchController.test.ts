@@ -70,7 +70,7 @@ describe('Video link prisoner search', () => {
               dateOfBirth: '1980-07-17',
               latestLocationId: 'LEI',
               latestLocation: 'Leeds',
-              pncNumber: '1/2345',
+              pncNumber: '01/2345A',
             },
             {
               offenderNo: 'A0011GZ',
@@ -104,6 +104,32 @@ describe('Video link prisoner search', () => {
               'createBooking/prisonerSearch.njk',
               expect.objectContaining({
                 formValues: { prisonNumber },
+                hasSearched: true,
+              })
+            )
+          })
+        })
+
+        describe('with a PNC number only', () => {
+          const pncNumber = '01/2345A'
+
+          it('should make the correct search', async () => {
+            req.query = { pncNumber }
+
+            await controller.submit()(req, res, null)
+
+            expect(prisonApi.globalSearch).toHaveBeenCalledWith(
+              res.locals,
+              {
+                pncNumber: '01/2345A',
+                location: 'IN',
+              },
+              1000
+            )
+            expect(res.render).toHaveBeenCalledWith(
+              'createBooking/prisonerSearch.njk',
+              expect.objectContaining({
+                formValues: { pncNumber },
                 hasSearched: true,
               })
             )
@@ -153,7 +179,7 @@ describe('Video link prisoner search', () => {
                     dob: '17 July 1980',
                     name: 'Test Offender',
                     offenderNo: 'G0011GX',
-                    pncNumber: '1/2345',
+                    pncNumber: '01/2345A',
                     prison: 'Leeds',
                     prisonId: 'LEI',
                   },

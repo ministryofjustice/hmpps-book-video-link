@@ -6,6 +6,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set title = 'Search for a prisoner' %}
 
@@ -26,9 +27,9 @@
     {{title}}
   </h1>
 
-  <p class="govuk-body">
-    <a href="/request-booking" class="govuk-link govuk-link--no-visited-state">This person is not currently in prison</a>
-  </p>
+  {{ govukInsetText({
+    html: "<p class='govuk-body'>This page can only be used to search for a person who is already in prison.</p><a href='/request-booking' class='govuk-link govuk-link--no-visited-state'>Request a video link for someone not currently in prison</a>"
+  }) }}
 
   <form novalidate="novalidate">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
@@ -54,8 +55,53 @@
       classes: 'govuk-!-width-one-third'
     }) }}
 
+    {{ govukDateInput({
+      id: "dob",
+      fieldset: {
+      legend: {
+          text: "Date of birth (optional)"
+        }
+      },
+      errorMessage: errors | findErrors(['dobDay', 'dobMonth', 'dobYear']),
+      hint: {
+        text: "For example, 31 3 1980"
+      },
+      items: [
+        {
+          id: "dobDay",
+          name: "dobDay",
+          label: "Day",
+          classes: "govuk-input--width-2" + errorClass('dobDay'),
+          value: formValues.dobDay
+        },
+        {
+          id: "dobMonth",
+          name: "dobMonth",
+          label: "Month",
+          classes: "govuk-input--width-2" + errorClass('dobMonth'),
+          value: formValues.dobMonth
+        },
+        {
+          id: "dobYear",
+          name: "dobYear",
+          label: "Year",
+          classes: "govuk-input--width-4" + errorClass('dobYear'),
+          value: formValues.dobYear
+        }
+      ]
+    }) }}
+
+    {{ govukSelect({
+      id: "prison",
+      name: "prison",
+      label: {
+        text: "Prison (optional)"
+      },
+      items: agencyOptions | addDefaultSelectedVale('Select', true) | setSelected(formValues.prison)
+    }) }}
+
     {% set otherSearchDetails %}
-      <p class="govuk-hint">Your search must include either a name or prison number</p>
+      <p class="govuk-hint">Your search must include either a name, prison number or PNC number</p>
     
       {{ govukInput({
         id: "prisonNumber",
@@ -71,55 +117,23 @@
         classes: 'govuk-!-width-one-third'
       }) }}
 
-      {{ govukDateInput({
-        id: "dob",
-        fieldset: {
-          legend: {
-            text: "Date of birth (optional)",
-            classes: "govuk-fieldset__legend--s"
-          }
-        },
-        errorMessage: errors | findErrors(['dobDay', 'dobMonth', 'dobYear']),
+      {{ govukInput({
+        id: "pncNumber",
+        name: "pncNumber",
         hint: {
-          text: "For example, 31 3 1980"
+          text: "Enter in the format '01/123456A'"
         },
-        items: [
-          {
-            id: "dobDay",
-            name: "dobDay",
-            label: "Day",
-            classes: "govuk-input--width-2" + errorClass('dobDay'),
-            value: formValues.dobDay
-          },
-          {
-            id: "dobMonth",
-            name: "dobMonth",
-            label: "Month",
-            classes: "govuk-input--width-2" + errorClass('dobMonth'),
-            value: formValues.dobMonth
-          },
-          {
-            id: "dobYear",
-            name: "dobYear",
-            label: "Year",
-            classes: "govuk-input--width-4" + errorClass('dobYear'),
-            value: formValues.dobYear
-          }
-        ]
-      }) }}
-
-      {{ govukSelect({
-        id: "prison",
-        name: "prison",
+        value: formValues.pncNumber,
+        errorMessage: errors | findError('pncNumber'),
         label: {
-          text: "Prison (optional)"
+            text: "PNC number"
         },
-        items: agencyOptions | addDefaultSelectedVale('Select', true) | setSelected(formValues.prison)
+        classes: 'govuk-!-width-one-third'
       }) }}
     {% endset %}
 
     {{ govukDetails({
-      summaryText: "Search using other details",
+      summaryText: "Search using prison number or PNC number",
       html: otherSearchDetails,
       open: hasOtherSearchDetails,
       attributes: { "data-qa": "other-search-details" }
