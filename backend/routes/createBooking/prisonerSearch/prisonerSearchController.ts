@@ -32,7 +32,6 @@ export default class PrisonerSearchController {
             firstName,
             dateOfBirth: dobIsValid ? dateOfBirth.format('YYYY-MM-DD') : undefined,
             location: 'IN',
-            prioritisedMatch: true,
           },
           1000
         )

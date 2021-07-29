@@ -97,7 +97,6 @@ describe('Video link prisoner search', () => {
               {
                 offenderNo: 'G0011GX',
                 location: 'IN',
-                prioritisedMatch: true,
               },
               1000
             )
@@ -124,7 +123,6 @@ describe('Video link prisoner search', () => {
               {
                 pncNumber: '01/2345A',
                 location: 'IN',
-                prioritisedMatch: true,
               },
               1000
             )
@@ -155,7 +153,6 @@ describe('Video link prisoner search', () => {
                 lastName: 'Offender',
                 firstName: 'Test',
                 location: 'IN',
-                prioritisedMatch: true,
               },
               1000
             )

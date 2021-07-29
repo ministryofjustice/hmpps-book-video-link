@@ -13,7 +13,6 @@ type GlobalSearchRequest = {
   location: 'IN' | 'OUT' | 'ALL'
   dateOfBirth: string
   includeAliases?: boolean
-  prioritisedMatch: boolean
 }
 
 export default class PrisonApi {
@@ -43,17 +42,7 @@ export default class PrisonApi {
   }
 
   public globalSearch(context: Context, params: GlobalSearchRequest, resultsLimit: number): Promise<PrisonerDetail[]> {
-    const {
-      offenderNo,
-      pncNumber,
-      lastName,
-      firstName,
-      gender,
-      location,
-      dateOfBirth,
-      includeAliases,
-      prioritisedMatch,
-    } = params
+    const { offenderNo, pncNumber, lastName, firstName, gender, location, dateOfBirth, includeAliases } = params
 
     const searchParams = mapToQueryString({
       offenderNo,
@@ -65,7 +54,7 @@ export default class PrisonApi {
       dob: dateOfBirth,
       partialNameMatch: false,
       includeAliases,
-      prioritisedMatch,
+      prioritisedMatch: true,
     })
     return this.get(context, `/api/prisoners?${searchParams}`, resultsLimit)
   }
