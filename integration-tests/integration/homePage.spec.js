@@ -61,4 +61,17 @@ context('A user can view the video link home page', () => {
     homePage.manageCourtsListTitle().click()
     ManageCourtsPage.verifyOnPage()
   })
+
+  it('should display the feedback banner with the correct href', () => {
+    const homePage = HomePage.goTo()
+
+    homePage
+      .feedbackBanner()
+      .find('a')
+      .should('contain', 'Give feedback on this service')
+      .should('have.attr', 'href')
+      .then(href => {
+        expect(href).to.equal('https://eu.surveymonkey.com/r/GYB8Y9Q?source=localhost/')
+      })
+  })
 })

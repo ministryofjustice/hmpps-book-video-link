@@ -13,6 +13,7 @@ $govuk-page-width: 1170px;
 
 @import 'views/components/datePicker/datePicker.scss';
 @import 'views/components/timePicker/timePicker.scss';
+@import 'views/components/feedbackBanner/feedbackBanner.scss';
 @import 'govuk-overrides';
 @import 'moj-overrides';
 @import 'typography';

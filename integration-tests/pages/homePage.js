@@ -5,6 +5,7 @@ const courtVideoLinkHomePage = () =>
     bookingTitle: () => cy.get('[data-qa="bookings-link"]'),
     appointmentsListTitle: () => cy.get('[data-qa="appointments-link"]'),
     manageCourtsListTitle: () => cy.get('[data-qa="manage-courts-link"]'),
+    feedbackBanner: () => cy.get('[data-qa="feedback-banner"]'),
     courtServiceFooter: () => cy.get('.qa-court-service-footer'),
     loggedInName: () => cy.get('[data-qa="logged-in-name"]'),
   })
