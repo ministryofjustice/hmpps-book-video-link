@@ -34,4 +34,7 @@ const job = async () => {
   await pusher.pushEvents(events)
 }
 
-job().catch(error => logger.error(error))
+job().catch(error => {
+  process.exitCode = 1
+  logger.error(error)
+})
