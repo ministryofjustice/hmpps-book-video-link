@@ -13,6 +13,7 @@ export default function setupCurrentUserAndRequestLogging({ oauthApi, manageCour
     res.locals = {
       ...res.locals,
       currentUrlPath: req.originalUrl,
+      hostname: req.hostname,
     }
     next()
   })
