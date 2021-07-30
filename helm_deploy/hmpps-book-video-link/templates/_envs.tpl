@@ -93,7 +93,7 @@ env:
     value: {{ .Values.env.API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL | quote }}    
 
   - name: API_PRISON_REGISTER_ENDPOINT_URL
-    value {{ .Values.env.API_PRISON_REGISTER_ENDPOINT_URL | quote }}
+    value: {{ .Values.env.API_PRISON_REGISTER_ENDPOINT_URL | quote }}
 
   - name: REMOTE_AUTH_STRATEGY
     value: {{ .Values.env.REMOTE_AUTH_STRATEGY | quote }}
