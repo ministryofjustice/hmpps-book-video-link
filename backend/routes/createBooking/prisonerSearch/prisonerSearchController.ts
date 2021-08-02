@@ -62,7 +62,7 @@ export default class PrisonerSearchController {
             }
           }),
         hasSearched,
-        hasOtherSearchDetails: prisonNumber || dobDay || dobMonth || dobYear || prison,
+        hasOtherSearchDetails: prisonNumber || pncNumber,
       })
     }
   }
