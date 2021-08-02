@@ -15,6 +15,7 @@ context('Health page reports health correctly', () => {
         tokenverification: 'UP',
         whereabouts: 'UP',
         prisonerOffenderSearch: 'UP',
+        prisonRegister: 'UP',
       })
     })
   })
@@ -33,6 +34,7 @@ context('Health page reports health correctly', () => {
         tokenverification: 'UP',
         whereabouts: 'UP',
         prisonerOffenderSearch: 'UP',
+        prisonRegister: 'UP',
       })
     })
   })
