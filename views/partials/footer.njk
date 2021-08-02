@@ -1,4 +1,13 @@
 {% from "govuk/components/footer/macro.njk" import govukFooter %}
+{% from "../components/feedbackBanner/feedbackBanner.njk" import feedbackBanner %}
+
+{{ 
+  feedbackBanner({
+    feedbackBannerAdditionalClasses: feedbackBannerBackground,
+    currentUrlPath: currentUrlPath,
+    hostname: hostname
+  })
+}}
 
 {% include "../components/feedbackBanner/feedbackBanner.njk" %}
 
