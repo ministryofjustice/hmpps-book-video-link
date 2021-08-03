@@ -438,6 +438,10 @@ context('A user can add a video link', () => {
 
     const notAvailablePage = NotAvailablePage.verifyOnPage()
     notAvailablePage.info().contains(`There are no video link bookings available at that time in the rooms selected.`)
+    notAvailablePage.details().click()
+    notAvailablePage.detailsSummaryText().contains(`What to do if you can't find a booking`)
+    notAvailablePage.detailsTextFirst().contains(`You should contact the prison you're trying to book a room in.`)
+    notAvailablePage.detailsTextSecond().contains(`They may be able to find an alternative room for your booking.`)
   })
 
   it('A user is redirected when option not available and then chooses alternative', () => {
@@ -477,6 +481,10 @@ context('A user can add a video link', () => {
 
     const notAvailablePage = NotAvailablePage.verifyOnPage()
     notAvailablePage.info().contains(`There are no video link bookings available at that time in the rooms selected.`)
+    notAvailablePage.details().click()
+    notAvailablePage.detailsSummaryText().contains(`What to do if you can't find a booking`)
+    notAvailablePage.detailsTextFirst().contains(`You should contact the prison you're trying to book a room in.`)
+    notAvailablePage.detailsTextSecond().contains(`They may be able to find an alternative room for your booking.`)
     notAvailablePage.selectAlternative(1)
 
     const confirmBookingPage = ConfirmBookingPage.verifyOnPage()

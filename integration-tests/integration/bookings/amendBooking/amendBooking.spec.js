@@ -510,6 +510,14 @@ context('A user can amend a booking', () => {
     videoLinkNotAvailablePage
       .info()
       .contains(`There are no video link bookings available at that time in the rooms selected.`)
+    videoLinkNotAvailablePage.details().click()
+    videoLinkNotAvailablePage.detailsSummaryText().contains(`What to do if you can't find a booking`)
+    videoLinkNotAvailablePage
+      .detailsTextFirst()
+      .contains(`You should contact the prison you're trying to book a room in.`)
+    videoLinkNotAvailablePage
+      .detailsTextSecond()
+      .contains(`They may be able to find an alternative room for your booking.`)
     videoLinkNotAvailablePage.selectAlternative(1)
 
     const confirmUpdatedBookingPage = ConfirmUpdatedBookingPage.verifyOnPage()
