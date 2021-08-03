@@ -23,7 +23,6 @@ const startPage = () =>
     returnToPrisonerSearch: () => cy.get("[data-qa='return-to-prisoner-search']"),
     datePicker: () => cy.get('#ui-datepicker-div'),
     activeDate: () => cy.get('.ui-state-active'),
-    errorSummary: () => cy.get('.govuk-error-summary'),
   })
 
 export default {
