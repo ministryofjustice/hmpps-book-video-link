@@ -33,6 +33,7 @@ env:
 
 jobs:
   cronspec: "59 * * * *"
+  alertChannel: digital-prison-service-dev
 
 whitelist:
   cloudplatform-live1-1: 35.178.209.113/32
