@@ -7,7 +7,6 @@ const otherCourtPage = () =>
       submitButton: () => cy.get('button[type="submit"]'),
       cancelButton: () => cy.get('.govuk-button--secondary'),
     }),
-    errorSummary: () => cy.get('.govuk-error-summary'),
   })
 
 export default {

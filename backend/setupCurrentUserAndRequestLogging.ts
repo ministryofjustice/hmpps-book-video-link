@@ -12,7 +12,7 @@ export default function setupCurrentUserAndRequestLogging({ oauthApi, manageCour
   router.use(async (req, res, next) => {
     res.locals = {
       ...res.locals,
-      currentUrlPath: req.originalUrl,
+      currentUrlPath: req.baseUrl + req.path,
       hostname: req.hostname,
     }
     next()

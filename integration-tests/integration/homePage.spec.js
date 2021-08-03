@@ -66,8 +66,7 @@ context('A user can view the video link home page', () => {
     const homePage = HomePage.goTo()
 
     homePage
-      .feedbackBanner()
-      .find('a')
+      .feedbackBannerLink()
       .should('contain', 'Give feedback on this service')
       .should('have.attr', 'href')
       .then(href => {
