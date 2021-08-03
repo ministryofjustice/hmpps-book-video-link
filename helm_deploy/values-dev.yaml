@@ -33,3 +33,4 @@ env:
 
 jobs:
   cronspec: "59 * * * *"
+  alertChannel: digital-prison-service-dev
