@@ -54,7 +54,6 @@ export default class PrisonApi {
       dob: dateOfBirth,
       partialNameMatch: false,
       includeAliases,
-      prioritisedMatch: true,
     })
     return this.get(context, `/api/prisoners?${searchParams}`, resultsLimit)
   }
