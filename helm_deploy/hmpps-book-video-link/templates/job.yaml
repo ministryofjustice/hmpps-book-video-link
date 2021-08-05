@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: update-events-job
+  name: {{ template "app.name" . }}-update-events
   labels:
   {{- include "app.labels" . | nindent 4 }}
 spec:
