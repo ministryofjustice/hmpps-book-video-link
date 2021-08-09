@@ -4,6 +4,7 @@ const HomePage = require('../pages/homePage')
 const PrisonerSearchPage = require('../pages/createBooking/prisonerSearchPage')
 const CourtVideoBookingsPage = require('../pages/viewBookings/courtVideoBookingsPage')
 const ManageCourtsPage = require('../pages/manageCourts/manageCourtsPage')
+const HelpPage = require('../pages/helpPage')
 
 context('A user can view the video link home page', () => {
   beforeEach(() => {
@@ -60,6 +61,12 @@ context('A user can view the video link home page', () => {
     const homePage = HomePage.goTo()
     homePage.manageCourtsListTitle().click()
     ManageCourtsPage.verifyOnPage()
+  })
+
+  it('A user is taken to the help page', () => {
+    const homePage = HomePage.goTo()
+    homePage.getHelpLink().click()
+    HelpPage.verifyOnPage()
   })
 
   it('should display the feedback banner with the correct href', () => {
