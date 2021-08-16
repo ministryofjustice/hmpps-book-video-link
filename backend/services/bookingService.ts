@@ -109,7 +109,7 @@ export = class BookingService {
 
     const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId)
 
-    // Fire and forget.
+    // Do not await the result of this call: Fire and forget.
     this.notificationService.sendBookingCreationEmails(context, currentUsername, {
       agencyId,
       court: court.name,
@@ -195,7 +195,7 @@ export = class BookingService {
     const court = await this.locationService.getVideoLinkEnabledCourt(context, update.courtId)
     const { bookingDescription: description } = await this.locationService.createRoomFinder(context, existing.agencyId)
 
-    // Fire and forget.
+    // Do not await the result of this call: Fire and forget.
     this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       offenderNo: existing.offenderNo,
       agencyId: existing.agencyId,
@@ -233,7 +233,8 @@ export = class BookingService {
     const existing = await this.get(context, videoBookingId)
     await this.whereaboutsApi.updateVideoLinkBookingComment(context, videoBookingId, comment)
 
-    // Fire and forget.
+    // Do not await the result of this call: Fire and forget.
+
     this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       ...existing,
       comments: comment,
