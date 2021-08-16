@@ -48,7 +48,7 @@ export = class BookingService {
     }
   }
 
-  private toNewAppointment(appointment: AppointmentDetail): NewAppointment {
+  private static toNewAppointment(appointment: AppointmentDetail): NewAppointment {
     return {
       locationId: appointment.locationId,
       startTime: appointment.start.format(DATE_TIME_FORMAT_SPEC),
@@ -70,8 +70,7 @@ export = class BookingService {
     })
 
     if (status === 'AVAILABLE') {
-      const newBookingId = await this.createBooking(context, currentUsername, newBooking)
-      return newBookingId
+      return this.createBooking(context, currentUsername, newBooking)
     }
     return false
   }
@@ -103,14 +102,15 @@ export = class BookingService {
       courtId,
       madeByTheCourt: true,
       ...(comment ? { comment } : {}),
-      main: this.toNewAppointment(mainAppointment),
-      ...(preAppointment ? { pre: this.toNewAppointment(preAppointment) } : {}),
-      ...(postAppointment ? { post: this.toNewAppointment(postAppointment) } : {}),
+      main: BookingService.toNewAppointment(mainAppointment),
+      ...(preAppointment ? { pre: BookingService.toNewAppointment(preAppointment) } : {}),
+      ...(postAppointment ? { post: BookingService.toNewAppointment(postAppointment) } : {}),
     })
 
     const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId)
 
-    await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
+    // Fire and forget.
+    this.notificationService.sendBookingCreationEmails(context, currentUsername, {
       agencyId,
       court: court.name,
       prison: agencyDetails.description,
@@ -195,7 +195,8 @@ export = class BookingService {
     const court = await this.locationService.getVideoLinkEnabledCourt(context, update.courtId)
     const { bookingDescription: description } = await this.locationService.createRoomFinder(context, existing.agencyId)
 
-    await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
+    // Fire and forget.
+    this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       offenderNo: existing.offenderNo,
       agencyId: existing.agencyId,
       prisonName: existing.prisonName,
@@ -231,7 +232,9 @@ export = class BookingService {
   ): Promise<void> {
     const existing = await this.get(context, videoBookingId)
     await this.whereaboutsApi.updateVideoLinkBookingComment(context, videoBookingId, comment)
-    await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
+
+    // Fire and forget.
+    this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
       ...existing,
       comments: comment,
       preDescription: existing.preDetails?.description,
@@ -243,7 +246,9 @@ export = class BookingService {
   public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {
     const details = await this.get(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)
-    await this.notificationService.sendCancellationEmails(context, currentUsername, details)
+
+    // Fire and forget.
+    this.notificationService.sendCancellationEmails(context, currentUsername, details)
     return {
       offenderNo: details.offenderNo,
       offenderName: details.prisonerName,
