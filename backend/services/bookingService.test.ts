@@ -25,7 +25,7 @@ jest.mock('../raiseAnalyticsEvent', () => ({
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
-const notificationService = new NotificationService(null, null) as jest.Mocked<NotificationService>
+const notificationService = new NotificationService(null, null, null) as jest.Mocked<NotificationService>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
 const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
@@ -302,6 +302,27 @@ describe('Booking service', () => {
         )
       })
 
+      it('should raise event despite notification service failure', async () => {
+        notificationService.sendBookingCreationEmails.mockRejectedValue(new Error())
+        await service.create(context, 'USER-1', {
+          offenderNo: 'AA1234AA',
+          agencyId: 'MDI',
+          courtId: 'CLDN',
+          comment: 'some comment',
+          mainStartTime: moment('2020-11-20T18:00:00'),
+          mainEndTime: moment('2020-11-20T19:00:00'),
+          pre: 1,
+          main: 2,
+          post: 3,
+        })
+
+        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
+          'VLB Appointments',
+          'Video link booked for City of London',
+          'Pre: Yes | Post: Yes'
+        )
+      })
+
       it('should raise event when neither pre and post', async () => {
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
@@ -507,6 +528,30 @@ describe('Booking service', () => {
       )
     })
 
+    it('Should call whereaboutsApi correctly when updating a comment even if notification service fails', async () => {
+      notificationService.sendBookingUpdateEmails.mockRejectedValue(new Error())
+
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'City of London', id: 'CLDN' })
+
+      await service.updateComments(context, 'A_USER', 1234, 'another comment')
+
+      expect(whereaboutsApi.updateVideoLinkBookingComment).toHaveBeenCalledWith(context, 1234, 'another comment')
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        ...bookingDetail,
+        comments: 'another comment',
+        preDescription: 'Vcc Room 3 - 17:45 to 18:00',
+        mainDescription: 'Vcc Room 1 - 18:00 to 19:00',
+        postDescription: 'Vcc Room 2 - 19:00 to 19:15',
+      })
+      expect(whereaboutsApi.getVideoLinkBooking.mock.invocationCallOrder[0]).toBeLessThan(
+        whereaboutsApi.updateVideoLinkBookingComment.mock.invocationCallOrder[0]
+      )
+    })
+
     it('Should call whereaboutsApi correctly when updating all appointments', async () => {
       availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
@@ -657,6 +702,48 @@ describe('Booking service', () => {
         postDescription: undefined,
       })
     })
+
+    it('Should complete when notification service fails', async () => {
+      notificationService.sendBookingUpdateEmails.mockRejectedValue(new Error())
+
+      availabilityCheckService.getAvailabilityStatus.mockResolvedValue('AVAILABLE')
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      locationService.getVideoLinkEnabledCourt.mockResolvedValue({ name: 'Westminster Crown Court', id: 'WMRCN' })
+
+      await service.update(context, 'A_USER', 1234, {
+        agencyId: 'WWI',
+        courtId: 'WMRCN',
+        comment: 'A comment',
+        date: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        startTime: moment('2020-11-20T09:00:00', DATE_TIME_FORMAT_SPEC, true),
+        endTime: moment('2020-11-20T10:00:00', DATE_TIME_FORMAT_SPEC, true),
+        mainLocation: 2,
+        preRequired: false,
+        postRequired: false,
+      })
+
+      expect(locationService.getVideoLinkEnabledCourt).toHaveBeenCalledWith(context, 'WMRCN')
+      expect(whereaboutsApi.updateVideoLinkBooking).toHaveBeenCalledWith(context, 1234, {
+        courtId: 'WMRCN',
+        comment: 'A comment',
+        main: { locationId: 2, startTime: '2020-11-20T09:00:00', endTime: '2020-11-20T10:00:00' },
+      })
+      expect(notificationService.sendBookingUpdateEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        agencyId: 'WWI',
+        courtLocation: 'Westminster Crown Court',
+        dateDescription: '20 November 2020',
+        offenderNo: 'A1234AA',
+        comments: 'A comment',
+        prisonName: 'some prison',
+        prisonerName: 'John Doe',
+        preDescription: undefined,
+        mainDescription: 'Vcc Room 2 - 09:00 to 10:00',
+        postDescription: undefined,
+      })
+    })
   })
 
   describe('Delete Booking', () => {
@@ -673,6 +760,22 @@ describe('Booking service', () => {
     }
 
     it('Should call whereaboutsApi and PrisonApi correctly when deleting a booking', async () => {
+      whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
+      prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
+      prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
+      whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+
+      await service.delete(context, 'A_USER', 1234)
+
+      expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
+      expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
+      expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
+      expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+    })
+
+    it('Should call whereaboutsApi and PrisonApi correctly when deleting a booking even when  notification service fails', async () => {
+      notificationService.sendCancellationEmails.mockRejectedValue(new Error())
+
       whereaboutsApi.getVideoLinkBooking.mockResolvedValue(videoLinkBooking)
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)

@@ -19,7 +19,7 @@ const errorLogger = error => {
   // Log it for information and pass it down the line
   // in case controllers want to do something specific.
   if (status === 404) {
-    logger.warn(`${error.response.req.method} ${error.response.req.path} No record found`)
+    logger.info(`${error.response.req.method} ${error.response.req.path} No record found`)
     return error
   }
 

@@ -2,6 +2,9 @@ import moment from 'moment'
 import { BookingDetails, UpdateEmail, RequestEmail, CreateEmail } from './model'
 import config from '../config'
 import NotificationService from './notificationService'
+import PrisonRegisterApi from '../api/prisonRegisterApi'
+
+jest.mock('../api/prisonRegisterApi')
 
 const oauthApi = {
   userDetails: jest.fn(),
@@ -12,14 +15,16 @@ const notifyApi = {
   sendEmail: jest.fn(),
 }
 
+const prisonRegisterApi = new PrisonRegisterApi(null) as jest.Mocked<PrisonRegisterApi>
+
 describe('Notification service', () => {
   const context = {}
   let notificationService: NotificationService
 
   beforeEach(() => {
-    notificationService = new NotificationService(oauthApi, notifyApi)
-    config.notifications.emails.WWI.omu = 'omu@prison.com'
-    config.notifications.emails.WWI.vlb = 'vlb@prison.com'
+    notificationService = new NotificationService(oauthApi, notifyApi, prisonRegisterApi)
+    prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockResolvedValue('omu@prison.com')
+    prisonRegisterApi.getVideoLinkConferencingCentreEmailAddress.mockResolvedValue('vlb@prison.com')
   })
 
   afterEach(() => {
@@ -233,7 +238,8 @@ describe('Notification service', () => {
     })
 
     it('Offender Management Unit email address is optional', async () => {
-      config.notifications.emails.WWI.omu = null
+      prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
+
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
@@ -417,7 +423,8 @@ describe('Notification service', () => {
     })
 
     it('Offender Management Unit email address is optional', async () => {
-      config.notifications.emails.WWI.omu = null
+      prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
+
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
@@ -578,7 +585,8 @@ describe('Notification service', () => {
     })
 
     it('Offender Management Unit email address is optional', async () => {
-      config.notifications.emails.WWI.omu = null
+      prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
+
       oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
       oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})

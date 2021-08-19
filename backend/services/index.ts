@@ -7,9 +7,17 @@ import ManageCourtsService from './manageCourtsService'
 import { roomFinderFactory } from './roomFinder'
 import AvailabilityCheckService from './availabilityCheckService'
 
-const { oauthApi, whereaboutsApi, prisonApi, notifyApi, prisonerOffenderSearchApi, userCourtPreferencesApi } = apis
+const {
+  oauthApi,
+  whereaboutsApi,
+  prisonApi,
+  notifyApi,
+  prisonerOffenderSearchApi,
+  userCourtPreferencesApi,
+  prisonRegisterApi,
+} = apis
 
-const notificationService = new NotificationService(oauthApi, notifyApi)
+const notificationService = new NotificationService(oauthApi, notifyApi, prisonRegisterApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)

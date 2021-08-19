@@ -1,6 +1,7 @@
 const { rmdir } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
+const prisonRegisterApi = require('../mockApis/prisonRegisterApi')
 const whereabouts = require('../mockApis/whereabouts')
 const tokenverification = require('../mockApis/tokenverification')
 const prisonerOffenderSearch = require('../mockApis/prisonerOffenderSearch')
@@ -27,6 +28,7 @@ module.exports = on => {
         whereabouts.stubHealth(),
         tokenverification.stubHealth(),
         prisonerOffenderSearch.stubHealth(),
+        prisonRegisterApi.stubHealth(),
       ]),
     getLoginUrl: auth.getLoginUrl,
     stubLoginCourt: ({ user = {}, preferredCourts = ['ABDRCT'] }) =>

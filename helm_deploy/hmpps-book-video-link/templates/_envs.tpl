@@ -58,90 +58,6 @@ env:
         name: {{ template "app.name" . }}
         key: NOTIFY_API_KEY
 
-  - name: WANDSWORTH_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: WANDSWORTH_OMU_EMAIL
-
-  - name: WANDSWORTH_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: WANDSWORTH_VLB_EMAIL
-
-  - name: HEWELL_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: HEWELL_OMU_EMAIL
-
-  - name: HEWELL_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: HEWELL_VLB_EMAIL
-
-  - name: THAMESIDE_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: THAMESIDE_OMU_EMAIL
-
-  - name: THAMESIDE_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: THAMESIDE_VLB_EMAIL
-
-  - name: BERWYN_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: BERWYN_OMU_EMAIL
-
-  - name: BERWYN_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: BERWYN_VLB_EMAIL
-
-  - name: NOTTINGHAM_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: NOTTINGHAM_OMU_EMAIL
-    
-  - name: NOTTINGHAM_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: NOTTINGHAM_VLB_EMAIL
-
-  - name: ELMLEY_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: ELMLEY_OMU_EMAIL
-    
-  - name: ELMLEY_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: ELMLEY_VLB_EMAIL
-
-  - name: BULLINGDON_OMU_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: BULLINGDON_OMU_EMAIL
-
-  - name: BULLINGDON_VLB_EMAIL
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: BULLINGDON_VLB_EMAIL
-
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
@@ -175,6 +91,9 @@ env:
 
   - name: API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL
     value: {{ .Values.env.API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL | quote }}    
+
+  - name: API_PRISON_REGISTER_ENDPOINT_URL
+    value: {{ .Values.env.API_PRISON_REGISTER_ENDPOINT_URL | quote }}
 
   - name: REMOTE_AUTH_STRATEGY
     value: {{ .Values.env.REMOTE_AUTH_STRATEGY | quote }}

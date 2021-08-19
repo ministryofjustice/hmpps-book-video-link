@@ -64,6 +64,10 @@ module.exports = {
     googleApi: {
       serviceAccountKey: process.env.GOOGLE_SERVICE_ACCOUNT_KEY,
     },
+    prisonRegister: {
+      url: process.env.API_PRISON_REGISTER_ENDPOINT_URL || 'http://localhost:8085/',
+      timeoutSeconds: toInt(process.env.API_PRISON_REGISTER_ENDPOINT_TIMEOUT_SECONDS, 30),
+    },
   },
 
   notifications: {
@@ -81,37 +85,6 @@ module.exports = {
 
     requestBookingCourtTemplateVLBAdminId: 'fab3084c-49bc-444e-acd7-030291978562',
     requestBookingCourtTemplateRequesterId: 'bc5f77eb-792b-4ae0-8216-3f9012bca220',
-
-    emails: {
-      WWI: {
-        omu: process.env.WANDSWORTH_OMU_EMAIL,
-        vlb: process.env.WANDSWORTH_VLB_EMAIL,
-      },
-      TSI: {
-        omu: process.env.THAMESIDE_OMU_EMAIL,
-        vlb: process.env.THAMESIDE_VLB_EMAIL,
-      },
-      HEI: {
-        omu: process.env.HEWELL_OMU_EMAIL,
-        vlb: process.env.HEWELL_VLB_EMAIL,
-      },
-      BWI: {
-        omu: process.env.BERWYN_OMU_EMAIL,
-        vlb: process.env.BERWYN_VLB_EMAIL,
-      },
-      NMI: {
-        omu: process.env.NOTTINGHAM_OMU_EMAIL,
-        vlb: process.env.NOTTINGHAM_VLB_EMAIL,
-      },
-      EYI: {
-        omu: process.env.ELMLEY_OMU_EMAIL,
-        vlb: process.env.ELMLEY_VLB_EMAIL,
-      },
-      BNI: {
-        omu: process.env.BULLINGDON_OMU_EMAIL,
-        vlb: process.env.BULLINGDON_VLB_EMAIL,
-      },
-    },
   },
 
   jobs: {

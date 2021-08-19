@@ -10,6 +10,7 @@ const health = healthFactory([
   { name: 'whereabouts', url: config.apis.whereabouts.url },
   { name: 'tokenverification', url: config.apis.tokenverification.url },
   { name: 'prisonerOffenderSearch', url: config.apis.prisonerOffenderSearch.url },
+  { name: 'prisonRegister', url: config.apis.prisonRegister.url },
 ])
 
 module.exports = () => {

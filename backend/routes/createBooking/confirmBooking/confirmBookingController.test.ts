@@ -98,8 +98,6 @@ describe('Select court appointment rooms', () => {
   describe('submit', () => {
     beforeEach(() => {
       res.redirect = jest.fn()
-      config.notifications.emails.WWI.omu = 'omu@prison.com'
-      config.notifications.emails.WWI.vlb = 'vlb@prison.com'
     })
 
     it('should redirect back when errors in request', async () => {
