@@ -154,6 +154,7 @@ describe('Test clients built by oauthEnabledClient', () => {
   describe('Logging', () => {
     const client = new Client({ baseUrl: `${hostname}/`, timeout: 20000 })
     logger.warn = jest.fn()
+    logger.info = jest.fn()
     afterEach(() => {
       nock.cleanAll()
     })
@@ -163,7 +164,7 @@ describe('Test clients built by oauthEnabledClient', () => {
 
       await expect(client.get({}, '/api/users/me')).rejects.toThrow('Not Found')
 
-      expect(logger.warn).toHaveBeenCalledWith('GET /api/users/me No record found')
+      expect(logger.info).toHaveBeenCalledWith('GET /api/users/me No record found')
     })
 
     it('Should log 500 correctly', async () => {
@@ -198,7 +199,7 @@ describe('Test clients built by oauthEnabledClient', () => {
 
       await expect(client.delete({}, '/api/users/me')).rejects.toThrow('Not Found')
 
-      expect(logger.warn).toHaveBeenCalledWith('DELETE /api/users/me No record found')
+      expect(logger.info).toHaveBeenCalledWith('DELETE /api/users/me No record found')
     })
 
     it('Should log 500 correctly', async () => {
@@ -257,7 +258,7 @@ describe('Test clients built by oauthEnabledClient', () => {
 
       await expect(client.put({}, '/api/users/me')).rejects.toThrow('Not Found')
 
-      expect(logger.warn).toHaveBeenCalledWith('PUT /api/users/me No record found')
+      expect(logger.info).toHaveBeenCalledWith('PUT /api/users/me No record found')
     })
 
     it('Should log 500 correctly', async () => {
