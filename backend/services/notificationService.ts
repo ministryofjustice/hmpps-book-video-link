@@ -62,9 +62,11 @@ export default class NotificationService {
 
   private async sendEmails(context: Context, username: string, emailSpec: EmailSpec): Promise<void> {
     const userDetails = await this.getUserDetails(context, username)
-    const recipientEmailer = recipientEmailSpec =>
-      this.emailToRecipient(context, recipientEmailSpec, userDetails, emailSpec)
-    await Promise.all(emailSpec.recipients.map(recipientEmailer))
+    await Promise.all(
+      emailSpec.recipients.map(recipientEmailSpec =>
+        this.emailToRecipient(context, recipientEmailSpec, userDetails, emailSpec)
+      )
+    )
   }
 
   private async emailToRecipient(
@@ -73,14 +75,24 @@ export default class NotificationService {
     userDetails: UserDetails,
     emailSpec: EmailSpec
   ): Promise<void> {
+    let emailAddress
     try {
-      const emailAddress = await this.getEmailAddress(
+      emailAddress = await this.getEmailAddress(
         context,
         recipientEmailSpec.recipient,
         emailSpec.agencyId,
         userDetails.email
       )
-
+    } catch (error) {
+      /*
+       * Ignore failed email address look-ups and do not log here regardless of
+       * the kind of failure.
+       * 404's are expected, others failures will be due to network problems
+       * problems with remote services etc.
+       */
+      return Promise.resolve()
+    }
+    try {
       if (!emailAddress) {
         return Promise.resolve()
       }
@@ -92,7 +104,7 @@ export default class NotificationService {
       })
     } catch (error) {
       log.error(
-        `Failed to email the ${recipientEmailSpec.recipient} a ${emailSpec.name}: ${error.message}`,
+        `Failed to send the ${recipientEmailSpec.recipient} recipient a ${emailSpec.name} email.`,
         error.response?.data?.errors
       )
       return Promise.resolve()
