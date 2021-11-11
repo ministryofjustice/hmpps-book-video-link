@@ -17,6 +17,7 @@ ingress:
   path: /
   annotations:
     external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-prod-blue
+    
 env:
   API_ENDPOINT_URL: https://api.prison.service.justice.gov.uk/
   OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth/
