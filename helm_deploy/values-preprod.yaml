@@ -15,6 +15,8 @@ ingress:
   host: book-video-link-preprod.prison.service.justice.gov.uk
   cert_secret: hmpps-book-video-link-cert
   path: /
+  annotations:
+    external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-preprod-blue
 
 env:
   API_ENDPOINT_URL: https://api-preprod.prison.service.justice.gov.uk/
