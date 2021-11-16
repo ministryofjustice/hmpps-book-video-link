@@ -3,3 +3,7 @@
 
 generic-prometheus-alerts:
   targetApplication: hmpps-book-video-link
+
+ingress:
+  annotations:
+    external-dns.alpha.kubernetes.io/aws-weight: "100"
