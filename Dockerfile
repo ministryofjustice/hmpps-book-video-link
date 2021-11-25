@@ -1,4 +1,4 @@
-FROM node:16.13-bullseye-slim as builder
+FROM node:16.13-bullseye as builder
 
 ARG BUILD_NUMBER
 ARG GIT_REF
@@ -10,13 +10,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit && \
+RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit --ignore-scripts && \
     npm run build && \
     export BUILD_NUMBER=${BUILD_NUMBER} && \
     export GIT_REF=${GIT_REF} && \
-    npm run record-build-info
-
-RUN npm prune --production
+    npm run record-build-info && \
+    npm prune --production
 
 FROM node:16.13-bullseye-slim
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"

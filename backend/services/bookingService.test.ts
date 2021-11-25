@@ -303,7 +303,7 @@ describe('Booking service', () => {
       })
 
       it('should raise event despite notification service failure', async () => {
-        notificationService.sendBookingCreationEmails.mockRejectedValue(new Error())
+        notificationService.sendBookingCreationEmails.mockRejectedValue(new Error('an error occurred'))
         await service.create(context, 'USER-1', {
           offenderNo: 'AA1234AA',
           agencyId: 'MDI',

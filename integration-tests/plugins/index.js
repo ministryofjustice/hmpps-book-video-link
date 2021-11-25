@@ -1,4 +1,4 @@
-const { rmdir } = require('fs')
+const { rm } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
 const prisonRegisterApi = require('../mockApis/prisonRegisterApi')
@@ -84,7 +84,7 @@ module.exports = on => {
       console.log('deleting folder %s', folderName)
 
       return new Promise((resolve, reject) => {
-        rmdir(folderName, { maxRetries: 10, recursive: true }, err => {
+        rm(folderName, { maxRetries: 10, recursive: true, force: true }, err => {
           if (err) {
             console.error(err)
             return reject(err)
