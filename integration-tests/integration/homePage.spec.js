@@ -12,8 +12,8 @@ context('A user can view the video link home page', () => {
     cy.task('reset')
     cy.task('stubLoginCourt', {})
 
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
 
     cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
 

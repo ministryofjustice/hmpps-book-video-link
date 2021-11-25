@@ -35,7 +35,7 @@ module.exports = on => {
       Promise.all([
         auth.stubLoginCourt(user),
         whereabouts.stubCourts(),
-        userCourtPreferencesApi.stubGetUserCourtPreferences(user.username, preferredCourts),
+        userCourtPreferencesApi.stubGetUserCourtPreferences(preferredCourts),
         tokenverification.stubVerifyToken(true),
       ]),
 
@@ -63,11 +63,8 @@ module.exports = on => {
     stubLoginPage: auth.redirect,
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
-    stubGetUserCourtPreferences: ({ username, courts }) =>
-      userCourtPreferencesApi.stubGetUserCourtPreferences(username, courts),
-
-    stubUpdateUserCourtPreferences: ({ username, courts }) =>
-      Promise.all([userCourtPreferencesApi.stubUpdateUserCourtPreferences(username, courts)]),
+    stubGetUserCourtPreferences: ({ courts }) => userCourtPreferencesApi.stubGetUserCourtPreferences(courts),
+    stubUpdateUserCourtPreferences: ({ courts }) => userCourtPreferencesApi.stubUpdateUserCourtPreferences(courts),
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),

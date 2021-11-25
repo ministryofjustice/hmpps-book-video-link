@@ -9,8 +9,8 @@ context('A user can request a booking', () => {
     cy.clearCookies()
     cy.task('resetAndStubTokenVerification')
     cy.task('stubAgencies', [{ agencyId: 'WWI', formattedDescription: 'HMP Wandsworth' }])
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
   })
 
   it('A user with multiple preferred courts can request a video link booking for a prisoner who is not in prison', () => {

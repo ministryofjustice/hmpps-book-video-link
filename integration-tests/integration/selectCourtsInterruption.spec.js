@@ -24,11 +24,9 @@ context('A user is shown the select courts interrruption page when required', ()
     manageCourtsPage.form.court('ABDRCT').click()
     manageCourtsPage.form.checkbox('ABDRCT').should('be.checked')
     cy.task('stubUpdateUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABDRCT'],
     })
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABDRCT'],
     })
     manageCourtsPage.continue().click()

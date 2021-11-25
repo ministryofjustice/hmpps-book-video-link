@@ -49,8 +49,8 @@ context('A user can update a booking comment', () => {
 
     cy.task('stubUpdateVideoLinkBookingComment', 10)
 
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
 
     cy.task('stubGetRooms', {
       agencyId: '.*?',
