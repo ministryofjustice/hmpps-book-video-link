@@ -33,10 +33,7 @@ const oauthApiFactory = (client, { clientId, clientSecret, url }) => {
   })
 
   // eslint-disable-next-line camelcase
-  const parseOauthTokens = ({ access_token, refresh_token }) => ({
-    access_token,
-    refresh_token,
-  })
+  const parseOauthTokens = ({ access_token, refresh_token }) => ({ access_token, refresh_token })
 
   const makeTokenRequest = (data, msg) =>
     oauthAxios({ data })
