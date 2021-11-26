@@ -12,7 +12,8 @@ image:
 ingress:
   enabled: true
   enable_whitelist: false
-  host: book-video-link-dev.prison.service.justice.gov.uk$NL    contextColour: green
+  host: book-video-link-dev.prison.service.justice.gov.uk
+  contextColour: green
   cert_secret: hmpps-book-video-link-cert
   path: /
   annotations:
