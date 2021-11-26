@@ -20,6 +20,7 @@ import { DATE_ONLY_LONG_FORMAT_SPEC, DATE_TIME_FORMAT_SPEC, Time } from '../shar
 import { formatName } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
 import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
+import log from '../log'
 
 type AppointmentDetail = {
   locationId: number
@@ -109,19 +110,22 @@ export = class BookingService {
 
     const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId)
 
-    // Do not await the result of this call: Fire and forget.
-    this.notificationService.sendBookingCreationEmails(context, currentUsername, {
-      agencyId,
-      court: court.name,
-      prison: agencyDetails.description,
-      offenderNo,
-      prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
-      date: mainStartTime,
-      preDetails: preAppointment?.description,
-      mainDetails: mainAppointment.description,
-      postDetails: postAppointment?.description,
-      comment,
-    })
+    try {
+      await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
+        agencyId,
+        court: court.name,
+        prison: agencyDetails.description,
+        offenderNo,
+        prisonerName: formatName(prisonBooking.firstName, prisonBooking.lastName),
+        date: mainStartTime,
+        preDetails: preAppointment?.description,
+        mainDetails: mainAppointment.description,
+        postDetails: postAppointment?.description,
+        comment,
+      })
+    } catch (e) {
+      log.error('Notify failed: ', e)
+    }
 
     raiseAnalyticsEvent(
       'VLB Appointments',
@@ -195,19 +199,22 @@ export = class BookingService {
     const court = await this.locationService.getVideoLinkEnabledCourt(context, update.courtId)
     const { bookingDescription: description } = await this.locationService.createRoomFinder(context, existing.agencyId)
 
-    // Do not await the result of this call: Fire and forget.
-    this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
-      offenderNo: existing.offenderNo,
-      agencyId: existing.agencyId,
-      prisonName: existing.prisonName,
-      prisonerName: existing.prisonerName,
-      courtLocation: court.name,
-      comments: update.comment,
-      dateDescription: update.startTime.format(DATE_ONLY_LONG_FORMAT_SPEC),
-      preDescription: update.preLocation && description(update.preLocation, preAppointmentTimes(update.startTime)),
-      mainDescription: description(update.mainLocation, [update.startTime, update.endTime]),
-      postDescription: update.postLocation && description(update.postLocation, postAppointmentTimes(update.endTime)),
-    })
+    try {
+      await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
+        offenderNo: existing.offenderNo,
+        agencyId: existing.agencyId,
+        prisonName: existing.prisonName,
+        prisonerName: existing.prisonerName,
+        courtLocation: court.name,
+        comments: update.comment,
+        dateDescription: update.startTime.format(DATE_ONLY_LONG_FORMAT_SPEC),
+        preDescription: update.preLocation && description(update.preLocation, preAppointmentTimes(update.startTime)),
+        mainDescription: description(update.mainLocation, [update.startTime, update.endTime]),
+        postDescription: update.postLocation && description(update.postLocation, postAppointmentTimes(update.endTime)),
+      })
+    } catch (e) {
+      log.error('Notify failed: ', e)
+    }
   }
 
   public async update(
@@ -232,24 +239,28 @@ export = class BookingService {
   ): Promise<void> {
     const existing = await this.get(context, videoBookingId)
     await this.whereaboutsApi.updateVideoLinkBookingComment(context, videoBookingId, comment)
-
-    // Do not await the result of this call: Fire and forget.
-
-    this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
-      ...existing,
-      comments: comment,
-      preDescription: existing.preDetails?.description,
-      mainDescription: existing.mainDetails.description,
-      postDescription: existing.postDetails?.description,
-    })
+    try {
+      await this.notificationService.sendBookingUpdateEmails(context, currentUsername, {
+        ...existing,
+        comments: comment,
+        preDescription: existing.preDetails?.description,
+        mainDescription: existing.mainDetails.description,
+        postDescription: existing.postDetails?.description,
+      })
+    } catch (e) {
+      log.error('Notify failed: ', e)
+    }
   }
 
   public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {
     const details = await this.get(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)
 
-    // Fire and forget.
-    this.notificationService.sendCancellationEmails(context, currentUsername, details)
+    try {
+      await this.notificationService.sendCancellationEmails(context, currentUsername, details)
+    } catch (e) {
+      log.error('Notify failed: ', e)
+    }
     return {
       offenderNo: details.offenderNo,
       offenderName: details.prisonerName,

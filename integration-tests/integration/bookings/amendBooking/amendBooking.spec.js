@@ -13,8 +13,8 @@ context('A user can amend a booking', () => {
     cy.task('reset')
     cy.task('stubLoginCourt', {})
     cy.login()
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
 
     // Stub booking list
     cy.task('stubCourts')

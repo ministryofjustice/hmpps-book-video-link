@@ -6,21 +6,22 @@ const logger = require('../log')
 const hostname = 'http://localhost:8080'
 
 describe('Test clients built by oauthEnabledClient', () => {
+  const client = new Client({ baseUrl: `${hostname}/`, timeout: 2000 })
+
+  afterEach(() => {
+    nock.abortPendingRequests()
+    nock.cleanAll()
+  })
+
   it('should build something', () => {
-    const client = new Client({ baseUrl: `${hostname}/`, timeout: 2000 })
     expect(client).not.toBeNull()
   })
 
   describe('Assert client behaviour', () => {
-    const client = new Client({ baseUrl: `${hostname}/`, timeout: 2000 })
     const getRequest = nock(hostname)
 
     beforeEach(() => {
       getRequest.get('/api/users/me').reply(200, {})
-    })
-
-    afterEach(() => {
-      nock.cleanAll()
     })
 
     it('Should set the authorization header with "Bearer <access token>"', async () => {
@@ -71,10 +72,6 @@ describe('Test clients built by oauthEnabledClient', () => {
     const client = new Client({ baseUrl: `${hostname}/`, timeout: 900 })
     const mock = nock(hostname)
 
-    afterEach(() => {
-      nock.cleanAll()
-    })
-
     describe('get', () => {
       it('Should retry twice if request fails', async () => {
         mock
@@ -122,12 +119,7 @@ describe('Test clients built by oauthEnabledClient', () => {
   })
 
   describe('Normalise base url behaviour', () => {
-    afterEach(() => {
-      nock.cleanAll()
-    })
-
     it('Should set the url correctly if ends with a /', async () => {
-      const client = new Client({ baseUrl: `${hostname}/`, timeout: 2000 })
       nock(hostname).get('/api/users/me').reply(200, {})
 
       const context = {}
@@ -155,9 +147,6 @@ describe('Test clients built by oauthEnabledClient', () => {
     const client = new Client({ baseUrl: `${hostname}/`, timeout: 20000 })
     logger.warn = jest.fn()
     logger.info = jest.fn()
-    afterEach(() => {
-      nock.cleanAll()
-    })
 
     it('Should log 404 correctly', async () => {
       nock(hostname).get('/api/users/me').reply(404)
@@ -179,9 +168,6 @@ describe('Test clients built by oauthEnabledClient', () => {
   describe('Delete', () => {
     const client = new Client({ baseUrl: `${hostname}/`, timeout: 20000 })
     logger.warn = jest.fn()
-    afterEach(() => {
-      nock.cleanAll()
-    })
 
     it('Should set the authorization header with "Bearer <access token>"', async () => {
       const context = {}
@@ -214,9 +200,6 @@ describe('Test clients built by oauthEnabledClient', () => {
   describe('Put', () => {
     const client = new Client({ baseUrl: `${hostname}/`, timeout: 20000 })
     logger.warn = jest.fn()
-    afterEach(() => {
-      nock.cleanAll()
-    })
 
     it('Should set the authorization header with "Bearer <access token>"', async () => {
       const context = {}

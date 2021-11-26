@@ -43,15 +43,15 @@ export const mapToQueryString = (params: Record<string, unknown>): string =>
     })
     .join('&')
 
-export const toMap = <T, F extends keyof T>(items: T[] = [], name: F): Map<T[F], T> => {
-  return items.reduce((result, item) => {
+export const toMap = <T, F extends keyof T>(items: T[], name: F): Map<T[F], T> => {
+  return (items || []).reduce((result, item) => {
     result.set(item[name], item)
     return result
   }, new Map<T[F], T>())
 }
 
-export const groupBy = <T, K>(items: T[] = [], groupingFunction: (T) => K): Map<K, T[]> => {
-  return items.reduce((result, item) => {
+export const groupBy = <T, K>(items: T[], groupingFunction: (T) => K): Map<K, T[]> => {
+  return (items || []).reduce((result, item) => {
     const key = groupingFunction(item)
     const currentValues = result.get(key) || []
     currentValues.push(item)
@@ -113,7 +113,7 @@ export function assertHasStringValues<K extends string>(
   if (!matches) {
     throw Error('Not a record')
   }
-  const invalidKeys = keysToCheck.filter(k => typeof obj[k] !== 'string')
+  const invalidKeys = keysToCheck.filter(k => typeof obj[k as string] !== 'string')
   if (invalidKeys.length) {
     throw Error(`Missing or invalid keys: ${invalidKeys}`)
   }
@@ -128,7 +128,7 @@ export function assertHasOptionalStringValues<K extends string>(
   if (!matches) {
     throw Error('Not a record')
   }
-  const invalidKeys = keysToCheck.filter(k => obj[k] && typeof obj[k] !== 'string')
+  const invalidKeys = keysToCheck.filter(k => obj[k as string] && typeof obj[k as string] !== 'string')
   if (invalidKeys.length) {
     throw Error(`Non string keys: ${invalidKeys}`)
   }

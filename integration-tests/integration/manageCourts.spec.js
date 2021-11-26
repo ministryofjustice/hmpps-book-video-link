@@ -14,7 +14,6 @@ context('A user can view the manage courts page', () => {
 
   it('When a user selects preferred courts for the first time', () => {
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: [],
     })
     const manageCourtsPage = ManageCourtsPage.goTo()
@@ -33,11 +32,9 @@ context('A user can view the manage courts page', () => {
     manageCourtsPage.form.court('ABRYCT').click()
     manageCourtsPage.form.checkbox('ABRYCT').should('be.checked')
     cy.task('stubUpdateUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABRYCT'],
     })
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABRYCT'],
     })
     manageCourtsPage.continue().click()
@@ -51,7 +48,6 @@ context('A user can view the manage courts page', () => {
 
   it('When a user updates their list of preferred courts', () => {
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABDRCT', 'ABRYCT'],
     })
     const manageCourtsPage = ManageCourtsPage.goTo()
@@ -75,11 +71,9 @@ context('A user can view the manage courts page', () => {
     manageCourtsPage.form.court('BANBCT').click()
     manageCourtsPage.form.checkbox('BANBCT').should('be.checked')
     cy.task('stubUpdateUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABDRCT', 'ABRYCT', 'BANBCT'],
     })
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: ['ABDRCT', 'ABRYCT', 'BANBCT'],
     })
     manageCourtsPage.continue().click()
@@ -95,7 +89,6 @@ context('A user can view the manage courts page', () => {
 
   it('When no court is selected a validation error is displayed', () => {
     cy.task('stubGetUserCourtPreferences', {
-      username: 'ITAG_USER',
       courts: [],
     })
     let manageCourtsPage = ManageCourtsPage.goTo()

@@ -23,8 +23,8 @@ context('A user can add a video link', () => {
       agencyId: 'MDI',
       details: { agencyId: 'MDI', description: 'Moorland', agencyType: 'INST' },
     })
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
     cy.task('stubOffenderBooking', {
       bookingId: 1,
       response: {

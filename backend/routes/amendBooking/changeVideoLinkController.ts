@@ -2,7 +2,7 @@ import { RequestHandler } from 'express'
 import type BookingService from '../../services/bookingService'
 import LocationService from '../../services/locationService'
 
-import { DAY_MONTH_YEAR, Hours, Minutes, HOURS_TIME, MINUTES_TIME } from '../../shared/dateHelpers'
+import { DAY_MONTH_YEAR, Hours, Minutes } from '../../shared/dateHelpers'
 import { ChangeVideoLinkBooking, toFormValues } from './forms'
 import { clearUpdate, setUpdate, getUpdate } from './state'
 import { AvailabilityCheckService } from '../../services'

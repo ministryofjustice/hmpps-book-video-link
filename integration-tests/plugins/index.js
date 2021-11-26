@@ -1,4 +1,4 @@
-const { rmdir } = require('fs')
+const { rm } = require('fs')
 const auth = require('../mockApis/auth')
 const prisonApi = require('../mockApis/prisonApi')
 const prisonRegisterApi = require('../mockApis/prisonRegisterApi')
@@ -35,7 +35,7 @@ module.exports = on => {
       Promise.all([
         auth.stubLoginCourt(user),
         whereabouts.stubCourts(),
-        userCourtPreferencesApi.stubGetUserCourtPreferences(user.username, preferredCourts),
+        userCourtPreferencesApi.stubGetUserCourtPreferences(preferredCourts),
         tokenverification.stubVerifyToken(true),
       ]),
 
@@ -63,11 +63,8 @@ module.exports = on => {
     stubLoginPage: auth.redirect,
     stubOffenderBasicDetails: basicDetails => Promise.all([prisonApi.stubOffenderBasicDetails(basicDetails)]),
     stubActivityLocations: status => prisonApi.stubActivityLocations(status),
-    stubGetUserCourtPreferences: ({ username, courts }) =>
-      userCourtPreferencesApi.stubGetUserCourtPreferences(username, courts),
-
-    stubUpdateUserCourtPreferences: ({ username, courts }) =>
-      Promise.all([userCourtPreferencesApi.stubUpdateUserCourtPreferences(username, courts)]),
+    stubGetUserCourtPreferences: ({ courts }) => userCourtPreferencesApi.stubGetUserCourtPreferences(courts),
+    stubUpdateUserCourtPreferences: ({ courts }) => userCourtPreferencesApi.stubUpdateUserCourtPreferences(courts),
     stubAgencyDetails: ({ agencyId, details }) => Promise.all([prisonApi.stubAgencyDetails(agencyId, details)]),
     stubAppointmentLocations: ({ agency, locations }) =>
       Promise.all([prisonApi.stubAppointmentLocations(agency, locations)]),
@@ -87,7 +84,7 @@ module.exports = on => {
       console.log('deleting folder %s', folderName)
 
       return new Promise((resolve, reject) => {
-        rmdir(folderName, { maxRetries: 10, recursive: true }, err => {
+        rm(folderName, { maxRetries: 10, recursive: true, force: true }, err => {
           if (err) {
             console.error(err)
             return reject(err)

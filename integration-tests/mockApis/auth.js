@@ -3,7 +3,7 @@ const { stubFor, getMatchingRequests } = require('./wiremock')
 
 const createToken = () => {
   const payload = {
-    user_name: 'ITAG_USER',
+    user_name: 'COURT_USER',
     scope: ['read', 'write'],
     auth_source: 'nomis',
     authorities: ['ROLE_GLOBAL_SEARCH'],
@@ -92,7 +92,7 @@ const token = () =>
   })
 
 const stubUser = username => {
-  const user = username || 'ITAG_USER'
+  const user = username || 'COURT_USER'
   return stubFor({
     request: {
       method: 'GET',
@@ -115,7 +115,7 @@ const stubUser = username => {
   })
 }
 
-const stubUserMe = ({ username = 'ITAG_USER', staffId = 12345, name } = {}) => {
+const stubUserMe = ({ username = 'COURT_USER', staffId = 12345, name } = {}) => {
   return stubFor({
     request: {
       method: 'GET',

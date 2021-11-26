@@ -15,8 +15,8 @@ context('A user can delete a booking', () => {
 
   beforeEach(() => {
     Cypress.Cookies.preserveOnce('hmpps-session-dev')
-    cy.task('stubUserEmail', 'ITAG_USER')
-    cy.task('stubUser', 'ITAG_USER', 'WWI')
+    cy.task('stubUserEmail', 'COURT_USER')
+    cy.task('stubUser', 'COURT_USER', 'WWI')
 
     // Stub booking list
     cy.task('stubCourts')

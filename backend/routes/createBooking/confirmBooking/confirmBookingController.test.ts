@@ -3,7 +3,6 @@ import moment from 'moment'
 import { Agency, InmateDetail } from 'prisonApi'
 
 import ConfirmBookingController from './confirmBookingController'
-import config from '../../../config'
 import { BookingService, LocationService } from '../../../services'
 import { DATE_TIME_FORMAT_SPEC } from '../../../shared/dateHelpers'
 import { mockNext, mockRequest, mockResponse } from '../../__test/requestTestUtils'
