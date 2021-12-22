@@ -85,17 +85,18 @@ describe('setupAuthorisation tests', () => {
   describe('No service access page', () => {
     it('should display the email address link', async () => {
       const app = express()
+      app.set('view engine', 'njk')
       nunjucksSetup(app, path)
       const services = /** @type{any} */ ({})
       app.use((req, res, next) => {
         res.locals = { userRoles: () => [], preferredCourts: ['ABRDCT'] }
         next()
       })
-
+      app.use(setupAuthorisation())
       app.use(routes(services))
 
       await request(app)
-        .get('/feedback-and-support')
+        .get('/no-service-access')
         .expect(200)
         .expect(res => {
           expect(res.text).toContain('>bookavideolink@digital.justice.gov.uk<')

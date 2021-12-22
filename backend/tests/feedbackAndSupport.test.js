@@ -29,13 +29,4 @@ describe('Feedback and support', () => {
         expect(res.text).toContain('Help using Book a video link with a prison')
       })
   })
-  it('should display the email address link', async () => {
-    await request
-      .get('/feedback-and-support')
-      .expect(200)
-      .expect(res => {
-        expect(res.text).toContain('bookavideolink@digital.justice.gov.uk')
-        expect(res.text).toContain('mailto:bookavideolink@digital.justice.gov.uk')
-      })
-  })
 })
