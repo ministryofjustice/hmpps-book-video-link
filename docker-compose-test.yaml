@@ -5,7 +5,7 @@ services:
     container_name: book-video-link-wiremock
     restart: always
     ports:
-      - "9191:8080"
+      - "9091:8080"
 
   book-video-link-test-redis:
     image: redis
