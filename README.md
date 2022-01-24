@@ -30,7 +30,7 @@ You need to fire up the wiremock server first:
 ```docker-compose -f docker-compose-test.yaml up```
 
 This will give you useful feedback if the app is making requests that you haven't mocked out. You can see
-the request log at `localhost:9191/__admin/requests/` and a JSON representation of the mocks `localhost:9191/__admin/mappings`.
+the request log at `localhost:9091/__admin/requests/` and a JSON representation of the mocks `localhost:9091/__admin/mappings`.
 
 ### Linting and unit tests
 

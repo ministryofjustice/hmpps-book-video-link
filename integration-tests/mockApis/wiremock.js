@@ -1,6 +1,6 @@
 const superagent = require('superagent')
 
-const url = 'http://localhost:9191/__admin'
+const url = 'http://localhost:9091/__admin'
 
 const stubFor = mapping => superagent.post(`${url}/mappings`).send(mapping)
 
