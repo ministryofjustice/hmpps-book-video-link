@@ -1,5 +1,5 @@
 const express = require('express')
-const helmet = require('helmet')
+const helmet = require('helmet').default
 const noCache = require('nocache')
 const cookieParser = require('cookie-parser')
 

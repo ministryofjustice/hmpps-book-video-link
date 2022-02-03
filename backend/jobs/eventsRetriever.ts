@@ -1,5 +1,5 @@
 import { Moment } from 'moment'
-import parse from 'csv-parse'
+import { parse } from 'csv-parse'
 import logger from '../log'
 
 import WhereaboutsApi from '../api/whereaboutsApi'
