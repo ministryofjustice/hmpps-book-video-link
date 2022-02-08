@@ -19,7 +19,6 @@ import type {
 import { DATE_ONLY_LONG_FORMAT_SPEC, DATE_TIME_FORMAT_SPEC, Time } from '../shared/dateHelpers'
 import { formatName } from '../utils'
 import { postAppointmentTimes, preAppointmentTimes } from './bookingTimes'
-import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 import log from '../log'
 
 type AppointmentDetail = {
@@ -126,12 +125,6 @@ export = class BookingService {
     } catch (e) {
       log.error('Notify failed: ', e)
     }
-
-    raiseAnalyticsEvent(
-      'VLB Appointments',
-      `Video link booked for ${court.name}`,
-      `Pre: ${preAppointment ? 'Yes' : 'No'} | Post: ${postAppointment ? 'Yes' : 'No'}`
-    )
 
     return videoBookingId
   }

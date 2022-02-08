@@ -1,10 +1,5 @@
 import ConfirmationController from './confirmationController'
-import { raiseAnalyticsEvent } from '../../raiseAnalyticsEvent'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
-
-jest.mock('../../raiseAnalyticsEvent', () => ({
-  raiseAnalyticsEvent: jest.fn(),
-}))
 
 describe('Confirmation controller', () => {
   let controller: ConfirmationController
@@ -40,11 +35,6 @@ describe('Confirmation controller', () => {
 
       await controller.view()(req, res, null)
 
-      expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-        'VLB Appointments',
-        'Video link requested for London',
-        'Pre: Yes | Post: Yes'
-      )
       expect(res.render).toHaveBeenCalledWith('requestBooking/confirmation.njk', {
         details: {
           prison: 'HMP Wandsworth',
@@ -71,8 +61,6 @@ describe('Confirmation controller', () => {
       req.flash.mockReturnValueOnce([])
 
       await expect(controller.view()(req, res, null)).rejects.toThrow('Request details are missing')
-
-      expect(raiseAnalyticsEvent).not.toHaveBeenCalled()
     })
   })
 })

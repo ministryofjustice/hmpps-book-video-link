@@ -15,7 +15,6 @@ module.exports = {
   supportTelephone: '0800 917 5148',
 
   analytics: {
-    googleAnalyticsId: process.env.GOOGLE_ANALYTICS_ID,
     googleTagManagerKey: process.env.GOOGLE_TAG_MANAGER_KEY,
   },
   hmppsCookie: {
