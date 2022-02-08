@@ -34,12 +34,6 @@ env:
         name: {{ template "app.name" . }}
         key: APPINSIGHTS_INSTRUMENTATIONKEY
 
-  - name: GOOGLE_ANALYTICS_ID
-    valueFrom:
-      secretKeyRef:
-        name: {{ template "app.name" . }}
-        key: GOOGLE_ANALYTICS_ID
-
   - name: GOOGLE_TAG_MANAGER_KEY
     valueFrom:
       secretKeyRef:

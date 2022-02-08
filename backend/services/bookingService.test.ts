@@ -10,7 +10,6 @@ import { DATE_TIME_FORMAT_SPEC } from '../shared/dateHelpers'
 import AvailabilityCheckService from './availabilityCheckService'
 import LocationService from './locationService'
 
-import { raiseAnalyticsEvent } from '../raiseAnalyticsEvent'
 import { RoomFinder } from './roomFinder'
 
 jest.mock('../api/prisonApi')
@@ -18,10 +17,6 @@ jest.mock('../api/whereaboutsApi')
 jest.mock('./notificationService')
 jest.mock('./availabilityCheckService')
 jest.mock('./locationService')
-
-jest.mock('../raiseAnalyticsEvent', () => ({
-  raiseAnalyticsEvent: jest.fn(),
-}))
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
@@ -278,89 +273,6 @@ describe('Booking service', () => {
         expect(result).toBe(false)
         expect(whereaboutsApi.createVideoLinkBooking).not.toHaveBeenCalled()
         expect(notificationService.sendBookingCreationEmails).not.toHaveBeenCalled()
-      })
-    })
-
-    describe('Event raising', () => {
-      it('should raise event when both pre and post', async () => {
-        await service.create(context, 'USER-1', {
-          offenderNo: 'AA1234AA',
-          agencyId: 'MDI',
-          courtId: 'CLDN',
-          comment: 'some comment',
-          mainStartTime: moment('2020-11-20T18:00:00'),
-          mainEndTime: moment('2020-11-20T19:00:00'),
-          pre: 1,
-          main: 2,
-          post: 3,
-        })
-
-        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-          'VLB Appointments',
-          'Video link booked for City of London',
-          'Pre: Yes | Post: Yes'
-        )
-      })
-
-      it('should raise event despite notification service failure', async () => {
-        notificationService.sendBookingCreationEmails.mockRejectedValue(new Error('an error occurred'))
-        await service.create(context, 'USER-1', {
-          offenderNo: 'AA1234AA',
-          agencyId: 'MDI',
-          courtId: 'CLDN',
-          comment: 'some comment',
-          mainStartTime: moment('2020-11-20T18:00:00'),
-          mainEndTime: moment('2020-11-20T19:00:00'),
-          pre: 1,
-          main: 2,
-          post: 3,
-        })
-
-        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-          'VLB Appointments',
-          'Video link booked for City of London',
-          'Pre: Yes | Post: Yes'
-        )
-      })
-
-      it('should raise event when neither pre and post', async () => {
-        await service.create(context, 'USER-1', {
-          offenderNo: 'AA1234AA',
-          agencyId: 'MDI',
-          courtId: 'CLDN',
-          comment: 'some comment',
-          mainStartTime: moment('2020-11-20T18:00:00'),
-          mainEndTime: moment('2020-11-20T19:00:00'),
-          pre: undefined,
-          main: 2,
-          post: undefined,
-        })
-
-        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-          'VLB Appointments',
-          'Video link booked for City of London',
-          'Pre: No | Post: No'
-        )
-      })
-
-      it('should raise event when only pre and not post', async () => {
-        await service.create(context, 'USER-1', {
-          offenderNo: 'AA1234AA',
-          agencyId: 'MDI',
-          courtId: 'CLDN',
-          comment: 'some comment',
-          mainStartTime: moment('2020-11-20T18:00:00'),
-          mainEndTime: moment('2020-11-20T19:00:00'),
-          pre: 1,
-          main: 2,
-          post: undefined,
-        })
-
-        expect(raiseAnalyticsEvent).toHaveBeenCalledWith(
-          'VLB Appointments',
-          'Video link booked for City of London',
-          'Pre: Yes | Post: No'
-        )
       })
     })
 

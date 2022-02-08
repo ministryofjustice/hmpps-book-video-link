@@ -1,5 +1,4 @@
 import { RequestHandler, Request } from 'express'
-import { raiseAnalyticsEvent } from '../../raiseAnalyticsEvent'
 
 export default class ConfirmationController {
   private extractObjectFromFlash({ req, key }) {
@@ -30,20 +29,10 @@ export default class ConfirmationController {
         endTime,
         comments,
         date,
-        preAppointmentRequired,
-        postAppointmentRequired,
         preHearingStartAndEndTime,
         postHearingStartAndEndTime,
         hearingLocation,
       } = requestDetails
-
-      raiseAnalyticsEvent(
-        'VLB Appointments',
-        `Video link requested for ${hearingLocation}`,
-        `Pre: ${preAppointmentRequired === 'yes' ? 'Yes' : 'No'} | Post: ${
-          postAppointmentRequired === 'yes' ? 'Yes' : 'No'
-        }`
-      )
 
       return res.render('requestBooking/confirmation.njk', {
         details: {
