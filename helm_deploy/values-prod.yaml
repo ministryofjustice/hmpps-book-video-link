@@ -60,8 +60,10 @@ whitelist:
   dxc_webproxy2: 195.92.38.21/32
   dxc_webproxy3: 195.92.38.22/32
   dxc_webproxy4: 195.92.38.23/32
+  global-protect: 35.176.93.186/32
   moj-official-tgw-preprod: 51.149.251.0/24
   moj-official-tgw-prod: 51.149.250.0/24
+  petty-france-wifi: 213.121.161.112/28
   quantum1: 62.25.109.197/32
   quantum2: 212.137.36.230/32
   quantum3: 195.92.38.16/28
