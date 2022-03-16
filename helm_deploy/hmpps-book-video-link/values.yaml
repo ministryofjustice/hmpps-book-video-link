@@ -7,3 +7,7 @@ generic-prometheus-alerts:
 ingress:
   annotations:
     external-dns.alpha.kubernetes.io/aws-weight: "100"
+
+allowlist:
+  petty-france-wifi: "213.121.161.112/28"
+  global-protect: "35.176.93.186/32"
