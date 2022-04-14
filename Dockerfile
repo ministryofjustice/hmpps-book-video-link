@@ -20,6 +20,9 @@ RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit --ignore-scripts && \
 FROM node:16.13-bullseye-slim
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 
+# Cache breaking
+ENV BUILD_NUMBER ${BUILD_NUMBER:-1_0_0}
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
@@ -37,20 +40,20 @@ USER 2000
 WORKDIR /app
 
 COPY --from=builder --chown=appuser:appgroup \
-        /app/package.json \
-        /app/package-lock.json \
-        /app/dist \
-        /app/build-info.json \
-        ./
+    /app/package.json \
+    /app/package-lock.json \
+    /app/dist \
+    /app/build-info.json \
+    ./
 
 COPY --from=builder --chown=appuser:appgroup \
-        /app/build ./build
+    /app/build ./build
 
 COPY --from=builder --chown=appuser:appgroup \
-        /app/node_modules ./node_modules
+    /app/node_modules ./node_modules
 
 COPY --from=builder --chown=appuser:appgroup \
-        /app/views ./views
+    /app/views ./views
 
 ENV PORT=3000
 
