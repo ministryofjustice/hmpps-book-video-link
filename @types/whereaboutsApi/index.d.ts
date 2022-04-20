@@ -6,6 +6,10 @@ declare module 'whereaboutsApi' {
     name: string
   }
 
+  export type CourtEmail = {
+    email: string
+  }
+
   export type NewAppointment = { endTime: string; locationId: number; startTime: string }
 
   export type NewVideoLinkBooking = {

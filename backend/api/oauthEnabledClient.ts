@@ -99,6 +99,27 @@ export default class Client {
     })
   }
 
+  public getPotential(context: Context, path: string): Promise<superagent.Response> {
+    return new Promise((resolve, reject) => {
+      superagent
+        .get(this.remoteUrl + path)
+        .agent(this.keepaliveAgent)
+        .set(getHeaders(context))
+        .retry(2, (err, res) => {
+          if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
+          return undefined // retry handler only for logging retries, not to influence retry logic
+        })
+        .timeout({ deadline: this.timeout / 3 })
+        .end((error, response) => {
+          if (error && error.status === 404) {
+            return resolve(null)
+          }
+          if (error) return reject(errorLogger(error))
+          return resolve(resultLogger(response))
+        })
+    })
+  }
+
   public getToStream(context: Context, path: string, stream: NodeJS.WritableStream) {
     superagent
       .get(this.remoteUrl + path)

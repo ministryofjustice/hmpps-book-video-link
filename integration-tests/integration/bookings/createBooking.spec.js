@@ -43,6 +43,8 @@ context('A user can add a video link', () => {
         { locationId: 3, description: 'Room 3', locationType: 'VIDE' },
       ],
     })
+
+    cy.task('stubCourtEmailAddress', { courtId: 'ABDRCT' })
   })
 
   it('A user with a single preferred court creates a booking for a pre, main and post appointment', () => {
