@@ -42,6 +42,7 @@ module.exports = on => {
     stubUserEmail: username => auth.stubEmail(username),
     stubUser: (username, caseload) => auth.stubUser(username, caseload),
     stubCourts: courts => whereabouts.stubCourts(courts),
+    stubCourtEmailAddress: court => whereabouts.stubCourtEmailAddress(court),
     stubGroups: caseload => whereabouts.stubGroups(caseload),
     stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
     getBookingRequest: () => whereabouts.getBookingRequest(),

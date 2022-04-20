@@ -153,6 +153,7 @@ describe('Booking service', () => {
   describe('Create', () => {
     beforeEach(() => {
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getCourtEmail.mockResolvedValue({ email: 'court@supportEmail.com' })
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonerDetails.mockResolvedValue({
         bookingId: 1000,
@@ -179,7 +180,7 @@ describe('Booking service', () => {
         })
 
         expect(videoBookingId).toBe(11)
-
+        expect(whereaboutsApi.getCourtEmail).toBeCalledWith(context, 'CLDN')
         expect(whereaboutsApi.createVideoLinkBooking).toHaveBeenCalledWith(context, {
           bookingId: 1000,
           courtId: 'CLDN',
@@ -229,6 +230,7 @@ describe('Booking service', () => {
           preDetails: 'Vcc Room 1 - 17:45 to 18:00',
           mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
           postDetails: 'Vcc Room 3 - 19:00 to 19:15',
+          courtEmailAddress: 'court@supportEmail.com',
         })
       })
       it('availability check service called correctly', async () => {
@@ -327,6 +329,7 @@ describe('Booking service', () => {
         postDetails: undefined,
         mainDetails: 'Vcc Room 2 - 18:00 to 19:00',
         preDetails: undefined,
+        courtEmailAddress: 'court@supportEmail.com',
       })
     })
 

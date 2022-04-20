@@ -74,7 +74,9 @@ module.exports = {
     notifyKey: process.env.NOTIFY_API_KEY || '',
 
     bookingCreationConfirmationCourt: '47cfc1c3-ad56-47c4-98e7-0e41c0e2c9b4',
-    bookingCreationConfirmationPrison: '05456200-846b-446e-81cb-e003611bfea6',
+
+    bookingCreationConfirmationPrison: '7a5fe332-0001-4ef2-bd06-5595c01552f5',
+    bookingCreationConfirmationPrisonWithCourtEmailAddress: 'f659c351-da69-4a59-984b-8345e59c6048',
 
     bookingUpdateConfirmationCourt: 'a9d69cd4-0775-4902-87ae-4891c5ccaf11',
     bookingUpdateConfirmationPrison: 'ed299559-7e58-4e60-b5aa-b5f0eababeb1',

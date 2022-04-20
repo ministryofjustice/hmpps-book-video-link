@@ -123,6 +123,7 @@ export type CreateEmail = {
   mainDetails: string
   postDetails: string
   comment: string
+  courtEmailAddress?: string
 }
 
 export type UpdateEmail = {

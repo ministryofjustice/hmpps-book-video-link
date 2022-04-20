@@ -33,6 +33,22 @@ module.exports = {
     })
   },
 
+  stubCourtEmailAddress: ({ courtId }) => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        url: `/whereabouts/court/courts/${courtId}/email`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: { email: 'court@email.com' },
+      },
+    })
+  },
+
   stubCreateVideoLinkBooking: (status = 200) => {
     return stubFor({
       request: {

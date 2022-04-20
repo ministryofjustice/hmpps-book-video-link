@@ -13,6 +13,7 @@ export default function BookingCreation(details: CreateEmail): EmailSpec {
     postAppointmentInfo: details.postDetails || 'Not required',
     date: details.date.format(DATE_ONLY_LONG_FORMAT_SPEC),
     prison: details.prison,
+    courtEmailAddress: details.courtEmailAddress,
   }
 
   return {
@@ -21,12 +22,16 @@ export default function BookingCreation(details: CreateEmail): EmailSpec {
     recipients: [
       {
         recipient: 'vlb',
-        template: notifications.bookingCreationConfirmationPrison,
+        template: details.courtEmailAddress
+          ? notifications.bookingCreationConfirmationPrisonWithCourtEmailAddress
+          : notifications.bookingCreationConfirmationPrison,
         personalisation: () => personalisation,
       },
       {
         recipient: 'omu',
-        template: notifications.bookingCreationConfirmationPrison,
+        template: details.courtEmailAddress
+          ? notifications.bookingCreationConfirmationPrisonWithCourtEmailAddress
+          : notifications.bookingCreationConfirmationPrison,
         personalisation: () => personalisation,
       },
       {

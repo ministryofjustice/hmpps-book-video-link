@@ -2,6 +2,7 @@ import {
   AppointmentLocationsSpecification,
   AvailableLocations,
   Court,
+  CourtEmail,
   NewVideoLinkBooking,
   UpdateVideoLinkBooking,
   VideoLinkBooking,
@@ -42,6 +43,10 @@ export = class WhereaboutsApi {
 
   public getCourts(context: Context): Promise<Court[]> {
     return this.get(context, '/court/courts')
+  }
+
+  public getCourtEmail(context: Context, courtId: string): Promise<CourtEmail> {
+    return this.get(context, `/court/courts/${courtId}/email`)
   }
 
   public checkAvailability(

@@ -108,6 +108,7 @@ export = class BookingService {
     })
 
     const court = await this.locationService.getVideoLinkEnabledCourt(context, courtId)
+    const courtEmailAddress = await this.whereaboutsApi.getCourtEmail(context, courtId)
 
     try {
       await this.notificationService.sendBookingCreationEmails(context, currentUsername, {
@@ -121,6 +122,7 @@ export = class BookingService {
         mainDetails: mainAppointment.description,
         postDetails: postAppointment?.description,
         comment,
+        courtEmailAddress: courtEmailAddress?.email,
       })
     } catch (e) {
       log.error('Notify failed: ', e)
