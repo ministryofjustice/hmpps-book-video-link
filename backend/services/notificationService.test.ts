@@ -666,5 +666,36 @@ describe('Notification service', () => {
         }
       )
     })
+
+    it('should not include court email address in email sent to prison', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingCreationEmails(context, 'A_USER', {
+        ...createEmail,
+        courtEmailAddress: undefined,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingCreationConfirmationPrison,
+        'vlb@prison.com',
+        {
+          personalisation: {
+            comments: 'some comment',
+            court: 'City of London',
+            date: '20 November 2020',
+            offenderNo: 'A1234AA',
+            postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
+            mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
+            preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
+            prison: 'some prison',
+            prisonerName: 'John Doe',
+            courtEmailAddress: undefined,
+          },
+          reference: null,
+        }
+      )
+    })
   })
 })

@@ -22,11 +22,15 @@ export = class WhereaboutsApi {
   constructor(private readonly client: Client) {}
 
   private processResponse(response: Response) {
-    return response.body
+    return response?.body
   }
 
   private get(context: Context, url: string) {
     return this.client.get(context, url).then(this.processResponse)
+  }
+
+  private getPotential(context: Context, url: string) {
+    return this.client.getPotential(context, url).then(this.processResponse)
   }
 
   private post(context: Context, url: string, data) {
@@ -46,7 +50,7 @@ export = class WhereaboutsApi {
   }
 
   public getCourtEmail(context: Context, courtId: string): Promise<CourtEmail> {
-    return this.get(context, `/court/courts/${courtId}/email`)
+    return this.getPotential(context, `/court/courts/${courtId}/email`)
   }
 
   public checkAvailability(
