@@ -74,12 +74,12 @@ module.exports = {
     notifyKey: process.env.NOTIFY_API_KEY || '',
 
     bookingCreationConfirmationCourt: '47cfc1c3-ad56-47c4-98e7-0e41c0e2c9b4',
-
     bookingCreationConfirmationPrison: '7a5fe332-0001-4ef2-bd06-5595c01552f5',
     bookingCreationConfirmationPrisonWithCourtEmailAddress: 'f659c351-da69-4a59-984b-8345e59c6048',
 
     bookingUpdateConfirmationCourt: 'a9d69cd4-0775-4902-87ae-4891c5ccaf11',
-    bookingUpdateConfirmationPrison: 'ed299559-7e58-4e60-b5aa-b5f0eababeb1',
+    bookingUpdateConfirmationPrison: 'aa1f124f-f68a-413b-86ea-6fac8e4e9bce',
+    bookingUpdateConfirmationPrisonWithCourtEmailAddress: 'ddff3026-fd5a-4eec-bbb3-596a85173b97',
 
     bookingCancellationCourt: '544fc4a2-d04a-4e97-aa12-1516f30dc11a',
     bookingCancellationPrison: '41063a6b-66a5-4a1a-b9ef-a78fd3c137cc',

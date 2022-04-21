@@ -137,6 +137,7 @@ export type UpdateEmail = {
   preDescription?: string
   mainDescription: string
   postDescription?: string
+  courtEmailAddress?: string
 }
 
 export type RequestEmail = {

@@ -165,6 +165,7 @@ describe('Notification service', () => {
       preDescription: 'Vcc Room 3 - 17:40 to 18:00',
       mainDescription: 'Vcc Room 1 - 18:00 to 19:00',
       postDescription: 'Vcc Room 2 - 19:00 to 19:20',
+      courtEmailAddress: 'court@email.com',
     }
 
     it('Details are retrieved for user', async () => {
@@ -191,12 +192,13 @@ describe('Notification service', () => {
       })
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingUpdateConfirmationPrison,
+        config.notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress,
         'omu@prison.com',
         {
           personalisation: {
             comments: 'None entered',
             court: 'City of London',
+            courtEmailAddress: 'court@email.com',
             date: '20 November 2020',
             mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
             offenderNo: 'A1234AA',
@@ -218,7 +220,7 @@ describe('Notification service', () => {
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingUpdateConfirmationPrison,
+        config.notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress,
         'omu@prison.com',
         {
           personalisation: {
@@ -231,6 +233,7 @@ describe('Notification service', () => {
             preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
             prison: 'some prison',
             prisonerName: 'John Doe',
+            courtEmailAddress: 'court@email.com',
           },
           reference: null,
         }
@@ -249,7 +252,7 @@ describe('Notification service', () => {
       expect(notifyApi.sendEmail).toHaveBeenCalledTimes(2)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingUpdateConfirmationPrison,
+        config.notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress,
         'vlb@prison.com',
         expect.anything()
       )
@@ -269,6 +272,36 @@ describe('Notification service', () => {
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress,
+        'vlb@prison.com',
+        {
+          personalisation: {
+            comments: 'some comment',
+            court: 'City of London',
+            date: '20 November 2020',
+            mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
+            offenderNo: 'A1234AA',
+            postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
+            preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
+            prison: 'some prison',
+            prisonerName: 'John Doe',
+            courtEmailAddress: 'court@email.com',
+          },
+          reference: null,
+        }
+      )
+    })
+    it('should not include court email address in email to prison', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingUpdateEmails(context, 'A_USER', {
+        ...updateEmail,
+        courtEmailAddress: undefined,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingUpdateConfirmationPrison,
         'vlb@prison.com',
         {
@@ -282,6 +315,7 @@ describe('Notification service', () => {
             preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
             prison: 'some prison',
             prisonerName: 'John Doe',
+            courtEmailAddress: undefined,
           },
           reference: null,
         }
@@ -309,6 +343,7 @@ describe('Notification service', () => {
             prison: 'some prison',
             prisonerName: 'John Doe',
             userName: 'A User',
+            courtEmailAddress: 'court@email.com',
           },
           reference: null,
         }

@@ -12,6 +12,7 @@ export default function BookingUpdate(details: UpdateEmail): EmailSpec {
     mainAppointmentInfo: details.mainDescription,
     postAppointmentInfo: details.postDescription || 'Not required',
     comments: details.comments || 'None entered',
+    courtEmailAddress: details.courtEmailAddress,
   }
 
   return {
@@ -20,12 +21,16 @@ export default function BookingUpdate(details: UpdateEmail): EmailSpec {
     recipients: [
       {
         recipient: 'vlb',
-        template: notifications.bookingUpdateConfirmationPrison,
+        template: details.courtEmailAddress
+          ? notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress
+          : notifications.bookingUpdateConfirmationPrison,
         personalisation: () => personalisation,
       },
       {
         recipient: 'omu',
-        template: notifications.bookingUpdateConfirmationPrison,
+        template: details.courtEmailAddress
+          ? notifications.bookingUpdateConfirmationPrisonWithCourtEmailAddress
+          : notifications.bookingUpdateConfirmationPrison,
         personalisation: () => personalisation,
       },
       {
