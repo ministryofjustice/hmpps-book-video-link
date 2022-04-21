@@ -358,6 +358,7 @@ describe('Notification service', () => {
       comments: 'some comment',
       courtLocation: 'City of London',
       courtId: 'CLDN',
+      courtEmailAddress: 'court@email.com',
       date: moment('2020-11-20'),
       dateDescription: '20 November 2020',
       prisonBookingId: 789,
@@ -411,7 +412,7 @@ describe('Notification service', () => {
       })
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingCancellationPrison,
+        config.notifications.bookingCancellationPrisonWithCourtEmailAddress,
         'omu@prison.com',
         {
           personalisation: {
@@ -424,6 +425,7 @@ describe('Notification service', () => {
             preAppointmentInfo: 'Not required',
             prison: 'some prison',
             prisonerName: 'John Doe',
+            courtEmailAddress: 'court@email.com',
           },
           reference: null,
         }
@@ -438,7 +440,7 @@ describe('Notification service', () => {
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingCancellationPrison,
+        config.notifications.bookingCancellationPrisonWithCourtEmailAddress,
         'omu@prison.com',
         {
           personalisation: {
@@ -451,6 +453,7 @@ describe('Notification service', () => {
             preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
             prison: 'some prison',
             prisonerName: 'John Doe',
+            courtEmailAddress: 'court@email.com',
           },
           reference: null,
         }
@@ -469,7 +472,7 @@ describe('Notification service', () => {
       expect(notifyApi.sendEmail).toHaveBeenCalledTimes(2)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.bookingCancellationPrison,
+        config.notifications.bookingCancellationPrisonWithCourtEmailAddress,
         'vlb@prison.com',
         expect.anything()
       )
@@ -489,6 +492,37 @@ describe('Notification service', () => {
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.bookingCancellationPrisonWithCourtEmailAddress,
+        'vlb@prison.com',
+        {
+          personalisation: {
+            comments: 'some comment',
+            court: 'City of London',
+            date: '20 November 2020',
+            mainAppointmentInfo: 'Vcc Room 1 - 18:00 to 19:00',
+            offenderNo: 'A1234AA',
+            postAppointmentInfo: 'Vcc Room 2 - 19:00 to 19:20',
+            preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
+            prison: 'some prison',
+            prisonerName: 'John Doe',
+            courtEmailAddress: 'court@email.com',
+          },
+          reference: null,
+        }
+      )
+    })
+
+    it('should not send email to Prison Video Link Booking Admin', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendCancellationEmails(context, 'A_USER', {
+        ...bookingDetail,
+        courtEmailAddress: undefined,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
         config.notifications.bookingCancellationPrison,
         'vlb@prison.com',
         {
@@ -502,6 +536,7 @@ describe('Notification service', () => {
             preAppointmentInfo: 'Vcc Room 3 - 17:40 to 18:00',
             prison: 'some prison',
             prisonerName: 'John Doe',
+            courtEmailAddress: undefined,
           },
           reference: null,
         }
@@ -529,6 +564,7 @@ describe('Notification service', () => {
             prison: 'some prison',
             prisonerName: 'John Doe',
             userName: 'A User',
+            courtEmailAddress: 'court@email.com',
           },
           reference: null,
         }

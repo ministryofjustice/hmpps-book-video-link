@@ -679,13 +679,18 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getCourtEmail.mockResolvedValue({ email: 'court@supportEmail.com' })
 
       await service.delete(context, 'A_USER', 1234)
 
+      expect(whereaboutsApi.getCourtEmail).toHaveBeenCalledWith(context, videoLinkBooking.courtId)
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
       expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
-      expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+      expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        ...bookingDetail,
+        courtEmailAddress: 'court@supportEmail.com',
+      })
     })
 
     it('Should call whereaboutsApi and PrisonApi correctly when deleting a booking even when  notification service fails', async () => {
@@ -695,13 +700,17 @@ describe('Booking service', () => {
       prisonApi.getAgencyDetails.mockResolvedValue(agencyDetail)
       prisonApi.getPrisonBooking.mockResolvedValue(offenderDetails)
       whereaboutsApi.getRooms.mockResolvedValue([room(1), room(2), room(3)])
+      whereaboutsApi.getCourtEmail.mockResolvedValue({ email: 'court@supportEmail.com' })
 
       await service.delete(context, 'A_USER', 1234)
 
       expect(whereaboutsApi.getVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
       expect(prisonApi.getPrisonBooking).toHaveBeenCalledWith(context, 789)
       expect(whereaboutsApi.deleteVideoLinkBooking).toHaveBeenCalledWith(context, 1234)
-      expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', bookingDetail)
+      expect(notificationService.sendCancellationEmails).toHaveBeenCalledWith(context, 'A_USER', {
+        ...bookingDetail,
+        courtEmailAddress: 'court@supportEmail.com',
+      })
     })
 
     it('Should return the offender identifiers when deleting a booking', () => {

@@ -252,6 +252,8 @@ export = class BookingService {
   public async delete(context: Context, currentUsername: string, videoBookingId: number): Promise<OffenderIdentifiers> {
     const details = await this.get(context, videoBookingId)
     await this.whereaboutsApi.deleteVideoLinkBooking(context, videoBookingId)
+    const courtEmailAddress = await this.whereaboutsApi.getCourtEmail(context, details.courtId)
+    details.courtEmailAddress = courtEmailAddress?.email
 
     try {
       await this.notificationService.sendCancellationEmails(context, currentUsername, details)

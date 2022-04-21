@@ -47,6 +47,7 @@ export type AppointmentDetail = {
 }
 
 export type BookingDetails = {
+  courtEmailAddress?: string
   videoBookingId: number
   prisonerName: string
   offenderNo: string
