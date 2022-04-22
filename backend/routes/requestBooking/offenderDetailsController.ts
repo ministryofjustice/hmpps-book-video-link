@@ -67,6 +67,7 @@ export default class OffenderDetailsController {
       })
 
       const matchingPrison = await this.locationService.getMatchingPrison(res.locals, prison)
+      const courtEmailAddress = await this.locationService.getCourtEmailAddress(res.locals, bookingDetails.courtId)
 
       const personalisation: RequestEmail = {
         firstName,
@@ -81,6 +82,7 @@ export default class OffenderDetailsController {
         comments,
         preHearingStartAndEndTime,
         postHearingStartAndEndTime,
+        courtEmailAddress: courtEmailAddress?.email,
       }
 
       this.packBookingDetails(req, personalisation)

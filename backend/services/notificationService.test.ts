@@ -45,6 +45,7 @@ describe('Notification service', () => {
       comments: 'some comment',
       preHearingStartAndEndTime: '11:00 to 11:20',
       postHearingStartAndEndTime: '09:35 to 11:00',
+      courtEmailAddress: 'court@mail.com',
     }
 
     it('Details are retrieved for user', async () => {
@@ -87,6 +88,7 @@ describe('Notification service', () => {
             comments: 'None entered',
             hearingLocation: 'London',
             userName: 'A User',
+            courtEmailAddress: 'court@mail.com',
           },
           reference: null,
         }
@@ -101,7 +103,7 @@ describe('Notification service', () => {
       await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
 
       expect(notifyApi.sendEmail).toHaveBeenCalledWith(
-        config.notifications.requestBookingCourtTemplateVLBAdminId,
+        config.notifications.requestBookingCourtTemplateVLBAdminWithCourtEmailAddress,
         'vlb@prison.com',
         {
           personalisation: {
@@ -116,6 +118,7 @@ describe('Notification service', () => {
             preHearingStartAndEndTime: '11:00 to 11:20',
             postHearingStartAndEndTime: '09:35 to 11:00',
             hearingLocation: 'London',
+            courtEmailAddress: 'court@mail.com',
           },
           reference: null,
         }
@@ -146,6 +149,39 @@ describe('Notification service', () => {
             postHearingStartAndEndTime: '09:35 to 11:00',
             hearingLocation: 'London',
             userName: 'A User',
+            courtEmailAddress: 'court@mail.com',
+          },
+          reference: null,
+        }
+      )
+    })
+    it('Should not send court email address', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      await notificationService.sendBookingRequestEmails(context, 'A_USER', {
+        ...requestEmail,
+        courtEmailAddress: undefined,
+      })
+
+      expect(notifyApi.sendEmail).toHaveBeenCalledWith(
+        config.notifications.requestBookingCourtTemplateVLBAdmin,
+        'vlb@prison.com',
+        {
+          personalisation: {
+            firstName: 'John',
+            lastName: 'Doe',
+            prison: 'some prison',
+            dateOfBirth: '10 December 2019',
+            date: '20 November 2020',
+            startTime: '10:00',
+            endTime: '11:00',
+            comments: 'some comment',
+            preHearingStartAndEndTime: '11:00 to 11:20',
+            postHearingStartAndEndTime: '09:35 to 11:00',
+            hearingLocation: 'London',
+            courtEmailAddress: undefined,
           },
           reference: null,
         }

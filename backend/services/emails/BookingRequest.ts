@@ -14,15 +14,17 @@ export default function BookingRequest(details: RequestEmail): EmailSpec {
     postHearingStartAndEndTime: details.postHearingStartAndEndTime || 'Not required',
     comments: details.comments || 'None entered',
     hearingLocation: details.hearingLocation,
+    courtEmailAddress: details.courtEmailAddress,
   }
-
   return {
     name: 'BookingRequest',
     agencyId: details.agencyId,
     recipients: [
       {
         recipient: 'vlb',
-        template: notifications.requestBookingCourtTemplateVLBAdminId,
+        template: details.courtEmailAddress
+          ? notifications.requestBookingCourtTemplateVLBAdminWithCourtEmailAddress
+          : notifications.requestBookingCourtTemplateVLBAdmin,
         personalisation: () => personalisation,
       },
       {

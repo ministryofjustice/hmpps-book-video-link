@@ -7,7 +7,7 @@ jest.mock('../../services/locationService')
 jest.mock('../../services/notificationService')
 
 describe('Offender details controller', () => {
-  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
   const notificationService = new NotificationService(null, null, null) as jest.Mocked<NotificationService>
 
   let controller: OffenderDetailsController
@@ -24,6 +24,8 @@ describe('Offender details controller', () => {
       agencyId: 'WWI',
       description: 'HMP Wandsworth',
     })
+
+    locationService.getCourtEmailAddress.mockResolvedValue({ email: 'court@mail.com' })
 
     controller = new OffenderDetailsController(locationService, notificationService)
   })
@@ -80,6 +82,7 @@ describe('Offender details controller', () => {
         preHearingStartAndEndTime: '11:00 to 11:20',
         prison: 'WWI',
         startTime: '2019-12-01T10:00:00',
+        courtId: 'someCourtId',
       }
       req.flash.mockReturnValueOnce([details])
 
@@ -106,8 +109,10 @@ describe('Offender details controller', () => {
         comments: 'test',
         prison: 'HMP Wandsworth',
         agencyId: 'WWI',
+        courtEmailAddress: 'court@mail.com',
       }
 
+      expect(locationService.getCourtEmailAddress).toHaveBeenLastCalledWith(res.locals, 'someCourtId')
       expect(notificationService.sendBookingRequestEmails).toHaveBeenCalledWith(
         res.locals,
         'COURT_USER',
@@ -150,6 +155,7 @@ describe('Offender details controller', () => {
         lastName: 'Doe',
         comments: 'test',
         agencyId: 'WWI',
+        courtEmailAddress: 'court@mail.com',
       })
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/confirmation')
     })

@@ -5,7 +5,7 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/locationService')
 
 describe('Select court controller', () => {
-  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
 
   let controller: SelectCourtController
 
@@ -140,7 +140,7 @@ describe('Select court controller', () => {
   })
 
   describe('Submit', () => {
-    it('should stash hearing location into flash and redirect to enter offender details', async () => {
+    it('should stash hearing location and court id into flash and redirect to enter offender details', async () => {
       req.body = { courtId: 'LDNCOU' }
       locationService.getVideoLinkEnabledCourt.mockResolvedValue({ id: 'LDNCOU', name: 'London County Court' })
       mockFlashState({
@@ -160,6 +160,7 @@ describe('Select court controller', () => {
 
       expect(req.flash).toHaveBeenCalledWith('requestBooking', {
         hearingLocation: 'London County Court',
+        courtId: 'LDNCOU',
       })
       expect(res.redirect('/request-booking/enter-offender-details'))
     })

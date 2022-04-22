@@ -21,7 +21,12 @@ const notificationService = new NotificationService(oauthApi, notifyApi, prisonR
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)
-const locationService = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
+const locationService = new LocationService(
+  prisonApi,
+  manageCourtsService,
+  roomFinderFactory(whereaboutsApi),
+  whereaboutsApi
+)
 const viewBookingsService = new ViewBookingsService(
   prisonApi,
   whereaboutsApi,
