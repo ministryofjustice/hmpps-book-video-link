@@ -90,6 +90,7 @@ export default class SelectCourtController {
       this.packBookingDetails(req, {
         ...bookingDetails,
         hearingLocation: court.name,
+        courtId: court.id,
       })
       return res.redirect('/request-booking/enter-offender-details')
     }

@@ -3,6 +3,7 @@ import BookingService from './bookingService'
 import ViewBookingsService from './viewBookingsService'
 import NotificationService from './notificationService'
 import LocationService from './locationService'
+import RequestService from './requestService'
 import ManageCourtsService from './manageCourtsService'
 import { roomFinderFactory } from './roomFinder'
 import AvailabilityCheckService from './availabilityCheckService'
@@ -37,6 +38,8 @@ const bookingService = new BookingService(
   locationService
 )
 
+const requestService = new RequestService(whereaboutsApi, notificationService)
+
 export const services = {
   bookingService,
   notificationService,
@@ -44,6 +47,7 @@ export const services = {
   viewBookingsService,
   availabilityCheckService,
   manageCourtsService,
+  requestService,
 
   // Have to expose these as lots of routes require these directly
   ...apis,
@@ -51,4 +55,4 @@ export const services = {
 
 export type Services = typeof services
 
-export { NotificationService, AvailabilityCheckService, BookingService, LocationService }
+export { NotificationService, AvailabilityCheckService, BookingService, LocationService, RequestService }

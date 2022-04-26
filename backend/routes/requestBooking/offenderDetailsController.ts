@@ -3,12 +3,14 @@ import moment from 'moment'
 import { DAY_MONTH_YEAR, Time } from '../../shared/dateHelpers'
 import type LocationService from '../../services/locationService'
 import type NotificationService from '../../services/notificationService'
+import type RequestService from '../../services/requestService'
 import type { RequestEmail } from '../../services/model'
 
 export default class OffenderDetailsController {
   public constructor(
     private readonly locationService: LocationService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
+    private readonly requestService: RequestService
   ) {}
 
   private extractObjectFromFlash({ req, key }) {
@@ -67,6 +69,7 @@ export default class OffenderDetailsController {
       })
 
       const matchingPrison = await this.locationService.getMatchingPrison(res.locals, prison)
+      const courtEmailAddress = await this.requestService.getCourtEmailAddress(res.locals, bookingDetails.courtId)
 
       const personalisation: RequestEmail = {
         firstName,
@@ -81,12 +84,13 @@ export default class OffenderDetailsController {
         comments,
         preHearingStartAndEndTime,
         postHearingStartAndEndTime,
+        courtEmailAddress: courtEmailAddress?.email,
       }
 
       this.packBookingDetails(req, personalisation)
 
       const { username } = req.session.userDetails
-      await this.notificationService.sendBookingRequestEmails(res.locals, username, personalisation)
+      await this.requestService.sendBookingRequestEmails(res.locals, username, personalisation)
 
       return res.redirect('/request-booking/confirmation')
     }

@@ -1,14 +1,17 @@
 import OffenderDetailsController from './offenderDetailsController'
 import LocationService from '../../services/locationService'
 import NotificationService from '../../services/notificationService'
+import RequestService from '../../services/requestService'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/locationService')
 jest.mock('../../services/notificationService')
+jest.mock('../../services/requestService')
 
 describe('Offender details controller', () => {
   const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
   const notificationService = new NotificationService(null, null, null) as jest.Mocked<NotificationService>
+  const requestService = new RequestService(null, null) as jest.Mocked<RequestService>
 
   let controller: OffenderDetailsController
 
@@ -25,7 +28,9 @@ describe('Offender details controller', () => {
       description: 'HMP Wandsworth',
     })
 
-    controller = new OffenderDetailsController(locationService, notificationService)
+    requestService.getCourtEmailAddress.mockResolvedValue({ email: 'court@mail.com' })
+
+    controller = new OffenderDetailsController(locationService, notificationService, requestService)
   })
 
   describe('View', () => {
@@ -80,6 +85,7 @@ describe('Offender details controller', () => {
         preHearingStartAndEndTime: '11:00 to 11:20',
         prison: 'WWI',
         startTime: '2019-12-01T10:00:00',
+        courtId: 'someCourtId',
       }
       req.flash.mockReturnValueOnce([details])
 
@@ -106,13 +112,11 @@ describe('Offender details controller', () => {
         comments: 'test',
         prison: 'HMP Wandsworth',
         agencyId: 'WWI',
+        courtEmailAddress: 'court@mail.com',
       }
 
-      expect(notificationService.sendBookingRequestEmails).toHaveBeenCalledWith(
-        res.locals,
-        'COURT_USER',
-        personalisation
-      )
+      expect(requestService.getCourtEmailAddress).toHaveBeenLastCalledWith(res.locals, 'someCourtId')
+      expect(requestService.sendBookingRequestEmails).toHaveBeenCalledWith(res.locals, 'COURT_USER', personalisation)
     })
 
     it('should stash appointment details and redirect to the confirmation page', async () => {
@@ -150,6 +154,7 @@ describe('Offender details controller', () => {
         lastName: 'Doe',
         comments: 'test',
         agencyId: 'WWI',
+        courtEmailAddress: 'court@mail.com',
       })
       expect(res.redirect).toHaveBeenCalledWith('/request-booking/confirmation')
     })
