@@ -92,23 +92,22 @@ export default class NotificationService {
        */
       return Promise.resolve()
     }
-    try {
-      if (!emailAddress) {
-        return Promise.resolve()
-      }
 
-      return this.sendEmail({
-        templateId: recipientEmailSpec.template,
-        emailAddress,
-        personalisation: recipientEmailSpec.personalisation(userDetails.name),
-      })
-    } catch (error) {
+    if (!emailAddress) {
+      return Promise.resolve()
+    }
+
+    return this.sendEmail({
+      templateId: recipientEmailSpec.template,
+      emailAddress,
+      personalisation: recipientEmailSpec.personalisation(userDetails.name),
+    }).catch(error => {
       log.error(
         `Failed to send the ${recipientEmailSpec.recipient} recipient a ${emailSpec.name} email.`,
         error.response?.data?.errors
       )
       return Promise.resolve()
-    }
+    })
   }
 
   public async sendBookingCreationEmails(context: Context, username: string, details: CreateEmail): Promise<void> {
