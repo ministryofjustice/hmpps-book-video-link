@@ -142,7 +142,7 @@ export type UpdateEmail = {
 }
 
 export type RequestEmail = {
-  courtEmailAddress: string
+  courtEmailAddress?: string
   firstName: string
   lastName: string
   dateOfBirth: string

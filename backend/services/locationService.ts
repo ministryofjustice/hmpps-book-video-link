@@ -1,5 +1,5 @@
-import { Location, Court, CourtEmail } from 'whereaboutsApi'
-import type { PrisonApi, WhereaboutsApi } from '../api'
+import { Location, Court } from 'whereaboutsApi'
+import type { PrisonApi } from '../api'
 import type ManageCourtsService from './manageCourtsService'
 import { Context, Prison } from './model'
 import { app } from '../config'
@@ -9,8 +9,7 @@ export = class LocationService {
   constructor(
     private readonly prisonApi: PrisonApi,
     private readonly manageCourtsService: ManageCourtsService,
-    private readonly roomFinderFactory: RoomFinderFactory,
-    private readonly whereaboutsApi: WhereaboutsApi
+    private readonly roomFinderFactory: RoomFinderFactory
   ) {}
 
   private transformPrison(prison): Prison {
@@ -46,10 +45,5 @@ export = class LocationService {
   public async getVideoLinkEnabledCourt(context: Context, courtId: string): Promise<Court> {
     const court = await this.manageCourtsService.getCourt(context, courtId)
     return court
-  }
-
-  public async getCourtEmailAddress(context: Context, courtId: string): Promise<CourtEmail> {
-    const courtEmailAddress = await this.whereaboutsApi.getCourtEmail(context, courtId)
-    return courtEmailAddress
   }
 }

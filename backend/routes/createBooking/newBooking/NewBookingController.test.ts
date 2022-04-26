@@ -9,7 +9,7 @@ import { LocationService, AvailabilityCheckService } from '../../../services'
 
 const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
 const availabilityCheckService = new AvailabilityCheckService(null) as jest.Mocked<AvailabilityCheckService>
-const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
+const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
 jest.mock('../../../api/prisonApi')
 jest.mock('../../../services')

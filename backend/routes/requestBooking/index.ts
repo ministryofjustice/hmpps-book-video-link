@@ -12,10 +12,10 @@ import startValidation from './startValidation'
 import selectCourtValidation from './selectCourtValidation'
 import offenderDetailsValidation from './offenderDetailsValidation'
 
-export default function createRoutes({ locationService, notificationService }: Services): Router {
+export default function createRoutes({ locationService, notificationService, requestService }: Services): Router {
   const startController = new StartController(locationService)
   const selectCourtController = new SelectCourtController(locationService)
-  const offenderDetailsController = new OffenderDetailsController(locationService, notificationService)
+  const offenderDetailsController = new OffenderDetailsController(locationService, notificationService, requestService)
   const confirmationController = new ConfirmationController()
 
   const routes = express.Router({ mergeParams: true })

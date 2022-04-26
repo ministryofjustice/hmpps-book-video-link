@@ -1,14 +1,17 @@
 import OffenderDetailsController from './offenderDetailsController'
 import LocationService from '../../services/locationService'
 import NotificationService from '../../services/notificationService'
+import RequestService from '../../services/requestService'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 
 jest.mock('../../services/locationService')
 jest.mock('../../services/notificationService')
+jest.mock('../../services/requestService')
 
 describe('Offender details controller', () => {
-  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
   const notificationService = new NotificationService(null, null, null) as jest.Mocked<NotificationService>
+  const requestService = new RequestService(null, null) as jest.Mocked<RequestService>
 
   let controller: OffenderDetailsController
 
@@ -25,9 +28,9 @@ describe('Offender details controller', () => {
       description: 'HMP Wandsworth',
     })
 
-    locationService.getCourtEmailAddress.mockResolvedValue({ email: 'court@mail.com' })
+    requestService.getCourtEmailAddress.mockResolvedValue({ email: 'court@mail.com' })
 
-    controller = new OffenderDetailsController(locationService, notificationService)
+    controller = new OffenderDetailsController(locationService, notificationService, requestService)
   })
 
   describe('View', () => {
@@ -112,12 +115,8 @@ describe('Offender details controller', () => {
         courtEmailAddress: 'court@mail.com',
       }
 
-      expect(locationService.getCourtEmailAddress).toHaveBeenLastCalledWith(res.locals, 'someCourtId')
-      expect(notificationService.sendBookingRequestEmails).toHaveBeenCalledWith(
-        res.locals,
-        'COURT_USER',
-        personalisation
-      )
+      expect(requestService.getCourtEmailAddress).toHaveBeenLastCalledWith(res.locals, 'someCourtId')
+      expect(requestService.sendBookingRequestEmails).toHaveBeenCalledWith(res.locals, 'COURT_USER', personalisation)
     })
 
     it('should stash appointment details and redirect to the confirmation page', async () => {

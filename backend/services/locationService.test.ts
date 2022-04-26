@@ -31,7 +31,7 @@ describe('Location service', () => {
   let service: LocationService
 
   beforeEach(() => {
-    service = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi), whereaboutsApi)
+    service = new LocationService(prisonApi, manageCourtsService, roomFinderFactory(whereaboutsApi))
   })
 
   afterEach(() => {
@@ -103,13 +103,6 @@ describe('Location service', () => {
       const response = await service.getVideoLinkEnabledCourt(context, 'LDNCOU')
       expect(response).toEqual({ name: 'London County Court', id: 'LDNCOU' })
       expect(manageCourtsService.getCourt).toBeCalledWith(context, 'LDNCOU')
-    })
-  })
-  describe('getCourtEmail', () => {
-    it('Should get single court email address using courtId ', async () => {
-      whereaboutsApi.getCourtEmail.mockResolvedValue({ email: 'court@email.com' })
-      const response = await service.getCourtEmailAddress(context, 'DRBYCC')
-      expect(response).toEqual({ email: 'court@email.com' })
     })
   })
 })

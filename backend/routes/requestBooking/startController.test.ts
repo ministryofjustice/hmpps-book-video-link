@@ -5,7 +5,7 @@ import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 jest.mock('../../services/locationService')
 
 describe('Request path Start controller', () => {
-  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
   let controller: StartController
 

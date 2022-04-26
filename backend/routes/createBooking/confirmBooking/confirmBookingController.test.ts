@@ -15,7 +15,7 @@ jest.mock('../../../services')
 describe('Select court appointment rooms', () => {
   const prisonApi = new PrisonApi(null) as jest.Mocked<PrisonApi>
   const bookingService = new BookingService(null, null, null, null, null) as jest.Mocked<BookingService>
-  const locationService = new LocationService(null, null, null, null) as jest.Mocked<LocationService>
+  const locationService = new LocationService(null, null, null) as jest.Mocked<LocationService>
 
   let controller: ConfirmBookingController
 
