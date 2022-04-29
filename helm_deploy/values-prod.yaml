@@ -37,9 +37,6 @@ env:
 jobs:
   cronspec: "59 * * * *"
 
-generic-prometheus-alerts:
-  alertSeverity: digital-prison-service
-
 whitelist:
   cloudplatform-live1-1: 35.178.209.113/32
   cloudplatform-live1-2: 3.8.51.207/32
@@ -70,4 +67,5 @@ whitelist:
 
 # determine which slack channel alerts are sent to, via the correct Alert Manager receiver
 generic-prometheus-alerts:
-  alertSeverity: digital-prison-service
+  targetApplication: hmpps-book-video-link
+  alertSeverity: elp_alerts
