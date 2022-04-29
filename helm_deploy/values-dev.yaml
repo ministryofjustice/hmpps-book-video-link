@@ -36,6 +36,3 @@ env:
 
 jobs:
   cronspec: "59 * * * *"
-
-generic-prometheus-alerts:
-  alertSeverity: digital-prison-service-dev

@@ -3,6 +3,7 @@
 
 generic-prometheus-alerts:
   targetApplication: hmpps-book-video-link
+  alertSeverity: digital-prison-service-dev
 
 ingress:
   annotations:
