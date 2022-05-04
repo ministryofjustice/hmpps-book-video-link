@@ -19,9 +19,9 @@ describe('prisonRegisterApi', () => {
       expect(await api.getVideoLinkConferencingCentreEmailAddress({}, 'MDI')).toEqual('vcc@def')
     })
 
-    it('VCC email address not found', async () => {
-      mock.get('/secure/prisons/id/MDI/videolink-conferencing-centre/email-address').reply(404, {})
-      await expect(api.getVideoLinkConferencingCentreEmailAddress({}, 'MDI')).rejects.toThrow(new Error('Not Found'))
+    it('VCC email address not found - returns 404 error', async () => {
+      mock.get('/secure/prisons/id/MDI/videolink-conferencing-centre/email-address').reply(404)
+      await expect(api.getVideoLinkConferencingCentreEmailAddress({}, 'MDI')).resolves.toBe(undefined)
     })
   })
 
@@ -31,9 +31,9 @@ describe('prisonRegisterApi', () => {
       expect(await api.getOffenderManagementUnitEmailAddress({}, 'MDI')).toEqual('omu@def')
     })
 
-    it('OMU email address not found', async () => {
-      mock.get('/secure/prisons/id/MDI/offender-management-unit/email-address').reply(404, {})
-      await expect(api.getOffenderManagementUnitEmailAddress({}, 'MDI')).rejects.toThrow(new Error('Not Found'))
+    it('OMU email address not found - returns 404 error', async () => {
+      mock.get('/secure/prisons/id/MDI/offender-management-unit/email-address').reply(404)
+      await expect(api.getOffenderManagementUnitEmailAddress({}, 'MDI')).resolves.toBe(undefined)
     })
   })
 })
