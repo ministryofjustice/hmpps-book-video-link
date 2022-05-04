@@ -187,6 +187,19 @@ describe('Notification service', () => {
         }
       )
     })
+
+    it('Should throw error', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockRejectedValue(new Error('Network error'))
+
+      await expect(
+        notificationService.sendBookingRequestEmails(context, 'A_USER', {
+          ...requestEmail,
+          courtEmailAddress: undefined,
+        })
+      ).rejects.toThrow()
+    })
   })
 
   describe('Send update emails', () => {
@@ -803,6 +816,26 @@ describe('Notification service', () => {
           reference: null,
         }
       )
+    })
+
+    it('fails to get emailAddress on prisonApi exception', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockResolvedValue({})
+
+      prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue(new Error('Network error'))
+      const result = await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
+      expect(result).toBe(undefined)
+    })
+
+    it('fails to send email on Notify exception', async () => {
+      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      notifyApi.sendEmail.mockRejectedValue(new Error('Network error'))
+
+      prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockResolvedValue('some email address')
+      const result = await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
+      expect(result).toBe(undefined)
     })
   })
 })

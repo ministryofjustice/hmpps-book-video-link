@@ -114,15 +114,53 @@ export default class NotificationService {
     await this.sendEmails(context, username, BookingCreation(details))
   }
 
-  public async sendBookingRequestEmails(context: Context, username: string, details: RequestEmail): Promise<void> {
-    await this.sendEmails(context, username, BookingRequest(details))
-  }
-
   public async sendBookingUpdateEmails(context: Context, username: string, details: UpdateEmail): Promise<void> {
     await this.sendEmails(context, username, BookingUpdated(details))
   }
 
   public async sendCancellationEmails(context: Context, username: string, details: BookingDetails): Promise<void> {
     await this.sendEmails(context, username, BookingCancellation(details))
+  }
+
+  public async sendBookingRequestEmails(context: Context, username: string, details: RequestEmail): Promise<void> {
+    const userDetails = await this.getUserDetails(context, username)
+    const emailSpec = BookingRequest(details)
+    await Promise.all(
+      emailSpec.recipients.map(recipientEmailSpec =>
+        this.emailRequestToRecipient(context, recipientEmailSpec, userDetails, emailSpec)
+      )
+    )
+  }
+
+  private async emailRequestToRecipient(
+    context: Context,
+    recipientEmailSpec: RecipientEmailSpec,
+    userDetails: UserDetails,
+    emailSpec: EmailSpec
+  ): Promise<void> {
+    const emailAddress = await this.getEmailAddress(
+      context,
+      recipientEmailSpec.recipient,
+      emailSpec.agencyId,
+      userDetails.email
+    )
+
+    if (!emailAddress) {
+      return
+    }
+
+    try {
+      await this.sendEmail({
+        templateId: recipientEmailSpec.template,
+        emailAddress,
+        personalisation: recipientEmailSpec.personalisation(userDetails.name),
+      })
+    } catch (error) {
+      log.warn(
+        `Failed to send the ${recipientEmailSpec.recipient} recipient a ${emailSpec.name} email.`,
+        error.response?.data?.errors
+      )
+      throw error
+    }
   }
 }
