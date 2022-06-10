@@ -25,10 +25,13 @@ const configureRoutes = ({ app, tokenRefresher, tokenVerifier }) => {
     return passport.authenticate('oauth2')(req, res, next)
   }
 
-  const logout = (req, res) => {
-    req.session.destroy(() => {
-      res.redirect(authLogoutUrl)
-    })
+  const logout = (req, res, next) => {
+    if (req.user) {
+      req.logout(err => {
+        if (err) return next(err)
+        return req.session.destroy(() => res.redirect(authLogoutUrl))
+      })
+    } else res.redirect(authLogoutUrl)
   }
 
   /**
@@ -54,22 +57,22 @@ const configureRoutes = ({ app, tokenRefresher, tokenVerifier }) => {
       if (req.isAuthenticated()) {
         await tokenRefresher(req.user)
       }
-      next()
+      return next()
     } catch (error) {
       // need to logout here otherwise user will still be considered authenticated when we take them to /login
-      req.logout()
+      return req.logout(err => {
+        if (err) return next(err)
+        if (isXHRRequest(req)) {
+          req.session.destroy()
+          res.status(401)
+          res.json({ reason: 'session-expired' })
+          return next(error)
+        }
 
-      if (isXHRRequest(req)) {
-        req.session.destroy()
-        res.status(401)
-        res.json({ reason: 'session-expired' })
-        next(error)
-        return
-      }
-
-      req.session.destroy(() => {
-        const query = querystring.stringify({ returnTo: req.originalUrl })
-        res.redirect(`/login?${query}`)
+        return req.session.destroy(() => {
+          const query = querystring.stringify({ returnTo: req.originalUrl })
+          return res.redirect(`/login?${query}`)
+        })
       })
     }
   }
@@ -81,20 +84,21 @@ const configureRoutes = ({ app, tokenRefresher, tokenVerifier }) => {
   const requireLoginMiddleware = async (req, res, next) => {
     if (req.isAuthenticated() && (await tokenVerifier(req.user))) {
       contextProperties.setTokens(req.user, res.locals)
-      next()
-      return
+      return next()
     }
-    req.logout() // need logout as want session recreated from latest auth credentials
-    if (isXHRRequest(req)) {
-      req.session.destroy()
-      res.status(401)
-      res.json({ reason: 'session-expired' })
-      return
-    }
+    // need logout as want session recreated from latest auth credentials
+    return req.logout(err => {
+      if (err) return next(err)
+      if (isXHRRequest(req)) {
+        req.session.destroy()
+        res.status(401)
+        return res.json({ reason: 'session-expired' })
+      }
 
-    req.session.destroy(() => {
-      const query = querystring.stringify({ returnTo: req.originalUrl })
-      res.redirect(`/login?${query}`)
+      return req.session.destroy(() => {
+        const query = querystring.stringify({ returnTo: req.originalUrl })
+        return res.redirect(`/login?${query}`)
+      })
     })
   }
 
