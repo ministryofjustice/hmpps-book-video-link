@@ -1,5 +1,11 @@
-import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
+import { Contracts, setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
+import { EnvelopeTelemetry } from 'applicationinsights/out/Declarations/Contracts'
 import applicationVersion from './application-version'
+
+export type ContextObject = {
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  [name: string]: any
+}
 
 export const initialiseAppInsights = (name = defaultName()): void => {
   if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
@@ -8,6 +14,7 @@ export const initialiseAppInsights = (name = defaultName()): void => {
     setup().setDistributedTracingMode(DistributedTracingModes.AI_AND_W3C).start()
     defaultClient.context.tags['ai.cloud.role'] = name
     defaultClient.context.tags['ai.application.ver'] = version()
+    defaultClient.addTelemetryProcessor(addUserDataToRequests)
   }
 }
 
@@ -28,4 +35,20 @@ export const getInsightsClient = (): TelemetryClient => {
     return defaultClient
   }
   return null
+}
+
+export function addUserDataToRequests(envelope: EnvelopeTelemetry, contextObjects: ContextObject): boolean {
+  const isRequest = envelope.data.baseType === Contracts.TelemetryTypeString.Request
+  if (isRequest) {
+    const { username } = contextObjects?.['http.ServerRequest']?.res?.locals?.user || {}
+    if (username) {
+      const { properties } = envelope.data.baseData
+      // eslint-disable-next-line no-param-reassign
+      envelope.data.baseData.properties = {
+        username,
+        ...properties,
+      }
+    }
+  }
+  return true
 }
