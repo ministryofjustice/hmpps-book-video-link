@@ -41,11 +41,13 @@ export function addUserDataToRequests(envelope: EnvelopeTelemetry, contextObject
   const isRequest = envelope.data.baseType === Contracts.TelemetryTypeString.Request
   if (isRequest) {
     const { username } = contextObjects?.['http.ServerRequest']?.res?.locals?.user || {}
-    const { properties } = envelope.data.baseData
-    // eslint-disable-next-line no-param-reassign
-    envelope.data.baseData.properties = {
-      username,
-      ...properties,
+    if (username) {
+      const { properties } = envelope.data.baseData
+      // eslint-disable-next-line no-param-reassign
+      envelope.data.baseData.properties = {
+        username,
+        ...properties,
+      }
     }
   }
   return true

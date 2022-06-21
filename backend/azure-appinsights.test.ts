@@ -41,6 +41,16 @@ describe('azure-appinsights', () => {
       })
     })
 
+    it('handles absent user data', () => {
+      const envelope = createEnvelope({})
+
+      addUserDataToRequests(envelope, context)
+
+      expect(envelope.data.baseData.properties).toStrictEqual({
+        ...user,
+      })
+    })
+
     it('returns true when not RequestData type', () => {
       const envelope = createEnvelope({}, 'NOT_REQUEST_DATA')
 
