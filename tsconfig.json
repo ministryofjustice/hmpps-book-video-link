@@ -16,6 +16,6 @@
     "allowSyntheticDefaultImports": true,
     "typeRoots": ["@types", "./node_modules/@types"]
   },
-  "exclude": ["node_modules", "assets", "integration-tests", "build", "dist", "static", "config",],
+  "exclude": ["node_modules", "assets", "integration-tests", "build", "dist", "cypress.config.ts", "static", "config"],
   "include": ["**/*.js", "**/*.ts"]
 }
