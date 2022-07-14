@@ -1,0 +1,61 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+
+{% set title = 'Booking events download' %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: "/",
+        classes: "govuk-!-display-none-print"
+    }) }}
+{% endblock %}
+
+{% block content %}
+    {% if errors.length > 0 %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errors,
+            attributes: { 'data-qa-errors': true }
+        }) }}
+    {% endif %}
+
+    <h1 class="govuk-heading-l">{{ title }}</h1>
+
+    <form novalidate="novalidate" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+
+        {{ govukRadios({
+        idPrefix: "option",
+        name: "option",
+        fieldset: {
+            legend: {
+            text: "Download By?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--m"
+            }
+        },
+        errorMessage: errors | findError('option'),
+        items: [
+            {
+            value: "DATE_OF_BOOKING_WAS_MADE",
+            text: "Date booking was made"
+            },
+            {
+            value: "DATE_OF_HEARING",
+            text: "Date of hearing"
+            }
+        ]
+        }) }}
+        {{ govukButton({
+            text: "Continue",
+            preventDoubleClick: true
+        }) }}
+
+    </form>
+{% endblock %}

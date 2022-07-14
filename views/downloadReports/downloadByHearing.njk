@@ -14,7 +14,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
         text: "Back",
-        href: "/",
+        href: "video-link-booking-events",
         classes: "govuk-!-display-none-print"
     }) }}
 {% endblock %}
@@ -30,8 +30,10 @@
 
     <h1 class="govuk-heading-l">{{ title }}</h1>
 
+    <h2 class="govuk-heading-m">Download by hearing date</h2>
+
     <form novalidate="novalidate">
-        <formValues type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
 
         {{ govukDateInput({
             id: "start",
@@ -43,7 +45,7 @@
                 }
             },
             hint: {
-                text: "For example, 28 03 2021"
+                text: "For example 28 03 2021"
             },
             errorMessage: errors | findErrors(['startDay', 'startMonth', 'startYear']),
             items: [

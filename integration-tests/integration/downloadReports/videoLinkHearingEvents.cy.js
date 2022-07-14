@@ -1,7 +1,8 @@
 const path = require('path')
-const EventsPage = require('../pages/eventsPage')
+const DownloadOptionPage = require('../../pages/downloadReports/downloadOptionPage')
+const HearingPage = require('../../pages/downloadReports/hearingPage')
 
-context('A user can download video link booking events as CSV files', () => {
+context('A user can download video link bookings as CSV files', () => {
   before(() => {
     cy.clearCookies()
     cy.task('reset')
@@ -17,19 +18,26 @@ context('A user can download video link booking events as CSV files', () => {
     cy.task('deleteFolder', downloadsFolder)
   })
 
+  it('selects download by booking option', () => {
+    cy.visit('/video-link-booking-events')
+    const page = DownloadOptionPage.verifyOnPage()
+    const form = page.form()
+    form.dateHearing().type('radio').first().check()
+    page.continueButton().click()
+  })
+
   it('Download a csv file', () => {
     cy.task('stubGetEventsCsv', 'h1,h2,h3\n1,2,3')
-
-    cy.visit('/video-link-booking-events')
-    const page = EventsPage.verifyOnPage()
+    const page = HearingPage.verifyOnPage()
     const form = page.form()
+    form.heading().contains('Download by hearing date')
     form.startDay().type('28')
     form.startMonth().type('03')
     form.startYear().type('2021')
     form.days().type('7')
     page.downloadButton().click()
 
-    const filename = path.join(downloadsFolder, 'video-link-booking-events-from-2021-03-28-for-7-days.csv')
+    const filename = path.join(downloadsFolder, 'video-link-hearing-events-from-2021-03-28-for-7-days.csv')
 
     // browser might take a while to download the file,
     // so use "cy.readFile" to retry until the file exists

@@ -7,7 +7,7 @@ import requestBookingRoutes from './requestBooking'
 import createBookingRoutes from './createBooking'
 import deleteBookingRoutes from './deleteBooking'
 import viewBookingsRoutes from './viewBookings'
-import eventRoutes from './events'
+import downloadRoutes from './downloadReports'
 import amendBookingsRoutes from './amendBooking'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
@@ -32,7 +32,7 @@ export = function createRoutes(services: Services): Router {
   router.use(amendBookingsRoutes(services))
   router.use(viewBookingsRoutes(services))
 
-  router.use(eventRoutes(services))
+  router.use(downloadRoutes(services))
 
   router.get('/feedback-and-support', (req, res) => {
     res.render('feedbackAndSupport.njk', { supportEmail, supportTelephone })

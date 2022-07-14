@@ -99,6 +99,7 @@ export default defineConfig({
         stubFindPrisonersByBookingIds: prisonerOffenderSearch.stubFindPrisonersByBookingIds,
 
         stubGetEventsCsv: body => whereabouts.stubGetEventsCsv(body),
+        stubGetBookingsCsv: body => whereabouts.stubGetBookingsCsv(body),
 
         deleteFolder: folderName => {
           console.log('deleting folder %s', folderName)

@@ -1,8 +1,9 @@
-const page = require('./page')
+const page = require('../page')
 
-const eventsPage = () =>
+const hearingPage = () =>
   page('Booking events download', {
     form: () => ({
+      heading: () => cy.get('.govuk-heading-m'),
       startDay: () => cy.get('#startDay'),
       startMonth: () => cy.get('#startMonth'),
       startYear: () => cy.get('#startYear'),
@@ -12,9 +13,9 @@ const eventsPage = () =>
   })
 
 export default {
-  verifyOnPage: eventsPage,
+  verifyOnPage: hearingPage,
   goTo: () => {
-    cy.visit('/video-link-booking-events')
-    return eventsPage()
+    cy.visit('/download-by-hearing')
+    return hearingPage()
   },
 }

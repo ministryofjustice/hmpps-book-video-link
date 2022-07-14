@@ -23,7 +23,7 @@ export default class EventsRetriever {
       from: 2,
     })
     const records: string[][] = []
-    this.whereaboutsApi.getVideoLinkBookingEvents(tokens, parser, day.startOf('day'), 1)
+    this.whereaboutsApi.getVideoLinkEventsCSV(tokens, parser, day.startOf('day'), 1)
     // eslint-disable-next-line no-restricted-syntax
     for await (const record of parser) {
       records.push(record)
