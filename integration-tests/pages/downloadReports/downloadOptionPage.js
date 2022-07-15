@@ -5,6 +5,7 @@ const downloadOption = () =>
     form: () => ({
       dateBooking: () => cy.get('#option'),
       dateHearing: () => cy.get('#option-2'),
+      heading: () => cy.get('.govuk-heading-m'),
     }),
     continueButton: () => cy.get('.govuk-button'),
   })

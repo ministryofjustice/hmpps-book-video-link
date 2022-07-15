@@ -3,7 +3,6 @@ const page = require('../page')
 const bookingPage = () =>
   page('Booking events download', {
     form: () => ({
-      heading: () => cy.get('.govuk-heading-m'),
       startDay: () => cy.get('#startDay'),
       startMonth: () => cy.get('#startMonth'),
       startYear: () => cy.get('#startYear'),

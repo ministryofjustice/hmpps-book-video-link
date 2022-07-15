@@ -28,7 +28,7 @@
     <h1 class="govuk-heading-l">{{ title }}</h1>
 
     <form novalidate="novalidate" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}" />
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ govukRadios({
         idPrefix: "option",

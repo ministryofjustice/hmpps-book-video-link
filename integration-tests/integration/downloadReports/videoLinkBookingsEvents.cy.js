@@ -24,13 +24,13 @@ context('A user can download video link bookings as CSV files', () => {
     const form = page.form()
     form.dateBooking().type('radio').first().check()
     page.continueButton().click()
+    form.heading().contains('Download by date booking was made')
   })
 
   it('Download a csv file', () => {
     cy.task('stubGetBookingsCsv', 'h1,h2,h3\n1,2,3')
     const page = BookingPage.verifyOnPage()
     const form = page.form()
-    form.heading().contains('Download by date booking was made')
     form.startDay().type('28')
     form.startMonth().type('03')
     form.startYear().type('2021')
