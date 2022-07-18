@@ -236,6 +236,21 @@ module.exports = {
     })
   },
 
+  stubGetBookingsCsv: body =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: '/whereabouts/court/video-link-bookings',
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/csv;charset=UTF-8',
+        },
+        body,
+      },
+    }),
+
   stubGetEventsCsv: body =>
     stubFor({
       request: {

@@ -1,6 +1,6 @@
-const page = require('./page')
+const page = require('../page')
 
-const eventsPage = () =>
+const bookingPage = () =>
   page('Booking events download', {
     form: () => ({
       startDay: () => cy.get('#startDay'),
@@ -12,9 +12,9 @@ const eventsPage = () =>
   })
 
 export default {
-  verifyOnPage: eventsPage,
+  verifyOnPage: bookingPage,
   goTo: () => {
-    cy.visit('/video-link-booking-events')
-    return eventsPage()
+    cy.visit('/download-by-booking')
+    return bookingPage()
   },
 }

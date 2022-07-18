@@ -108,7 +108,7 @@ export = class WhereaboutsApi {
     return this.delete(context, `/court/video-link-bookings/${videoBookingId}`)
   }
 
-  public getVideoLinkBookingEvents(
+  public getVideoLinkEventsCSV(
     context: Context,
     stream: NodeJS.WritableStream,
     date: moment.Moment,
@@ -119,6 +119,21 @@ export = class WhereaboutsApi {
     this.client.getToStream(
       context,
       `/events/video-link-booking-events?start-date=${date.format(DATE_ONLY_FORMAT_SPEC)}${daysQP}`,
+      stream
+    )
+  }
+
+  public getVideoLinkBookingsCSV(
+    context: Context,
+    stream: NodeJS.WritableStream,
+    date: moment.Moment,
+    days?: number
+  ): void {
+    setCustomRequestHeaders(context, { Accept: 'text/csv' })
+    const daysQP = days ? `&days=${days}` : ''
+    this.client.getToStream(
+      context,
+      `/court/video-link-bookings?start-date=${date.format(DATE_ONLY_FORMAT_SPEC)}${daysQP}`,
       stream
     )
   }

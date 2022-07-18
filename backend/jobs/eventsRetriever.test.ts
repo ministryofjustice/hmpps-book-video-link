@@ -21,7 +21,7 @@ describe('test', () => {
   it('Retrieves events as nested arrays', async () => {
     const tokens = { access_token: 'at', refresh_token: 'rt' }
     tokenSource.getTokens.mockResolvedValue(tokens)
-    whereaboutsApi.getVideoLinkBookingEvents.mockImplementation((c, writable, m, d) => {
+    whereaboutsApi.getVideoLinkEventsCSV.mockImplementation((c, writable, m, d) => {
       Readable.from('a,b,c\n1,2,3\n4,5,6').pipe(writable)
       return Promise.resolve()
     })
@@ -33,7 +33,7 @@ describe('test', () => {
       ['4', '5', '6'],
     ])
 
-    const call = whereaboutsApi.getVideoLinkBookingEvents.mock.calls[0]
+    const call = whereaboutsApi.getVideoLinkEventsCSV.mock.calls[0]
     expect(call[0]).toStrictEqual(tokens)
 
     expect(
@@ -45,7 +45,7 @@ describe('test', () => {
   it('Handles no events', async () => {
     const tokens = { access_token: 'at', refresh_token: 'rt' }
     tokenSource.getTokens.mockResolvedValue(tokens)
-    whereaboutsApi.getVideoLinkBookingEvents.mockImplementation((c, writable, m, d) => {
+    whereaboutsApi.getVideoLinkEventsCSV.mockImplementation((c, writable, m, d) => {
       Readable.from('a,b,c\n').pipe(writable)
       return Promise.resolve()
     })
