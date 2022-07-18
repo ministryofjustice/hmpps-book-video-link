@@ -1,8 +1,6 @@
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
 import IndexController from './indexController'
 
-jest.mock('../../api/whereaboutsApi')
-
 const ERROR = [{ href: '#option', text: 'Select a download type' }]
 let controller: IndexController
 
