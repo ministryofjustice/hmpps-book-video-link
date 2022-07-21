@@ -13,8 +13,8 @@ export default function createRoutes(services: Services): Router {
   router.get('/video-link-booking-events', indexController.viewSelectionPage)
   router.post('/video-link-booking-events', indexController.submitSelection)
   router.get('/video-link-booking-events-csv', bookingsController.getCsvBooking)
-  router.get('/download-by-booking-date', bookingsController.viewBookingPage)
+  router.get('/video-link-booking-events/download-by-booking-date', bookingsController.viewBookingPage)
   router.get('/video-link-hearing-events-csv', eventsController.getCsvHearing)
-  router.get('/download-by-hearing-date', eventsController.viewHearingPage)
+  router.get('/video-link-booking-events/download-by-hearing-date', eventsController.viewHearingPage)
   return router
 }

@@ -46,7 +46,7 @@ describe('IndexController', () => {
       const res = mockResponse({})
 
       await controller.submitSelection(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith('/download-by-booking-date')
+      expect(res.redirect).toHaveBeenCalledWith('/video-link-booking-events/download-by-booking-date')
     })
 
     it('redirects to download by hearing page', async () => {
@@ -58,7 +58,7 @@ describe('IndexController', () => {
       const res = mockResponse({})
 
       await controller.submitSelection(req, res, null)
-      expect(res.redirect).toHaveBeenCalledWith('/download-by-hearing-date')
+      expect(res.redirect).toHaveBeenCalledWith('/video-link-booking-events/download-by-hearing-date')
     })
 
     it('displays error upon no selection ', async () => {
