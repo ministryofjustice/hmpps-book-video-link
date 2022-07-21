@@ -8,6 +8,7 @@ export default function (startDay, startMonth, startYear) {
   })
   const startIsValid =
     startDate.isValid() && !Number.isNaN(startDay) && !Number.isNaN(startMonth) && !Number.isNaN(startYear)
+  const missingDate = !startDay && !startMonth && !startYear
   const startErrors = []
 
   if (startDay && startMonth && startYear) {
@@ -25,6 +26,9 @@ export default function (startDay, startMonth, startYear) {
     if (startIsValid && startIsTooEarly) {
       startErrors.push({ text: 'Start date must be after 2020', href: '#startDay' }, { href: '#startError' })
     }
+  }
+  if (missingDate) {
+    startErrors.push({ text: 'Enter the earliest event date', href: '#startDay' }, { href: '#startError' })
   }
 
   if (!startDay && (startMonth || startYear)) {
