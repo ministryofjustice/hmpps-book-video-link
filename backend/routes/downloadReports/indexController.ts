@@ -13,9 +13,9 @@ export default class IndexController {
     const { option } = req.body
     switch (option) {
       case 'DATE_OF_BOOKING_WAS_MADE':
-        return res.redirect('/download-by-booking-date')
+        return res.redirect('/video-link-booking-events/download-by-booking-date')
       case 'DATE_OF_HEARING':
-        return res.redirect('/download-by-hearing-date')
+        return res.redirect('/video-link-booking-events/download-by-hearing-date')
       default: {
         req.flash('errors', [{ text: 'Select a download type', href: '#option' }])
         return res.redirect(`/video-link-booking-events`)
