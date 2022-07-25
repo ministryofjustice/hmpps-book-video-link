@@ -6,25 +6,25 @@ import { assertHasOptionalStringValues } from '../../utils'
 import eventsValidation from './eventsValidation'
 import startDateValidation from './startDateValidation'
 
-export default class BookingsController {
+export default class DownloadByEventTimestampController {
   constructor(private readonly whereaboutsApi: WhereaboutsApi) {}
 
-  public viewBookingPage: RequestHandler = async (req, res) => {
+  public viewPage: RequestHandler = async (req, res) => {
     const hasSubmitted = Object.keys(req.query).length > 0
     if (!hasSubmitted) {
-      return res.render('downloadReports/downloadByBooking.njk', { errors: [], formValues: {} })
+      return res.render('downloadReports/downloadByEventTimestamp.njk', { errors: [], formValues: {} })
     }
 
     const errors = eventsValidation(req.query)
-    const downloadPath = errors.length < 1 ? getDownloadPathBooking(req.query) : undefined
-    return res.render('downloadReports/downloadByBooking.njk', {
+    const downloadPath = errors.length < 1 ? getDownloadPathHearing(req.query) : undefined
+    return res.render('downloadReports/downloadByEventTimestamp.njk', {
       errors,
       formValues: req.query,
       downloadPath,
     })
   }
 
-  public getCsvBooking: RequestHandler = (req, res) => {
+  public viewCsv: RequestHandler = (req, res) => {
     const { query } = req
     assertHasOptionalStringValues(query, ['start-date', 'days'])
     const startDate = moment(query['start-date'], DATE_ONLY_FORMAT_SPEC, true)
@@ -34,18 +34,18 @@ export default class BookingsController {
       res.sendStatus(400)
     } else {
       res.contentType('text/csv')
-      res.set('Content-Disposition', attachmentTextBooking(startDate, days))
+      res.set('Content-Disposition', attachmentTextHearing(startDate, days))
 
-      this.whereaboutsApi.getVideoLinkBookingsCSV(res.locals, res, startDate, days)
+      this.whereaboutsApi.getVideoLinkEventsCSV(res.locals, res, startDate, days)
     }
   }
 }
 
-const getDownloadPathBooking = query => {
+const getDownloadPathHearing = query => {
   const { startDay, startMonth, startYear, days } = query
   const { startDate } = startDateValidation(startDay, startMonth, startYear)
-  return `/video-link-booking-events-csv?start-date=${startDate.format(DATE_ONLY_FORMAT_SPEC)}&days=${days}`
+  return `/video-link-events-csv?start-date=${startDate.format(DATE_ONLY_FORMAT_SPEC)}&days=${days}`
 }
 
-const attachmentTextBooking = (startDate: moment.Moment, days: number) =>
-  `attachment;filename=video-link-bookings-from-${startDate.format(DATE_ONLY_FORMAT_SPEC)}-for-${days}-days.csv`
+const attachmentTextHearing = (startDate: moment.Moment, days: number) =>
+  `attachment;filename=video-link-events-from-${startDate.format(DATE_ONLY_FORMAT_SPEC)}-for-${days}-days.csv`

@@ -1,26 +1,26 @@
 import WhereaboutsApi from '../../api/whereaboutsApi'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
-import EventsController from './downloadEventsController'
+import DownloadByHearingDateController from './downloadByHearingDateController'
 
 jest.mock('../../api/whereaboutsApi')
 
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
-let controller: EventsController
+let controller: DownloadByHearingDateController
 
-describe('EventsController', () => {
+describe('BookingsController', () => {
   describe('view', () => {
     beforeEach(() => {
       jest.resetAllMocks()
-      controller = new EventsController(whereaboutsApi)
+      controller = new DownloadByHearingDateController(whereaboutsApi)
     })
 
     it('First view', async () => {
       const req = mockRequest({})
       const res = mockResponse({})
 
-      await controller.viewHearingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearing.njk', {
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearingDate.njk', {
         downloadPath: undefined,
         errors: [],
         formValues: {},
@@ -38,9 +38,9 @@ describe('EventsController', () => {
       })
       const res = mockResponse({})
 
-      await controller.viewHearingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearing.njk', {
-        downloadPath: '/video-link-hearing-events-csv?start-date=2021-03-30&days=7',
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearingDate.njk', {
+        downloadPath: '/video-links-by-hearing-date-csv?start-date=2021-03-30&days=7',
         errors: [],
         formValues: {
           days: '7',
@@ -61,8 +61,8 @@ describe('EventsController', () => {
       })
       const res = mockResponse({})
 
-      await controller.viewHearingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearing.njk', {
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByHearingDate.njk', {
         downloadPath: undefined,
         errors: [{ href: '#days', text: 'Enter the number of days of events to download' }],
         formValues: {
@@ -84,7 +84,7 @@ describe('EventsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvHearing(req, res, null)
+      controller.viewCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
       expect(res.sendStatus.mock.calls[0][0]).toBe(400)
     })
@@ -98,7 +98,7 @@ describe('EventsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvHearing(req, res, null)
+      controller.viewCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
       expect(res.sendStatus.mock.calls[0][0]).toBe(400)
     })
@@ -112,12 +112,12 @@ describe('EventsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvHearing(req, res, null)
+      controller.viewCsv(req, res, null)
 
       expect(res.set.mock.calls.length).toBe(1)
       expect(res.set.mock.calls[0]).toEqual([
         'Content-Disposition',
-        'attachment;filename=video-link-hearing-events-from-2021-03-28-for-7-days.csv',
+        'attachment;filename=video-links-by-hearing-date-from-2021-03-28-for-7-days.csv',
       ])
     })
   })

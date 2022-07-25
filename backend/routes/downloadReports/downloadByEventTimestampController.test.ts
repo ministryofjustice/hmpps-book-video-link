@@ -1,26 +1,26 @@
 import WhereaboutsApi from '../../api/whereaboutsApi'
 import { mockRequest, mockResponse } from '../__test/requestTestUtils'
-import BookingsController from './downloadBookingsController'
+import DownloadByEventTimestampController from './downloadByEventTimestampController'
 
 jest.mock('../../api/whereaboutsApi')
 
 const whereaboutsApi = new WhereaboutsApi(null) as jest.Mocked<WhereaboutsApi>
 
-let controller: BookingsController
+let controller: DownloadByEventTimestampController
 
-describe('BookingsController', () => {
+describe('EventsController', () => {
   describe('view', () => {
     beforeEach(() => {
       jest.resetAllMocks()
-      controller = new BookingsController(whereaboutsApi)
+      controller = new DownloadByEventTimestampController(whereaboutsApi)
     })
 
     it('First view', async () => {
       const req = mockRequest({})
       const res = mockResponse({})
 
-      await controller.viewBookingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByBooking.njk', {
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByEventTimestamp.njk', {
         downloadPath: undefined,
         errors: [],
         formValues: {},
@@ -38,9 +38,9 @@ describe('BookingsController', () => {
       })
       const res = mockResponse({})
 
-      await controller.viewBookingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByBooking.njk', {
-        downloadPath: '/video-link-booking-events-csv?start-date=2021-03-30&days=7',
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByEventTimestamp.njk', {
+        downloadPath: '/video-link-events-csv?start-date=2021-03-30&days=7',
         errors: [],
         formValues: {
           days: '7',
@@ -61,8 +61,8 @@ describe('BookingsController', () => {
       })
       const res = mockResponse({})
 
-      await controller.viewBookingPage(req, res, null)
-      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByBooking.njk', {
+      await controller.viewPage(req, res, null)
+      expect(res.render).toHaveBeenCalledWith('downloadReports/downloadByEventTimestamp.njk', {
         downloadPath: undefined,
         errors: [{ href: '#days', text: 'Enter the number of days of events to download' }],
         formValues: {
@@ -84,7 +84,7 @@ describe('BookingsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvBooking(req, res, null)
+      controller.viewCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
       expect(res.sendStatus.mock.calls[0][0]).toBe(400)
     })
@@ -98,7 +98,7 @@ describe('BookingsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvBooking(req, res, null)
+      controller.viewCsv(req, res, null)
       expect(res.sendStatus.mock.calls.length).toBe(1)
       expect(res.sendStatus.mock.calls[0][0]).toBe(400)
     })
@@ -112,12 +112,12 @@ describe('BookingsController', () => {
       })
       const res = mockResponse({})
 
-      controller.getCsvBooking(req, res, null)
+      controller.viewCsv(req, res, null)
 
       expect(res.set.mock.calls.length).toBe(1)
       expect(res.set.mock.calls[0]).toEqual([
         'Content-Disposition',
-        'attachment;filename=video-link-bookings-from-2021-03-28-for-7-days.csv',
+        'attachment;filename=video-link-events-from-2021-03-28-for-7-days.csv',
       ])
     })
   })
