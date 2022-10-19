@@ -53,7 +53,7 @@ describe('ViewBookingService', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
+    whereaboutsApi.findVideoLinkBookings.mockResolvedValue([])
     prisonApi.getAgencies.mockResolvedValue([])
     whereaboutsApi.getRooms.mockResolvedValue([])
     service = new ViewBookingsService(prisonApi, whereaboutsApi, prisonerOffenderSearchApi, locationService)
@@ -157,7 +157,7 @@ describe('ViewBookingService', () => {
     })
 
     it('A booking is turned into appointments', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking()])
+      whereaboutsApi.findVideoLinkBookings.mockResolvedValueOnce([booking()])
 
       const result = await service.getList(context, now, null, username)
 
@@ -168,7 +168,7 @@ describe('ViewBookingService', () => {
     })
 
     it('APIs are called correctly', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([
+      whereaboutsApi.findVideoLinkBookings.mockResolvedValue([
         booking({ bookingId: 1 }),
         booking({ bookingId: 2 }),
         booking({ bookingId: 1 }),
@@ -180,12 +180,15 @@ describe('ViewBookingService', () => {
       expect(prisonerOffenderSearchApi.getPrisoners).toHaveBeenCalledWith(context, [1, 2])
       expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
       expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'MDI')
-      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'WWI', now, 'WMRCN')
-      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
+      expect(whereaboutsApi.findVideoLinkBookings).toHaveBeenCalledWith(
+        context,
+        { prisonIds: ['WWI', 'MDI'], courtId: 'WMRCN' },
+        now
+      )
     })
 
     it('Check APIs are called correctly when no bookings', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValue([])
+      whereaboutsApi.findVideoLinkBookings.mockResolvedValue([])
 
       await service.getList(context, now, 'WMRCN', username)
 
@@ -193,13 +196,18 @@ describe('ViewBookingService', () => {
       expect(prisonerOffenderSearchApi.getPrisoners).not.toHaveBeenCalled()
       expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'WWI')
       expect(whereaboutsApi.getRooms).toHaveBeenCalledWith(context, 'MDI')
-      expect(whereaboutsApi.getVideoLinkBookings).toHaveBeenCalledWith(context, 'MDI', now, 'WMRCN')
+      expect(whereaboutsApi.findVideoLinkBookings).toHaveBeenCalledWith(
+        context,
+        { prisonIds: ['WWI', 'MDI'], courtId: 'WMRCN' },
+        now
+      )
     })
 
     it('multiple bookings', async () => {
-      whereaboutsApi.getVideoLinkBookings
-        .mockResolvedValueOnce([booking({ agencyId: 'WWI' })])
-        .mockResolvedValueOnce([booking({ agencyId: 'MDI' })])
+      whereaboutsApi.findVideoLinkBookings.mockResolvedValueOnce([
+        booking({ agencyId: 'WWI' }),
+        booking({ agencyId: 'MDI' }),
+      ])
 
       const result = await service.getList(context, now, 'WMRCN', username)
 
@@ -217,7 +225,7 @@ describe('ViewBookingService', () => {
     })
 
     it('prisoner not found', async () => {
-      whereaboutsApi.getVideoLinkBookings.mockResolvedValueOnce([booking({ bookingId: 2 })])
+      whereaboutsApi.findVideoLinkBookings.mockResolvedValueOnce([booking({ bookingId: 2 })])
 
       const result = await service.getList(context, now, 'WMRCN', username)
 

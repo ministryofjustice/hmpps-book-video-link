@@ -70,17 +70,15 @@ export = class ViewBookingsService {
     const sortedCourts = this.sortAlphabetically(courts)
     const courtId = courtIdFilter || sortedCourts[0].id
 
-    const bookingRequests = app.videoLinkEnabledFor.map(prison =>
-      this.whereaboutsApi.getVideoLinkBookings(context, prison, searchDate, courtId)
+    const relevantBookings = await this.whereaboutsApi.findVideoLinkBookings(
+      context,
+      { prisonIds: app.videoLinkEnabledFor, courtId },
+      searchDate
     )
+
     const locationRequests = app.videoLinkEnabledFor.map(prison => this.whereaboutsApi.getRooms(context, prison))
 
-    const [locations, bookings] = await Promise.all([
-      flattenCalls(locationRequests).then(result => toMap(result, 'locationId')),
-      flattenCalls(bookingRequests),
-    ])
-
-    const relevantBookings = bookings.flatMap(array => array)
+    const locations = await flattenCalls(locationRequests).then(result => toMap(result, 'locationId'))
 
     const toAppointment = await this.appointmentBuilder(context, prisons, locations, relevantBookings)
 

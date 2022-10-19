@@ -9,12 +9,12 @@ import {
   Location,
   VideoLinkBookingOptions,
   VideoLinkBookingSearchSpecification,
+  VideoLinkBookingSearchAcrossMultiplePrisonsSpecification,
 } from 'whereaboutsApi'
 
 import { Response } from 'superagent'
 import moment from 'moment'
 import Client, { Context } from './oauthEnabledClient'
-import { mapToQueryString } from '../utils'
 import { setCustomRequestHeaders } from '../contextProperties'
 import { DATE_ONLY_FORMAT_SPEC } from '../shared/dateHelpers'
 
@@ -76,20 +76,12 @@ export = class WhereaboutsApi {
     return this.get(context, `/video-link-rooms/${agencyId}`)
   }
 
-  public getVideoLinkBookings(
+  public findVideoLinkBookings(
     context: Context,
-    agencyId: string,
-    date: moment.Moment,
-    courtId?: string
+    body: VideoLinkBookingSearchAcrossMultiplePrisonsSpecification,
+    date: moment.Moment
   ): Promise<VideoLinkBooking[]> {
-    const searchParams = mapToQueryString({
-      courtId,
-    })
-
-    return this.get(
-      context,
-      `/court/video-link-bookings/prison/${agencyId}/date/${date.format('YYYY-MM-DD')}?${searchParams}`
-    )
+    return this.post(context, `/court/video-link-bookings/date/${date.format('YYYY-MM-DD')}`, body)
   }
 
   public updateVideoLinkBookingComment(context: Context, videoBookingId: number, comment: string): Promise<void> {
