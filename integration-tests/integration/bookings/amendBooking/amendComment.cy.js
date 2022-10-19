@@ -40,9 +40,7 @@ context('A user can update a booking comment', () => {
     cy.task('stubCourts')
     cy.task('stubFindPrisonersByBookingIds', [{ bookingId: 1, firstName: 'OFFENDER', lastName: 'ONE' }])
 
-    cy.task('stubGetVideoLinkBookings', {
-      courtId: '.*?',
-      agencyId: '.*?',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })
@@ -66,10 +64,8 @@ context('A user can update a booking comment', () => {
       ],
     })
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
-      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',

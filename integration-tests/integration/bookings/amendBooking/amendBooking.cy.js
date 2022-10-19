@@ -23,9 +23,7 @@ context('A user can amend a booking', () => {
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: '.*?',
-      courtId: '.*?',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })
@@ -50,10 +48,8 @@ context('A user can amend a booking', () => {
       post: [{ locationId: 120, description: 'Room 3', locationType: 'VIDE' }],
     })
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
-      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',

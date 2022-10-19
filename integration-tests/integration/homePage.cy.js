@@ -17,9 +17,7 @@ context('A user can view the video link home page', () => {
 
     cy.task('stubAgencies', [{ agencyId: 'WWI', description: 'HMP Wandsworth' }])
 
-    cy.task('stubGetVideoLinkBookings', {
-      courtId: '.*?',
-      agencyId: '.*?',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })

@@ -64,8 +64,7 @@ export default defineConfig({
         stubGroups: caseload => whereabouts.stubGroups(caseload),
         stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),
         getBookingRequest: () => whereabouts.getBookingRequest(),
-        stubGetVideoLinkBookings: ({ agencyId, date, bookings, courtId }) =>
-          whereabouts.stubGetVideoLinkBookings(agencyId, date, bookings, courtId),
+        stubFindVideoLinkBookings: ({ date, bookings }) => whereabouts.stubFindVideoLinkBookings(date, bookings),
         stubGetVideoLinkBooking: booking => whereabouts.stubGetVideoLinkBooking(booking),
         getUpdateCommentRequest: () => whereabouts.getUpdateCommentRequest(),
         stubUpdateVideoLinkBookingComment: videoBookingId =>
