@@ -88,6 +88,12 @@ declare module 'whereaboutsApi' {
     vlbIdToExclude?: number
   }
 
+  // Request object
+  export type VideoLinkBookingSearchAcrossMultiplePrisonsSpecification = {
+    prisonIds: string[]
+    courtId?: string
+  }
+
   export type LocationAndInterval = {
     /** If present find the locations that can be used for the pre interval. */
     interval?: Interval

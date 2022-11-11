@@ -11,11 +11,9 @@ context('A user can view the video link home page', () => {
       { bookingId: 2, firstName: 'OFFENDER', lastName: 'TWO' },
     ])
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: '.*?',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
-      courtId: '.*?',
     })
 
     cy.task('stubGetRooms', {
@@ -37,10 +35,8 @@ context('A user can view the video link home page', () => {
     cy.task('stubLoginCourt', {})
     cy.login()
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
-      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',
@@ -145,10 +141,8 @@ context('A user can view the video link home page', () => {
   it('Has correct date format, defaults to first court, and allows selecting other court', () => {
     cy.task('stubLoginCourt', { preferredCourts: ['ABDRCT', 'BANBCT'] })
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
-      courtId: 'ABDRCT',
       bookings: [
         {
           agencyId: 'WWI',
@@ -182,10 +176,8 @@ context('A user can view the video link home page', () => {
     courtVideoBookingsPage.dateInput().should('have.value', moment().format('D MMMM YYYY'))
     courtVideoBookingsPage.courtOption().select('BANBCT')
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
-      courtId: 'BANBCT',
       bookings: [
         {
           agencyId: 'WWI',
@@ -234,8 +226,7 @@ context('A user can view the video link home page', () => {
     cy.task('stubLoginCourt', {})
     cy.login()
 
-    cy.task('stubGetVideoLinkBookings', {
-      agencyId: 'WWI',
+    cy.task('stubFindVideoLinkBookings', {
       date: moment().format('yyyy-MM-DD'),
       bookings: [],
     })
