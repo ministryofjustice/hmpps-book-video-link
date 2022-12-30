@@ -3,31 +3,22 @@ const DownloadOptionPage = require('../../pages/downloadReports/downloadOptionPa
 const HearingPage = require('../../pages/downloadReports/hearingPage')
 
 context('A user can download video link bookings by hearing date as CSV files', () => {
-  before(() => {
+  const downloadsFolder = Cypress.config('downloadsFolder')
+
+  beforeEach(() => {
     cy.clearCookies()
-    cy.task('reset')
+    cy.task('resetAndStubTokenVerification')
+    cy.task('deleteFolder', downloadsFolder)
     cy.task('stubLoginCourt', {})
     cy.login()
   })
 
-  const downloadsFolder = Cypress.config('downloadsFolder')
-
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('hmpps-session-dev')
-    cy.task('resetAndStubTokenVerification')
-    cy.task('deleteFolder', downloadsFolder)
-  })
-
   it('selects download by booking option', () => {
     cy.visit('/video-link-booking-events')
-    const page = DownloadOptionPage.verifyOnPage()
-    const form = page.form()
-    form.dateHearing().type('radio').first().check()
-    page.continueButton().click()
-    form.heading().contains('Download by hearing date')
-  })
+    const optionsPage = DownloadOptionPage.verifyOnPage()
+    optionsPage.dateHearing().check()
+    optionsPage.continueButton().click()
 
-  it('Download a csv file', () => {
     cy.task('stubGetBookingsCsv', 'h1,h2,h3\n1,2,3')
     const page = HearingPage.verifyOnPage()
     const form = page.form()
