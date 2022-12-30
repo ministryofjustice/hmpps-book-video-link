@@ -2,7 +2,7 @@ const page = require('../page')
 
 const confirmDeletion = () =>
   page('Are you sure you want to delete this video link booking?', {
-    errorSummaryTitle: () => cy.get('#error-summary-title'),
+    errorSummaryTitle: () => cy.get('.govuk-error-summary__title'),
     inlineError: () => cy.get('#delete-booking-error'),
     selectYes: () => cy.get('[name="confirmDeletion"]').check('yes'),
     selectNo: () => cy.get('[name="confirmDeletion"]').check('no'),
