@@ -6,15 +6,12 @@ const PrisonerSearchPage = require('../../pages/createBooking/prisonerSearchPage
 const BookingDetailsPage = require('../../pages/viewBookings/bookingDetailsPage')
 
 context('A user can delete a booking', () => {
-  before(() => {
+  beforeEach(() => {
     cy.clearCookies()
     cy.task('reset')
     cy.task('stubLoginCourt', {})
     cy.login()
-  })
 
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('hmpps-session-dev')
     cy.task('stubUserEmail', 'COURT_USER')
     cy.task('stubUser', 'COURT_USER', 'WWI')
 

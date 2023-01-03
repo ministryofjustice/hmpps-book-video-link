@@ -23,7 +23,7 @@ const changeVideoLinkPage = () =>
     summaryListCourt: () => cy.get('.qa-court-value'),
     datePicker: () => cy.get('#ui-datepicker-div'),
     activeDate: () => cy.get('.ui-state-active'),
-    errorSummaryTitle: () => cy.get('#error-summary-title'),
+    errorSummaryTitle: () => cy.get('.govuk-error-summary__title'),
     errorSummaryBody: () => cy.get('.govuk-error-summary__body'),
   })
 

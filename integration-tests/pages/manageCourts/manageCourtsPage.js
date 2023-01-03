@@ -7,7 +7,7 @@ const manageCourtsPage = () =>
       court: courtId => cy.get(`label[for="court-${courtId}"]`),
       checkbox: courtId => cy.get(`input#court-${courtId}`),
     },
-    errorSummaryTitle: () => cy.get('#error-summary-title'),
+    errorSummaryTitle: () => cy.get('.govuk-error-summary__title'),
     errorSummaryBody: () => cy.get('.govuk-error-summary__body'),
     continue: () => cy.get('button[type="submit"]'),
   })

@@ -2,11 +2,8 @@ const page = require('../page')
 
 const downloadOption = () =>
   page('Booking events download', {
-    form: () => ({
-      dateBooking: () => cy.get('#option'),
-      dateHearing: () => cy.get('#option-2'),
-      heading: () => cy.get('.govuk-heading-m'),
-    }),
+    dateBooking: () => cy.get('#option'),
+    dateHearing: () => cy.get('#option-2'),
     continueButton: () => cy.get('.govuk-button'),
   })
 

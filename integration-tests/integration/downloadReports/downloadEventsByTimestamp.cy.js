@@ -3,38 +3,28 @@ const DownloadOptionPage = require('../../pages/downloadReports/downloadOptionPa
 const BookingPage = require('../../pages/downloadReports/bookingPage')
 
 context('A user can download by event timestamp as CSV files', () => {
-  before(() => {
+  const downloadsFolder = Cypress.config('downloadsFolder')
+
+  beforeEach(() => {
     cy.clearCookies()
-    cy.task('reset')
+    cy.task('resetAndStubTokenVerification')
+    cy.task('deleteFolder', downloadsFolder)
     cy.task('stubLoginCourt', {})
     cy.login()
   })
 
-  const downloadsFolder = Cypress.config('downloadsFolder')
-
-  beforeEach(() => {
-    Cypress.Cookies.preserveOnce('hmpps-session-dev')
-    cy.task('resetAndStubTokenVerification')
-    cy.task('deleteFolder', downloadsFolder)
-  })
-
-  it('selects download by booking option', () => {
+  it('downloads events', () => {
     cy.visit('/video-link-booking-events')
-    const page = DownloadOptionPage.verifyOnPage()
-    const form = page.form()
-    form.dateBooking().type('radio').first().check()
-    page.continueButton().click()
-    form.heading().contains('Download by date booking was made')
-  })
+    const optionsPage = DownloadOptionPage.verifyOnPage()
+    optionsPage.dateBooking().check()
+    optionsPage.continueButton().click()
 
-  it('Download a csv file', () => {
     cy.task('stubGetEventsCsv', 'h1,h2,h3\n1,2,3')
     const page = BookingPage.verifyOnPage()
-    const form = page.form()
-    form.startDay().type('28')
-    form.startMonth().type('03')
-    form.startYear().type('2021')
-    form.days().type('7')
+    page.startDay().type('28')
+    page.startMonth().type('03')
+    page.startYear().type('2021')
+    page.days().type('7')
     page.downloadButton().click()
 
     const filename = path.join(downloadsFolder, 'video-link-events-from-2021-03-28-for-7-days.csv')
