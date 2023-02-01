@@ -41,7 +41,6 @@
                 }) }}
 
     {{ govukRadios({
-                    classes: "govuk-radios--inline",
                     idPrefix: "pre-appointment-required",
                     name: "preAppointmentRequired",
                     errorMessage: errors | findError('pre-appointment-required'),
@@ -66,7 +65,6 @@
                 }) }}
 
     {{ govukRadios({
-                    classes: "govuk-radios--inline",
                     idPrefix: "post-appointment-required",
                     name: "postAppointmentRequired",
                     errorMessage: errors | findError('post-appointment-required'),
