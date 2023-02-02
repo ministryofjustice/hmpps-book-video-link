@@ -135,7 +135,6 @@
                 {% endset -%}
                 
                 {{ govukRadios({
-                    classes: "govuk-radios--inline",
                     idPrefix: "pre-appointment-required",
                     name: "preRequired",
                     errorMessage: errors | findError('pre-appointment-required'),
@@ -173,7 +172,6 @@
                 {% endset -%}
 
                 {{ govukRadios({
-                    classes: "govuk-radios--inline",
                     idPrefix: "post-appointment-required",
                     name: "postRequired",
                     errorMessage: errors | findError('post-appointment-required'),
