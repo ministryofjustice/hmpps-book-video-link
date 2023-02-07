@@ -115,6 +115,9 @@ env:
 
   - name: REDIS_ENABLED
     value: {{ .Values.env.REDIS_ENABLED | quote }}
+  
+  - name: SERVICE_IS_UNAVAILABLE
+    value: {{ .Values.env.SERVICE_IS_UNAVAILABLE | quote }}
 
   - name: GOOGLE_SERVICE_ACCOUNT_KEY
     valueFrom:
