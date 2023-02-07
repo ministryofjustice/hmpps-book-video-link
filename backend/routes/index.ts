@@ -12,16 +12,11 @@ import amendBookingsRoutes from './amendBooking'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import checkForPreferredCourts from '../middleware/checkForPreferredCourts'
 
-import { supportEmail, supportTelephone, serviceIsUnvailable } from '../config'
+import { supportEmail, supportTelephone } from '../config'
 
 const router = express.Router()
 
 export = function createRoutes(services: Services): Router {
-  if (serviceIsUnvailable) {
-    router.all('*', (req, res) => {
-      res.render('serviceUnavailable.njk')
-    })
-  }
   router.get('/courts-not-selected', (req, res) => {
     res.render('courtsNotSelected.njk')
   })
