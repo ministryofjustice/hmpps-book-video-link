@@ -52,6 +52,12 @@ env:
         name: {{ template "app.name" . }}
         key: NOTIFY_API_KEY
 
+  - name: SERVICE_IS_UNAVAILABLE
+    valueFrom:
+      secretKeyRef:
+        name: {{ template "app.name" . }}
+        key: SERVICE_IS_UNAVAILABLE
+
   - name: REDIS_HOST
     valueFrom:
       secretKeyRef:
