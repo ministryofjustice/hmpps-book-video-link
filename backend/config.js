@@ -1,7 +1,6 @@
 const toInt = (envVar, defaultVal) => (envVar ? parseInt(envVar, 10) : defaultVal)
 
 module.exports = {
-  serviceIsUnvailable: process.env.SERVICE_IS_UNAVAILABLE === 'true',
   app: {
     port: process.env.PORT || 3000,
     production: process.env.NODE_ENV === 'production',
