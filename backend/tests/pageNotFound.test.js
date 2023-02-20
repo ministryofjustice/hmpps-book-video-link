@@ -28,15 +28,6 @@ describe('Page not found ', () => {
     request = supertest(app)
   })
 
-  it("should present 'Page not found' page", async () => {
-    await request
-      .get('/unknown-endpoint')
-      .expect(404)
-      .expect(res => {
-        expect(res.text).toContain('Page not found')
-      })
-  })
-
   it("should present 'home' page", async () => {
     await request
       .get('/')

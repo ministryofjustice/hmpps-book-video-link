@@ -26,7 +26,7 @@ describe('Feedback and support', () => {
       .get('/feedback-and-support')
       .expect(200)
       .expect(res => {
-        expect(res.text).toContain('Help using Book a video link with a prison')
+        expect(res.text).toContain('This service is currently unavailable')
       })
   })
 })

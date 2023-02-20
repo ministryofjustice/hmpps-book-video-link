@@ -17,6 +17,10 @@ import { supportEmail, supportTelephone } from '../config'
 const router = express.Router()
 
 export = function createRoutes(services: Services): Router {
+  router.all('*', (req, res) => {
+    res.render('serviceUnavailable.njk')
+  })
+
   router.get('/courts-not-selected', (req, res) => {
     res.render('courtsNotSelected.njk')
   })
