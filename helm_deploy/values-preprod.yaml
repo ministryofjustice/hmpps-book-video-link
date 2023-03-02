@@ -64,3 +64,4 @@ whitelist:
   quantum1: 62.25.109.197/32
   quantum2: 212.137.36.230/32
   quantum3: 195.92.38.16/28
+  royal-courts-of-justice: 178.248.34.43/32
