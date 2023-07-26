@@ -188,5 +188,6 @@ module.exports = (app, path) => {
   njkEnv.addFilter('possessive', possessive)
   njkEnv.addGlobal('googleTagManagerKey', config.analytics.googleTagManagerKey)
   njkEnv.addGlobal('authUrl', config.apis.oauth2.url)
+  njkEnv.addGlobal('featureFlagOutageBannerEnabled', config.featureFlagOutageBannerEnabled)
   return njkEnv
 }

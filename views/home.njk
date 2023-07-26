@@ -1,10 +1,24 @@
 {% extends "./partials/layout.njk" %}
 {% from "./components/card/card.njk" import card %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% set title = "Book a video link with a prison" %}
 {% set feedbackBannerBackground = 'feedbackBannerBackground'%}
 
 {% block main %}
-    <div class="govuk-width-container">
+<div class="govuk-width-container">
+    {% set html %}
+        <p class="govuk-notification-banner__heading">
+        Maintenance work is planned for today at 4:30pm. <br>
+        Book a video link may be temporarily unavailable.
+        </p>
+    {% endset %}
+
+    {% if featureFlagOutageBannerEnabled == "true" %}
+    {{ govukNotificationBanner({
+        html: html,
+        classes: 'govuk-!-margin-top-2'
+    }) }}
+    {% endif %}
         <h1 class="govuk-heading-l govuk-!-margin-top-7">{{ title }}</h1>
         <p class="govuk-body govuk-!-margin-bottom-7">If you work in a court, you can book a video link with a prison for a court appearance.</p>
     </div>
@@ -40,7 +54,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+</div>
 {% endblock %}
 {% block pageScripts %}
     <script src="/js/card.js"></script>
