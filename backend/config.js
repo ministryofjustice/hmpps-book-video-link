@@ -95,4 +95,6 @@ module.exports = {
       spreadsheetId: process.env.VLBEVENT_EXPORT_SPREADSHEET_ID,
     },
   },
+
+  featureFlagOutageBannerEnabled: process.env.FEATURE_FLAG_OUTAGE_BANNER_ENABLED,
 }
