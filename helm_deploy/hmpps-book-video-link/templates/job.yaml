@@ -16,6 +16,7 @@ spec:
       ttlSecondsAfterFinished: 345600
       template:
         spec:
+          serviceAccountName: book-a-video-link
           restartPolicy: Never
           activeDeadlineSeconds: 240
           containers:
