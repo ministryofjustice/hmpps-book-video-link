@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { HttpError } from 'http-errors'
 import errorHandler from './errorHandler'
 import { logError } from '../logError'
 
@@ -15,7 +16,7 @@ describe('Error handling middleware', () => {
     render: jest.fn(),
     locals: {} as Record<string, unknown>,
   }
-  const error = new Error('error message')
+  const error = new Error('error message') as HttpError<number>
   const production = false
 
   const handleErrorWhenRetryLinkIs = redirectUrl =>
