@@ -40,7 +40,7 @@
     "passport": "^0.6.0",
     "passport-oauth2": "^1.7.0",
     "qs": "^6.11.1",
-    "redis": "^3.1.2",
+    "redis": "^4.6.7",
     "superagent": "^8.0.9"
   },
   "devDependencies": {
