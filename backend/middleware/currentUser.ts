@@ -4,14 +4,14 @@ import { forenameToInitial } from '../utils'
 import config from '../config'
 import ManageCourtsService from '../services/manageCourtsService'
 
-export default (oauthApi, manageCourtsService: ManageCourtsService): RequestHandler =>
+export default (manageUsersApi, manageCourtsService: ManageCourtsService): RequestHandler =>
   async (req, res, next) => {
     if (!req.xhr) {
       if (!req.session.userDetails) {
-        req.session.userDetails = await oauthApi.currentUser(res.locals)
+        req.session.userDetails = await manageUsersApi.currentUser(res.locals)
       }
       if (!req.session.userRoles) {
-        req.session.userRoles = await oauthApi.userRoles(res.locals)
+        req.session.userRoles = await manageUsersApi.userRoles(res.locals)
       }
 
       if (typeof req.csrfToken === 'function') {

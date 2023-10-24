@@ -1,7 +1,7 @@
 import currentUser from './currentUser'
 import ManageCourtsService from '../services/manageCourtsService'
 
-const oauthApi = {
+const manageUsersApi = {
   currentUser: jest.fn(),
   userRoles: jest.fn(),
 }
@@ -32,15 +32,15 @@ describe('Current user', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-    oauthApi.currentUser = jest.fn()
-    oauthApi.userRoles = jest.fn()
+    manageUsersApi.currentUser = jest.fn()
+    manageUsersApi.userRoles = jest.fn()
 
-    oauthApi.currentUser.mockReturnValue({
+    manageUsersApi.currentUser.mockReturnValue({
       name: 'Bob Smith',
       username: 'USER_BOB',
     })
 
-    oauthApi.userRoles.mockReturnValue([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
+    manageUsersApi.userRoles.mockReturnValue([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
 
     req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get: jest.fn() }
 
@@ -48,11 +48,11 @@ describe('Current user', () => {
   })
 
   it('should request and store user details', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
 
     await controller(req, res, next)
 
-    expect(oauthApi.currentUser).toHaveBeenCalled()
+    expect(manageUsersApi.currentUser).toHaveBeenCalled()
     expect(req.session.userDetails).toEqual({
       name: 'Bob Smith',
       username: 'USER_BOB',
@@ -60,16 +60,16 @@ describe('Current user', () => {
   })
 
   it('should request and store user roles to session', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
 
     await controller(req, res, next)
 
-    expect(oauthApi.userRoles).toHaveBeenCalled()
+    expect(manageUsersApi.userRoles).toHaveBeenCalled()
     expect(req.session.userRoles).toEqual([{ roleCode: 'ROLE_A' }, { roleCode: 'ROLE_B' }, { roleCode: 'ROLE_C' }])
   })
 
   it('should call get', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
     const get = jest.fn().mockReturnValue('someHost')
     req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get }
 
@@ -78,7 +78,7 @@ describe('Current user', () => {
     expect(get).toHaveBeenCalledWith('host')
   })
   it('should stash user data into res.locals', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
     const get = jest.fn().mockReturnValue('someHost')
     req = { session: {}, protocol: 'http', originalUrl: '/somethingelse', get }
 
@@ -93,7 +93,7 @@ describe('Current user', () => {
   })
 
   it('should stash userRole data into res.locals', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
 
     await controller(req, res, next)
 
@@ -102,7 +102,7 @@ describe('Current user', () => {
 
   it('should stash preferredCourts data into res.locals when a user has selected preferred courts', async () => {
     manageCourtsService.getSelectedCourts.mockResolvedValue(courtList)
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
 
     await controller(req, res, next)
 
@@ -111,7 +111,7 @@ describe('Current user', () => {
 
   it('should stash an empty array of no preferredCourts data into res.locals when a user has not selected preferred courts', async () => {
     manageCourtsService.getSelectedCourts.mockResolvedValue([])
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
 
     await controller(req, res, next)
 
@@ -119,12 +119,12 @@ describe('Current user', () => {
   })
 
   it('ignore xhr requests', async () => {
-    const controller = currentUser(oauthApi, manageCourtsService)
+    const controller = currentUser(manageUsersApi, manageCourtsService)
     req.xhr = true
 
     await controller(req, res, next)
 
-    expect(oauthApi.currentUser.mock.calls.length).toEqual(0)
+    expect(manageUsersApi.currentUser.mock.calls.length).toEqual(0)
     expect(next).toHaveBeenCalled()
   })
 })

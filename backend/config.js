@@ -39,6 +39,10 @@ module.exports = {
       systemId: process.env.API_SYSTEM_ID || 'book-video-link-system',
       systemSecret: process.env.API_SYSTEM_SECRET || 'systemsecret',
     },
+    manageUsers: {
+      url: process.env.MANAGE_USERS_API_URL || 'http://localhost:9091/',
+      timeoutSeconds: toInt(process.env.MANAGE_USERS_API_TIMEOUT_SECONDS, 30),
+    },
     prison: {
       url: process.env.API_ENDPOINT_URL || 'http://localhost:8080/',
       timeoutSeconds: toInt(process.env.API_ENDPOINT_TIMEOUT_SECONDS, 30),
