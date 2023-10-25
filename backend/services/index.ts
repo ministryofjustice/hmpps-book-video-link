@@ -10,6 +10,7 @@ import AvailabilityCheckService from './availabilityCheckService'
 
 const {
   oauthApi,
+  manageUsersApi,
   whereaboutsApi,
   prisonApi,
   notifyApi,
@@ -18,7 +19,7 @@ const {
   prisonRegisterApi,
 } = apis
 
-const notificationService = new NotificationService(oauthApi, notifyApi, prisonRegisterApi)
+const notificationService = new NotificationService(manageUsersApi, notifyApi, prisonRegisterApi)
 const availabilityCheckService = new AvailabilityCheckService(whereaboutsApi)
 
 const manageCourtsService = new ManageCourtsService(whereaboutsApi, userCourtPreferencesApi)

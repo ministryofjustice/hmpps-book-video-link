@@ -22,7 +22,7 @@ interface UserDetails {
 
 export default class NotificationService {
   constructor(
-    private readonly oauthApi: any,
+    private readonly manageUsersApi: any,
     private readonly notifyApi: any,
     private readonly prisonRegisterApi: PrisonRegisterApi
   ) {}
@@ -36,8 +36,8 @@ export default class NotificationService {
 
   private async getUserDetails(context: Context, username: string): Promise<UserDetails> {
     const [{ email }, { name }] = await Promise.all([
-      this.oauthApi.userEmail(context, username),
-      this.oauthApi.userDetails(context, username),
+      this.manageUsersApi.userEmail(context, username),
+      this.manageUsersApi.userDetails(context, username),
     ])
     return { email, name }
   }

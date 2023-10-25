@@ -9,6 +9,7 @@ import { oauthApiFactory } from './oauthApi'
 import { tokenVerificationApiFactory } from './tokenVerificationApi'
 import { notifyApi } from './notifyApi'
 import UserCourtPreferencesApi from './userCourtPreferencesApi'
+import ManageUsersApi from './manageUsersApi'
 
 const userCourtPreferencesApi = new UserCourtPreferencesApi(
   new Client({
@@ -38,13 +39,14 @@ const prisonerOffenderSearchApi = new PrisonerOffenderSearchApi(
   })
 )
 
-const oauthApi = oauthApiFactory(
+const manageUsersApi = new ManageUsersApi(
   new Client({
-    baseUrl: config.apis.oauth2.url,
-    timeout: config.apis.oauth2.timeoutSeconds * 1000,
-  }),
-  { ...config.apis.oauth2 }
+    baseUrl: config.apis.manageUsers.url,
+    timeout: config.apis.manageUsers.timeoutSeconds * 1000,
+  })
 )
+
+const oauthApi = oauthApiFactory({ ...config.apis.oauth2 })
 
 const tokenVerificationApi = tokenVerificationApiFactory(
   new Client({
@@ -64,6 +66,7 @@ export const apis = {
   userCourtPreferencesApi,
   notifyApi,
   oauthApi,
+  manageUsersApi,
   prisonApi,
   prisonRegisterApi,
   prisonerOffenderSearchApi,

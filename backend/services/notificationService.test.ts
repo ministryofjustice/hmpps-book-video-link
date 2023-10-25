@@ -6,7 +6,7 @@ import PrisonRegisterApi from '../api/prisonRegisterApi'
 
 jest.mock('../api/prisonRegisterApi')
 
-const oauthApi = {
+const manageUsersApi = {
   userDetails: jest.fn(),
   userEmail: jest.fn(),
 }
@@ -22,7 +22,7 @@ describe('Notification service', () => {
   let notificationService: NotificationService
 
   beforeEach(() => {
-    notificationService = new NotificationService(oauthApi, notifyApi, prisonRegisterApi)
+    notificationService = new NotificationService(manageUsersApi, notifyApi, prisonRegisterApi)
     prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockResolvedValue('omu@prison.com')
     prisonRegisterApi.getVideoLinkConferencingCentreEmailAddress.mockResolvedValue('vlb@prison.com')
   })
@@ -49,19 +49,19 @@ describe('Notification service', () => {
     }
 
     it('Details are retrieved for user', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
 
-      expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
-      expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
     })
 
     it('should send personalisation with optional fields', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingRequestEmails(context, 'A_USER', {
@@ -96,8 +96,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Prison Video Link Booking Admin', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
@@ -126,8 +126,8 @@ describe('Notification service', () => {
     })
 
     it('Should send email to court', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingRequestEmails(context, 'A_USER', requestEmail)
@@ -156,8 +156,8 @@ describe('Notification service', () => {
       )
     })
     it('Should not send court email address', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingRequestEmails(context, 'A_USER', {
@@ -189,8 +189,8 @@ describe('Notification service', () => {
     })
 
     it('Should throw error', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockRejectedValue(new Error('Network error'))
 
       await expect(
@@ -218,19 +218,19 @@ describe('Notification service', () => {
     }
 
     it('Details are retrieved for user', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
 
-      expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
-      expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
     })
 
     it('should send personalisation with optional fields', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', {
@@ -262,8 +262,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Offender Management Unit', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
@@ -292,8 +292,8 @@ describe('Notification service', () => {
     it('Offender Management Unit email address is optional', async () => {
       prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
 
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
@@ -314,8 +314,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Prison Video Link Booking Admin', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', updateEmail)
@@ -341,8 +341,8 @@ describe('Notification service', () => {
       )
     })
     it('should not include court email address in email to prison', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'A_USER', {
@@ -372,8 +372,8 @@ describe('Notification service', () => {
     })
 
     it('Should send email to court', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingUpdateEmails(context, 'USER', updateEmail)
@@ -438,19 +438,19 @@ describe('Notification service', () => {
     }
 
     it('Details are retrieved for user', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
 
-      expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
-      expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
     })
 
     it('should send personalisation with optional fields', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', {
@@ -482,8 +482,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Offender Management Unit', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
@@ -512,8 +512,8 @@ describe('Notification service', () => {
     it('Offender Management Unit email address is optional', async () => {
       prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
 
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
@@ -534,8 +534,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Prison Video Link Booking Admin', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', bookingDetail)
@@ -562,8 +562,8 @@ describe('Notification service', () => {
     })
 
     it('should not send email to Prison Video Link Booking Admin', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'A_USER', {
@@ -593,8 +593,8 @@ describe('Notification service', () => {
     })
 
     it('Should send email to court', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendCancellationEmails(context, 'USER', bookingDetail)
@@ -636,19 +636,19 @@ describe('Notification service', () => {
       courtEmailAddress: 'court@email.com',
     }
     it('Details are retrieved for user', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
 
-      expect(oauthApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
-      expect(oauthApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userEmail).toHaveBeenCalledWith({}, 'A_USER')
+      expect(manageUsersApi.userDetails).toHaveBeenCalledWith({}, 'A_USER')
     })
 
     it('should send personalisation with optional fields', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', {
@@ -680,8 +680,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Offender Management Unit', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
@@ -710,8 +710,8 @@ describe('Notification service', () => {
     it('Offender Management Unit email address is optional', async () => {
       prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue({})
 
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
@@ -732,8 +732,8 @@ describe('Notification service', () => {
     })
 
     it('should send email to Prison Video Link Booking Admin', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', createEmail)
@@ -760,8 +760,8 @@ describe('Notification service', () => {
     })
 
     it('Should send email to court', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'USER', createEmail)
@@ -788,8 +788,8 @@ describe('Notification service', () => {
     })
 
     it('should not include court email address in email sent to prison', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       await notificationService.sendBookingCreationEmails(context, 'A_USER', {
@@ -819,8 +819,8 @@ describe('Notification service', () => {
     })
 
     it('fails to get emailAddress on prisonApi exception', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockResolvedValue({})
 
       prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockRejectedValue(new Error('Network error'))
@@ -829,8 +829,8 @@ describe('Notification service', () => {
     })
 
     it('fails to send email on Notify exception', async () => {
-      oauthApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
-      oauthApi.userDetails.mockResolvedValue({ name: 'A User' })
+      manageUsersApi.userEmail.mockResolvedValue({ email: 'user@email.com' })
+      manageUsersApi.userDetails.mockResolvedValue({ name: 'A User' })
       notifyApi.sendEmail.mockRejectedValue(new Error('Network error'))
 
       prisonRegisterApi.getOffenderManagementUnitEmailAddress.mockResolvedValue('some email address')

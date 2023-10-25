@@ -34,6 +34,7 @@ env:
   FEATURE_FLAG_OUTAGE_BANNER_ENABLED: false
   REDIS_ENABLED: true
   VLBEVENT_EXPORT_SPREADSHEET_ID: "18BcOjlGlVfK8Qr3V3fhqdfYj4XEUfQGRIcJwzJ3BB-Y"
+  MANAGE_USERS_API_URL: https://manage-users-api-dev.hmpps.service.justice.gov.uk/
 
 jobs:
   cronspec: "59 * * * *"
