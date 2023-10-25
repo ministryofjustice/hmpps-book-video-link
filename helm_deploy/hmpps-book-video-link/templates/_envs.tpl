@@ -109,6 +109,9 @@ env:
 
   - name: TOKENVERIFICATION_API_ENABLED
     value: {{ .Values.env.TOKENVERIFICATION_API_ENABLED | quote }}
+  
+  - name: MANAGE_USERS_API_URL
+    value: {{ .Values.env.MANAGE_USERS_API_URL | quote }}
 
   - name: FEATURE_FLAG_OUTAGE_BANNER_ENABLED
     value: {{ .Values.env.FEATURE_FLAG_OUTAGE_BANNER_ENABLED | quote }}
