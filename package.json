@@ -35,7 +35,7 @@
     "moment": "^2.29.4",
     "moment-business-days": "^1.2.0",
     "nocache": "^3.0.4",
-    "notifications-node-client": "^7.0.0",
+    "notifications-node-client": "^7.0.6",
     "nunjucks": "^3.2.4",
     "passport": "^0.6.0",
     "passport-oauth2": "^1.7.0",
