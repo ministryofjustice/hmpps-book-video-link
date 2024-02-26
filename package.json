@@ -12,7 +12,7 @@
     "@ministryofjustice/frontend": "^1.6.6",
     "agentkeepalive": "^4.3.0",
     "applicationinsights": "^2.6.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.7",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
     "connect-flash": "^0.1.1",
@@ -35,7 +35,7 @@
     "moment": "^2.29.4",
     "moment-business-days": "^1.2.0",
     "nocache": "^3.0.4",
-    "notifications-node-client": "^7.0.6",
+    "notifications-node-client": "^8.0.0",
     "nunjucks": "^3.2.4",
     "passport": "^0.6.0",
     "passport-oauth2": "^1.7.0",
@@ -44,7 +44,6 @@
     "superagent": "^8.0.9"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/bunyan": "^1.8.8",
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "^4.17.17",
