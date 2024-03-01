@@ -7,8 +7,8 @@ module.exports = () => {
   router.use(express.static(path.join(process.cwd(), '/build')))
 
   const assetPaths = [
-    '/node_modules/govuk-frontend/govuk/assets',
-    '/node_modules/govuk-frontend',
+    '/node_modules/govuk-frontend/dist/govuk/assets',
+    '/node_modules/govuk-frontend/dist/govuk',
     '/node_modules/@ministryofjustice/frontend',
   ]
   assetPaths.forEach(dir => {
