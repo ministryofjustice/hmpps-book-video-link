@@ -23,18 +23,20 @@ context('A user can view the manage courts page', () => {
 
     const manageCourtsPage = ManageCourtsPage.goTo()
 
-    // Section headers should be visible
+    // Check the expected section headers exist
     manageCourtsPage.form.section('A').should('exist')
     manageCourtsPage.form.section('B').should('exist')
 
-    // Next lines are failing after Cypress upgrade ... visibility test not working as they are in the DOM
-    // No section A values should be visible until clicked
-    // manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
-    // manageCourtsPage.form.court('ABRYCT').should('not.be.visible')
-    // manageCourtsPage.form.court('BANBCT').should('not.be.visible')
+    // Visibility checks now work on the section content
+    cy.get('#accordion-default-content-A').should('not.be.visible')
+    cy.get('#accordion-default-content-B').should('not.be.visible')
 
     // Click section A to make courts beginning with A visible
     manageCourtsPage.form.section('A').click()
+
+    // Recheck visibility
+    cy.get(`#accordion-default-content-A`).should('be.visible')
+    cy.get(`#accordion-default-content-B`).should('not.be.visible')
 
     // Section A courts should now be visible but not checked
     manageCourtsPage.form.court('ABDRCT').should('be.visible')
@@ -42,15 +44,10 @@ context('A user can view the manage courts page', () => {
     manageCourtsPage.form.court('ABRYCT').should('be.visible')
     manageCourtsPage.form.checkbox('ABRYCT').should('not.be.checked')
 
-    // Section B should not be visible
-    // manageCourtsPage.form.court('BANBCT').should('not.be.visible')
-    manageCourtsPage.form.checkbox('BANBCT').should('not.be.checked')
-
-    // Select Aberystwyth
+    // Select Aberystwyth in the A section
     manageCourtsPage.form.court('ABRYCT').click()
     manageCourtsPage.form.checkbox('ABRYCT').should('be.checked')
 
-    // Update the user's preferences to include Aberystwyth
     cy.task('stubUpdateUserCourtPreferences', {
       courts: ['ABRYCT'],
     })
@@ -79,29 +76,32 @@ context('A user can view the manage courts page', () => {
     manageCourtsPage.form.section('A').should('exist')
     manageCourtsPage.form.section('B').should('exist')
 
-    // Visibility test not working after Cypress upgrade
-    // manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
-    // manageCourtsPage.form.court('ABRYCT').should('not.be.visible')
-    // manageCourtsPage.form.court('BANBCT').should('not.be.visible')
+    // Visibility checks now work on the section content
+    cy.get('#accordion-default-content-A').should('not.be.visible')
+    cy.get('#accordion-default-content-B').should('not.be.visible')
 
+    // Click section A to make courts beginning with A visible
     manageCourtsPage.form.section('A').click()
 
+    // Recheck section visibility
+    cy.get(`#accordion-default-content-A`).should('be.visible')
+    cy.get(`#accordion-default-content-B`).should('not.be.visible')
+
+    // Check and select A-courts
     manageCourtsPage.form.court('ABDRCT').should('be.visible')
     manageCourtsPage.form.checkbox('ABDRCT').should('be.checked')
     manageCourtsPage.form.court('ABRYCT').should('be.visible')
     manageCourtsPage.form.checkbox('ABRYCT').should('be.checked')
 
-    // Visibility test not working after Cypress upgrade
-    // manageCourtsPage.form.court('BANBCT').should('not.be.visible')
-
-    // Click sections A and B
+    // Click sections A (to close) and B (to open)
     manageCourtsPage.form.section('A').click()
     manageCourtsPage.form.section('B').click()
 
-    // Visibility test not working after Cypress upgrade
-    // manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
-    // manageCourtsPage.form.court('ABRYCT').should('not.be.visible')
+    // Recheck section visibility
+    cy.get(`#accordion-default-content-A`).should('not.be.visible')
+    cy.get(`#accordion-default-content-B`).should('be.visible')
 
+    // Check and select B-courts
     manageCourtsPage.form.court('BANBCT').should('be.visible')
     manageCourtsPage.form.checkbox('BANBCT').should('not.be.checked')
     manageCourtsPage.form.court('BANBCT').click()
@@ -136,16 +136,24 @@ context('A user can view the manage courts page', () => {
     manageCourtsPage.form.section('A').should('exist')
     manageCourtsPage.form.section('B').should('exist')
 
-    // Visibility test not working after Cypress upgrade
-    // manageCourtsPage.form.court('ABDRCT').should('not.be.visible')
+    // Visibility checks now work on the section content
+    cy.get('#accordion-default-content-A').should('not.be.visible')
+    cy.get('#accordion-default-content-B').should('not.be.visible')
 
     manageCourtsPage.form.section('A').click()
 
+    // Recheck section visibility
+    cy.get('#accordion-default-content-A').should('be.visible')
+    cy.get('#accordion-default-content-B').should('not.be.visible')
     manageCourtsPage.form.court('ABDRCT').should('be.visible')
+
+    // Close section A again
     manageCourtsPage.form.section('A').click()
+    cy.get('#accordion-default-content-A').should('not.be.visible')
+
+    // Press continue without selecting any courts
     manageCourtsPage.continue().click()
     manageCourtsPage = ManageCourtsPage.verifyOnPage()
-
     manageCourtsPage.errorSummaryTitle().contains('There is a problem')
     manageCourtsPage.errorSummaryBody().contains('You need to select at least one court')
   })
