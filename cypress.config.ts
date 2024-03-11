@@ -16,12 +16,13 @@ export default defineConfig({
   fixturesFolder: 'integration-tests/fixtures',
   screenshotsFolder: 'integration-tests/screenshots',
   videosFolder: 'integration-tests/videos',
+  viewportWidth: 1000,
+  viewportHeight: 1500,
   downloadsFolder: 'integration-tests/downloads',
   reporter: 'cypress-multi-reporters',
   reporterOptions: {
     configFile: 'cypress-reporter-config.json',
   },
-  videoUploadOnPasses: false,
   taskTimeout: 200000,
   pageLoadTimeout: 200000,
   e2e: {
@@ -36,8 +37,9 @@ export default defineConfig({
         },
         stubAuthHealth: status => auth.stubHealth(status),
         stubPrisonApiHealth: status => prisonApi.stubHealth(status),
-        stubWhereaboutsHealth: status => whereabouts.stubHealth(status),
-        stubTokenverificationHealth: status => tokenverification.stubHealth(status),
+        // These are not used - remove if no problem
+        // stubWhereaboutsHealth: status => whereabouts.stubHealth(status),
+        // stubTokenverificationHealth: status => tokenverification.stubHealth(status),
 
         stubHealthAllHealthy: () =>
           Promise.all([
@@ -58,8 +60,8 @@ export default defineConfig({
           ]),
 
         stubUserEmail: username => auth.stubEmail(username),
-        stubUser: (username, caseload) => auth.stubUser(username, caseload),
-        stubCourts: courts => whereabouts.stubCourts(courts),
+        stubUser: username => auth.stubUser(username),
+        stubCourts: () => whereabouts.stubCourts(),
         stubCourtEmailAddress: court => whereabouts.stubCourtEmailAddress(court),
         stubGroups: caseload => whereabouts.stubGroups(caseload),
         stubCreateVideoLinkBooking: () => whereabouts.stubCreateVideoLinkBooking(),

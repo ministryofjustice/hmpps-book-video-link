@@ -16,7 +16,10 @@ module.exports = (app, path) => {
     [
       path.join(__dirname, '../../views'),
       'node_modules/govuk-frontend/dist/',
+      'node_modules/govuk-frontend/dist/components/',
+      'node_modules/govuk-frontend/dist/govuk/assets/',
       'node_modules/@ministryofjustice/frontend/',
+      'node_modules/@ministryofjustice/frontend/components/',
     ],
     {
       autoescape: true,
