@@ -1,5 +1,6 @@
 # hmpps-book-video-link
-allow court users to book video link session with prison
+Allows court users to book video link hearing with people in prison.
+Allows probation pilot users to book video link meetings with people in prison.
 
 Application can be built with for dev mode
 
