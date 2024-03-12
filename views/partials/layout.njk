@@ -40,17 +40,17 @@
 {% endblock %}
 
 {% block bodyEnd %}
-{# Run JavaScript at end of the
-<body>, to avoid blocking the initial render. #}
-<script src="/assets/govuk/all.js"></script>
-<script src="/js/main.js"></script>
-<script>window.GOVUKFrontend.initAll();</script>
-<script>var MOJFrontend = {};</script>
-    {# Javascript block for individual pages #}
-    {% block pageScripts %}
-    {%  endblock %}
+  {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
+  <script type="module" src="/js/govukFrontendInit.js"></script>
+  <script src="/js/main.js"></script>
+  <script>var MOJFrontend = {};</script>
+
+  {# Javascript block for individual pages #}
+  {% block pageScripts %}
+  {%  endblock %}
+
 {% endblock %}
 
 {% block footer %}
-    {% include "./footer.njk" %}
+  {% include "./footer.njk" %}
 {% endblock %}
