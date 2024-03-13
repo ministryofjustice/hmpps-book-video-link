@@ -35,7 +35,7 @@
         <h1 class="govuk-heading-l">{{title}}</h1>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                {% if now > today | atTime(15, 0) and details.date | stringToDate('D MMMM YYYY') < today | addDays(2) %}
+                {% if warnPrison %}
                     {{ govukWarningText({
                         text: "Discuss this booking with the prison to make sure they are prepared",
                         iconFallbackText: "Warning"

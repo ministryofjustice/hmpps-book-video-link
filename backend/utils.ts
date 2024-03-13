@@ -90,12 +90,6 @@ export const getTime = (dateTimeString: string): string => {
   return moment(dateTimeString, DATE_TIME_FORMAT_SPEC).format('HH:mm')
 }
 
-export const stringToDate = (date: string, fromFormat = 'YYYY-MM-DD') => moment(date, fromFormat).toDate()
-export const addDays = (date: Date, days: number): Date => moment(date).add(days, 'days').toDate()
-export const atTime = (date: Date, hour: number, minute: number): Date => moment(date).set({ hour, minute }).toDate()
-export const now = () => moment().toDate()
-export const today = () => moment().startOf('day').toDate()
-
 export const hyphenatedStringToCamel = (string: string): string =>
   string.replace(/[-\s]([a-z])/g, char => char[1].toUpperCase())
 

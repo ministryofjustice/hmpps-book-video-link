@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express'
+import moment from 'moment/moment'
 import { PrisonApi } from '../../../api'
 
 import type { BookingService, LocationService } from '../../../services'
@@ -50,6 +51,8 @@ export default class ConfirmBookingController {
         'Post-court hearing briefing': getPostDescription(newBooking.endTime, newBooking.postRequired),
         'Prison room for post-court hearing briefing': roomFinder.prisonRoom(newBooking.postLocation),
       },
+      warnPrison:
+        moment() > moment().set({ hour: 15, minute: 0 }) && newBooking.date < moment().startOf('day').add(2, 'days'),
       errors: req.flash('errors') || [],
       form,
     })
