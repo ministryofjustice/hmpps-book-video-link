@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Court } from 'whereaboutsApi'
+import { useFakeTimers } from 'sinon'
 import CheckAndConfirmYourBookingController from './confirmUpdatedBookingController'
 import { BookingService, LocationService } from '../../services'
 import { BookingDetails } from '../../services/model'
@@ -139,6 +140,7 @@ describe('Confirm updated booking controller', () => {
           changeBookingLink: '/change-video-link/12',
           comment: 'some comment',
           errors: [],
+          warnPrison: true,
         })
       })
     })
@@ -191,6 +193,7 @@ describe('Confirm updated booking controller', () => {
           changeBookingLink: '/change-video-link/12',
           comment: 'another comment',
           errors: [{ text: 'error message', href: 'error' }],
+          warnPrison: true,
         })
       })
 
@@ -237,7 +240,108 @@ describe('Confirm updated booking controller', () => {
           changeBookingLink: '/change-video-link/12',
           comment: 'some comment',
           errors: [{ text: 'error message', href: 'error' }],
+          warnPrison: true,
         })
+      })
+    })
+
+    describe('Warn prison when now is after 3pm the date of the booking is less than 2 days away', () => {
+      it('should display booking details', async () => {
+        const clock = useFakeTimers(new Date('2020-11-19T15:01:00').getTime())
+
+        bookingService.get.mockResolvedValue(bookingDetails)
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
+        mockFlashState({ errors: [], input: [] })
+
+        await controller.view()(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/confirmUpdatedBooking.njk', {
+          bookingId: '12',
+          update: {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+            mainLocation: 1,
+            postLocation: 3,
+            postRequired: true,
+            preLocation: 2,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+          },
+          bookingDetails: {
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              courtLocation: 'City of London',
+            },
+            hearingDetails: {
+              date: '20 November 2020',
+              mainCourtHearingTime: '18:00 to 19:00',
+              prisonRoomForCourtHearing: 'vcc room 1',
+              'pre-court hearing briefing': '17:45 to 18:00',
+              'prison room for pre-court hearing briefing': 'vcc room 2',
+              'post-court hearing briefing': '19:00 to 19:15',
+              'prison room for post-court hearing briefing': 'vcc room 3',
+            },
+          },
+          changeBookingLink: '/change-video-link/12',
+          comment: 'some comment',
+          errors: [],
+          warnPrison: true,
+        })
+
+        clock.restore()
+      })
+    })
+
+    describe('Do not warn prison when now is after 3pm the date of the booking is more than 2 days away', () => {
+      it('should display booking details', async () => {
+        const clock = useFakeTimers(new Date('2020-11-18T15:01:00').getTime())
+
+        bookingService.get.mockResolvedValue(bookingDetails)
+        locationService.getVideoLinkEnabledCourt.mockResolvedValue(court)
+        mockFlashState({ errors: [], input: [] })
+
+        await controller.view()(req, res, null)
+
+        expect(res.render).toHaveBeenCalledWith('amendBooking/confirmUpdatedBooking.njk', {
+          bookingId: '12',
+          update: {
+            agencyId: 'WWI',
+            courtId: 'CLDN',
+            date: moment('2020-11-20T00:00:00', DATE_TIME_FORMAT_SPEC, true),
+            endTime: moment('2020-11-20T19:00:00', DATE_TIME_FORMAT_SPEC, true),
+            mainLocation: 1,
+            postLocation: 3,
+            postRequired: true,
+            preLocation: 2,
+            preRequired: true,
+            startTime: moment('2020-11-20T18:00:00', DATE_TIME_FORMAT_SPEC, true),
+          },
+          bookingDetails: {
+            details: {
+              name: 'John Doe',
+              prison: 'some prison',
+              courtLocation: 'City of London',
+            },
+            hearingDetails: {
+              date: '20 November 2020',
+              mainCourtHearingTime: '18:00 to 19:00',
+              prisonRoomForCourtHearing: 'vcc room 1',
+              'pre-court hearing briefing': '17:45 to 18:00',
+              'prison room for pre-court hearing briefing': 'vcc room 2',
+              'post-court hearing briefing': '19:00 to 19:15',
+              'prison room for post-court hearing briefing': 'vcc room 3',
+            },
+          },
+          changeBookingLink: '/change-video-link/12',
+          comment: 'some comment',
+          errors: [],
+          warnPrison: false,
+        })
+
+        clock.restore()
       })
     })
   })

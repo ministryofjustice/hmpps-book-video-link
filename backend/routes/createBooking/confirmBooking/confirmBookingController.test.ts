@@ -2,6 +2,7 @@ import moment from 'moment'
 
 import { Agency, InmateDetail } from 'prisonApi'
 
+import { useFakeTimers } from 'sinon'
 import ConfirmBookingController from './confirmBookingController'
 import { BookingService, LocationService } from '../../../services'
 import { DATE_TIME_FORMAT_SPEC } from '../../../shared/dateHelpers'
@@ -81,7 +82,62 @@ describe('Select court appointment rooms', () => {
         errors: [],
         form: {},
         offender: { court: 'LEEDS', name: 'Bob Smith', prison: 'Leeds' },
+        warnPrison: true,
       })
+    })
+
+    it('should return warnPrison as false if now is after 3pm the date of the booking is more than 2 days away', async () => {
+      const clock = useFakeTimers(new Date('2017-11-08T15:01:00').getTime())
+
+      await controller.view(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('createBooking/confirmBooking.njk', {
+        agencyId: 'WWI',
+        offenderNo: 'A12345',
+        details: {
+          'Post-court hearing briefing': '14:00 to 14:15',
+          'Pre-court hearing briefing': '10:45 to 11:00',
+          'Prison room for post-court hearing briefing': 'Room 3',
+          'Prison room for pre-court hearing briefing': 'Room 1',
+          courtHearingEndTime: '14:00',
+          courtHearingStartTime: '11:00',
+          date: '10 November 2017',
+          prisonRoomForCourtHearing: 'Room 2',
+        },
+        errors: [],
+        form: {},
+        offender: { court: 'LEEDS', name: 'Bob Smith', prison: 'Leeds' },
+        warnPrison: false,
+      })
+
+      clock.restore()
+    })
+
+    it('should return warnPrison as true if now is after 3pm the date of the booking is less than 2 days away', async () => {
+      const clock = useFakeTimers(new Date('2017-11-09T15:01:00').getTime())
+
+      await controller.view(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('createBooking/confirmBooking.njk', {
+        agencyId: 'WWI',
+        offenderNo: 'A12345',
+        details: {
+          'Post-court hearing briefing': '14:00 to 14:15',
+          'Pre-court hearing briefing': '10:45 to 11:00',
+          'Prison room for post-court hearing briefing': 'Room 3',
+          'Prison room for pre-court hearing briefing': 'Room 1',
+          courtHearingEndTime: '14:00',
+          courtHearingStartTime: '11:00',
+          date: '10 November 2017',
+          prisonRoomForCourtHearing: 'Room 2',
+        },
+        errors: [],
+        form: {},
+        offender: { court: 'LEEDS', name: 'Bob Smith', prison: 'Leeds' },
+        warnPrison: true,
+      })
+
+      clock.restore()
     })
 
     it('should call services correctly', async () => {
