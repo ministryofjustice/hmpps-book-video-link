@@ -6,6 +6,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% set title = "Check and confirm your booking" %}
 
@@ -34,6 +35,13 @@
         <h1 class="govuk-heading-l">{{title}}</h1>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+                {% if now > today | atTime(15, 0) and details.date | stringToDate('DD MMMM YYYY') < today | addDays(2) %}
+                    {{ govukWarningText({
+                        text: "Discuss this booking with the prison to make sure they are prepared",
+                        iconFallbackText: "Warning"
+                    }) }}
+                {% endif %}
+
                 {{ govukSummaryList({
                     classes: "govuk-summary-list--no-border govuk-body govuk-!-margin-bottom-2",
                     rows: offender | toSummaryViewModel | removePaddingBottom

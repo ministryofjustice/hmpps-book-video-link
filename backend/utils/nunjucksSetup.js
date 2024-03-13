@@ -9,6 +9,11 @@ const {
   hyphenatedStringToCamel,
   possessive,
   escapeHtml,
+  stringToDate,
+  addDays,
+  atTime,
+  now,
+  today,
 } = require('../utils')
 
 module.exports = (app, path) => {
@@ -193,8 +198,13 @@ module.exports = (app, path) => {
   njkEnv.addFilter('getTime', getTime)
   njkEnv.addFilter('truthy', data => Boolean(data))
   njkEnv.addFilter('possessive', possessive)
+  njkEnv.addFilter('stringToDate', stringToDate)
+  njkEnv.addFilter('addDays', addDays)
+  njkEnv.addFilter('atTime', atTime)
   njkEnv.addGlobal('googleTagManagerKey', config.analytics.googleTagManagerKey)
   njkEnv.addGlobal('authUrl', config.apis.oauth2.url)
   njkEnv.addGlobal('featureFlagOutageBannerEnabled', config.featureFlagOutageBannerEnabled)
+  njkEnv.addGlobal('now', now())
+  njkEnv.addGlobal('today', today())
   return njkEnv
 }
