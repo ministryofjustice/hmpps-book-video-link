@@ -24,7 +24,7 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                {% if now > today | atTime(15, 0) and bookingDetails.hearingDetails.date | stringToDate('DD MMMM YYYY') < today | addDays(2) %}
+                {% if now > today | atTime(15, 0) and bookingDetails.hearingDetails.date | stringToDate('D MMMM YYYY') < today | addDays(2) %}
                     {{ govukWarningText({
                         text: "Discuss this booking with the prison to make sure they are prepared",
                         iconFallbackText: "Warning"

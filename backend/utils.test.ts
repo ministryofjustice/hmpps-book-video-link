@@ -12,6 +12,9 @@ import {
   assertHasOptionalStringValues,
   forenameToInitial,
   trimObjectValues,
+  stringToDate,
+  addDays,
+  atTime,
 } from './utils'
 
 describe('capitalize()', () => {
@@ -160,6 +163,27 @@ describe('getTime()', () => {
 
   it('should return Invalid message if no date time string is used', () => {
     expect(getTime(undefined)).toEqual('Invalid date or time')
+  })
+})
+
+describe('stringToDate', () => {
+  it('should convert a string to a date', () => {
+    expect(stringToDate('2024-03-14')).toEqual(new Date('2024-03-14'))
+    expect(stringToDate('14 March 2024', 'D MMMM YYYY')).toEqual(new Date('2024-03-14'))
+  })
+})
+
+describe('addDays', () => {
+  it('should add the given number of days to the given date', () => {
+    expect(addDays(stringToDate('2024-03-14'), 1)).toEqual(new Date('2024-03-15'))
+    expect(addDays(stringToDate('2024-12-29'), 3)).toEqual(new Date('2025-01-01'))
+    expect(addDays(stringToDate('2024-12-29'), -1)).toEqual(new Date('2024-12-28'))
+  })
+})
+
+describe('atTime', () => {
+  it('should return a dateTime using the given date, hour and minute', () => {
+    expect(atTime(stringToDate('2024-03-14'), 15, 10)).toEqual(new Date('2024-03-14T15:10:00Z'))
   })
 })
 
