@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express'
+import moment from 'moment'
 import type { BookingService, LocationService } from '../../services'
 import { getUpdate, clearUpdate } from './state'
 import { DATE_ONLY_LONG_FORMAT_SPEC, MOMENT_TIME } from '../../shared/dateHelpers'
@@ -48,6 +49,8 @@ export default class CheckAndConfirmYourBookingController {
         },
         comment,
         changeBookingLink: `/change-video-link/${bookingId}`,
+        warnPrison:
+          moment() > moment().set({ hour: 15, minute: 0 }) && update.date < moment().startOf('day').add(2, 'days'),
       })
     }
   }
