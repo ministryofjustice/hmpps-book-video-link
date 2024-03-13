@@ -104,7 +104,7 @@ context('A user can view the video link home page', () => {
       location().contains('in: HMP Wandsworth')
       court().contains('Aberdare County Court')
       type().contains('Court hearing')
-      action().contains('Change')
+      action().contains('View or edit')
     }
     {
       const { time, prisoner, location, court, type, action } = courtVideoBookingsPage.getRow(2)
@@ -134,7 +134,7 @@ context('A user can view the video link home page', () => {
       location().contains('in: HMP Wandsworth')
       court().contains('Aberdare County Court')
       type().contains('Court hearing')
-      action().contains('Change')
+      action().contains('View or edit')
     }
   })
 
@@ -218,7 +218,7 @@ context('A user can view the video link home page', () => {
       location().contains('Room 2')
       court().contains('Banbury County Court')
       type().contains('Court hearing')
-      action().contains('Change')
+      action().contains('View or edit')
     }
   })
 
