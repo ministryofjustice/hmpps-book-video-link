@@ -33,6 +33,11 @@ export default class ConfirmBookingController {
     const [input] = req.flash('input')
     const form = input || {}
 
+    const today = moment().startOf('day')
+    const tomorrow = today.clone().add(1, 'day')
+    const twoDaysFromNow = today.clone().add(2, 'day')
+    const fifteenHrsToday = today.clone().set({ hour: 15, minute: 0 })
+
     return res.render('createBooking/confirmBooking.njk', {
       agencyId,
       offenderNo,
@@ -52,7 +57,8 @@ export default class ConfirmBookingController {
         'Prison room for post-court hearing briefing': roomFinder.prisonRoom(newBooking.postLocation),
       },
       warnPrison:
-        moment() > moment().set({ hour: 15, minute: 0 }) && newBooking.date < moment().startOf('day').add(2, 'days'),
+        newBooking.date.isBefore(tomorrow) ||
+        (moment().isAfter(fifteenHrsToday) && newBooking.date.isBefore(twoDaysFromNow)),
       errors: req.flash('errors') || [],
       form,
     })

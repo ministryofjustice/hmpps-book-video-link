@@ -27,6 +27,11 @@ export default class CheckAndConfirmYourBookingController {
 
       const comment = input ? input.comment : bookingDetails.comments
 
+      const today = moment().startOf('day')
+      const tomorrow = today.clone().add(1, 'day')
+      const twoDaysFromNow = today.clone().add(2, 'day')
+      const fifteenHrsToday = today.clone().set({ hour: 15, minute: 0 })
+
       return res.render('amendBooking/confirmUpdatedBooking.njk', {
         errors,
         update,
@@ -50,7 +55,7 @@ export default class CheckAndConfirmYourBookingController {
         comment,
         changeBookingLink: `/change-video-link/${bookingId}`,
         warnPrison:
-          moment() > moment().set({ hour: 15, minute: 0 }) && update.date < moment().startOf('day').add(2, 'days'),
+          update.date.isBefore(tomorrow) || (moment().isAfter(fifteenHrsToday) && update.date.isBefore(twoDaysFromNow)),
       })
     }
   }
