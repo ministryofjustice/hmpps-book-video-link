@@ -56,6 +56,8 @@ export default class EventsPusher {
       })
       logger.info(result?.data?.responses || 'EventsPusher: Finished. No response from sheets API')
     } catch (error) {
+      logger.info(`eventsPusher.pushEvents failed. events[0][0]: ${events[0][0]}`)
+      logger.info(`events received: ${events}`)
       logger.info(error)
       throw error
     }
