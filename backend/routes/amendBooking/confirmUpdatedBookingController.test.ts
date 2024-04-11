@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { Court } from 'whereaboutsApi'
+// eslint-disable-next-line import/no-unresolved
 import { useFakeTimers } from 'sinon'
 import CheckAndConfirmYourBookingController from './confirmUpdatedBookingController'
 import { BookingService, LocationService } from '../../services'

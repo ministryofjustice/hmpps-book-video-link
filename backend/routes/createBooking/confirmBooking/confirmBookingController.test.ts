@@ -2,6 +2,7 @@ import moment from 'moment'
 
 import { Agency, InmateDetail } from 'prisonApi'
 
+// eslint-disable-next-line import/no-unresolved
 import { useFakeTimers } from 'sinon'
 import ConfirmBookingController from './confirmBookingController'
 import { BookingService, LocationService } from '../../../services'
