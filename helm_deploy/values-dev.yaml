@@ -38,3 +38,4 @@ env:
 
 jobs:
   cronspec: "0 8,12,15 * * *"
+# jobs will run at 9am, 1pm and 4pm
