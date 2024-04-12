@@ -37,7 +37,7 @@ describe('test', () => {
     const call = whereaboutsApi.getVideoLinkEventsCSV.mock.calls[0]
     expect(call[0]).toStrictEqual(tokens)
     expect(reportDate.isSame(call[2])).toBe(true)
-    expect(call[3]).toBe(31)
+    expect(call[3]).toBe(185)
   })
 
   it('Handles no events', async () => {
