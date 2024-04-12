@@ -15,7 +15,7 @@ export default class EventsRetriever {
     this.whereaboutsApi = whereaboutsApi
   }
 
-  async retrieveEventsForDay(day: Moment): Promise<string[][]> {
+  async retrieveEventsForPastMonth(date: Moment): Promise<string[][]> {
     const tokens = await this.tokenSource.getTokens()
     const parser = parse({
       delimiter: ',',
@@ -23,12 +23,12 @@ export default class EventsRetriever {
       from: 2,
     })
     const records: string[][] = []
-    this.whereaboutsApi.getVideoLinkEventsCSV(tokens, parser, day.startOf('day'), 1)
+    this.whereaboutsApi.getVideoLinkEventsCSV(tokens, parser, date, 31)
     // eslint-disable-next-line no-restricted-syntax
     for await (const record of parser) {
       records.push(record)
     }
-    logger.info(`Retrieved ${records.length} events for ${day}`)
+    logger.info(`Retrieved ${records.length} events from ${date}`)
     return records
   }
 }

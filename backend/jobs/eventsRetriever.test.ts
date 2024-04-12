@@ -26,7 +26,8 @@ describe('test', () => {
       return Promise.resolve()
     })
 
-    const events = await eventsRetriever.retrieveEventsForDay(moment('2021-07-01 09:01:01'))
+    const reportDate = moment('2021-07-01 09:01:01')
+    const events = await eventsRetriever.retrieveEventsForPastMonth(reportDate)
 
     expect(events).toStrictEqual([
       ['1', '2', '3'],
@@ -35,11 +36,8 @@ describe('test', () => {
 
     const call = whereaboutsApi.getVideoLinkEventsCSV.mock.calls[0]
     expect(call[0]).toStrictEqual(tokens)
-
-    expect(
-      moment({ year: 2021, month: 6, day: 1, hour: 0, minute: 0, seconds: 0, milliseconds: 0 }).isSame(call[2])
-    ).toBe(true)
-    expect(call[3]).toBe(1)
+    expect(reportDate.isSame(call[2])).toBe(true)
+    expect(call[3]).toBe(31)
   })
 
   it('Handles no events', async () => {
@@ -50,7 +48,7 @@ describe('test', () => {
       return Promise.resolve()
     })
 
-    const events = await eventsRetriever.retrieveEventsForDay(moment('2021-07-01'))
+    const events = await eventsRetriever.retrieveEventsForPastMonth(moment('2021-07-01'))
     expect(events).toStrictEqual([])
   })
 })

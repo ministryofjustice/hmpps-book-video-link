@@ -37,4 +37,4 @@ env:
   MANAGE_USERS_API_URL: https://manage-users-api-dev.hmpps.service.justice.gov.uk/
 
 jobs:
-  cronspec: "59 * * * *"
+  cronspec: "0 8,12,15 * * *"
