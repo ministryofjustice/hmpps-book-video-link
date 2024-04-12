@@ -27,7 +27,7 @@ describe('test', () => {
     })
 
     const reportDate = moment('2021-07-01 09:01:01')
-    const events = await eventsRetriever.retrieveEventsForPastMonth(reportDate)
+    const events = await eventsRetriever.retrieveEvents(reportDate)
 
     expect(events).toStrictEqual([
       ['1', '2', '3'],
@@ -48,7 +48,7 @@ describe('test', () => {
       return Promise.resolve()
     })
 
-    const events = await eventsRetriever.retrieveEventsForPastMonth(moment('2021-07-01'))
+    const events = await eventsRetriever.retrieveEvents(moment('2021-07-01'))
     expect(events).toStrictEqual([])
   })
 })

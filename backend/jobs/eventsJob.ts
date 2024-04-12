@@ -30,7 +30,7 @@ const pusher = new EventsPusher(
 )
 
 const job = async () => {
-  const events = await retriever.retrieveEventsForPastMonth(moment().subtract(1, 'month'))
+  const events = await retriever.retrieveEvents(moment().subtract(6, 'months'))
   await pusher.pushEvents(events)
 }
 

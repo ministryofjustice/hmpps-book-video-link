@@ -15,7 +15,7 @@ export default class EventsRetriever {
     this.whereaboutsApi = whereaboutsApi
   }
 
-  async retrieveEventsForPastMonth(date: Moment): Promise<string[][]> {
+  async retrieveEvents(date: Moment): Promise<string[][]> {
     const tokens = await this.tokenSource.getTokens()
     const parser = parse({
       delimiter: ',',
