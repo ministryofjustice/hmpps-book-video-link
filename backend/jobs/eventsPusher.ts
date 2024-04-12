@@ -41,7 +41,11 @@ export default class EventsPusher {
     }
 
     try {
-      await this.spreadsheets.values.clear({ range: 'A2' })
+      await this.spreadsheets.values.clear({
+        spreadsheetId: this.spreadsheetId,
+        range: 'A2',
+        requestBody: {},
+      })
       const result = await this.spreadsheets.values.batchUpdate({
         spreadsheetId: this.spreadsheetId,
         requestBody: {
