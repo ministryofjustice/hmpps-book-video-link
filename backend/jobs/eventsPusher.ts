@@ -39,15 +39,15 @@ export default class EventsPusher {
       logger.info(`EventsPusher: Finished. No events to push.`)
       return
     }
-    const firstRow = parseInt(events[0][0], 10)
-    const range = `A${firstRow + 1}`
+
     try {
+      await this.spreadsheets.values.clear({ range: 'A2' })
       const result = await this.spreadsheets.values.batchUpdate({
         spreadsheetId: this.spreadsheetId,
         requestBody: {
           data: [
             {
-              range,
+              range: 'A2',
               values: events,
             },
           ],
