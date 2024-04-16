@@ -99,8 +99,8 @@ describe('setupAuthorisation tests', () => {
         .get('/no-service-access')
         .expect(200)
         .expect(res => {
-          expect(res.text).toContain('> bookavideolinkservice@justice.gov.uk<')
-          expect(res.text).toContain("href='mailto: bookavideolinkservice@justice.gov.uk'")
+          expect(res.text).toContain('>bookavideolinkservice@justice.gov.uk<')
+          expect(res.text).toContain("href='mailto:bookavideolinkservice@justice.gov.uk'")
         })
     })
   })
