@@ -10,7 +10,7 @@ module.exports = {
     videoLinkEnabledFor: (process.env.VIDEO_LINK_ENABLED_FOR || '').split(','),
   },
 
-  supportEmail: 'bookavideolink@digital.justice.gov.uk',
+  supportEmail: 'bookavideolinkservice@justice.gov.uk',
 
   supportTelephone: '0800 917 5148',
 
