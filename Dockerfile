@@ -17,6 +17,7 @@ RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit --ignore-scripts && \
     npm run record-build-info && \
     npm prune --production
 
+FROM node:20.12-bookworm-slim
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
 
 # Cache breaking
