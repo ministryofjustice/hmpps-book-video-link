@@ -90,6 +90,11 @@
     },
     "superagent": {
       "formidable": "3.5.1"
+    },
+    "jest": {
+      "jest-core": {
+        "micromatch": "4.0.8"
+      }
     }
   },
   "scripts": {
