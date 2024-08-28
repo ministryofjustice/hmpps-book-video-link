@@ -1,41 +1,23 @@
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+generic-service:
 
-replicaCount: 2
+  replicaCount: 2
 
-image:
-  repository: quay.io/hmpps/hmpps-book-video-link
-  tag: latest
-  pullPolicy: IfNotPresent
-  port: 3000
+  ingress:
+    enable_whitelist: false
+    host: book-video-link-dev.prison.service.justice.gov.uk
+    annotations:
+      external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-dev-green
 
-ingress:
-  enabled: true
-  enable_whitelist: false
-  host: book-video-link-dev.prison.service.justice.gov.uk
-  cert_secret: hmpps-book-video-link-cert
-  path: /
-  annotations:
-    external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-dev-green
-
-env:
-  API_ENDPOINT_URL: https://prison-api-dev.prison.service.justice.gov.uk/
-  OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth/
-  API_WHEREABOUTS_ENDPOINT_URL: https://whereabouts-api-dev.service.justice.gov.uk/
-  API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL: https://prisoner-search-dev.prison.service.justice.gov.uk/
-  API_PRISON_REGISTER_ENDPOINT_URL: https://prison-register-dev.hmpps.service.justice.gov.uk/
-  API_HMPPS_USER_PREFERENCE_ENDPOINT_URL: https://hmpps-user-preferences-dev.hmpps.service.justice.gov.uk/
-  HMPPS_COOKIE_NAME: hmpps-session-dev
-  REMOTE_AUTH_STRATEGY: "true"
-  WEB_SESSION_TIMEOUT_IN_MINUTES: "60"
-  VIDEO_LINK_ENABLED_FOR: "WWI,TSI,HEI,BWI,NMI,EYI,BNI,PBI,BMI,NWI,PNI,BZI,PVI,EXI,WSI"
-  TOKENVERIFICATION_API_URL: https://token-verification-api-dev.prison.service.justice.gov.uk
-  TOKENVERIFICATION_API_ENABLED: true
-  FEATURE_FLAG_OUTAGE_BANNER_ENABLED: false
-  REDIS_ENABLED: true
-  VLBEVENT_EXPORT_SPREADSHEET_ID: "18BcOjlGlVfK8Qr3V3fhqdfYj4XEUfQGRIcJwzJ3BB-Y"
-  MANAGE_USERS_API_URL: https://manage-users-api-dev.hmpps.service.justice.gov.uk/
-
-jobs:
-  cronspec: "0 8,12,15 * * *"
-# jobs will run at 9am, 1pm and 4pm
+  env:
+    API_ENDPOINT_URL: https://prison-api-dev.prison.service.justice.gov.uk/
+    OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth/
+    API_WHEREABOUTS_ENDPOINT_URL: https://whereabouts-api-dev.service.justice.gov.uk/
+    API_PRISONER_OFFENDER_SEARCH_ENDPOINT_URL: https://prisoner-search-dev.prison.service.justice.gov.uk/
+    API_PRISON_REGISTER_ENDPOINT_URL: https://prison-register-dev.hmpps.service.justice.gov.uk/
+    API_HMPPS_USER_PREFERENCE_ENDPOINT_URL: https://hmpps-user-preferences-dev.hmpps.service.justice.gov.uk/
+    HMPPS_COOKIE_NAME: hmpps-session-dev
+    TOKENVERIFICATION_API_URL: https://token-verification-api-dev.prison.service.justice.gov.uk
+    VLBEVENT_EXPORT_SPREADSHEET_ID: "18BcOjlGlVfK8Qr3V3fhqdfYj4XEUfQGRIcJwzJ3BB-Y"
+    MANAGE_USERS_API_URL: https://manage-users-api-dev.hmpps.service.justice.gov.uk/
