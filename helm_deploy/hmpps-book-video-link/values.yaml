@@ -44,7 +44,14 @@ generic-service:
     hmpps-book-video-link-elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
-    
+
+  livenessProbe:
+    httpGet:
+      path: /ping
+  readinessProbe:
+      httpGet:
+        path: /ping
+
   allowlist:
     groups:
       - moj_cloud_platform
