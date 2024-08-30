@@ -8,6 +8,7 @@ generic-service:
     host: book-video-link-dev.prison.service.justice.gov.uk
 
   env:
+    INGRESS_URL: https://book-video-link-dev.prison.service.justice.gov.uk
     API_ENDPOINT_URL: https://prison-api-dev.prison.service.justice.gov.uk/
     OAUTH_ENDPOINT_URL: https://sign-in-dev.hmpps.service.justice.gov.uk/auth/
     API_WHEREABOUTS_ENDPOINT_URL: https://whereabouts-api-dev.service.justice.gov.uk/
