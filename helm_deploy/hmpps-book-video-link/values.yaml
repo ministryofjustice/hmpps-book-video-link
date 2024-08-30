@@ -41,7 +41,7 @@ generic-service:
       GOOGLE_TAG_MANAGER_KEY: "GOOGLE_TAG_MANAGER_KEY"
       NOTIFY_API_KEY: "NOTIFY_API_KEY"
       SESSION_COOKIE_SECRET: "SESSION_COOKIE_SECRET"
-    elasticache-redis:
+    hmpps-book-video-link-elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
     
