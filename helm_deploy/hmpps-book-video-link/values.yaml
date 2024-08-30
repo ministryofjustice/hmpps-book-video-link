@@ -27,6 +27,7 @@ generic-service:
     TOKENVERIFICATION_API_ENABLED: true
     FEATURE_FLAG_OUTAGE_BANNER_ENABLED: false
     REDIS_ENABLED: true
+    REDIS_TLS_ENABLED: true
 
   namespace_secrets:
     hmpps-book-video-link:
@@ -40,6 +41,9 @@ generic-service:
       GOOGLE_TAG_MANAGER_KEY: "GOOGLE_TAG_MANAGER_KEY"
       NOTIFY_API_KEY: "NOTIFY_API_KEY"
       SESSION_COOKIE_SECRET: "SESSION_COOKIE_SECRET"
+    elasticache-redis:
+      REDIS_HOST: "primary_endpoint_address"
+      REDIS_AUTH_TOKEN: "auth_token"
     
   allowlist:
     groups:
