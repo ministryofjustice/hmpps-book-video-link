@@ -13,11 +13,8 @@ generic-service:
 
   ingress:
     enabled: true
-    enable_whitelist: true
-    cert_secret: hmpps-book-video-link-cert
+    tlsSecretName: hmpps-book-video-link-cert
     path: /
-    annotations:
-      external-dns.alpha.kubernetes.io/aws-weight: "100"
 
   jobs:
     cronspec: "0 8,12,15 * * *"
