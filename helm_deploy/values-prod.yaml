@@ -5,9 +5,7 @@ generic-service:
 
   ingress:
     host: book-video-link.prison.service.justice.gov.uk
-    annotations:
-      external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-prod-green
-
+    
   env:
     API_ENDPOINT_URL: https://prison-api.prison.service.justice.gov.uk/
     OAUTH_ENDPOINT_URL: https://sign-in.hmpps.service.justice.gov.uk/auth/

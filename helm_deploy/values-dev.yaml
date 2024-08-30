@@ -5,10 +5,7 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    enable_whitelist: false
     host: book-video-link-dev.prison.service.justice.gov.uk
-    annotations:
-      external-dns.alpha.kubernetes.io/set-identifier: hmpps-book-video-link-hmpps-book-video-link-dev-green
 
   env:
     API_ENDPOINT_URL: https://prison-api-dev.prison.service.justice.gov.uk/
