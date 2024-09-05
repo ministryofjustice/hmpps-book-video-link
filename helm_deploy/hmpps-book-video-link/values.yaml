@@ -31,6 +31,7 @@ generic-service:
     REDIS_ENABLED: true
     REDIS_TLS_ENABLED: true
 
+
   namespace_secrets:
     hmpps-book-video-link:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
