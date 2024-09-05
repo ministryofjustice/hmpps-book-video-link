@@ -5,6 +5,9 @@ name: hmpps-book-video-link
 version: 0.2.1
 
 dependencies:
+  - name: generic-service
+    version: "3.5"
+    repository: https://ministryofjustice.github.io/hmpps-helm-charts
   - name: generic-prometheus-alerts
-    version: 1.0.0
+    version: "1.8"
     repository: https://ministryofjustice.github.io/hmpps-helm-charts
