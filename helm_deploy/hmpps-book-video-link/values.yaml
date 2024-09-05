@@ -15,6 +15,7 @@ generic-service:
   ingress:
     enabled: true
     tlsSecretName: hmpps-book-video-link-cert
+    path: /
 
   jobs:
     cronspec: "0 8,12,15 * * *"
