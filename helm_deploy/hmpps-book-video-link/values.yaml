@@ -3,6 +3,7 @@
 generic-service:
   nameOverride: hmpps-book-video-link
   productId: DPS004
+  serviceAccountName: book-a-video-link
 
   image:
     repository: quay.io/hmpps/hmpps-book-video-link
