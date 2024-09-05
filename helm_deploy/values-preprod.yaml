@@ -14,6 +14,7 @@ generic-service:
     API_PRISON_REGISTER_ENDPOINT_URL: https://prison-register-preprod.hmpps.service.justice.gov.uk/
     API_HMPPS_USER_PREFERENCE_ENDPOINT_URL: https://hmpps-user-preferences-preprod.hmpps.service.justice.gov.uk/
     HMPPS_COOKIE_NAME: hmpps-session-preprod
+    HMPPS_COOKIE_DOMAIN: hmpps-session-preprod
     TOKENVERIFICATION_API_URL: https://token-verification-api-preprod.prison.service.justice.gov.uk
     VLBEVENT_EXPORT_SPREADSHEET_ID: "1YUKHKsq9VftSLm6twO9F172gHDh6Xp8Tj6V1HEN6FbA"
     MANAGE_USERS_API_URL: https://manage-users-api-preprod.hmpps.service.justice.gov.uk/
