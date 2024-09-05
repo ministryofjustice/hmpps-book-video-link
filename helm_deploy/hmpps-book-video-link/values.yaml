@@ -2,7 +2,7 @@
 # Values here are the same across all environments
 generic-service:
   nameOverride: hmpps-book-video-link
-  productId: DPS093
+  productId: DPS004
 
   image:
     repository: quay.io/hmpps/hmpps-book-video-link
