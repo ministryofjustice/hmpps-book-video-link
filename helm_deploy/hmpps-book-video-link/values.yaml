@@ -2,7 +2,6 @@
 # Values here are the same across all environments
 generic-service:
   nameOverride: hmpps-book-video-link
-  productId: DPS004
   serviceAccountName: book-a-video-link
 
   image:
