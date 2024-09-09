@@ -31,11 +31,6 @@ app.set('view engine', 'njk')
 
 nunjucksSetup(app, path)
 
-app.use((req, res, next) => {
-  console.log('***** hitting the app ******')
-  console.log('req.url =====', req.url)
-  next()
-})
 app.use(setupBodyParsers())
 app.use(setupHealthChecks())
 app.use(setupWebSecurity())
