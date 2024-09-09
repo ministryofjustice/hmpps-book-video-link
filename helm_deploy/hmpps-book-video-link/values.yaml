@@ -30,6 +30,7 @@ generic-service:
     FEATURE_FLAG_OUTAGE_BANNER_ENABLED: false
     REDIS_ENABLED: true
     REDIS_TLS_ENABLED: true
+    NODE_ENV: production
 
 
   namespace_secrets:
