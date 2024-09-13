@@ -38,6 +38,8 @@ generic-service:
     groups:
       - prisons
       - probation
+      - moj_cloud_platform
+      - digital_staff_and_mojo
 
   # determine which slack channel alerts are sent to, via the correct Alert Manager receiver
   generic-prometheus-alerts:
