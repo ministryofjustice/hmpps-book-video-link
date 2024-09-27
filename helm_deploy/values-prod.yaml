@@ -21,8 +21,6 @@ generic-service:
     MANAGE_USERS_API_URL: https://manage-users-api.hmpps.service.justice.gov.uk/
 
   allowlist:
-    royal-courts-of-justice: 178.248.34.43/32
-
     groups:
       - prisons
       - probation
