@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: hmpps-book-video-link-update-events
 spec:
-  schedule: {{ .Values.jobs.cronspec | quote }}
+  schedule: 0 8,12,15 * * *
   concurrencyPolicy: Replace
   failedJobsHistoryLimit: 3
   startingDeadlineSeconds: 300
