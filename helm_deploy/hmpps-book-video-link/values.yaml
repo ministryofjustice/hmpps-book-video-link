@@ -18,10 +18,6 @@ generic-service:
     tlsSecretName: hmpps-book-video-link-cert
     path: /
 
-  jobs:
-    cronspec: "0 8,12,15 * * *"
-  # jobs will run at 9am, 1pm and 4pm
-
   env:
     REMOTE_AUTH_STRATEGY: "true"
     WEB_SESSION_TIMEOUT_IN_MINUTES: "60"
