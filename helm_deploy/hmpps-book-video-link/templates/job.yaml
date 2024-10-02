@@ -23,4 +23,4 @@ spec:
               args:
                 - node
                 - backend/jobs/eventsJob
-  {{ include "deployment.envs" . | nindent 14 }}
+{{- include "deployment.envs" (index .Values "generic-service") | nindent 14 }}
