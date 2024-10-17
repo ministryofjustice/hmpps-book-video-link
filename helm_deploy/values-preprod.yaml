@@ -4,9 +4,6 @@ generic-service:
 
   ingress:
     host: book-video-link-preprod.prison.service.justice.gov.uk
-    annotations:
-      nginx.ingress.kubernetes.io/server-snippet: |
-        return 302 "https://book-a-video-link-preprod.prison.service.justice.gov.uk";
 
   env:
     BOOK_VIDEO_LINK_UI_URL: https://book-video-link-preprod.prison.service.justice.gov.uk/
