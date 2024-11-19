@@ -6,7 +6,6 @@ import { initialiseAppInsights } from './azure-appinsights'
 initialiseAppInsights()
 
 import express from 'express'
-import csrf from 'csurf'
 import path from 'path'
 
 import { services } from './services'
@@ -23,6 +22,7 @@ import setupStaticContent from './setupStaticContent'
 import nunjucksSetup from './utils/nunjucksSetup'
 import setupCurrentUserAndRequestLogging from './setupCurrentUserAndRequestLogging'
 import setupAuthorisation from './setupAuthorisation'
+import setUpCsrf from './middleware/setUpCsrf'
 
 const app = express()
 
@@ -37,7 +37,7 @@ app.use(setupWebSecurity())
 app.use(setupStaticContent())
 app.use(setupWebSession())
 app.use(setupAuth(services))
-app.use(csrf())
+app.use(setUpCsrf())
 app.use(setupCurrentUserAndRequestLogging(services))
 app.use(setupAuthorisation())
 app.use(routes(services))
