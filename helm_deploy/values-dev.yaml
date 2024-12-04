@@ -8,7 +8,7 @@ generic-service:
     host: book-video-link-dev.prison.service.justice.gov.uk
     annotations:
       nginx.ingress.kubernetes.io/server-snippet: |
-        return 302 "https://book-a-video-link-dev.prison.service.justice.gov.uk";
+        return 301 "https://book-a-video-link-dev.prison.service.justice.gov.uk";
 
   env:
     BOOK_VIDEO_LINK_UI_URL: https://book-video-link-dev.prison.service.justice.gov.uk/
